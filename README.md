@@ -78,3 +78,9 @@ just check
 Feedback and contributions
 are welcome through [issues](https://github.com/X-McKay/playbooks/issues) and
 [pull requests](https://github.com/X-McKay/playbooks/pulls).
+
+The [initial repository review](docs/reviews/initial-review/README.md) records
+prioritized findings, external research, reproducible validation probes, and a
+proposed improvement roadmap against the reviewed commit.
+The [backlog](backlog/README.md) tracks the resulting implementation changes,
+runtime and repository improvements, and architecture and governance decisions.
