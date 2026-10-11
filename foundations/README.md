@@ -18,9 +18,10 @@ the meaning defined in the Agent Playbook.
 
 ## Guides
 
-1. [Strategy and use-case selection](01-strategy-and-use-cases.md): when an
-   agent is worth building, how to state a value hypothesis, and how to measure
-   value, reliability, safety, and adoption separately.
+1. [Strategy and use-case selection](01-strategy-and-use-cases.md): for
+   developers deciding whether an agent is worth building, how much authority
+   the first release gets, and how to measure success, cost, and safety
+   separately.
 2. [Defining the problem](02-problem-definition.md): the brief, success
    criteria, constraints, data, risks, owners, dependencies, and the two
    readiness decisions every agent faces.
