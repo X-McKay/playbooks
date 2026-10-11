@@ -107,6 +107,12 @@ multi-agent system conformance =
 Passing member-agent checks does not establish system conformance. A composition
 can introduce risks, costs, and failure modes that no member has in isolation.
 
+## Before you start
+
+The [Foundations](../foundations/README.md) guides cover the decisions this
+standard assumes are settled: whether agents are the right answer, the problem
+brief, zero-trust principles, and the operating model.
+
 ## Skills and implementations
 
 Optional workflow skills that help teams apply this playbook are described in

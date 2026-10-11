@@ -109,15 +109,6 @@ rollout and rollback plan
 
 ## Initial adoption path
 
-Teams adopting the playbook incrementally should:
-
-1. Inventory agents, owners, tools, side effects, and credentials.
-2. Assign execution classes and complete scenario-based risk assessments.
-3. Introduce typed inputs, outputs, and tool contracts.
-4. Move state-changing agents onto a durable execution engine.
-5. Add hard budgets and correlated telemetry.
-6. Establish smoke, regression, safety, and trajectory evals.
-7. Add human approval to consequential actions.
-8. Complete the production-readiness checklist.
+The [operating model](../foundations/04-operating-model.md#bringing-existing-agents-into-conformance) describes how to bring existing agents into conformance step by step and how to stage adoption on evidence.
 
 For one opinionated, zero-trust implementation of this playbook, see [Zetra](https://github.com/X-McKay/zetra).
