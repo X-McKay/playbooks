@@ -14,6 +14,8 @@ The playbook is intentionally opinionated. Teams may adopt stricter controls. Ex
 
 ## Contents
 
+New to agents? Start with [Core concepts](00-core-concepts.md): what models, tools, MCP servers, and skills are, when to use each, and where they live.
+
 1. [Principles and scope](01-principles-and-scope.md)
 2. [Reference architecture](02-reference-architecture.md)
 3. [Canonical agent contract](03-agent-contract.md)
