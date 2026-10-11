@@ -1,16 +1,25 @@
-# 7. Evaluation standard
+# 7. Evaluation
 
-Evaluation is part of the agent contract. A production agent is incomplete until its expected behavior, prohibited behavior, operational limits, and failure handling are represented in executable tests and evals.
+This chapter is for developers deciding whether an agent change is ready to
+ship: how to layer tests and evals, which checks are pass/fail gates, and
+what a release decision must record.
+
+Evaluation is part of the agent contract. A production agent is incomplete
+until its expected behavior, prohibited behavior, operational limits, and
+failure handling are represented in executable tests and evals.
 
 ## Evaluation layers
 
-| Layer                | Purpose                                         | Model/API usage    |
-| -------------------- | ----------------------------------------------- | ------------------ |
-| Unit tests           | Deterministic code and policy                   | None               |
-| Component tests      | Agent assembly with controlled models and tools | Mocked             |
-| Offline evals        | Behavior on curated datasets                    | Real model         |
-| Durability scenarios | Failure recovery and side-effect safety         | Mocked and real    |
-| Online evals         | Production drift and unknown failures           | Sampled production |
+Use the cheapest layer that can catch a given problem, and keep real-model
+evals for the questions only a real model can answer.
+
+| Layer | Purpose | Model/API usage |
+| --- | --- | --- |
+| Unit tests | Deterministic code and policy | None |
+| Component tests | Agent assembly with controlled models and tools | Mocked |
+| Offline evals | Behavior on curated datasets | Real model |
+| Durability scenarios | Failure recovery and side-effect safety | Mocked and real |
+| Online evals | Production drift and unknown failures | Sampled production |
 
 ## Dataset structure
 
@@ -47,11 +56,14 @@ Prefer, in order:
 4. LLM-as-a-judge
 5. Human review
 
-A capable evaluation harness supports output assertions, duration limits, tool correctness, trajectory matching, argument correctness, model/tool-call limits, span-based evaluation over trace data, and online evaluation.
+A capable evaluation harness supports output assertions, duration limits,
+tool correctness, trajectory matching, argument correctness, model/tool-call
+limits, span-based evaluation over trace data, and online evaluation.
 
 ## Hard gates
 
-The following are binary release gates:
+The following are binary release
+gates:
 
 - Output validates against its declared type.
 - No unauthorized or cross-tenant tool call occurs.
@@ -68,15 +80,17 @@ A weighted average MUST NOT hide failure of a hard gate.
 
 ## Risk-based evaluation planning
 
-Every material risk scenario has a stable ID used as an eval tag. The scenario
+Your [risk assessment](13-risk-assessment.md) tells you what to test. Every
+material risk scenario has a stable ID used as an eval tag. The scenario
 links to deterministic invariants, behavioral cases, workflow failure cases,
-production indicators, and recovery evidence appropriate to its dimensions and
-governance tier. High- and critical-risk scenarios require repeated runs and
-failure-distribution reporting when model behavior is involved.
+production indicators, and recovery evidence appropriate to its dimensions
+and governance tier. High- and critical-risk scenarios require repeated runs
+and failure-distribution reporting when model behavior is involved.
 
-An eval report identifies covered and uncovered scenario IDs. Missing required
-coverage, failed hard gates, or absent control evidence blocks release. Passing
-average quality cannot compensate for an uncovered material risk.
+An eval report identifies covered and uncovered scenario IDs. Missing
+required coverage, failed hard gates, or absent control evidence blocks
+release. Passing average quality cannot compensate for an uncovered material
+risk.
 
 ## Quality metrics
 
@@ -90,10 +104,12 @@ Select metrics appropriate to the agent:
 - Calibrated uncertainty
 - Tone and communication quality
 
-Every metric needs a definition, evaluator, threshold, owner, and regression response.
+Every metric needs a definition, evaluator, threshold, owner, and regression
+response.
 
 ## Trajectory evaluation
 
+A correct answer reached by calling a forbidden tool is still a failure.
 Evaluate the path as well as the answer:
 
 - Correct tool and skill selection
@@ -104,21 +120,30 @@ Evaluate the path as well as the answer:
 - Redundant calls and loop behavior
 - Appropriate stopping and escalation
 
-Prefer invariants over one exact sequence because several trajectories may be valid.
+Prefer invariants over one exact sequence because several trajectories may
+be valid.
 
 ## Skill evals
 
-Each skill requires cases for correct activation, correct non-activation, ambiguity, procedure adherence, interaction with other skills, tool use, stopping, safety, and context cost.
+Each skill requires cases for correct activation, correct non-activation,
+ambiguity, procedure adherence, interaction with other skills, tool use,
+stopping, safety, and context cost.
 
 ## LLM judges
 
-An LLM judge MUST use a versioned rubric, return structured scores and reasons, be calibrated against human-reviewed examples, record model and prompt versions, and receive only needed context.
+An LLM judge MUST use a versioned rubric, return structured scores and
+reasons, be calibrated against human-reviewed examples, record model and
+prompt versions, and receive only needed context.
 
-An LLM judge MUST NOT be the sole evaluator for authorization, approval, isolation, schema validity, or other deterministic safety properties.
+An LLM judge MUST NOT be the sole evaluator for authorization, approval,
+isolation, schema validity, or other deterministic safety properties.
 
 ## Multi-run evaluation
 
-Use repeated runs for changes to models, providers, instructions, skills, tool descriptions, temperature, reasoning, compaction, or retry behavior.
+The same input can produce different behavior on different runs, so one
+passing run says little. Use repeated runs for changes to models, providers,
+instructions, skills, tool descriptions, temperature, reasoning, compaction,
+or retry behavior.
 
 Report distributions:
 
@@ -149,7 +174,9 @@ evaluation_policy:
     p95_model_requests_max: 5
 ```
 
-Values are use-case specific. A release fails when any hard gate fails, an absolute threshold is missed, regression exceeds tolerance, or results lack reproducible provenance.
+Values are use-case specific. A release fails when any hard gate fails, an
+absolute threshold is missed, regression exceeds tolerance, or results lack
+reproducible provenance.
 
 ## CI strategy
 
@@ -161,8 +188,28 @@ Values are use-case specific. A release fails when any hard gate fails, an absol
 
 ## Online evaluation
 
-Online evaluation MUST be asynchronous, side-effect-free, privacy controlled, version attributed, and stratified by relevant agent and use-case dimensions. Confirmed failures feed the regression dataset.
+Online evaluation MUST be asynchronous, side-effect-free, privacy
+controlled, version attributed, and stratified by relevant agent and
+use-case dimensions. Confirmed failures feed the regression dataset.
 
 ## Provenance
 
-Every eval report records agent and manifest version, Git commit, datasets, evaluators, model settings, judge rubric, skills, toolsets, worker build, run count, timestamp, case-level results, latency, and cost.
+Every eval report records agent and manifest version, Git commit, datasets,
+evaluators, model settings, judge rubric, skills, toolsets, worker build, run
+count, timestamp, case-level results, latency, and cost.
+
+## Common pitfalls
+
+- **One run per case.** A pass that happens two times in three looks the
+  same as one that always happens.
+- **Judging safety with a model.** A judge can miss an unauthorized call that
+  a deterministic check would always catch.
+- **Pinning exact trajectories.** Tests fail on harmless reorderings, and
+  people learn to ignore them.
+
+## Before you move on
+
+- [ ] Hard gates are deterministic and block release on any failure.
+- [ ] Every material risk scenario ID is covered, or the gap blocks release.
+- [ ] Behavior changes run multiple times and report distributions.
+- [ ] Each eval report carries enough provenance to reproduce it.

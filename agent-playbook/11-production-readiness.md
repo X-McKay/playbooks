@@ -1,6 +1,11 @@
 # 11. Production readiness
 
-An accountable owner completes and approves this checklist before production launch.
+Use this checklist before an agent's first production launch. It collects the
+earlier chapters' requirements in one place. Work through it as the
+developer, linking evidence for each item; an accountable owner then
+completes and approves it before production launch. An unchecked item is
+either a blocker or a recorded
+[exception](10-security-and-governance.md#exceptions-and-review).
 
 ## Contract
 
@@ -34,7 +39,8 @@ An accountable owner completes and approves this checklist before production lau
 - [ ] Cancellation and compensation are defined.
 - [ ] Payloads and histories are bounded.
 - [ ] Replay tests pass.
-- [ ] A build that can continue in-flight workflows stays available during rollout.
+- [ ] A build that can continue in-flight workflows stays available during
+  rollout.
 
 ## Evaluation
 
@@ -75,7 +81,8 @@ An accountable owner completes and approves this checklist before production lau
 - [ ] Residual risks have treatments, owners, acceptance, and review dates.
 - [ ] Threat model is current.
 - [ ] Required security, privacy, domain, and risk reviews are complete.
-- [ ] Credentials, storage, filesystem, and network access are least privilege.
+- [ ] Credentials, storage, filesystem, and network access are least
+  privilege.
 - [ ] MCP servers and dependencies are approved and pinned.
 - [ ] Human approval is authenticated and tamper-tested.
 - [ ] Kill switches are tested.
@@ -84,13 +91,16 @@ An accountable owner completes and approves this checklist before production lau
 
 ## Operations
 
-- [ ] Staging, shadow, canary, and promotion criteria match the governance tier.
+- [ ] Staging, shadow, canary, and promotion criteria match the governance
+  tier.
 - [ ] On-call and escalation ownership are established.
 - [ ] Provider and dependency failures are tested.
 - [ ] Worker shutdown, recovery, and replay are tested.
 - [ ] Decommissioning responsibility is assigned.
 
 ## Approval record
+
+You fill in the record; the approvers sign it. Keep it with the release.
 
 ```text
 Agent:
@@ -113,3 +123,10 @@ Approved by:
 Approval date:
 Next review date:
 ```
+
+## Common pitfalls
+
+- **Ticking boxes without links.** A checked item with no evidence is a claim,
+  not readiness.
+- **Doing the checklist at the end.** Items such as replay tests and kill
+  switches are cheap to design in and expensive to retrofit.

@@ -1,56 +1,62 @@
-# 8. Observability standard
+# 8. Observability
 
-Observe the composition as one governed system and each interaction as an
-attributable boundary. Member-agent telemetry required by the Agent Playbook
-remains in force and is correlated with system, workflow, graph, delegation,
-budget, approval, and outcome data.
+This guide is for developers who will operate a multi-agent system and need
+to explain what it did. Each member still emits the telemetry the Agent
+Playbook's [observability](../agent-playbook/08-observability.md) chapter
+requires. On top of that, observe the composition as one governed system and
+each interaction as an attributable boundary, and correlate member telemetry
+with system, workflow, graph, delegation, budget, approval, and outcome data.
 
-## Objectives
+## What you need to be able to answer
 
-Operators must be able to determine:
+Design telemetry backwards from the questions an operator will ask:
 
-- Which system, manifest, graph, members, models, and policies handled a task
-- Why each member and edge was selected or denied
-- Which agent had control, responsibility, data, and authority at each point
-- How state, evidence, conflicts, and ownership changed
-- Where active time, queue time, retries, tokens, tools, and spend accumulated
-- Whether limits, admission, authorization, approval, and termination held
-- How failures, cancellation, and compensation propagated
-- Whether a dynamic run can be reconstructed after registry state changes
-- Which version, scenario, or control caused a degraded or unsafe outcome
+- Which system, manifest, graph, members, models, and policies handled a task?
+- Why was each member and edge selected or denied?
+- Which agent had control, responsibility, data, and authority at each point?
+- How did state, evidence, conflicts, and ownership change?
+- Where did active time, queue time, retries, tokens, tools, and spend
+  accumulate?
+- Did limits, admission, authorization, approval, and termination hold?
+- How did failures, cancellation, and compensation propagate?
+- Can a dynamic run be reconstructed after registry state changes?
+- Which version, scenario, or control caused a degraded or unsafe outcome?
 
 ## Telemetry types
 
-Production systems MUST provide:
+Production systems MUST provide the Agent Playbook's telemetry types
+(traces, metrics, structured logs, audit records, and evaluation results) for
+the system as a whole: traces span workflows, interactions, agent runs,
+models, and tools; metrics cover coordination and capacity as well as health,
+quality, and cost; logs hold restricted diagnostics; tamper-resistant audit
+records cover admission, approval, policy, and effects; and evaluation results
+cover system behavior. They MUST also keep an interaction ledger for the
+material delegation and state-transition record.
 
-- Distributed traces for workflows, interactions, agent runs, models, and tools
-- Metrics for health, coordination, quality, capacity, and cost
-- Structured logs for restricted diagnostics
-- An interaction ledger for the material delegation and state-transition record
-- Tamper-resistant audit records for admission, approval, policy, and effects
-- Evaluation results for system behavior
+Traces are diagnostic evidence. They do not replace the authoritative
+workflow state, interaction ledger, or audit record.
 
-Traces are diagnostic evidence. They do not replace the authoritative workflow
-state, interaction ledger, or audit record.
+## Shape traces around causality
 
-## Trace structure
+The root system span represents one business task or bounded workflow
+segment. It contains workflow, policy, interaction, agent-run, model, and tool
+spans.
 
-The root system span represents one business task or bounded workflow segment.
-It contains workflow, policy, interaction, agent-run, model, and tool spans.
+Use parent-child spans for synchronous work with one clear owner. Use span
+links for fan-out, queues, events, batches, blackboard reactions, handoffs
+across independent lifecycles, and work with multiple causal parents.
+Propagate a safe creation context with every message so producers and
+consumers remain correlatable.
 
-Use parent-child spans for synchronous work with one clear owner. Use span links
-for fan-out, queues, events, batches, blackboard reactions, handoffs across
-independent lifecycles, and work with multiple causal parents. Propagate a safe
-creation context with every message so producers and consumers remain
-correlatable.
-
-Trace shape MUST NOT be used as the only representation of system semantics.
-Record explicit delegation IDs, parent IDs, graph versions, interaction modes,
-and ownership transitions.
+Trace shape MUST NOT be the only representation of system semantics. Record
+explicit delegation IDs, parent IDs, graph versions, interaction modes, and
+ownership transitions.
 
 ## Required correlation
 
-In addition to Agent Playbook fields, spans and material records include:
+In addition to the Agent Playbook's
+[correlation](../agent-playbook/08-observability.md#correlation) fields, spans
+and material records include:
 
 ```text
 system.name
@@ -79,30 +85,31 @@ member.manifest_id
 ```
 
 Dynamic-admission spans also record registry, candidate, policy version,
-decision, reason category, evidence hash, assigned role, and admitted manifest.
-Do not place arbitrary agent text or rejection explanations in metric labels.
+decision, reason category, evidence hash, assigned role, and admitted
+manifest. Do not place arbitrary agent text or rejection explanations in
+metric labels.
 
-## Graph and state provenance
+## Record the graph and its changes
 
 Every run records its initial graph and each accepted graph change. A graph
 record contains:
 
-- Graph version and parent version
-- Added, removed, substituted, or quarantined members
-- Added, removed, enabled, or disabled edges
-- Proposer and deterministic decision authority
-- Policy and evidence references
-- Timestamp and workflow event identity
-- Composition or run manifest digest
+- graph version and parent version;
+- added, removed, substituted, or quarantined members;
+- added, removed, enabled, or disabled edges;
+- the proposer and the deterministic decision authority;
+- policy and evidence references;
+- timestamp and workflow event identity; and
+- the composition or run manifest digest.
 
 State transitions record previous and next state, transition type, initiating
 principal, accepted evidence references, policy decision, and workflow event.
 Sensitive payloads remain in controlled artifact storage.
 
-## Interaction ledger
+## Keep an interaction ledger
 
-The ledger is the compact, authoritative account of material system activity. It
-records:
+The ledger is the compact, authoritative account of material system activity.
+It records:
 
 ```text
 interaction and delegation identity
@@ -116,8 +123,8 @@ evidence, approval, side-effect, and compensation references
 ```
 
 Ledger entries SHOULD be append-only or tamper-evident. The ledger stores safe
-metadata and references, not unrestricted prompts, private reasoning, secrets,
-or raw customer content.
+metadata and references, not unrestricted prompts, private reasoning,
+secrets, or raw customer content.
 
 ## Normalized outcomes
 
@@ -142,9 +149,10 @@ partial_effect
 compensated
 ```
 
-Interaction outcomes use the result-envelope taxonomy. Provider and framework
-errors map to stable internal categories while retaining original restricted
-diagnostics.
+Interaction outcomes use the
+[result-envelope](05-delegation-and-interactions.md) taxonomy. Provider and
+framework errors map to stable internal categories while retaining the
+original restricted diagnostics.
 
 ## Metrics
 
@@ -166,71 +174,75 @@ Track at least:
 | Cost | Total, by member and edge, unused reservations, cost per compliant success |
 
 Metrics use low-cardinality labels such as system, version, environment,
-topology, role, interaction type, outcome, and policy category. Run IDs,
-delegation IDs, user IDs, tenant IDs, dynamic member IDs, URLs, prompts, and
-errors belong in traces, ledgers, or restricted logs—not metric labels.
+topology, role, interaction type, outcome, and policy category. Besides the
+values the Agent Playbook keeps out of labels, run IDs, delegation IDs, and
+dynamic member IDs belong in traces, ledgers, or restricted logs.
 
-## Dynamic-system observability
+## Watch dynamic systems for drift
 
 Dynamic systems additionally monitor:
 
-- Candidate and admission distributions
-- Selection reasons and selection regret
-- Registry freshness, errors, and policy mismatches
-- Run-graph size and shape distributions
-- Previously unseen member, edge, role, or protocol combinations
-- Member churn and substitution rates
-- Recursive depth, branching, useful-work ratio, and abandoned subtrees
-- Blackboard write contention, stale reads, and unresolved records
-- Event lag, duplication, reordering, and feedback-loop indicators
+- candidate and admission distributions;
+- selection reasons and selection regret;
+- registry freshness, errors, and policy mismatches;
+- run-graph size and shape distributions;
+- previously unseen member, edge, role, or protocol combinations;
+- member churn and substitution rates;
+- recursive depth, branching, useful-work ratio, and abandoned subtrees;
+- blackboard write contention, stale reads, and unresolved records; and
+- event lag, duplication, reordering, and feedback-loop indicators.
 
-Unexpected graph behavior is drift even if models and prompts have not changed.
+Unexpected graph behavior is drift even if models and prompts have not
+changed.
 
 ## Content, privacy, and reasoning
 
-Prompt, completion, interaction payload, blackboard, and event-content capture is
-off by default. Enabling any content requires purpose, approval, classification,
-minimization, redaction, access, retention, deletion, sampling, residency, and
+Prompt, completion, interaction
+payload, blackboard, and event-content capture is off by default. Enabling
+any of it requires purpose, approval, classification, minimization,
+redaction, access, retention, deletion, sampling, residency, and
 affected-party review.
 
-Do not require private chain-of-thought or unrestricted internal reasoning for
-observability. Record typed decisions, selected alternatives, evidence
+Do not require private chain-of-thought or unrestricted internal reasoning
+for observability. Record typed decisions, selected alternatives, evidence
 references, policy outcomes, safe summaries, hashes, and externally meaningful
 rationales.
 
-Redaction occurs before export and includes credentials, identity tokens,
-headers, cookies, personal and customer content, hidden instructions, tool
-payloads, artifact URLs, workflow history payloads, bids, error messages, and content
-copied from other agents.
+Redaction occurs before export. Besides what the Agent Playbook lists, it
+covers identity tokens, hidden instructions, artifact URLs, workflow history
+payloads, bids, error messages, and content copied from other agents.
 
 ## Audit
 
 Audit records are required for:
 
-- Dynamic member admission, substitution, removal, and quarantine
-- Graph or policy changes
-- Authorization overrides and exceptional routing
-- Approval and consequential action
-- Kill switches, manual workflow intervention, and compensation
-- Production promotion and rollback
-- Sensitive artifact access or export
-- Risk acceptance and exception use
+- dynamic member admission, substitution, removal, and quarantine;
+- graph or policy changes;
+- authorization overrides and exceptional routing;
+- approval and consequential action;
+- kill switches, manual workflow intervention, and compensation;
+- production promotion and rollback;
+- sensitive artifact access or export; and
+- risk acceptance and exception use.
 
-Records contain accountable actor, action, target, time, reason category,
-system/run/workflow identity, manifest and graph version, policy version,
-canonical argument or change hash, approval reference, result, and idempotency
-key where applicable.
+Records contain the accountable actor, action, target, time, reason category,
+system, run, and workflow identity, manifest and graph version, policy
+version, canonical argument or change hash, approval reference, result, and
+idempotency key where applicable.
 
 ## Sampling and retention
 
 - Aggregate metrics continuously.
 - Retain admission changes, policy denials, approval, consequential effects,
   partial effects, security events, and audit failures at 100%.
-- Retain enough graph and ledger data to reconstruct every production outcome.
+- Retain enough graph and ledger data to reconstruct every production
+  outcome.
 - Sample ordinary successful traces based on volume and risk.
-- Stratify samples across topology, graph shape, depth, member, role, and outcome.
+- Stratify samples across topology, graph shape, depth, member, role, and
+  outcome.
 - Sample online evaluation independently from operational trace sampling.
-- Apply data-specific retention and deletion policies to referenced artifacts.
+- Apply data-specific retention and deletion policies to referenced
+  artifacts.
 
 High-risk and dynamic systems SHOULD use tail-based sampling that retains
 unusual graphs, deep recursion, degraded outcomes, high cost, high latency,
@@ -238,49 +250,58 @@ conflicts, and policy denials.
 
 ## Dashboards
 
-Every production system needs dashboards for:
+Every production system needs dashboards for outcome, SLO, and workflow
+health; graph shape, admission, membership, and topology behavior;
+delegation, routing, handoff, aggregation, and termination; member and
+interaction reliability; quality, safety, and risk indicators; capacity,
+queues, concurrency, and backpressure; tokens, tools, budgets, reservations,
+and cost; and approval, consequential actions, and compensation.
 
-- Outcome, SLO, and workflow health
-- Graph shape, admission, membership, and topology behavior
-- Delegation, routing, handoff, aggregation, and termination
-- Member and interaction reliability
-- Quality, safety, and risk indicators
-- Capacity, queues, concurrency, and backpressure
-- Tokens, tools, budgets, reservations, and cost
-- Approval, consequential actions, and compensation
-
-Operators SHOULD be able to move from a system-level symptom to one run, graph,
-delegation, agent, model, tool, policy decision, and artifact reference.
+Operators SHOULD be able to move from a system-level symptom to one run,
+graph, delegation, agent, model, tool, policy decision, and artifact
+reference.
 
 ## Alerts
 
 Urgently alert on:
 
-- Unauthorized member, edge, scope, tenant, or data flow
-- Unapproved consequential action or duplicate side effect
-- Manifest, graph, schema, or policy integrity failure
-- Runaway recursion, fan-out, event loop, or spend
-- Audit or authoritative state failure
-- Kill-switch failure
-- Persistent workflow, queue, registry, or required-member outage
+- an unauthorized member, edge, scope, tenant, or data flow;
+- an unapproved consequential action or duplicate side effect;
+- a manifest, graph, schema, or policy integrity failure;
+- runaway recursion, fan-out, event loop, or spend;
+- audit or authoritative state failure;
+- kill-switch failure; and
+- persistent workflow, queue, registry, or required-member outage.
 
 Use lower-urgency alerts for quality regression, routing drift, member churn,
-increased substitutions, conflict growth, no-progress termination, cost or token
-growth, reservation leakage, queue saturation, and unexpected graph patterns.
+increased substitutions, conflict growth, no-progress termination, cost or
+token growth, reservation leakage, queue saturation, and unexpected graph
+patterns.
 
 ## Service objectives
 
-Each system declares objectives for:
+Each system declares objectives for successful and compliant completion;
+hard-gate adherence; active-processing and end-to-end duration; maximum queue
+and approval wait; workflow and required-member availability; admission and
+routing correctness; cancellation and kill-switch propagation; cost per
+successful compliant outcome; and the maximum degraded-completion rate.
 
-- Successful and compliant completion
-- Hard-gate adherence
-- Active-processing and end-to-end duration
-- Maximum queue and approval wait
-- Workflow and required-member availability
-- Admission and routing correctness
-- Cancellation and kill-switch propagation
-- Cost per successful compliant outcome
-- Maximum degraded-completion rate
+Measure human waiting, queued capacity, and active processing separately so
+one does not hide another.
 
-Measure human waiting, queued capacity, and active processing separately so one
-does not hide another.
+## Common pitfalls
+
+- **Reading the trace tree as the truth.** Fan-out and queued work did not
+  nest, and no delegation IDs were recorded to rebuild the run.
+- **Putting run or member IDs in metric labels.** Dynamic membership turned
+  every new member into a new time series.
+- **Not recording the graph.** After the registry changed, nobody could say
+  which members a past run had used.
+
+## Before you move on
+
+- [ ] Spans carry the system, delegation, and member correlation fields.
+- [ ] Each run records its graph changes and an interaction ledger.
+- [ ] Capture is off by default and redaction covers inter-agent content.
+- [ ] Alerts cover unauthorized edges, runaway expansion, and kill-switch
+  failure.

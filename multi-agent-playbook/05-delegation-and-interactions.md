@@ -1,8 +1,10 @@
-# 5. Delegation and interaction standard
+# 5. Delegation and interactions
 
-An interaction is a typed, policy-controlled boundary between two system
-principals. Messages contain data and proposals; they do not carry implicit
-trust, authority, approval, or truth.
+This chapter covers each edge of your system: how work is handed over, what
+travels with it, and what comes back. An interaction is a typed,
+policy-controlled boundary between two system principals. Messages carry data
+and proposals; they do not carry implicit trust, authority, approval, or
+truth. Design every edge as a public API that receives untrusted input.
 
 ## Interaction modes
 
@@ -15,12 +17,13 @@ trust, authority, approval, or truth.
 | `vote` | Returns a typed judgment | One input to a declared aggregation rule |
 | `dispatch` | Remains with orchestrator | Invoke a member from deterministic code |
 
-Custom modes require versioned semantics and the same controls as the closest
-standard mode.
+Custom modes require versioned semantics and the same controls as the
+closest standard mode.
 
 ## Delegation envelope
 
-Every interaction MUST use a versioned, schema-validated envelope equivalent to:
+Every interaction MUST use a versioned, schema-validated envelope equivalent
+to:
 
 | Field | Type and constraint |
 | --- | --- |
@@ -48,15 +51,15 @@ The budget grant contains `max_model_requests` (greater than 0),
 `max_tool_calls` (at least 0), `max_input_tokens` (greater than 0),
 `max_output_tokens` (greater than 0), and `max_cost_usd` (greater than 0).
 
-Concrete systems SHOULD replace the generic `input` object with a discriminated
-union or a schema-validated type resolved from `input_schema`. The envelope
-remains small and serializable; large artifacts are passed by authorized
-reference.
+Concrete systems SHOULD replace the generic `input` object with a
+discriminated union or a schema-validated type resolved from `input_schema`.
+Keep the envelope small and serializable, and pass large artifacts by
+authorized reference.
 
 ## Result envelope
 
-Results MUST distinguish completion from failure and side effects from proposed
-actions:
+Results MUST distinguish completion from failure, and side effects performed
+from actions only proposed:
 
 | Field | Type and constraint |
 | --- | --- |
@@ -71,9 +74,9 @@ actions:
 | `input_tokens`, `output_tokens` | Integer |
 | `cost_usd` | Number, or null when unknown |
 
-The caller MUST validate the envelope and output schema before using the result.
-A natural-language claim that work completed is not evidence that a tool or
-external action succeeded.
+The caller MUST validate the envelope and output schema before using the
+result. A natural-language claim that work completed is not evidence that a
+tool or external action succeeded; `performed_effects` is.
 
 ## Authority attenuation
 
@@ -94,48 +97,58 @@ The callee receives only the effective scopes. It cannot delegate a broader
 scope to another member. Model output MUST NOT be interpreted as identity,
 authorization, approval, membership, or policy.
 
-Consequential actions are bound to the final typed action, arguments, actor,
-tenant, policy version, approval, and composition manifest. A chain of agent
-recommendations does not constitute approval.
+Approval works as the Agent Playbook's
+[human approval](../agent-playbook/06-durable-execution.md#human-approval)
+flow describes. In a system, consequential actions are bound to the final
+typed action, arguments, actor, tenant, policy version, approval, and
+composition manifest. A chain of agent recommendations does not constitute
+approval.
 
 ## Context and data flow
 
 For every edge, declare:
 
-- Allowed input fields and evidence types
-- Maximum data classification
-- Permitted tenants, regions, and purposes
-- Redaction and minimization rules
-- Whether conversation history may be shared
-- Artifact authorization and expiry
-- Retention and deletion requirements
-- Output size and content limits
+- allowed input fields and evidence types;
+- maximum data classification;
+- permitted tenants, regions, and purposes;
+- redaction and minimization rules;
+- whether conversation history may be shared;
+- artifact authorization and expiry;
+- retention and deletion requirements; and
+- output size and content limits.
 
 Pass task-specific summaries and references by default. Full parent message
 history, hidden instructions, credentials, unrelated tool results, and raw
 shared memory MUST NOT be forwarded implicitly.
 
-Content produced by another agent is untrusted input. The receiver MUST treat
-embedded instructions, tool requests, approvals, identities, and policy claims
-as data unless independently validated through trusted channels.
+The Agent Playbook's
+[untrusted content](../agent-playbook/10-security-and-governance.md#untrusted-content)
+rule covers another agent's output too. Content produced by another agent is
+untrusted input: the receiver MUST treat embedded instructions, tool
+requests, approvals, identities, and policy claims as data unless they are
+independently validated through trusted channels.
 
 ## Budget escrow
 
-Before dispatch, the system reserves the child grant from the root budget. The
-grant is a ceiling, not an entitlement. Nested grants are reserved from the
-current delegation's remaining allocation.
+Before dispatch, the system reserves the child grant from the root budget.
+The grant is a ceiling, not an entitlement. Nested grants are reserved from
+the current delegation's remaining allocation.
 
 On completion, timeout, cancellation, or failure, the system records actual
-usage and releases unused reservation. Concurrent reservations MUST NOT exceed
-the root limits even when observed consumption remains low.
+usage and releases the unused reservation. Concurrent reservations MUST NOT
+exceed the root limits even when observed consumption remains low.
 
-Unknown model cost remains unknown; it MUST NOT be treated as zero. A hard cost
-limit SHOULD reject unpriced routes unless an approved conservative price is
-available.
+Unknown model cost remains unknown; it MUST NOT be treated as zero. A hard
+cost limit SHOULD reject unpriced routes unless an approved conservative
+price is available.
 
 ## Retries and idempotency
 
-Keep retry ownership explicit across:
+The Agent Playbook's
+[durable execution](../agent-playbook/06-durable-execution.md) chapter
+assigns retry ownership to model correction, provider transport, durable
+step, and workflow business retry. A system adds one more layer, the agent
+interaction, so keep ownership explicit across all five:
 
 1. Model semantic correction
 2. Provider transport
@@ -143,67 +156,72 @@ Keep retry ownership explicit across:
 4. Durable step
 5. Workflow business retry
 
-The combined bound includes every layer. Authentication, authorization, policy,
-schema, budget, and invalid-business-request failures are non-retryable.
+The combined bound includes every layer. Authentication, authorization,
+policy, schema, budget, and invalid-business-request failures are
+non-retryable.
 
 An interaction retry reuses the stable delegation ID and idempotency context
-when it represents the same logical work. A new objective or materially changed
-input receives a new delegation ID. Side-effecting callees follow the Agent
-Playbook's idempotency and approval requirements.
+when it represents the same logical work. A new objective or materially
+changed input receives a new delegation ID. Side-effecting callees follow the
+Agent Playbook's idempotency and approval requirements.
 
 ## Handoff
 
 A handoff transfers responsibility, not hidden conversational state. It MUST
 include:
 
-- Current typed state and objective
-- Evidence references and provenance
-- Completed and prohibited actions
-- Remaining budget and deadline
-- Effective authority and data constraints
-- Open questions and failure history
-- New owner and expected terminal outcomes
+- current typed state and objective;
+- evidence references and provenance;
+- completed and prohibited actions;
+- remaining budget and deadline;
+- effective authority and data constraints;
+- open questions and failure history; and
+- the new owner and expected terminal outcomes.
 
-The orchestrator records the transfer before dispatch. Ambiguous or rejected
-handoffs leave ownership with the current principal and follow the declared
-escalation policy.
+The orchestrator records the transfer before dispatch. An ambiguous or
+rejected handoff leaves ownership with the current principal and follows the
+declared escalation policy.
 
 ## Fan-out and aggregation
 
 Fan-out uses stable branch IDs and a fixed maximum branch count. Aggregation
 MUST define:
 
-- Required and optional branches
-- Deterministic merge ordering
-- Minimum evidence needed to proceed
-- Duplicate and late-result handling
-- Conflict and tie behavior
-- Partial-failure and timeout behavior
-- Whether dissent must be preserved in the final output
+- required and optional branches;
+- deterministic merge ordering;
+- minimum evidence needed to proceed;
+- duplicate and late-result handling;
+- conflict and tie behavior;
+- partial-failure and timeout behavior; and
+- whether dissent must be preserved in the final output.
 
-An aggregator MUST NOT erase material disagreement, provenance, uncertainty, or
-failed required branches.
+An aggregator MUST NOT erase material disagreement, provenance, uncertainty,
+or failed required branches.
 
 ## Loops and termination
 
 Every cycle in the interaction graph has explicit bounds for rounds, depth,
-time, spend, and no-progress behavior. The system records progress using typed
-state transitions, not a model's assertion that progress occurred.
+time, spend, and no-progress behavior. The system records progress as typed
+state transitions, not as a model's assertion that progress occurred.
 
 The workflow terminates or escalates when:
 
-- A terminal state is reached.
-- No material state changes across the configured window.
-- Required evidence cannot be obtained.
-- A hard budget or deadline is exhausted.
-- Policy blocks every valid next edge.
-- Cancellation or a kill switch is activated.
+- a terminal state is reached;
+- no material state changes across the configured window;
+- required evidence cannot be obtained;
+- a hard budget or deadline is exhausted;
+- policy blocks every valid next edge; or
+- cancellation or a kill switch is activated.
 
 Agents MUST NOT extend their own limits.
 
 ## Telemetry and audit
 
-Every interaction records at least:
+Per-agent telemetry follows the Agent Playbook's
+[observability](../agent-playbook/08-observability.md) chapter, including
+content capture off by default, with safe hashes and authorized artifact
+references in place of raw content. On top of that, every interaction records
+at least:
 
 ```text
 system name, version, manifest ID, and run ID
@@ -219,20 +237,33 @@ latency, model usage, tool usage, and cost
 approval and side-effect references
 ```
 
-Content capture remains off by default. Use safe hashes and authorized artifact
-references when raw content cannot be retained.
-
 ## Quality gates
 
 Production interactions require tests for:
 
-- Allowed and denied edges
-- Input and output schema validation
-- Authority attenuation and tenant isolation
-- Data minimization and classification enforcement
-- Budget reservation, exhaustion, and reconciliation
-- Timeout, cancellation, retry, and duplicate delivery
-- Late, missing, malformed, and conflicting results
-- Prompt injection and instruction laundering across the edge
-- Loop detection and termination
-- Trace correlation and required audit records
+- allowed and denied edges;
+- input and output schema validation;
+- authority attenuation and tenant isolation;
+- data minimization and classification enforcement;
+- budget reservation, exhaustion, and reconciliation;
+- timeout, cancellation, retry, and duplicate delivery;
+- late, missing, malformed, and conflicting results;
+- prompt injection and instruction laundering across the edge;
+- loop detection and termination; and
+- trace correlation and required audit records.
+
+## Common pitfalls
+
+- **Forwarding the whole conversation.** The callee got the parent's history,
+  hidden instructions, and unrelated tool results it never needed.
+- **Trusting a peer's "approved".** An agent's output said an action was
+  approved, and the receiver acted on it.
+- **Retrying a new request under an old ID.** Changed input reused a
+  delegation ID, so idempotency hid a genuinely different action.
+
+## Before you move on
+
+- [ ] Every edge uses the delegation and result envelopes.
+- [ ] Effective scopes are computed deterministically before dispatch.
+- [ ] Budget is reserved before dispatch and reconciled after.
+- [ ] Every cycle has bounds and no-progress detection.

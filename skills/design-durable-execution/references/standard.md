@@ -1,6 +1,6 @@
 # Durable Agent Execution Standard
 
-This file condenses [Agent Playbook chapter 6, Durable execution standard](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/06-durable-execution.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+This file condenses [Agent Playbook chapter 6, Durable execution](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/06-durable-execution.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
 
 ## Boundary
 

@@ -1,6 +1,6 @@
 # Agent Contract Design Standard
 
-This file condenses [Agent Playbook chapter 2, Reference architecture](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/02-reference-architecture.md) and [Agent Playbook chapter 3, Canonical agent contract](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/03-agent-contract.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
+This file condenses [Agent Playbook chapter 2, Reference architecture](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/02-reference-architecture.md) and [Agent Playbook chapter 3, Agent contract](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/03-agent-contract.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
 
 ## Illustrative Package Layout
 

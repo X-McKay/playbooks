@@ -1,28 +1,39 @@
-# 5. Tool standard
+# 5. Tools
 
-Every tool has an explicit contract covering purpose, ownership, typed schemas, effects, authorization, retry safety, timeouts, data sensitivity, failure modes, telemetry, and cost.
+This chapter is for developers writing the tools an agent calls. Tools are
+where the agent's decisions become effects on real systems, so most of your
+safety lives here.
+
+Every tool has an explicit contract covering purpose, ownership, typed
+schemas, effects, authorization, retry safety, timeouts, data sensitivity,
+failure modes, telemetry, and cost. The two classifications that matter most
+are what the tool does to the world and whether it is safe to call twice.
 
 ## Effect classification
 
-| Effect                | Definition                                           | Minimum execution class |
-| --------------------- | ---------------------------------------------------- | ----------------------- |
-| `read`                | Observes without modifying external state            | `ephemeral`             |
-| `write_reversible`    | Creates a readily recoverable change                 | `durable`               |
-| `write_consequential` | Creates a high-impact or difficult-to-reverse action | `human_governed`        |
+| Effect | Definition | Minimum execution class |
+| --- | --- | --- |
+| `read` | Observes without modifying external state | `ephemeral` |
+| `write_reversible` | Creates a readily recoverable change | `durable` |
+| `write_consequential` | Creates a high-impact or difficult-to-reverse action | `human_governed` |
 
-The effective execution class of an agent MUST be at least the minimum required by its most consequential enabled tool.
+The effective execution class of an agent MUST be at least the minimum
+required by its most consequential enabled tool. Adding one consequential
+tool to a read-only agent changes how the whole agent runs (see
+[execution classes](01-principles-and-scope.md#execution-classes)).
 
 ## Retry classification
 
 Every tool declares its retry safety alongside its effect:
 
-| Retry safety               | Meaning                                                      |
-| -------------------------- | ------------------------------------------------------------ |
-| `safe`                     | Repeating the call cannot create an additional effect        |
+| Retry safety | Meaning |
+| --- | --- |
+| `safe` | Repeating the call cannot create an additional effect |
 | `idempotency_key_required` | Repeating is safe only when a stable idempotency key is sent |
-| `unsafe`                   | Repeating may duplicate an effect; no automatic retry        |
+| `unsafe` | Repeating may duplicate an effect; no automatic retry |
 
-A tool policy is a typed, reviewable record:
+Retries happen whether you plan for them or not, so this tells the runtime
+which repeats are harmless. A tool policy is a typed, reviewable record:
 
 ```yaml
 tool_policy:
@@ -49,7 +60,19 @@ Every tool MUST:
 - Emit agent, workflow, tool, outcome, latency, attempt, and cost metadata.
 - Minimize sensitive data returned to the model.
 
-Tools MUST NOT depend on a persona, hide side effects behind a read-like name, interpret model text as approval, retry unsafe operations automatically, or return unbounded raw API responses.
+Tools MUST NOT depend on a persona, hide side effects behind a read-like name,
+interpret model text as approval, retry unsafe operations automatically, or
+return unbounded raw API responses.
+
+Best practices:
+
+- **Authorize in code, not in the description.** Telling the model "only the
+  current customer" is a hint; checking tenant and scope in the tool is a
+  control.
+- **Return less.** Trim responses to the fields the task needs. It saves
+  tokens and keeps sensitive data out of the model's context.
+- **Make failures legible.** A typed business rejection lets the agent
+  explain or escalate; a generic error invites another try.
 
 ## Recommended structure
 
@@ -67,18 +90,21 @@ src/<package>/tools/
     └── policy        # Tool policies for this domain
 ```
 
-The service layer handles the external system. The tool layer adapts typed domain behavior for the agent. The toolset registers tools with a stable ID. This separation keeps infrastructure clients independently testable.
+The service layer handles the external system. The tool layer adapts typed
+domain behavior for the agent. The toolset registers tools with a stable ID.
+This separation keeps infrastructure clients independently testable.
 
 ## Durable execution and side effects
 
-For durable agents:
+For durable agents (see [durable execution](06-durable-execution.md)):
 
 - Tool I/O executes in durable steps.
 - Read tools SHOULD be safely retryable.
 - Reversible writes require idempotency or a durable operation record.
 - Consequential writes require valid approval and an idempotency key.
 - Business rejection and authorization failure are non-retryable.
-- The workflow owns orchestration, approval, compensation, and business retry policy.
+- The workflow owns orchestration, approval, compensation, and business retry
+  policy.
 - The tool owns validation and interaction with the external system.
 
 ## Quality gates
@@ -93,3 +119,22 @@ A production tool requires:
 - Telemetry assertions
 - Positive trajectory evals
 - Negative evals proving when the tool must not be called
+
+Teams often skip the negative evals, yet a tool called when it should not be
+is as much a defect as a wrong result (see [evaluation](07-evaluation.md)).
+
+## Common pitfalls
+
+- **Wrapping a raw API.** The model gets every endpoint and field; you get
+  unbounded output and no domain errors.
+- **Hiding a write in a read.** A `get_order` that also marks the order as
+  viewed gets called and retried freely.
+- **Retrying everything.** The first timeout that hides a success duplicates
+  a payment, email, or ticket.
+
+## Before you move on
+
+- [ ] Every tool has a policy record with owner, effect, retry safety,
+  scopes, timeout, and data classification.
+- [ ] The agent's execution class covers its most consequential tool.
+- [ ] Each tool has negative evals as well as positive ones.

@@ -1,8 +1,14 @@
-# 9. Cost optimization standard
+# 9. Cost optimization
 
-Optimize cost per successful, compliant outcome. Do not optimize token price in isolation.
+This chapter is for developers who need an agent to stay affordable under
+real traffic. It covers the limits you must build in and the order in which
+optimizations pay off. Optimize cost per successful, compliant outcome, not
+token price in isolation: a cheap model that fails and retries costs more.
 
-## Control order
+## Work in this order
+
+Work through the controls in this order; the early ones are cheaper and
+protect you while you tune the later ones:
 
 1. Prevent runaway execution.
 2. Remove unnecessary requests and context.
@@ -15,7 +21,9 @@ Optimize cost per successful, compliant outcome. Do not optimize token price in 
 
 ## Budget hierarchy
 
-Every production agent MUST have per-request and per-run limits. Shared deployments SHOULD also have conversation, tenant, deployment, and organization limits.
+Every production agent MUST have per-request and per-run limits. Shared
+deployments SHOULD also have conversation, tenant, deployment, and
+organization limits.
 
 ```yaml
 budgets:
@@ -32,50 +40,74 @@ budgets:
     maximum_cost_usd: 75
 ```
 
-Enforce run-level request, tool, token, and cost limits within the agent runtime. Use a shared, durable spend store for budgets spanning runs or workers. In-memory spend counters are insufficient for a production worker fleet or a durable workflow that may resume elsewhere.
-
-Cost and token limits may be known only after a response, so the request crossing a threshold may still be billed. Treat spend limits as a runtime brake and reconcile with provider billing.
-
-Unknown cost MUST remain unknown rather than be represented as zero. Hard USD budgets SHOULD reject unpriced models unless an approved custom price is supplied.
+- **Enforce run limits in the agent runtime.** Request, tool, token, and cost
+  limits for a run belong in the runtime, not in the prompt.
+- **Keep shared budgets in a durable store.** Budgets that span runs or
+  workers need a shared, durable spend store. In-memory counters are not
+  enough for a production worker fleet or for a durable workflow that may
+  resume on another worker.
+- **Treat spend limits as a brake, not a guarantee.** Cost and token counts
+  may be known only after a response, so the request that crosses a threshold
+  may still be billed. Reconcile with provider billing.
+- **Never record unknown cost as zero.** Unknown cost MUST remain unknown.
+  Hard USD budgets SHOULD reject unpriced models unless an approved custom
+  price is supplied.
 
 ## Model routing
 
-Resolve versioned policies such as `fast-v1`, `balanced-v1`, and `reasoning-v1`. Routing considers modalities, structured-output and tool reliability, context, risk, complexity, latency, cost, residency, and availability.
+Resolve versioned policies such as `fast-v1`, `balanced-v1`, and
+`reasoning-v1`. Routing weighs modalities, structured-output and tool
+reliability, context size, risk, complexity, latency, cost, residency, and
+availability.
 
-Escalation to a more capable model occurs only on explicit signals such as failed validation, verified complexity, low confidence, or a high-risk decision. The runtime constrains available routes and total budget.
+Best practices:
 
-Evaluate the total cost of failed attempts plus escalation; blindly trying models in sequence may cost more than starting with the appropriate model.
+- **Escalate on explicit signals only.** Move to a more capable model on
+  failed validation, verified complexity, low confidence, or a high-risk
+  decision. The runtime constrains which routes are available and the total
+  budget.
+- **Count the cost of failure.** Compare the total cost of failed attempts
+  plus escalation. Blindly trying models in sequence can cost more than
+  starting with the right one.
 
 ## Context
+
+Context grows quietly. Keep it lean:
 
 - Keep stable instructions concise.
 - Move specialized procedure into deferred skills.
 - Expose only relevant tools and skills.
 - Retrieve only needed evidence.
-- Return compact typed tool results.
+- Return compact, typed tool results.
 - Set cumulative and per-request context limits.
-- Compact or externalize history before model limits.
-- Preserve safety, authorization, approval, evidence, and side-effect state.
+- Compact or externalize history before you reach model limits.
+- Preserve safety, authorization, approval, evidence, and side-effect state
+  through any compaction.
 
-Summarizing compaction has its own model cost and information-loss risk. It requires eval coverage. Deterministic trimming strategies are preferred when they preserve required context.
+Summarizing compaction has its own model cost and can lose information, so it
+needs eval coverage. Prefer deterministic trimming when it preserves the
+context you need.
 
-## Tool output
+## Tool output and catalog size
 
-Tools MUST support appropriate filtering, pagination, field selection, result-count limits, and byte limits. Prefer a compact summary plus a stable reference over a raw payload.
+Tools
+MUST support appropriate filtering, pagination, field selection, result-count
+limits, and byte limits. Prefer a compact summary plus a stable reference over
+a raw payload. When results are large:
 
-When results are large:
+- truncate only when the loss is acceptable;
+- spill to approved storage when lossless access is required; and
+- summarize only when you have measured a quality and cost benefit.
 
-- Truncate only when loss is acceptable.
-- Spill to approved storage when lossless access is required.
-- Summarize only with a measured quality and cost benefit.
-
-## Catalog size
-
-Every exposed tool contributes schema tokens; every skill contributes catalog tokens. Production agents MUST use explicit allowlists. Rare tools SHOULD use deferred discovery when practical. Operational spend data belongs in the UI rather than a model-visible tool unless the agent must reason about it.
+The catalog costs tokens too: every exposed tool contributes schema tokens and
+every skill contributes catalog tokens. Production agents MUST use explicit
+allowlists. Rare tools SHOULD use deferred discovery when practical. Keep
+operational spend data in the user interface rather than in a model-visible
+tool unless the agent must reason about it.
 
 ## Prompt caching
 
-Keep the cacheable prefix stable:
+Keep the cacheable prefix stable, ordered from most to least stable:
 
 ```text
 tool schemas
@@ -85,19 +117,28 @@ conversation history
 dynamic user content
 ```
 
-Do not inject timestamps, random IDs, request metadata, nondeterministically ordered tools, or frequently changing flags into stable prefixes. Track cache reads, writes, hit ratio, savings, and cache-bust warnings.
+Do not inject timestamps, random IDs, request metadata, nondeterministically
+ordered tools, or frequently changing flags into the stable prefix. Track
+cache reads, writes, hit ratio, savings, and cache-bust warnings so you notice
+when a change breaks caching.
 
-Long durable-workflow waits may outlive a provider cache; resumed-workflow estimates SHOULD assume a miss unless observed otherwise.
+Long durable-workflow waits may outlive a provider cache. Estimates for a
+resumed workflow SHOULD assume a cache miss unless you have observed
+otherwise.
 
 ## Application caching
 
-Cache only safe, repeatable outputs. Keys SHOULD include agent, model, settings, instruction and skill hashes, tool schema, normalized input, authorization scope, tenant partition, and source-data version.
+Cache only safe, repeatable outputs. Keys SHOULD include agent,
+model, settings, instruction and skill hashes, tool schema, normalized input,
+authorization scope, tenant partition, and source-data version.
 
-Do not cache consequential execution, poorly versioned authorization decisions, cross-tenant sensitive data, stale time-sensitive answers, or unvalidated output.
+Do not cache consequential execution, poorly versioned authorization
+decisions, cross-tenant sensitive data, stale time-sensitive answers, or
+unvalidated output.
 
 ## Retry economics
 
-Calculate the upper bound:
+Retry layers multiply. Calculate the upper bound:
 
 ```text
 output-correction attempts
@@ -106,11 +147,13 @@ output-correction attempts
 × model fallbacks
 ```
 
-The default under durable execution is bounded output-correction retries, bounded durable-step retries, disabled provider transport retries, limited fallback candidates, and idempotent side effects.
+Under durable execution the default is bounded output-correction retries,
+bounded durable-step retries, disabled provider transport retries, a limited
+set of fallback candidates, and idempotent side effects.
 
 ## Durable-workflow economics
 
-- Resume partial progress rather than restart prompts.
+- Resume partial progress rather than restarting prompts.
 - Count ambiguous timeouts as potentially billable.
 - Use a shared durable spend store.
 - Keep large artifacts outside workflow history.
@@ -118,6 +161,27 @@ The default under durable execution is bounded output-correction retries, bounde
 - Expect prompt-cache expiry during long approval waits.
 - Make spend-event consumers idempotent.
 
-## Optimization method
+## How to optimize
 
-Baseline, identify the dominant cost, change one major variable, run multi-run quality/safety/latency/cost evals, roll out gradually, and monitor quality-adjusted cost. Roll back when a hard gate or approved quality threshold regresses.
+Treat optimization as an experiment: baseline, identify the dominant cost,
+change one major variable, run
+[multi-run](07-evaluation.md#multi-run-evaluation) quality, safety, latency,
+and cost evals, roll out gradually, and monitor quality-adjusted cost. Roll
+back when a hard gate or an approved quality threshold regresses.
+
+## Common pitfalls
+
+- **Counting spend in memory.** Limits reset when a worker restarts or a
+  workflow resumes elsewhere.
+- **Breaking the cache by accident.** A timestamp in the system prompt can
+  silently disable prompt caching.
+- **Stacking retries.** Several modest retry policies multiply into a large
+  worst case.
+
+## Before you move on
+
+- [ ] Run-level request, tool, token, and cost limits are enforced in the
+  runtime.
+- [ ] Budgets shared across runs or workers use a durable spend store.
+- [ ] Unknown cost stays unknown, and unpriced models are handled explicitly.
+- [ ] We measure cost per successful, compliant outcome.

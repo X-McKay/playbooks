@@ -5,13 +5,13 @@
 
 The [Agent Playbook](../agent-playbook/README.md) and the
 [Multi-Agent Systems Playbook](../multi-agent-playbook/README.md) define what a
-conforming agent or system must do. These guides come first. They help an
-organization decide whether an agent is the right answer, describe the problem
-well enough to build and judge one, adopt a zero-trust posture from the start,
-and give people clear decisions to own.
+conforming agent or system must do. These guides come first. They help you
+decide whether an agent is the right answer, describe the problem well enough
+to build and judge one, adopt a zero-trust posture from the start, and know who
+owns each decision.
 
-They are written for executive sponsors, product and business owners, platform
-and security leads, and the engineers who will build the agent. They are
+They are written for the developers who build agents, though product owners,
+platform teams, and security reviewers may also find them useful. They are
 guidance rather than conformance requirements: the playbooks remain the
 standard. Where a guide uses **MUST**, **SHOULD**, or **MAY**, the terms carry
 the meaning defined in the Agent Playbook.
@@ -22,14 +22,15 @@ the meaning defined in the Agent Playbook.
    developers deciding whether an agent is worth building, how much authority
    the first release gets, and how to measure success, cost, and safety
    separately.
-2. [Defining the problem](02-problem-definition.md): the brief, success
-   criteria, constraints, data, risks, owners, dependencies, and the two
-   readiness decisions every agent faces.
-3. [Zero-trust principles for agents](03-zero-trust-principles.md): why an
-   agent is treated as an untrusted workload acting on someone's behalf, and
-   what that requires.
-4. [Operating model](04-operating-model.md): ownership, decision rights,
-   oversight views, and how adoption progresses on evidence.
+2. [Defining the problem](02-problem-definition.md): how to write
+   the brief, agree success criteria and limits, map data, risks, owners, and
+   dependencies, and set the two readiness decisions every agent faces.
+3. [Zero-trust principles for agents](03-zero-trust-principles.md): why you
+   design your agent as an untrusted workload acting on someone's behalf, and
+   what that means for its identity, permissions, and evidence.
+4. [Operating model](04-operating-model.md): which decisions are yours, whose
+   sign-off you need, what your agent must report for oversight, and how it
+   moves through adoption stages on evidence.
 
 ## How they connect to the playbooks
 
