@@ -4,25 +4,24 @@
 
 ```text
 project/
-├── src/<package>/
-│   ├── agents/                         # Agent Playbook packages
-│   │   └── <agent_name>/
-│   │       └── agent.yaml
-│   ├── systems/
-│   │   └── <system_name>/
-│   │       ├── system.yaml
-│   │       ├── factory.py
-│   │       ├── models.py
-│   │       ├── coordination.py
-│   │       └── policies/
-│   │           ├── delegation.yaml
-│   │           ├── data-flow.yaml
-│   │           └── termination.yaml
-│   ├── workflows/
-│   ├── activities/
-│   ├── runtime/
-│   ├── observability/
-│   └── policy/
+├── agents/                             # Agent Playbook packages
+│   └── <agent_name>/
+│       └── agent spec
+├── systems/
+│   └── <system_name>/
+│       ├── system spec
+│       ├── factory/                    # builds the system from resolved specs
+│       ├── contracts/                  # typed interaction and state contracts
+│       ├── coordination/               # deterministic orchestration logic
+│       └── policies/
+│           ├── delegation policy
+│           ├── data-flow policy
+│           └── termination policy
+├── workflows/
+├── durable-steps/
+├── runtime/
+├── observability/
+├── policy/
 ├── evals/
 │   └── systems/<system_name>/
 │       ├── datasets/
@@ -51,16 +50,16 @@ into composition-local copies.
 
 ```mermaid
 flowchart LR
-    Client[API, event, or schedule] --> Workflow[Temporal system workflow]
+    Client[API, event, or schedule] --> Workflow[Durable system workflow]
     Workflow --> Policy[Deterministic policy and budget control]
-    Workflow --> A[Agent A activity]
-    Workflow --> B[Agent B activity]
-    Workflow --> C[Agent C activity]
+    Workflow --> A[Agent A durable step]
+    Workflow --> B[Agent B durable step]
+    Workflow --> C[Agent C durable step]
     A --> Proposal[Typed interaction proposal]
     Proposal --> Policy
     Policy --> Workflow
-    Workflow --> Approval[Human approval signal or update]
-    Workflow --> Effect[Side-effecting activity]
+    Workflow --> Approval[Human approval external event]
+    Workflow --> Effect[Side-effecting durable step]
     A -. evidence .-> Store[Authorized artifact store]
     B -. evidence .-> Store
     C -. evidence .-> Store
@@ -68,7 +67,7 @@ flowchart LR
 
 The workflow owns durable state and coordination. Deterministic policy validates
 membership, edges, schemas, authority, data flow, budgets, approval, and
-termination. Agent activities interpret, plan, investigate, review, and
+termination. Agent durable steps interpret, plan, investigate, review, and
 synthesize within those boundaries. Large artifacts remain outside workflow
 history and are passed by authorized reference.
 
@@ -279,7 +278,7 @@ The System Spec identifies one authority for each state category:
 
 | State | Required owner |
 | --- | --- |
-| Workflow status, branch status, and termination | Temporal workflow |
+| Workflow status, branch status, and termination | Durable workflow |
 | Authorization and approval | Deterministic policy and authenticated identity |
 | Budget reservations and consumption | Shared budget service or workflow-backed ledger |
 | Large evidence and artifacts | Authorized external store |

@@ -20,87 +20,56 @@ standard mode.
 
 ## Delegation envelope
 
-Every interaction MUST use a versioned envelope equivalent to:
+Every interaction MUST use a versioned, schema-validated envelope equivalent to:
 
-```python
-from datetime import datetime
-from typing import Literal
+| Field | Type and constraint |
+| --- | --- |
+| `contract_version` | Integer |
+| `system_name`, `system_version`, `manifest_id` | String |
+| `system_run_id`, `interaction_id`, `delegation_id` | String |
+| `parent_delegation_id` | String or null |
+| `mode` | One of `delegate`, `handoff`, `review`, `fanout`, `vote`, `dispatch` |
+| `caller`, `caller_version`, `callee`, `callee_version` | String |
+| `actor_id`, `tenant_id` | String |
+| `authorization_scopes` | Immutable set of scope strings |
+| `objective` | String |
+| `input_schema` | Schema identifier |
+| `input` | Object validated against `input_schema` |
+| `evidence_refs` | List of authorized artifact references |
+| `data_classification` | String |
+| `budget` | Budget grant (below) |
+| `depth` | Integer, at least 0 |
+| `attempt` | Integer, greater than 0 |
+| `deadline` | Timestamp |
+| `trace_context` | Map of string to string |
+| `approval_id` | String or null; defaults to null |
 
-from pydantic import BaseModel, Field
+The budget grant contains `max_model_requests` (greater than 0),
+`max_tool_calls` (at least 0), `max_input_tokens` (greater than 0),
+`max_output_tokens` (greater than 0), and `max_cost_usd` (greater than 0).
 
-
-class BudgetGrant(BaseModel):
-    max_model_requests: int = Field(gt=0)
-    max_tool_calls: int = Field(ge=0)
-    max_input_tokens: int = Field(gt=0)
-    max_output_tokens: int = Field(gt=0)
-    max_cost_usd: float = Field(gt=0)
-
-
-class DelegationEnvelope(BaseModel):
-    contract_version: int
-    system_name: str
-    system_version: str
-    manifest_id: str
-    system_run_id: str
-    interaction_id: str
-    delegation_id: str
-    parent_delegation_id: str | None
-    mode: Literal["delegate", "handoff", "review", "fanout", "vote", "dispatch"]
-    caller: str
-    caller_version: str
-    callee: str
-    callee_version: str
-    actor_id: str
-    tenant_id: str
-    authorization_scopes: frozenset[str]
-    objective: str
-    input_schema: str
-    input: dict
-    evidence_refs: list[str]
-    data_classification: str
-    budget: BudgetGrant
-    depth: int = Field(ge=0)
-    attempt: int = Field(gt=0)
-    deadline: datetime
-    trace_context: dict[str, str]
-    approval_id: str | None = None
-```
-
-Concrete systems SHOULD replace the generic `input` mapping with a discriminated
-union or a typed model resolved from `input_schema`. The envelope remains small
-and serializable; large artifacts are passed by authorized reference.
+Concrete systems SHOULD replace the generic `input` object with a discriminated
+union or a schema-validated type resolved from `input_schema`. The envelope
+remains small and serializable; large artifacts are passed by authorized
+reference.
 
 ## Result envelope
 
 Results MUST distinguish completion from failure and side effects from proposed
 actions:
 
-```python
-class InteractionResult(BaseModel):
-    delegation_id: str
-    status: Literal[
-        "completed",
-        "needs_information",
-        "rejected",
-        "policy_blocked",
-        "budget_exhausted",
-        "timeout",
-        "cancelled",
-        "failed_retryable",
-        "failed_permanent",
-    ]
-    output_schema: str
-    output: dict | None
-    evidence_refs: list[str]
-    performed_effects: list[str]
-    unresolved_questions: list[str]
-    model_requests: int
-    tool_calls: int
-    input_tokens: int
-    output_tokens: int
-    cost_usd: float | None
-```
+| Field | Type and constraint |
+| --- | --- |
+| `delegation_id` | String |
+| `status` | One of `completed`, `needs_information`, `rejected`, `policy_blocked`, `budget_exhausted`, `timeout`, `cancelled`, `failed_retryable`, `failed_permanent` |
+| `output_schema` | Schema identifier |
+| `output` | Object validated against `output_schema`, or null |
+| `evidence_refs` | List of authorized artifact references |
+| `performed_effects` | List of side-effect references |
+| `unresolved_questions` | List of strings |
+| `model_requests`, `tool_calls` | Integer |
+| `input_tokens`, `output_tokens` | Integer |
+| `cost_usd` | Number, or null when unknown |
 
 The caller MUST validate the envelope and output schema before using the result.
 A natural-language claim that work completed is not evidence that a tool or
@@ -171,7 +140,7 @@ Keep retry ownership explicit across:
 1. Model semantic correction
 2. Provider transport
 3. Agent interaction
-4. Temporal activity
+4. Durable step
 5. Workflow business retry
 
 The combined bound includes every layer. Authentication, authorization, policy,

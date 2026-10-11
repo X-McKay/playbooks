@@ -1,9 +1,17 @@
 # 6. Durable coordination standard
 
-This chapter extends the Agent Playbook's Temporal execution requirements from
-one agent run to a coordinated system. Temporal provides durability; it does not
-provide authorization, safe delegation, convergence, or bounded autonomy by
-itself.
+This chapter extends the Agent Playbook's
+[durable execution requirements](../agent-playbook/06-durable-execution.md)
+from one agent run to a coordinated system. A durable execution engine provides
+durability; it does not provide authorization, safe delegation, convergence, or
+bounded autonomy by itself.
+
+Terminology follows the Agent Playbook: a *workflow* is deterministic
+orchestration code whose history can be replayed; a *durable step* performs
+nondeterministic work and records its result; a *child workflow* is a workflow
+started and supervised by another; an *external event* is a recorded message,
+such as a human approval, delivered to a running workflow; and a *worker queue*
+routes durable work to the workers allowed to perform it.
 
 ## Workflow boundary
 
@@ -12,17 +20,17 @@ workflow MAY:
 
 - Maintain typed system and branch state
 - Materialize an allowed run graph
-- Schedule member-agent activities and child workflows
+- Schedule member-agent durable steps and child workflows
 - Reserve and reconcile budgets
 - Apply deterministic routing, aggregation, and conflict policies
-- Wait for signals, updates, timers, and human approval
+- Wait for external events, timers, and human approval
 - Propagate cancellation and initiate compensation
 - Commit terminal outcomes
 
 The workflow MUST NOT call models, agents, tools, MCP servers, registries,
 databases, queues, filesystems, clocks, random generators, or external services
 directly. Nondeterministic discovery and admission evidence are obtained through
-activities; the workflow applies a deterministic policy to their recorded
+durable steps; the workflow applies a deterministic policy to their recorded
 results.
 
 ## Stable identities
@@ -33,11 +41,11 @@ These identifiers MUST be explicit and stable:
 system name and version
 composition and run manifest IDs
 system run and workflow IDs
-workflow and activity types
+workflow and durable step types
 member agent names, versions, and manifest IDs
 role and interaction IDs
 delegation, branch, task, event, and approval IDs
-task queues, signals, updates, and durable registry keys
+worker queues, external event types, and durable registry keys
 ```
 
 Suggested workflow and delegation identities are:
@@ -58,10 +66,10 @@ also produces a run manifest containing every admitted member, role assignment,
 edge, policy decision, schema, capability ceiling, and budget grant used in that
 run.
 
-Graph changes occur only through a versioned workflow command or update:
+Graph changes occur only through a versioned workflow command or external event:
 
 1. An agent, operator, event, or policy proposes a member or edge.
-2. An activity obtains authenticated registry and compatibility evidence.
+2. A durable step obtains authenticated registry and compatibility evidence.
 3. Deterministic workflow code evaluates the admission policy.
 4. The workflow records the decision and updated graph version.
 5. Only then may the new member or edge receive work.
@@ -111,13 +119,13 @@ business policy.
 
 ## Interaction execution
 
-Each member invocation executes as an activity or within an explicitly managed
-child workflow. Its input contains the validated delegation envelope and its
+Each member invocation executes as a durable step or within an explicitly
+managed child workflow. Its input contains the validated delegation envelope and its
 output contains the validated result envelope.
 
-An interaction activity MUST define:
+An interaction durable step MUST define:
 
-- Start-to-close and schedule-to-close timeouts
+- Per-attempt and overall (including queueing and retries) timeouts
 - Retry and non-retryable failure classes
 - Cancellation and heartbeat behavior
 - Idempotency and duplicate-detection behavior
@@ -132,16 +140,17 @@ durability controls.
 
 ## Retry ownership
 
-Retries may exist at model, provider, agent, interaction, activity, workflow,
+Retries may exist at model, provider, agent, interaction, durable step, workflow,
 and business-process layers. The system documents one owner for each failure
 class and calculates the combined maximum executions, duration, and cost.
 
 The default is:
 
-- Agent frameworks own bounded semantic correction.
-- Temporal activities own transient infrastructure retry.
+- The agent runtime owns bounded semantic correction.
+- Durable steps own transient infrastructure retry.
 - Workflows own interaction and business retry decisions.
-- Provider transport retries are disabled or minimized beneath Temporal.
+- Provider transport retries are disabled or minimized beneath durable step
+  retry.
 
 Authorization failure, invalid admission, policy denial, incompatible schema,
 invalid approval, exhausted hard budget, and invalid business input are
@@ -157,9 +166,9 @@ and operation-version identity.
 The workflow deduplicates:
 
 - Repeated delegation requests
-- Retried activity results
+- Retried durable step results
 - Duplicate queue or event delivery
-- Repeated approval updates
+- Repeated approval events
 - Late results from cancelled branches
 - Replayed side-effect completion notifications
 
@@ -236,7 +245,7 @@ branch identities. The workflow defines behavior:
 - While a dynamic member is unreachable
 
 Completed work is not automatically undone. Reversible effects have explicit
-compensation activities and ordering. Consequential effects retain approval and
+compensation steps and ordering. Consequential effects retain approval and
 audit evidence even when later compensated.
 
 ## Child workflows
@@ -270,8 +279,8 @@ Keep model transcripts, documents, code, images, large result sets, blackboard
 contents, and event bodies outside workflow history. Store them in approved
 artifact systems and pass typed, authorized, integrity-protected references.
 
-Use `Continue-As-New` or bounded child workflows for long-lived systems. Before
-continuing, persist the current graph version, run manifest, budgets, unresolved
+Continue as a new run, or use bounded child workflows, for long-lived systems.
+Before continuing, persist the current graph version, run manifest, budgets, unresolved
 work, approvals, progress counters, and artifact references in a versioned
 continuation payload.
 
@@ -281,10 +290,11 @@ Before deployment:
 
 - Replay static and dynamic graph histories.
 - Test histories with active, failed, cancelled, and late branches.
-- Verify stable system, member, role, interaction, workflow, and activity IDs.
+- Verify stable system, member, role, interaction, workflow, and durable step IDs.
 - Verify graph and policy decisions do not call mutable registries during replay.
 - Test in-flight approvals, budget reservations, timers, and substitutions.
-- Use Worker Versioning or patching for incompatible changes.
+- Use the engine's worker versioning or code-patching mechanism for
+  incompatible changes.
 - Retain compatible workers until pinned executions complete or migrate.
 
 ## Required tests
@@ -300,6 +310,6 @@ Before deployment:
 - Root and branch cancellation tests
 - Partial-effect and compensation tests
 - Approval, expiry, tampering, and composition-change tests
-- Payload, history, and `Continue-As-New` tests
+- Payload, history, and continuation-as-a-new-run tests
 - Captured-history replay tests
-- End-to-end tests against a development Temporal environment
+- End-to-end tests against a development durable execution environment

@@ -15,8 +15,8 @@ Design the system as an explicit composition contract built on individually gove
 4. Choose static membership by default. Use dynamic membership only when runtime discovery creates material value and an authenticated registry plus admission policy can enforce compatibility.
 5. Define the System Spec: owners, version, execution class, governance tier, justification, topology, pinned members, restrictions, interactions, system budgets, state owner, and termination states.
 6. Ensure the system class and tier are never below any member or enabled path.
-7. Use `agentctl system scaffold` when available, replace every placeholder, and inspect generated policies.
-8. Run `agentctl system validate`, `explain`, and `graph`; resolve contract errors before runtime implementation.
+7. If the project provides scaffolding tooling, use it, replace every placeholder, and inspect generated policies.
+8. Validate the System Spec and render its interaction graph with the project's own validation tooling or CI; resolve contract errors before runtime implementation.
 9. Record rejected designs and open product decisions instead of inventing policy.
 
 ## Required Output

@@ -1,20 +1,29 @@
 # Playbooks
 
-Practical standards, reusable skills, and executable tooling for building and
-operating production software systems.
+Guides, best practices, and education for designing, building, and operating
+production AI agents and multi-agent systems.
+
+The playbooks are technology-neutral. They explain what good looks like and
+why: the contracts, controls, evidence, and decisions that make an agent safe
+to run. They do not prescribe SDKs, frameworks, products, or languages, so the
+guidance stays valid as tools change and applies to any stack.
+
+For one opinionated implementation of these ideas, with a focus on zero-trust
+agents, see [Zetra](https://github.com/X-McKay/zetra). Zetra is where SDK
+adapters, tooling, reference code, and deployment evidence live.
 
 ## What's here
 
 ### Agent Playbook
 
-The [Agent Playbook](agent-playbook/README.md) defines an opinionated standard for building production AI agents with PydanticAI and Temporal. It covers:
+The [Agent Playbook](agent-playbook/README.md) is a standard for production AI
+agents. It covers:
 
 - Agent specifications and typed contracts
-- Repository and package structure
-- Runtime skills and executable tools
+- Skills and tools, and how to classify their effects
 - Durable execution and human approval
 - Evaluation, observability, and cost controls
-- Security, governance, and production readiness
+- Security, governance, risk assessment, and production readiness
 
 ### Multi-Agent Systems Playbook
 
@@ -28,48 +37,30 @@ participating agent.
 ### Agent Development Skills
 
 The [`skills/`](skills/README.md) library turns both playbooks into fourteen
-portable Agent Skills for Claude Code, Codex, and compatible runtimes. It
-includes focused workflows for agent and multi-agent design, interactions,
-risk, Temporal execution, evals, production operations, and readiness reviews.
+portable Agent Skills for Claude Code, Codex, and compatible runtimes. They
+guide design, interactions, risk, durable execution, evals, production
+operations, and readiness reviews without assuming a particular stack.
 
-### Development Toolkit
+## Scope
 
-[`agentctl`](tools/agentctl/README.md) turns the standards into executable
-guardrails. It scaffolds agent and multi-agent system packages, validates Agent
-Specs, System Specs, risk assessments, and skills, renders composition graphs,
-runs version-pinned eval adapters, records provenance, and applies fail-closed
-release gates.
-
-```bash
-scripts/agentctl --help
-```
+Content belongs here when it would still be true on a different stack. Content
+that only makes sense for a particular SDK, framework, product, or language
+belongs in an implementation such as Zetra. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for the test to apply and how to handle
+examples.
 
 ## Development
 
-The repository uses one root [uv](https://docs.astral.sh/uv/) workspace and
-lockfile for Python dependencies, plus a pinned [Nix](https://nixos.org/) flake
-for Python, uv, Just, ShellCheck, Git, and Nix formatting across Linux and
-macOS. uv pins the application, Rich terminal stack, and Ruff.
+The repository is Markdown only. A pinned [Nix](https://nixos.org/) flake
+provides the lint and link-check tools.
 
 ```bash
 nix develop
-just bootstrap
 just check
 ```
 
-Without Nix, install uv and run the same locked workflow directly:
-
-```bash
-uv sync --locked
-uv run --locked agentctl --help
-uv run --locked python -m unittest discover -s tools/agentctl/tests
-```
-
-Use `uv lock --check` and `nix flake check` in CI to reject dependency or flake
-drift.
-
 ## Status
 
-The Agent Playbook is currently **v0.3 — draft**. Feedback and contributions
+The Agent Playbook is currently **v0.4 — draft**. Feedback and contributions
 are welcome through [issues](https://github.com/X-McKay/playbooks/issues) and
 [pull requests](https://github.com/X-McKay/playbooks/pulls).

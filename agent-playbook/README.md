@@ -1,10 +1,10 @@
 # Agent Playbook
 
 - **Status:** Draft
-- **Version:** 0.3
-- **Last updated:** 2026-09-25
+- **Version:** 0.4
+- **Last updated:** 2026-10-11
 
-This playbook defines a production standard for building AI agents with [PydanticAI](https://pydantic.dev/docs/ai/) and [Temporal](https://docs.temporal.io/). It treats an agent as a governed software system: a typed contract, a constrained set of capabilities, a durable execution model when required, and measurable quality, safety, reliability, and cost.
+This playbook is a technology-neutral standard for designing, building, and operating production AI agents. It treats an agent as a governed software system: a typed contract, a constrained set of capabilities, a durable execution model when required, and measurable quality, safety, reliability, and cost. It describes what a conforming agent must do and why, not which frameworks, SDKs, or products to use.
 
 For systems that coordinate multiple agents, every member remains subject to
 this standard and the composition is additionally governed by the companion
@@ -19,19 +19,20 @@ The playbook is intentionally opinionated. Teams may adopt stricter controls. Ex
 3. [Canonical agent contract](03-agent-contract.md)
 4. [Skill standard](04-skills.md)
 5. [Tool standard](05-tools.md)
-6. [Temporal execution standard](06-temporal-execution.md)
+6. [Durable execution standard](06-durable-execution.md)
 7. [Evaluation standard](07-evaluation.md)
 8. [Observability standard](08-observability.md)
 9. [Cost optimization standard](09-cost-optimization.md)
 10. [Security and governance](10-security-and-governance.md)
 11. [Production readiness](11-production-readiness.md)
-12. [Reference implementation](12-reference-implementation.md)
+12. [Implementation patterns](12-implementation-patterns.md)
 13. [Agent risk assessment](13-risk-assessment.md)
 14. [References](references.md)
 
-## Executable guidance
+## Skills and implementations
 
-The companion [Agent Development Skills](../skills/README.md) translate this standard into focused workflows for Claude Code, Codex, and compatible Agent Skills clients. [`agentctl`](../tools/agentctl/README.md) provides the executable golden path for scaffolding, Agent Spec, risk-contract, and skill validation, eval adapters, provenance, and release gates.
+- The companion [skills library](../skills/README.md) translates this standard into focused workflows for clients that support the Agent Skills specification.
+- [Zetra](https://github.com/X-McKay/zetra) is one opinionated, zero-trust implementation of this playbook. It is an example of conformance, not a requirement of it.
 
 ## Normative language
 
@@ -47,10 +48,12 @@ Every production agent:
 
 1. Has a stable name, version, owner, execution class, and evidence-based risk
    assessment.
-2. Uses a PydanticAI Agent Spec for its declarative definition and Python types for runtime validation.
+2. Uses a declarative agent specification for its definition and schema-validated
+   types for runtime validation.
 3. Explicitly allowlists its skills and tools.
 4. Classifies every tool as read-only, reversible write, or consequential write.
-5. Uses Temporal for long-running work or any externally visible side effect.
+5. Uses a durable execution engine for long-running work or any externally
+   visible side effect.
 6. Requires human approval for consequential operations.
 7. Enforces request, tool, token, time, and spend budgets.
 8. Is evaluated for outcomes, trajectory, safety, durability, latency, and cost.
@@ -60,11 +63,11 @@ Every production agent:
 
 ## Execution classes
 
-| Class            | Temporal |               Side effects |                     Human approval |
-| ---------------- | -------: | -------------------------: | ---------------------------------: |
-| `ephemeral`      | Optional |                 Prohibited |                           Optional |
-| `durable`        | Required | Allowed through activities |                       Policy-based |
-| `human_governed` | Required |     Allowed after approval | Required for consequential actions |
+| Class            | Durable execution |                  Side effects |                     Human approval |
+| ---------------- | ----------------: | ----------------------------: | ---------------------------------: |
+| `ephemeral`      |          Optional |                    Prohibited |                           Optional |
+| `durable`        |          Required | Allowed through durable steps |                       Policy-based |
+| `human_governed` |          Required |        Allowed after approval | Required for consequential actions |
 
 An individual workflow may elevate an agent's declared execution class, but it MUST NOT silently downgrade it. The effective class is at least the minimum required by the most consequential enabled tool.
 

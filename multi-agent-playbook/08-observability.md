@@ -200,7 +200,7 @@ rationales.
 
 Redaction occurs before export and includes credentials, identity tokens,
 headers, cookies, personal and customer content, hidden instructions, tool
-payloads, artifact URLs, Temporal payloads, bids, error messages, and content
+payloads, artifact URLs, workflow history payloads, bids, error messages, and content
 copied from other agents.
 
 ## Audit

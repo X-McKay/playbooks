@@ -2,7 +2,7 @@
 
 A skill is a versioned package of specialized instructions that teaches an agent how to approach a class of tasks. Skills provide knowledge and procedure; tools provide executable operations.
 
-PydanticAI exposes Agent Skills as deferred capabilities: the model initially sees their names and descriptions and loads full instructions when relevant.
+Agent frameworks commonly expose skills as deferred capabilities, following the progressive disclosure model of the Agent Skills specification: the model initially sees their names and descriptions and loads full instructions when relevant.
 
 ## Structure
 
@@ -15,7 +15,7 @@ src/<package>/skills/
     └── assets/
 ```
 
-PydanticAI automatically loads `SKILL.md`; it does not automatically read or execute bundled references, scripts, or assets. A skill MUST NOT assume those resources are available unless the application supplies a reviewed resource-loading capability.
+A runtime that loads `SKILL.md` does not necessarily read or execute bundled references, scripts, or assets. A skill MUST NOT assume those resources are available unless the application supplies a reviewed resource-loading capability.
 
 ## Required format
 
@@ -75,12 +75,12 @@ A skill MUST NOT contain secrets, grant authorization, override system policy, h
 Production agents MUST explicitly allowlist skills. They MUST NOT expose every discovered skill by default.
 
 ```yaml
-capabilities:
-  - Skills:
-      directories: src/acme_agent/skills
-      include:
-        - customer-policy
-        - incident-triage
+skills:
+  directories:
+    - src/<package>/skills
+  include:
+    - customer-policy
+    - incident-triage
 ```
 
 Skill names MUST be unique across all libraries loaded by the same agent.

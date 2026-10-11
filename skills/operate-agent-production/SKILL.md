@@ -1,6 +1,6 @@
 ---
 name: operate-agent-production
-description: Instrument, operate, and optimize a production agent. Use when adding OpenTelemetry or Logfire tracing, dashboards, alerts, SLOs, privacy controls, token and spend budgets, model routing, context reduction, caching, retry controls, or incident diagnostics.
+description: Instrument, operate, and optimize a production agent. Use when adding OpenTelemetry tracing, dashboards, alerts, SLOs, privacy controls, token and spend budgets, model routing, context reduction, caching, retry controls, or incident diagnostics.
 ---
 
 # Operate a Production Agent
@@ -10,7 +10,7 @@ Make agent behavior observable and cost-bounded without exposing sensitive conte
 ## Workflow
 
 1. Define service-level objectives for success, hard-gate safety, latency, availability, and cost per successful task.
-2. Establish one trace hierarchy from entry point through Temporal workflow and activity, agent run, model request, and tool call.
+2. Establish one trace hierarchy from entry point through durable workflow and durable step (when used), agent run, model request, and tool call.
 3. Attach stable correlation fields: agent, prompt, model, dataset or release, workflow, capability, tenant or environment, and outcome versions.
 4. Record tokens, latency, retries, tool calls, cache behavior, failures, and estimated cost at the narrowest useful scope.
 5. Apply redaction, hashing, allowlisting, sampling, access control, and retention before exporting telemetry. Treat prompts and tool payloads as sensitive by default.

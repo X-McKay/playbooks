@@ -19,7 +19,6 @@ model_settings:
 
 retries: 2
 tool_timeout: 20
-end_strategy: graceful
 instrument: true
 
 metadata:
@@ -60,55 +59,52 @@ The resolved provider, exact model, settings, and pricing version MUST be record
 
 ## Typed dependencies
 
-Dependencies carry trusted runtime context and reconstructable service interfaces.
+Dependencies carry trusted runtime context and reconstructable service interfaces. They SHOULD be immutable for the duration of a run.
 
-```python
-from dataclasses import dataclass
-from datetime import datetime
-from uuid import UUID
-
-
-@dataclass(frozen=True)
-class SupportDependencies:
-    request_id: UUID
-    tenant_id: UUID
-    actor_id: UUID
-    authorization_scopes: frozenset[str]
-    deadline: datetime
-```
+| Field                  | Type                 | Source                     |
+| ---------------------- | -------------------- | -------------------------- |
+| `request_id`           | UUID                 | Caller or gateway          |
+| `tenant_id`            | UUID                 | Authenticated session      |
+| `actor_id`             | UUID                 | Authenticated session      |
+| `authorization_scopes` | Set of scope strings | Authorization service      |
+| `deadline`             | Timestamp            | Caller or business process |
 
 Dependencies SHOULD include authenticated identity, tenant context, authorization scopes, correlation identifiers, deadlines, and policy context.
 
-They MUST NOT contain model-generated authorization, mutable global state, raw secrets, or objects that will be serialized unsafely into Temporal history. Pass serializable identifiers across workflow boundaries and reconstruct infrastructure clients within activities.
+They MUST NOT contain model-generated authorization, mutable global state, raw secrets, or objects that will be serialized unsafely into durable workflow history. Pass serializable identifiers across workflow boundaries and reconstruct infrastructure clients within durable steps.
 
 ## Typed output
 
-Production agents SHOULD use a Pydantic output type:
+Production agents SHOULD use a schema-validated output type. Expressed as JSON Schema:
 
-```python
-from typing import Literal
-from pydantic import BaseModel, Field
-
-
-class Evidence(BaseModel):
-    source: str
-    claim: str
-
-
-class SupportResolution(BaseModel):
-    status: Literal[
-        "answered",
-        "action_proposed",
-        "needs_information",
-        "escalated",
-    ]
-    summary: str
-    evidence: list[Evidence]
-    confidence: float = Field(ge=0, le=1)
-    proposed_action: str | None = None
+```json
+{
+  "title": "SupportResolution",
+  "type": "object",
+  "required": ["status", "summary", "evidence", "confidence"],
+  "properties": {
+    "status": {
+      "enum": ["answered", "action_proposed", "needs_information", "escalated"]
+    },
+    "summary": { "type": "string" },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "claim"],
+        "properties": {
+          "source": { "type": "string" },
+          "claim": { "type": "string" }
+        }
+      }
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "proposed_action": { "type": ["string", "null"] }
+  }
+}
 ```
 
-An Agent Spec `output_schema` guides model output but returns a plain dictionary rather than providing the same runtime validation as a typed `output_type`. Typed output is therefore the production default.
+A schema that only guides model output is not the same as runtime validation. Some declarative formats pass a schema to the model but hand back an unvalidated, untyped value. Production agents SHOULD validate output into a typed contract in application code before any downstream use. Typed, validated output is therefore the production default.
 
 ## Factory responsibilities
 
@@ -119,7 +115,7 @@ The factory:
 3. Resolves the model policy.
 4. Resolves and allowlists skills and toolsets.
 5. Verifies tool effects against the execution class.
-6. Attaches usage, spend, observability, and Temporal capabilities.
+6. Attaches usage, spend, observability, and durable-execution capabilities.
 7. Supplies dependency and output types.
 8. Produces the capability manifest.
 
@@ -135,6 +131,6 @@ Keep these versions separate:
 
 - `contract_version`: organizational metadata schema.
 - Agent version: behavioral configuration and capability set.
-- Worker/build version: executable and Temporal compatibility.
+- Worker/build version: executable and workflow replay compatibility.
 
-Behavior-changing edits to instructions, models, skills, tools, or outputs require an agent version change and relevant evals. Temporal-incompatible changes additionally require replay-safe deployment.
+Behavior-changing edits to instructions, models, skills, tools, or outputs require an agent version change and relevant evals. Replay-incompatible workflow changes additionally require replay-safe deployment.

@@ -7,15 +7,15 @@ This library translates the [Agent Playbook](../agent-playbook/README.md) and [M
 | Skill | Use it for |
 | --- | --- |
 | [`assess-agent-risk`](assess-agent-risk/SKILL.md) | Scenario-based inherent and residual risk assessment across eight dimensions |
-| [`design-pydantic-agent`](design-pydantic-agent/SKILL.md) | Agent Specs, typed contracts, package structure, execution classes, and risk tiers |
+| [`design-agent-contract`](design-agent-contract/SKILL.md) | Declarative agent specifications, typed contracts, package structure, execution classes, and risk tiers |
 | [`design-agent-capabilities`](design-agent-capabilities/SKILL.md) | Skill-versus-tool decisions, tool contracts, capability allowlists |
-| [`implement-temporal-agent`](implement-temporal-agent/SKILL.md) | Workflows, activities, retries, approvals, replay, and recovery |
+| [`design-durable-execution`](design-durable-execution/SKILL.md) | Engine-neutral workflows, durable steps, retries, approvals, replay, and recovery |
 | [`build-agent-evals`](build-agent-evals/SKILL.md) | Datasets, evaluators, trajectory checks, release gates, and online evals |
 | [`operate-agent-production`](operate-agent-production/SKILL.md) | Tracing, SLOs, privacy, budgets, and cost optimization |
 | [`review-agent-readiness`](review-agent-readiness/SKILL.md) | Evidence-based launch reviews and go/no-go decisions |
 | [`design-multi-agent-system`](design-multi-agent-system/SKILL.md) | Architecture justification, topology, System Specs, and composition contracts |
 | [`design-agent-interactions`](design-agent-interactions/SKILL.md) | Typed delegation, handoff, review, voting, authority, and data-flow edges |
-| [`implement-temporal-multi-agent`](implement-temporal-multi-agent/SKILL.md) | Durable coordination, replay, approvals, cancellation, and compensation |
+| [`design-durable-coordination`](design-durable-coordination/SKILL.md) | Engine-neutral durable coordination, replay, approvals, cancellation, and compensation |
 | [`build-multi-agent-evals`](build-multi-agent-evals/SKILL.md) | Composition, coordination, adversarial, durability, and baseline evaluations |
 | [`assess-multi-agent-risk`](assess-multi-agent-risk/SKILL.md) | System scenarios, emergent risks, controls, evidence, and decisions |
 | [`operate-multi-agent-system`](operate-multi-agent-system/SKILL.md) | System traces, SLOs, budgets, capacity, incidents, and rollback |
@@ -23,7 +23,9 @@ This library translates the [Agent Playbook](../agent-playbook/README.md) and [M
 
 Each package follows the [Agent Skills specification](https://agentskills.io/specification): a required `SKILL.md`, concise discovery metadata, progressive disclosure, directly linked references, examples, and no required product-specific frontmatter.
 
-When installed in a repository that includes the companion [`agentctl`](../tools/agentctl/README.md), the design, eval, and readiness skills use its scaffolding and validation commands as reproducible evidence.
+These skills are technology-neutral: they teach practices and checks, not a particular SDK, framework, or language. Where a skill asks for validation evidence, it expects the project's own validation tooling or CI to produce it.
+
+[Zetra](https://github.com/X-McKay/zetra) provides implementation-specific skills for its own stack.
 
 ## Use with Codex
 
@@ -53,26 +55,9 @@ cp -R /path/to/playbooks/skills/*/ .claude/skills/
 
 For personal use, use `~/.claude/skills/`. Claude Code can select a skill from its description or invoke it by name, such as `/build-agent-evals`.
 
-## Use as PydanticAI Runtime Skills
+## Use as Runtime Skills
 
-These packages can also be exposed as deferred PydanticAI Harness capabilities:
-
-```python
-from pydantic_ai import Agent
-from pydantic_ai_harness import Skills
-
-agent = Agent(
-    model,
-    capabilities=[
-        Skills(
-            "skills",
-            include=["build-agent-evals", "review-agent-readiness"],
-        )
-    ],
-)
-```
-
-PydanticAI loads the selected `SKILL.md` instructions, but it does not automatically load bundled `references/`, execute `scripts/`, or resolve product-specific placeholders. Keep runtime-critical instructions in `SKILL.md`, expose only reviewed skills, and provide filesystem capabilities separately if an agent must read bundled files.
+Agent frameworks that support the Agent Skills specification can also expose these packages to a running agent. Check what the framework actually loads: some load only `SKILL.md` instructions and do not automatically load bundled `references/`, execute `scripts/`, or resolve product-specific placeholders. Keep runtime-critical instructions in `SKILL.md`, expose only reviewed skills, and provide filesystem capabilities separately if an agent must read bundled files.
 
 ## Authoring Rules
 
@@ -102,5 +87,4 @@ Also run the repository's Markdown checks. A valid package is only the starting 
 - [Claude Code skills](https://code.claude.com/docs/en/skills)
 - [OpenAI skills guide](https://developers.openai.com/api/docs/guides/tools-skills)
 - [OpenAI plugin skill authoring](https://developers.openai.com/plugins/build/skills)
-- [PydanticAI Harness skills](https://pydantic.dev/docs/ai/harness/skills/)
 - [Agent Playbook references](../agent-playbook/references.md)

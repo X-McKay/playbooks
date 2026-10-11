@@ -1,6 +1,6 @@
 ---
 name: review-agent-readiness
-description: Review a PydanticAI and Temporal agent for production readiness. Use for architecture reviews, pre-launch audits, pull-request reviews, risk assessments, launch checklists, or go/no-go decisions covering contracts, capabilities, durability, evals, security, observability, and cost.
+description: Review an agent for production readiness, independent of framework or durable execution engine. Use for architecture reviews, pre-launch audits, pull-request reviews, risk assessments, launch checklists, or go/no-go decisions covering contracts, capabilities, durability, evals, security, observability, and cost.
 ---
 
 # Review Agent Readiness
@@ -11,11 +11,11 @@ Produce an evidence-based launch recommendation with prioritized, actionable fin
 
 1. Identify scope, proposed release, owner, execution class, governance tier,
    residual risk, users, and production environment.
-2. Gather evidence from code, Agent Spec, prompts, skill and tool manifests, tests, eval reports, Temporal configuration, telemetry, runbooks, and cost data.
-3. Run `agentctl validate`, `agentctl skills validate`, and `agentctl release check` when available; treat their output as evidence, not a substitute for review.
+2. Gather evidence from code, Agent Spec, prompts, skill and tool manifests, tests, eval reports, durable execution configuration, telemetry, runbooks, and cost data.
+3. Collect the output of the project's own validation tooling or CI for the agent specification, skill packages, and release gates; treat it as evidence, not a substitute for review. If no such tooling exists, record the gap as a finding.
 4. Review the agent contract and typed boundaries.
 5. Review capability least privilege, authorization, side effects, idempotency, and human approval.
-6. Review Temporal determinism, retries, timeouts, payloads, history growth, replay safety, and recovery tests when durable execution is used.
+6. Review workflow determinism, retries, timeouts, payloads, history growth, replay safety, and recovery tests when durable execution is used.
 7. Review eval coverage, dataset provenance, hard gates, variance, baseline comparison, and release thresholds.
 8. Review the scenario-based risk assessment, regulatory screen, control
    evidence, privacy, security, observability, SLOs, cost limits, incident

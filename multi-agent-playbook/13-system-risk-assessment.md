@@ -199,7 +199,7 @@ Composition controls include:
   rollback, compensation, credential revocation, and deterministic fallback.
 
 Evidence may include code and policy review, schema checks, deterministic tests,
-system evals, adversarial exercises, failure injection, Temporal replay,
+system evals, adversarial exercises, failure injection, durable replay,
 concurrency and duplicate tests, audit samples, production metrics, kill-switch
 exercises, and independent domain review.
 

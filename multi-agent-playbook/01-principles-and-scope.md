@@ -20,8 +20,8 @@ application outcome through delegation, handoff, review, voting, parallel work,
 or shared coordination state.
 
 It applies whether agents run in one process or many services, use the same or
-different models, and communicate through in-process calls, Temporal, queues,
-RPC, or another transport.
+different models, and communicate through in-process calls, a durable execution
+engine, queues, RPC, or another transport.
 
 The standard does not classify a deterministic service, ordinary tool call, or
 fixed software module as an agent merely because an agent invokes it.
@@ -100,8 +100,8 @@ they are valid when a static composition cannot efficiently meet the need.
 ### Durable composition
 
 Long-running coordination and any path capable of a side effect execute through
-Temporal. Workflows own deterministic coordination; activities own agent runs,
-model calls, tools, and other nondeterministic I/O.
+a durable execution engine. Workflows own deterministic coordination; durable
+steps own agent runs, model calls, tools, and other nondeterministic I/O.
 
 ### Evidence at both levels
 

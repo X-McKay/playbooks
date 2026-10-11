@@ -181,7 +181,7 @@ Classify controls as:
 
 Every credited control names an owner and links to evidence. Acceptable evidence
 includes code and configuration review, deterministic tests, eval results,
-Temporal replay and failure scenarios, red-team results, audit samples,
+workflow replay and failure scenarios, red-team results, audit samples,
 operational metrics, exercises, and independent review. A planned control or an
 untested policy receives no residual-risk reduction.
 
@@ -273,25 +273,26 @@ The assessment is complete only when scope, scenarios, controls, evidence,
 classification, acceptance, and review dates are populated and approved by the
 required owners.
 
-## Executable contract
+## Machine validation
 
-The companion `agentctl` package publishes the canonical Draft 2020-12 JSON
-Schema and adds semantic checks that JSON Schema cannot express, including the
-risk matrix, maximum-tier summaries, governance floors, prohibited-use and
-critical-residual decisions, duplicate identifiers, date ordering, assessment
-references, and verified evidence for claimed risk reduction.
+Risk assessments SHOULD be machine-validated in continuous integration, not
+only reviewed by people. An implementation SHOULD publish a versioned schema for
+the assessment artifact (JSON Schema is a suitable format) and validate every
+canonical assessment against it on each change.
 
-```bash
-# Validate every canonical assessment in a project.
-scripts/agentctl risk validate --root /path/to/project
+Structural schemas cannot express every rule in this chapter. Validation SHOULD
+add semantic checks for:
 
-# Validate or explain a specific artifact.
-scripts/agentctl risk validate docs/risk-assessments/customer-support.yaml
-scripts/agentctl risk explain docs/risk-assessments/customer-support.yaml
-scripts/agentctl risk explain docs/risk-assessments/customer-support.yaml \
-  --format json
-```
+- scores and tiers that agree with the risk matrix;
+- maximum-tier summaries that match the highest scenario tiers;
+- governance floors and the resulting governance tier;
+- `no_go` decisions for prohibited uses and critical residual scenarios;
+- unique scenario, control, and condition identifiers;
+- consistent date ordering for assessment, review, conditions, and expiry;
+- resolvable references to evidence, eval cases, and runbooks; and
+- verified evidence for every control credited with risk reduction.
 
-`agentctl validate` applies the same contract through the Agent Spec reference
-and additionally checks that the agent name, agent version, execution class,
-and governance tier agree across both artifacts.
+Validation SHOULD also check the assessment against the Agent Spec that
+references it, confirming that the agent name, agent version, execution class,
+and governance tier agree across both artifacts. A failed validation SHOULD
+block release.

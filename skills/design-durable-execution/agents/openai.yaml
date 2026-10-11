@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Durable Execution"
+  short_description: "Design durable, replay-safe agent execution"
+  default_prompt: "Use $design-durable-execution to design durable execution for this agent."

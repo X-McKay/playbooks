@@ -10,7 +10,7 @@ Review the composition independently of member approval and require evidence for
 ## Workflow
 
 1. Inventory the System Spec, architecture decision, Agent Specs, policies, manifests, risk assessment, threat model, eval reports, operational artifacts, and approvals.
-2. Run `agentctl validate`, `agentctl system validate`, `system graph`, evals, and release gates when available.
+2. Collect the output of the project's own validation tooling or CI for member and system specifications, the interaction graph, evals, and release gates; treat it as evidence, and record its absence as a finding.
 3. Verify multi-agent necessity against deterministic and single-agent baselines.
 4. Review membership pinning, graph allowlists, edge authority, data flow, shared state, budgets, termination, and exact provenance.
 5. Review dynamic or recursive behavior for admission, depth, fan-out, integrity, quarantine, and reproducibility controls.

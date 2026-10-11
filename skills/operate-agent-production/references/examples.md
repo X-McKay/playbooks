@@ -2,19 +2,17 @@
 
 ## Safe Span Attributes
 
-```python
-attributes = {
-    "agent.name": "support-agent",
-    "agent.version": "2026-09-25.1",
-    "agent.execution_class": "ephemeral",
-    "agent.risk_tier": "medium",
-    "llm.model": "configured-model-alias",
-    "llm.input_tokens": usage.input_tokens,
-    "llm.output_tokens": usage.output_tokens,
-    "agent.tool_calls": tool_call_count,
-    "agent.estimated_cost_usd": estimated_cost,
-    "agent.outcome": "escalated",
-}
+```yaml
+agent.name: "support-agent"
+agent.version: "2026-09-25.1"
+agent.execution_class: "ephemeral"
+agent.risk_tier: "medium"
+llm.model: "configured-model-alias"
+llm.input_tokens: 1840
+llm.output_tokens: 212
+agent.tool_calls: 2
+agent.estimated_cost_usd: 0.004
+agent.outcome: "escalated"
 ```
 
 Do not add the customer message, account record, tool credential, or unrestricted model response.

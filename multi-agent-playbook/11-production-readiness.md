@@ -53,10 +53,10 @@ quality does not establish system readiness.
 
 ## Durable coordination
 
-- [ ] Long-running or state-changing execution occurs in Temporal.
+- [ ] Long-running or state-changing execution occurs in a durable execution engine.
 - [ ] Workflows contain deterministic coordination only.
-- [ ] Agent runs, models, tools, registries, stores, and other I/O execute in activities.
-- [ ] Stable workflow, activity, member, interaction, delegation, and branch identities are used.
+- [ ] Agent runs, models, tools, registries, stores, and other I/O execute in durable steps.
+- [ ] Stable workflow, durable step, member, interaction, delegation, and branch identities are used.
 - [ ] Concurrent aggregation is deterministic and independent of incidental arrival order.
 - [ ] Retry ownership and combined maximum execution are documented.
 - [ ] Budget reservation and reconciliation survive worker loss and duplicate delivery.

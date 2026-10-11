@@ -6,14 +6,14 @@
 project/
 ├── .agents/
 │   └── skills/                       # Skills for coding/development agents
-├── pyproject.toml
+├── <build manifest>                  # Dependency and packaging definition
 ├── src/<package>/
 │   ├── agents/
 │   │   └── <agent_name>/
-│   │       ├── agent.yaml
-│   │       ├── factory.py
-│   │       ├── dependencies.py
-│   │       ├── models.py
+│   │       ├── agent.yaml                # Declarative Agent Spec
+│   │       ├── factory                   # Controlled assembly
+│   │       ├── dependencies              # Typed runtime context
+│   │       ├── types                     # Typed inputs and outputs
 │   │       ├── instructions/
 │   │       ├── skills/               # Private runtime skills
 │   │       └── tools/                # Private tools
@@ -21,12 +21,12 @@ project/
 │   ├── tools/                        # Shared executable capabilities
 │   │   ├── common/
 │   │   └── <domain>/
-│   ├── workflows/
-│   ├── activities/
+│   ├── workflows/                    # Deterministic orchestration
+│   ├── steps/                        # Durable steps that perform I/O
 │   ├── runtime/
 │   ├── observability/
 │   ├── policy/
-│   └── settings.py
+│   └── settings
 ├── evals/
 │   ├── datasets/
 │   ├── evaluators/
@@ -58,22 +58,22 @@ project/
 
 ```mermaid
 flowchart LR
-    Client[API, event, or schedule] --> Workflow[Temporal workflow]
-    Workflow --> Agent[PydanticAI agent loop]
-    Agent --> Model[Model activity]
-    Agent --> Tool[Tool activity]
-    Agent --> MCP[MCP activity]
-    Workflow --> Approval[Approval signal or update]
+    Client[API, event, or schedule] --> Workflow[Durable workflow]
+    Workflow --> Agent[Agent loop]
+    Agent --> Model[Model step]
+    Agent --> Tool[Tool step]
+    Agent --> MCP[MCP step]
+    Workflow --> Approval[Approval external event]
     Tool --> External[External services]
 ```
 
-The workflow owns durable coordination. Activities own nondeterministic work and I/O. The agent factory assembles a validated configuration from approved models, skills, tools, policies, and runtime capabilities.
+The workflow owns durable coordination. Durable steps own nondeterministic work and I/O. The agent factory assembles a validated configuration from approved models, skills, tools, policies, and runtime capabilities.
 
 ## Build and packaging
 
 - Agent specifications, instruction files, and runtime `SKILL.md` files MUST be included as package data.
-- Tests MUST load resources from the built wheel or equivalent deployment artifact.
-- Runtime resource paths SHOULD be resolved with `importlib.resources`, not a process working-directory assumption.
+- Tests MUST load resources from the built package or equivalent deployment artifact.
+- Runtime resource paths SHOULD be resolved relative to the installed package, not a process working-directory assumption.
 - Production images SHOULD be immutable and run with a read-only application filesystem.
 
 ## Capability bill of materials

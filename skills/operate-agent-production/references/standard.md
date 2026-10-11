@@ -6,14 +6,14 @@ Use a hierarchy that preserves one correlation path:
 
 ```text
 request
-  temporal.workflow
-    temporal.activity
+  workflow
+    durable_step
       agent.run
         model.request
         tool.call
 ```
 
-Not every agent uses Temporal; omit those spans for an ephemeral run. Propagate trace context across task queues and external calls.
+Not every agent uses a durable execution engine; omit those spans for an ephemeral run. Propagate trace context across worker queues and external calls.
 
 ## Required Attributes
 
@@ -22,7 +22,7 @@ Use safe identifiers or hashes for:
 - agent, prompt, policy, skill-set, tool-set, and release versions;
 - model provider and model name;
 - execution class and risk tier;
-- workflow and activity type;
+- workflow and durable-step type;
 - capability name and outcome;
 - input and output token counts;
 - latency, retry count, and estimated cost;

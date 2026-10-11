@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Durable Coordination"
+  short_description: "Design durable multi-agent coordination"
+  default_prompt: "Use $design-durable-coordination to design replay-safe multi-agent coordination on a durable execution engine."

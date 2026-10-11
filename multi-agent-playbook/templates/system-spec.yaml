@@ -12,8 +12,8 @@ metadata:
   threat_model: docs/threat-models/customer-resolution-system.md
   evaluation_policy: evals/systems/customer_resolution_system/release-policy.yaml
   data_classification: confidential
-  temporal_enabled: true
-  approval_policy: src/acme_agents/policy/approvals/customer_resolution.yaml
+  durable_execution_enabled: true
+  approval_policy: policy/approvals/customer-resolution.yaml
 
 justification:
   decision_owner: customer-platform

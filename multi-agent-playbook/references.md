@@ -1,30 +1,13 @@
 # References
 
 These sources inform the draft. The [Agent Playbook references](../agent-playbook/references.md)
-remain applicable to every member agent and to inherited PydanticAI, Temporal,
+remain applicable to every member agent and to inherited durable execution,
 evaluation, observability, risk, and security requirements.
 
-Framework behavior and protocol details MUST be checked against the versions
-pinned by an implementation.
-
-## PydanticAI
-
-- [Multi-agent applications](https://pydantic.dev/docs/ai/guides/multi-agent-applications/) — delegation, programmatic handoff, graph-based control flow, and deep-agent patterns.
-- [Subagents](https://pydantic.dev/docs/ai/harness/subagents/) — named delegate agents, isolated runs, dependency forwarding, usage limits, failure handling, and cancellation.
-- [Dynamic Workflow](https://pydantic.dev/docs/ai/harness/dynamic-workflow/) — model-authored bounded sub-agent choreography, fan-out, chaining, voting, structured results, sandboxing, and call budgets.
-- [Capabilities](https://pydantic.dev/docs/ai/capabilities/overview/) — planning, delegation, context, memory, guardrail, and runtime capabilities.
-- [Agents](https://pydantic.dev/docs/ai/core-concepts/agent/) — typed agents, dependencies, toolsets, output, and execution iteration.
-- [Temporal durable execution](https://pydantic.dev/docs/ai/capabilities/durable_execution/temporal/) — workflow and activity integration, stable identities, payloads, retries, and telemetry.
-- [Pydantic Evals](https://pydantic.dev/docs/ai/evals/evals/) — cases, datasets, evaluators, experiments, trajectories, and reports.
-- [Usage API and limits](https://pydantic.dev/docs/ai/api/pydantic-ai/usage/) — request, tool, token, and cost controls.
-
-## Temporal
-
-- [Python SDK developer guide](https://docs.temporal.io/develop/python)
-- [Child Workflows](https://docs.temporal.io/child-workflows) — parent and child lifecycle, isolation, cancellation, and history guidance.
-- [Message passing](https://docs.temporal.io/encyclopedia/workflow-message-passing) — Signals, Queries, and Updates.
-- [Durable AI](https://docs.temporal.io/ai)
-- [Safe deployments](https://docs.temporal.io/production-deployment/worker-deployments/worker-versioning)
+Protocol and specification details MUST be checked against the versions pinned
+by an implementation. Documentation for specific SDKs, frameworks, and
+products belongs with the implementations that use them, such as
+[Zetra](https://github.com/X-McKay/zetra).
 
 ## Interoperability
 
@@ -59,8 +42,9 @@ unstable high-cardinality attributes in production metrics.
 
 ## Notes
 
-- PydanticAI Harness and multi-agent APIs may change while on `0.x` releases.
-  Pin dependencies and treat upgrades as behavioral changes.
+- Agent runtimes and multi-agent APIs change quickly, especially before a
+  stable major release. Pin dependencies and treat upgrades as behavioral
+  changes.
 - A2A, MCP, OpenTelemetry, and other protocol support does not remove the need
   for application-specific authorization, data governance, risk assessment,
   evaluation, and operational controls.

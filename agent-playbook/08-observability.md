@@ -1,6 +1,6 @@
 # 8. Observability standard
 
-Observe the agent as an application, not merely as model calls. The standard is vendor-neutral and based on OpenTelemetry. Pydantic Logfire is a supported first-party backend, not a mandatory dependency.
+Observe the agent as an application, not merely as model calls. The standard is vendor-neutral and based on OpenTelemetry. Any backend that accepts OpenTelemetry data and meets the access, redaction, and retention requirements below is acceptable; no specific backend is required.
 
 ## Objectives
 
@@ -28,7 +28,7 @@ Ordinary telemetry is not a substitute for a tamper-resistant audit record.
 
 ## Correlation
 
-PydanticAI emits agent, model, and tool spans. Temporal emits workflow and activity telemetry. Because these may execute in different processes and at different times, every span MUST also carry stable logical correlation identifiers.
+The agent framework typically emits agent, model, and tool spans, while the durable execution engine emits workflow and durable-step telemetry. Because these may execute in different processes and at different times, every span MUST also carry stable logical correlation identifiers.
 
 Required resource and run attributes include:
 
@@ -46,16 +46,16 @@ agent.execution_class
 agent.risk_tier
 agent.run_id
 agent.request_id
-temporal.namespace
-temporal.task_queue
-temporal.workflow_type
-temporal.workflow_id
-temporal.run_id
+workflow.namespace
+workflow.queue
+workflow.type
+workflow.id
+workflow.run_id
 ```
 
 Model spans SHOULD use applicable OpenTelemetry generative-AI semantic conventions and record provider, request and response model, operation, input tokens, output tokens, cached tokens, request number, retry count, and estimated cost.
 
-Tool spans record tool name, toolset ID, effect, call ID, activity attempt, outcome, duration, authorization result, retry safety, and whether idempotency was applied.
+Tool spans record tool name, toolset ID, effect, call ID, durable-step attempt, outcome, duration, authorization result, retry safety, and whether idempotency was applied.
 
 ## Outcomes
 
@@ -97,7 +97,7 @@ Metrics MUST NOT use request IDs, user IDs, workflow IDs, raw prompts, URLs, arb
 
 Prompt and completion capture MUST be off by default in production. Enabling it requires a documented purpose, approval, data classification, redaction, access controls, retention, deletion, sampling, and applicable regional review.
 
-Redaction MUST occur before export and cover credentials, headers, cookies, personal identifiers, customer content, connection strings, signed URLs, tool inputs and outputs, Temporal payloads, and sensitive exception messages.
+Redaction MUST occur before export and cover credentials, headers, cookies, personal identifiers, customer content, connection strings, signed URLs, tool inputs and outputs, workflow and durable-step payloads, and sensitive exception messages.
 
 When content cannot be retained, record a safe hash, size, content type, template version, and whether redaction was applied.
 

@@ -1,6 +1,6 @@
 ---
 name: build-agent-evals
-description: Build or improve an agent evaluation program with Pydantic Evals. Use when creating datasets, cases, evaluators, trajectory checks, Temporal failure scenarios, regression suites, multi-run measurements, release gates, online evaluations, or quality-cost-latency scorecards.
+description: Build or improve an agent evaluation program with versioned datasets, evaluators, and release gates. Use when creating datasets, cases, evaluators, trajectory checks, durable-execution failure scenarios, regression suites, multi-run measurements, release gates, online evaluations, or quality-cost-latency scorecards.
 ---
 
 # Build Agent Evals
@@ -19,10 +19,10 @@ Convert product claims and operational risks into reproducible evidence and rele
    - tool and trajectory checks;
    - task-specific graders;
    - model-based judges for qualities that cannot be measured directly.
-6. Test the full execution path when it matters, including tool results and Temporal recovery behavior, not only the final answer.
+6. Test the full execution path when it matters, including tool results and durable-execution recovery behavior, not only the final answer.
 7. Repeat stochastic cases and report pass rate, variance, and confidence—not one lucky run.
 8. Track quality beside latency, tokens, tool calls, retries, and estimated cost.
-9. Use `agentctl eval run` and `agentctl release check` when available to normalize provenance and apply fail-closed gates.
+9. Run evals and release checks through the project's own validation tooling or CI so provenance is normalized and gates fail closed; treat that output as release evidence.
 10. Establish a trusted baseline and fail CI on hard-gate violations or material regressions beyond an explicit tolerance.
 11. Sample production traces into reviewed datasets while redacting sensitive data and separating monitoring from release evidence.
 

@@ -24,11 +24,11 @@ An accountable owner completes and approves this checklist before production lau
 - [ ] Consequential actions require bound approval.
 - [ ] Tool outputs are bounded.
 
-## Temporal
+## Durable execution
 
 - [ ] Durable runs execute inside workflows.
-- [ ] All I/O executes in activities.
-- [ ] Workflow and activity identifiers are stable.
+- [ ] All I/O executes in durable steps.
+- [ ] Workflow and durable-step identifiers are stable.
 - [ ] Timeouts and retry policies are bounded.
 - [ ] Provider transport retries are disabled or justified.
 - [ ] Cancellation and compensation are defined.
@@ -42,7 +42,7 @@ An accountable owner completes and approves this checklist before production lau
 - [ ] Eval reports identify covered and uncovered risk scenario IDs.
 - [ ] Unit, component, smoke, regression, capability, and safety suites pass.
 - [ ] Trajectory and tool-argument checks pass.
-- [ ] Temporal durability scenarios pass.
+- [ ] Durable-execution failure scenarios pass.
 - [ ] Required multi-run evaluations pass.
 - [ ] Quality, cost, and latency meet thresholds.
 - [ ] Critical hard gates have no known failures.
