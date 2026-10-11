@@ -1,15 +1,17 @@
 # 2. Defining the problem
 
-Describe the job, who it helps, and what should improve. Agree on what a good
-result looks like and what the agent must never do. This brief is the input to
-the [agent contract](../agent-playbook/03-agent-contract.md), the
-[risk assessment](../agent-playbook/13-risk-assessment.md), and the
-[evaluation plan](../agent-playbook/07-evaluation.md); a team that cannot write
-it is not ready to build.
+This guide is for the developers who will build the agent. It turns the notes
+from [strategy and use-case selection](01-strategy-and-use-cases.md) into a
+short brief: the job, what a good result looks like, the limits, the data,
+the risks, and who owns what. The brief feeds the
+[agent contract](../agent-playbook/03-agent-contract.md), the
+[risk assessment](../agent-playbook/12-risk-assessment.md), and the
+[evaluation plan](../agent-playbook/06-evaluation.md). If you cannot write it,
+you are not ready to build.
 
-## The brief
+## Write the brief
 
-A short example brief:
+Start with a few plain sentences. For example:
 
 ```text
 Help employees understand company policies
@@ -18,7 +20,8 @@ Show the source for each answer.
 Ask for help when information is missing.
 ```
 
-Each line carries a decision the team must make explicit:
+Each line hides a decision. Make each explicit before you write a prompt; each
+becomes a field in the contract or a case in the evaluation set:
 
 | Area | Questions to answer | In the example |
 | --- | --- | --- |
@@ -27,26 +30,32 @@ Each line carries a decision the team must make explicit:
 | A good result | What do representative requests look like, and what makes a response acceptable? | Correct, understandable, and supported by an approved, current source. |
 | Limits and help | What actions are prohibited, and when must the agent stop or ask for help? | Never guess when evidence is missing, read restricted documents, or change employee records. |
 
-## Success criteria
+## Agree what success looks like
 
-Choose measures and acceptance criteria before testing. Compare with today's
-process: does the agent improve the outcome enough to justify its cost? Include
-difficult tasks and failure cases, not only good examples.
+Choose your measures and acceptance criteria before you test, and compare
+against today's process: does the agent improve the outcome enough to justify
+its cost? Work backwards from the consequence of a wrong answer or action.
+A policy answer, for example, needs a valid supporting source, and restricted
+information must stay restricted. There is no universal pass score; speed and
+cost targets depend on the task and expected usage.
 
-Start from the consequences of a wrong answer or action. Agree with users and
-the owner on acceptable task results, maximum wait time and cost, and the
-checks that every release must pass. A policy answer, for example, needs a
-valid supporting source, and restricted information must stay restricted.
-Speed and cost targets depend on the task and expected usage; there is no
-universal pass score.
+Best practices:
 
-Use representative cases, repeated trials, and human review where judgment is
-needed. Record failures and uncertainty. A high average does not cancel a
-failed required safety check (see
-[multi-run evaluation](../agent-playbook/07-evaluation.md#multi-run-evaluation)
-and [release gates](../agent-playbook/07-evaluation.md#release-gates)).
+- **Agree targets with users and the owner.** Settle acceptable task results,
+  maximum wait time and cost, and the checks every release must pass.
+- **Include the hard cases.** Difficult tasks and failure cases tell you more
+  than good examples.
+- **Repeat trials and use human review where judgment is needed.** Record
+  failures and uncertainty, not only the average.
+- **Keep safety checks pass/fail.** A high average does not cancel a failed
+  required safety check (see
+  [multi-run evaluation](../agent-playbook/06-evaluation.md#multi-run-evaluation)
+  and [release gates](../agent-playbook/06-evaluation.md#release-gates)).
 
-## Constraints: cost, response time, and volume
+## Set limits on cost, time, and volume
+
+Answer these early; they become the agent's
+[budgets](../agent-playbook/10-cost-optimization.md#budget-hierarchy):
 
 - How long can users wait for a complete task, including slow dependencies and
   failures?
@@ -54,46 +63,50 @@ and [release gates](../agent-playbook/07-evaluation.md#release-gates)).
 - How many requests and simultaneous users are expected?
 - What does the user see when a limit is reached?
 
-Include model calls, tools, infrastructure, repeated attempts, and human review
-in the cost. These answers become the agent's
-[budgets](../agent-playbook/09-cost-optimization.md#budget-hierarchy).
+Count everything in the cost: model calls, tools, infrastructure, repeated
+attempts, and human review.
 
-## Data, information, and connections
+## Map the data and connections
 
-List the required documents, records, and services, their owners, and how the
-agent will reach them. Check access, data quality, freshness, availability,
-and rate limits.
+List the documents, records, and services the agent needs, who owns each,
+and how the agent will reach them. Check access, data quality, freshness,
+availability, and rate limits, and test access early rather than discovering
+a missing permission in the pilot.
 
-Decide what information may be sent to a model, stored, or logged, and for how
-long. Identify missing data and test access early. More data or broader access
-does not automatically improve the result, and every added source is added
+Decide what information may be sent to a model, stored, or logged, and for
+how long. Resist adding sources "in case": more data or broader access does
+not automatically improve the result, and every added source is added
 authority.
 
-## Risks and what needs approval
+## Name the risks and what needs approval
 
 Ask what could go wrong, who could be affected, and whether it can be undone.
 Consider incorrect advice, exposure of private information, misleading
 instructions embedded in documents, unwanted changes, and repeated actions.
 
-Limit allowed actions. Require review where an error could cause serious harm,
-and define prohibited actions and stopping conditions. For each important
-risk, name a prevention or detection measure and the person responsible for
-responding. The
-[risk assessment](../agent-playbook/13-risk-assessment.md#scenario-method)
+Then narrow the design:
+
+- **Limit the allowed actions** to what the purpose needs.
+- **Require review** where an error could cause serious harm.
+- **Define prohibited actions and stopping conditions.**
+- **Pair each important risk** with a prevention or detection measure and the
+  person responsible for responding.
+
+The [risk assessment](../agent-playbook/12-risk-assessment.md#scenario-method)
 turns this list into scored scenarios.
 
-## Owners
+## Name the owners
 
-Name a business owner who accepts the outcome, a developer responsible for
-changes, and an operating owner who handles alerts, support, and stopping the
-agent. One person may hold more than one role.
+You need three owners: a business owner who accepts the outcome, a developer
+responsible for changes, and an operating owner who handles alerts, support,
+and stopping the agent. One person may hold more than one role.
 
-Agree who approves access, maintains source information, reviews uncertain
-cases, and accepts remaining risk. Confirm that these people have the time and
-authority to act. The [operating model](04-operating-model.md) describes how
-these roles fit an organization.
+Also agree who approves access, maintains source information, reviews
+uncertain cases, and accepts remaining risk, and confirm those people have
+the time and authority to act. The [operating model](04-operating-model.md)
+explains which decisions each owner makes and where you need sign-off.
 
-## Dependencies and impacts
+## Record dependencies and impacts
 
 Upstream is what the agent relies on; downstream is who or what relies on its
 output.
@@ -106,10 +119,10 @@ output.
 Decide how missing or uncertain results are communicated before they affect
 another process.
 
-## Two readiness decisions
+## Agree the two readiness decisions
 
-Every agent faces two separate decisions. Agree on their criteria while
-defining the problem, not after building.
+Every agent faces two separate decisions. Agree their criteria now, while you
+define the problem, so nobody moves the bar after the build.
 
 ### Ready to test with users?
 
@@ -117,27 +130,44 @@ User acceptance testing checks whether representative users can complete real
 tasks.
 
 - Basic tests and evaluations meet the agreed entry criteria.
-- Important access and safety checks pass, and no known serious issue makes the
-  trial unsafe.
-- The trial uses an approved test environment and data. Users know the limits,
-  how to report problems, and who can stop the trial.
+- Important access and safety checks pass, and no known serious issue makes
+  the trial unsafe.
+- The trial uses an approved test environment and data. Users know the
+  limits, how to report problems, and who can stop the trial.
 
 ### Ready for production?
 
-The agent must be useful to users and safe to operate in its real environment.
+The agent must be useful to users and safe to operate in its real
+environment.
 
 - The business owner accepts the user-testing results, and the required
   quality, cost, response-time, and safety criteria pass.
-- Required access controls and protections are verified in the environment the
-  agent will run in, not only in testing.
-- Monitoring, support, stop, and recovery procedures are ready. Use begins with
-  a limited audience and is watched closely.
+- Required access controls and protections are verified in the environment
+  the agent will run in, not only in testing.
+- Monitoring, support, stop, and recovery procedures are ready. Use begins
+  with a limited audience and is watched closely.
 
-The second decision is recorded through the
-[production-readiness checklist](../agent-playbook/11-production-readiness.md).
+You record the second decision through the
+[production-readiness checklist](../agent-playbook/08-production-readiness.md).
 
-## Ready to move on
+## Common pitfalls
 
-The owner and developer agree on a brief that covers the job, success
-criteria, constraints, information and connections, risks, responsibilities,
-dependencies, and the criteria for both readiness decisions.
+- **A brief that only describes the happy path.** Without prohibited actions
+  and stopping conditions, there is nothing to test the limits against.
+- **Success defined after the demo.** Criteria chosen once results are in
+  tend to fit the results.
+- **Broad access "for now".** Extra sources and permissions granted in a
+  prototype become the production authority unless someone removes them.
+- **Owners in name only.** A named owner without time or authority cannot
+  approve access, answer alerts, or stop the agent.
+
+## Before you move on
+
+You are ready for [zero-trust principles](03-zero-trust-principles.md) when
+you and the owner agree on a brief that covers:
+
+- [ ] the job, users, success criteria, and cost, time, and volume limits;
+- [ ] the data and connections, with owners and handling rules;
+- [ ] risks, prohibited actions, and what needs review;
+- [ ] named owners and upstream and downstream dependencies; and
+- [ ] the criteria for both readiness decisions.

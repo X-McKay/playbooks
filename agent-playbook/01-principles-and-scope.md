@@ -1,83 +1,126 @@
 # 1. Principles and scope
 
-## Purpose
+This chapter is for developers building an agent that will run in production.
+It explains the ideas the rest of the playbook builds on, helps you pick the
+execution class that fits your agent, and says what "conforming" means. Read
+it first: most requirements in later chapters follow from the principles
+here, and the execution class you choose decides which of them apply to you.
 
-This playbook standardizes how teams design, implement, evaluate, deploy, and operate AI agents. Its primary goals are:
+## What this playbook is for
 
-- Predictable architecture across agent projects
-- Explicit trust, authorization, and side-effect boundaries
-- Durable recovery for long-running or state-changing work
-- Reproducible behavior and release decisions
-- Observable quality, safety, latency, and cost
-- Clear ownership throughout the lifecycle
+The playbook helps you build agents that behave predictably, are safe to give
+authority to, and can be operated by someone other than you. It aims for:
 
-## Scope
+- a predictable architecture from one agent project to the next;
+- explicit trust, authorization, and side-effect boundaries;
+- durable recovery for long-running or state-changing work;
+- reproducible behavior and release decisions;
+- observable quality, safety, latency, and cost; and
+- clear ownership throughout the agent's life.
 
-The standard applies to production agents regardless of the framework, language, or model provider used to build them, including agents exposed through APIs, user interfaces, background jobs, schedules, and event-driven workflows.
+## Where it applies
 
-In a multi-agent system, each agent MUST satisfy the agent contract independently. The composition is governed by the companion [Multi-Agent Systems Playbook](../multi-agent-playbook/README.md).
+The standard applies to production agents regardless of the framework,
+language, or model provider you use, and however the agent is exposed: APIs,
+user interfaces, background jobs, schedules, or event-driven workflows.
 
-This standard assumes the use case, problem brief, and ownership are already settled. The [Foundations](../foundations/README.md) guides cover those decisions and the [zero-trust principles](../foundations/03-zero-trust-principles.md) that the core principles below put into practice.
+If your agent is one member of a multi-agent system, it MUST still satisfy
+the agent contract on its own. The composition is governed by the companion
+[Multi-Agent Systems Playbook](../multi-agent-playbook/README.md).
+
+The playbook assumes you have already settled the use case, problem brief,
+and ownership. The [Foundations](../foundations/README.md) guides cover those
+decisions and the
+[zero-trust principles](../foundations/03-zero-trust-principles.md) that the
+principles below put into practice.
 
 ## Core principles
 
+Each principle is a design habit. Later chapters turn them into specific
+requirements.
+
 ### Declarative intent, typed enforcement
 
-Use a declarative agent specification (the Agent Spec) to declare identity, instructions, model defaults, retry budgets, timeouts, capabilities, and metadata. Use schema-validated types to enforce runtime inputs, dependencies, outputs, policies, and tool contracts.
+Declare what the agent is in a declarative agent specification (the Agent
+Spec): identity, instructions, model defaults, retry budgets, timeouts,
+capabilities, and metadata. Enforce what happens at runtime with
+schema-validated types for inputs, dependencies, outputs, policies, and tool
+contracts. The spec is easy to review; the types make sure reality matches it.
 
 ### Least capability
 
-An agent receives only the skills, tools, data, network access, and credentials needed for its purpose. Capability discovery is not authorization.
+Give the agent only the skills, tools, data, network access, and credentials
+its purpose needs. Being able to discover a capability is not permission to
+use it. Every extra capability is something an injected instruction or a model
+mistake can reach.
 
 ### Deterministic control, probabilistic assistance
 
-Use deterministic code for authorization, budget enforcement, approval, routing constraints, validation, and business invariants. Use the model for interpretation, synthesis, planning, and judgment within those boundaries.
+Use deterministic code for authorization, budget enforcement, approval,
+routing constraints, validation, and business invariants. Use the model for
+interpretation, synthesis, planning, and judgment inside those boundaries. If
+a rule must always hold, do not ask the model to remember it.
 
 ### Durable side effects
 
-Any agent that can modify external state MUST run on a durable execution engine. Model requests and I/O execute as durable steps; deterministic coordination executes in workflows.
+Any agent that can modify external state MUST run on a durable execution
+engine. Model requests and I/O execute as durable steps; deterministic
+coordination executes in workflows. This is what lets a crashed run resume
+without repeating or losing an action.
 
 ### Human control for consequential action
 
-Approval is bound to an exact action, arguments, actor, tenant, and policy version. A model cannot grant or infer approval.
+When a person must approve an action, the approval is bound to the exact
+action, arguments, actor, tenant, and policy version. A model cannot grant or
+infer approval.
 
 ### Evaluation before intuition
 
-Behavioral changes are accepted through evidence: deterministic tests, offline evals, trajectory checks, durability scenarios, and staged production observation.
+Accept behavioral changes on evidence: deterministic tests, offline evals,
+trajectory checks, durability scenarios, and staged production observation.
+A change that "looks better" in a few manual tries is not evidence.
 
 ### Quality-adjusted cost
 
-Optimize cost per successful, compliant outcome. A cheaper run that reduces task success or safety is not an optimization.
+Optimize cost per successful, compliant outcome. A cheaper run that lowers
+task success or safety is not an optimization.
 
 ### Observable by design
 
-Every production run can be attributed to a specific agent, configuration, model, skill set, tool set, worker build, and evaluation baseline.
+You should be able to attribute every production run to a specific agent,
+configuration, model, skill set, tool set, worker build, and evaluation
+baseline. Without that, you cannot explain a failure or compare releases.
 
 ## Execution classes
 
+The execution class describes how your agent's work runs. Pick the lowest
+class that covers what the agent can do; the most consequential tool you
+enable sets the floor.
+
 ### Ephemeral
 
-Use for short-lived, low-risk, request-response work.
+For short-lived, low-risk, request-response work such as classification,
+extraction, summarization, and read-only retrieval.
 
 - Durable execution is optional.
 - Tools MUST be read-only.
 - The agent MUST NOT create externally visible side effects.
-- Failure may require the caller to retry the run.
-
-Typical uses include classification, extraction, summarization, and read-only retrieval.
+- A failure may require the caller to retry the run.
 
 ### Durable
 
-Use for long-running work, recoverable processes, or any side effect.
+For long-running work, recoverable processes, or any side effect.
 
 - The run MUST execute inside a durable workflow.
-- Model, tool, MCP, database, filesystem, and network I/O MUST execute in durable steps.
-- Side-effecting durable steps MUST be idempotent or use stable idempotency keys.
+- Model, tool, MCP, database, filesystem, and network I/O MUST execute in
+  durable steps.
+- Side-effecting durable steps MUST be idempotent or use stable idempotency
+  keys.
 - Retry, timeout, cancellation, and compensation behavior MUST be explicit.
 
 ### Human-governed
 
-Use for consequential operations requiring accountable human review.
+For consequential operations that need accountable human review.
 
 - All durable requirements apply.
 - The workflow MUST pause before consequential action.
@@ -85,12 +128,41 @@ Use for consequential operations requiring accountable human review.
 - Approval MUST be recorded and bound to a canonical action hash.
 - Materially changed arguments MUST require new approval.
 
-## Conformance
+Best practices:
 
-A service conforms when:
+- **Start lower than you think you need.** A read-only ephemeral release
+  produces evaluation data and tool interfaces at little risk, and most of it
+  carries over when you add actions.
+- **Treat a class change as a new release decision.** Moving from ephemeral
+  to durable, or adding a consequential tool, changes your risk assessment
+  and evaluation plan, not just configuration.
 
-- All production agents satisfy the canonical contract.
-- All exposed tools and skills satisfy their respective standards.
-- Execution class and risk controls are enforced at startup and runtime.
-- Required evaluation and production gates pass.
-- Exceptions are documented, approved, and unexpired.
+## What conformance means
+
+Your service conforms when:
+
+- all production agents satisfy the [canonical contract](03-agent-contract.md);
+- all exposed tools and skills satisfy their chapters
+  ([tools](05-tools.md), [skills](04-skills.md));
+- execution class and risk controls are enforced at startup and at runtime;
+- required evaluation and production gates pass; and
+- exceptions are documented, approved, and unexpired.
+
+## Common pitfalls
+
+- **Letting the prompt enforce policy.** An instruction such as "never refund
+  more than the limit" is a hope, not a control. Put the limit in code.
+- **Treating discovered tools as granted tools.** A tool that is reachable is
+  not therefore allowed; allowlist explicitly.
+- **Choosing ephemeral for an agent that writes.** If any enabled tool changes
+  external state, the agent is at least durable.
+- **Approving intent instead of an action.** "Yes, go ahead" with no bound
+  arguments lets the agent change what it does after approval.
+
+## Before you move on
+
+- [ ] You can state the agent's purpose and the least capability it needs.
+- [ ] You have chosen an execution class that covers its most consequential
+  tool.
+- [ ] Every rule that must always hold is enforced in deterministic code.
+- [ ] You know which later chapters apply to your class.

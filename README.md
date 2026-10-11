@@ -24,14 +24,15 @@ you are deciding whether or how to adopt agents.
 
 ### Agent Playbook
 
-The [Agent Playbook](agent-playbook/README.md) is a standard for production AI
-agents. It covers:
+The [Agent Playbook](agent-playbook/README.md) is a guide and standard for
+production AI agents, in two parts:
 
-- Agent specifications and typed contracts
-- Skills and tools, and how to classify their effects
-- Durable execution and human approval
-- Evaluation, observability, and cost controls
-- Security, governance, risk assessment, and production readiness
+- **Core**, what every agent needs to ship: principles, reference
+  architecture, the agent contract, skills, tools, evaluation, observability,
+  and production readiness.
+- **Advanced concepts**, what you add as your agent takes on more: durable
+  execution and human approval, cost optimization, security and governance,
+  risk assessment, and implementation patterns.
 
 ### Multi-Agent Systems Playbook
 

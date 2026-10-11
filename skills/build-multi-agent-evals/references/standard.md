@@ -1,6 +1,6 @@
 # Multi-Agent Evaluation Standard
 
-This file condenses [Multi-Agent Systems Playbook chapter 7, Evaluation standard](https://github.com/X-McKay/playbooks/blob/main/multi-agent-playbook/07-evaluation.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+This file condenses [Multi-Agent Systems Playbook chapter 7, Evaluation](https://github.com/X-McKay/playbooks/blob/main/multi-agent-playbook/07-evaluation.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
 
 Use a layered suite:
 

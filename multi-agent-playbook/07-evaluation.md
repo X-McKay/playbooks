@@ -1,13 +1,14 @@
-# 7. Evaluation standard
+# 7. Evaluation
 
-A multi-agent system is incomplete until its claimed composition benefit,
-member behavior, interaction contracts, emergent failure modes, operational
-limits, and recovery behavior are represented in reproducible tests and evals.
+This guide is for developers who need to show that a multi-agent system
+works, not just that its members do. Every member still needs the evaluation
+the Agent Playbook's [evaluation](../agent-playbook/06-evaluation.md) chapter
+requires, but passing member evals does not demonstrate that the composition
+works. A system is incomplete until its claimed composition benefit, member
+behavior, interaction contracts, emergent failure modes, operational limits,
+and recovery behavior are represented in reproducible tests and evals.
 
-Passing member-agent evals is necessary but does not demonstrate that the
-composition works.
-
-## Evaluation layers
+## Test each layer with the right tool
 
 | Layer | Purpose | Typical execution |
 | --- | --- | --- |
@@ -20,30 +21,30 @@ composition works.
 | Adversarial system evals | Cross-agent attacks and emergent failure | Realistic sandbox |
 | Online evals | Drift, graph behavior, and unknown failures | Sampled production |
 
-Deterministic properties MUST use deterministic tests. A model judge is not an
-acceptable evaluator for authorization, admission, tenant isolation, approval,
-schema validity, budget enforcement, idempotency, or termination.
+Deterministic properties MUST use deterministic tests. A model judge is not
+an acceptable evaluator for authorization, admission, tenant isolation,
+approval, schema validity, budget enforcement, idempotency, or termination.
+Where you do use a judge, the Agent Playbook's rules for LLM judges apply.
 
-## Admission baseline
+## Beat a simpler baseline
 
-The multi-agent admission test is executable. The evaluation plan identifies a
-reasonable simpler baseline, normally:
+The multi-agent admission test is executable. The evaluation plan identifies
+a reasonable simpler baseline, normally one of:
 
-- A deterministic implementation
-- One agent with the same underlying tools and evidence
-- One agent with deferred skills rather than specialist agents
-- The previous static composition when proposing a dynamic one
+- a deterministic implementation;
+- one agent with the same underlying tools and evidence;
+- one agent with deferred skills rather than specialist agents; or
+- the previous static composition, when proposing a dynamic one.
 
 Compare the system and baseline on task success, hard-gate safety, latency,
-cost, operational complexity, and the specific claimed benefits. The comparison
-controls datasets, tools, permissions, model families where practical, and run
-counts.
+cost, operational complexity, and the specific claimed benefits. Control
+datasets, tools, permissions, model families where practical, and run counts.
 
-A system SHOULD NOT proceed merely because it wins one quality metric. The
-decision records whether improvement justifies added failure modes, operational
+A system SHOULD NOT proceed merely because it wins one quality metric. Record
+whether the improvement justifies the added failure modes, operational
 burden, and cost.
 
-## Dataset structure
+## Organize datasets by what can go wrong
 
 ```text
 evals/systems/<system_name>/
@@ -73,13 +74,13 @@ evals/systems/<system_name>/
 └── baselines/
 ```
 
-Every confirmed system defect becomes a sanitized regression case. Cases carry
-stable IDs, risk-scenario tags, topology and capability tags, expected
+Every confirmed system defect becomes a sanitized regression case. Cases
+carry stable IDs, risk-scenario tags, topology and capability tags, expected
 invariants, required branches, and dataset provenance.
 
 ## Hard gates
 
-The following are binary release gates when applicable:
+These are binary release gates when applicable:
 
 - Every member and interaction is admitted by current policy.
 - No undeclared edge or incompatible schema is used.
@@ -87,150 +88,117 @@ The following are binary release gates when applicable:
 - No prohibited data crosses an interaction boundary.
 - No consequential action executes without valid bound approval.
 - Duplicate, retried, or concurrent work creates no duplicate side effect.
-- Root and child budgets, concurrency, depth, fan-out, rounds, and deadlines hold.
+- Root and child budgets, concurrency, depth, fan-out, rounds, and deadlines
+  hold.
 - Cancellation and kill switches stop new dispatch and propagate correctly.
 - Required members, evidence, and reviews cannot be silently skipped.
 - System state reaches an accurate terminal or escalation status.
 - Durable replay passes for supported histories.
 - Critical system-risk cases have zero known failures.
 
-One hard-gate failure blocks release. Average member quality, majority votes, or
-high aggregate task success cannot compensate for it.
+One hard-gate failure blocks release. Average member quality, majority votes,
+or high aggregate task success cannot compensate for it.
 
-## Outcome evaluation
+## Judge the outcome, not the members
 
-Measure the end-to-end product outcome rather than treating member completion as
-success. Metrics may include:
+Measure the end-to-end product outcome rather than treating member completion
+as success. Alongside the Agent Playbook's quality metrics, consider evidence
+completeness, process adherence, conflict recognition and resolution quality,
+user effort and time to a useful outcome, recovery from incomplete or failed
+work, and cost and latency per successful, compliant outcome.
 
-- Task success and factual accuracy
-- Groundedness and evidence completeness
-- Policy and process adherence
-- Conflict recognition and resolution quality
-- Calibrated uncertainty and escalation
-- User effort and time to useful outcome
-- Recovery from incomplete or failed work
-- Cost and latency per successful, compliant outcome
+The final evaluator receives the authoritative system result, relevant
+evidence, and a normalized execution summary. It MUST NOT infer success from
+an agent's self-reported status.
 
-The final evaluator receives the authoritative system result, relevant evidence,
-and normalized execution summary. It MUST NOT infer success from an agent's
-self-reported status.
+## Evaluate the path through the graph
 
-## Coordination and trajectory evaluation
+Evaluate the system's path as well as its answer:
 
-Evaluate the system path as well as its answer:
+- appropriate topology, member, and role selection;
+- correct and minimal delegation;
+- correct edge, schema, arguments, authority, and data context;
+- handoff completeness and unambiguous ownership;
+- required ordering, and approval before effects;
+- useful parallelism without avoidable duplication;
+- preservation of evidence, uncertainty, and dissent;
+- correct aggregation and conflict handling;
+- no ping-pong, deadlock, livelock, or premature termination; and
+- graceful budget exhaustion, failure, and escalation.
 
-- Appropriate topology, member, and role selection
-- Correct and minimal delegation
-- Correct edge, schema, arguments, authority, and data context
-- Handoff completeness and unambiguous ownership
-- Required ordering and approval before effects
-- Useful parallelism without avoidable duplication
-- Preservation of evidence, uncertainty, and dissent
-- Correct aggregation and conflict handling
-- No ping-pong, deadlock, livelock, or premature termination
-- Graceful budget exhaustion, failure, and escalation
+Prefer invariants and allowed partial orders over one exact trace, because
+several safe execution paths may be valid.
 
-Prefer invariants and allowed partial orders over one exact trace because several
-safe execution paths may be valid.
+## Measure what each topology risks
 
-## Topology-specific evaluation
+Each [topology](02-reference-architecture.md) invites its own failures:
 
-### Supervisor and worker
+| Topology | Measure |
+| --- | --- |
+| Supervisor and worker | Routing precision and recall, unnecessary delegation, unavailable-member behavior, coordinator bottlenecks, specialist misuse |
+| Fan-out and gather | Coverage gain, branch diversity, redundant work, stragglers, merge correctness, partial results, whether parallelism improves wall-clock time |
+| Producer and reviewer | Reviewer detection and false-rejection rates, correlated failures, rubber-stamping, correction effectiveness, retry loops |
+| Quorum or voting | Error correlation, calibration, tie policy, minority correctness, aggregation sensitivity, performance against the strongest single member |
+| Hierarchy and handoff | Information loss at every level, summary fidelity, ownership transfer, compounded latency, whether escalation reaches the correct authority |
+| Blackboard and event-driven | Stale reads, conflicting writes, provenance loss, poisoning, duplicate or reordered events, feedback loops, convergence, recovery after consumer outage |
+| Recursive task trees | Decomposition quality, useful versus redundant nodes, depth and fan-out distributions, subtree cancellation, synthesis completeness, worst-case resource expansion |
+| Dynamic membership and allocation | Admission correctness, compatibility, registry failure, substitution, selection regret, malicious or misleading capability claims, reproducibility, quarantine, behavior when no valid member is available |
 
-Measure routing precision and recall, unnecessary delegation, unavailable-member
-behavior, coordinator bottlenecks, and specialist misuse.
-
-### Fan-out and gather
-
-Measure coverage gain, branch diversity, redundant work, stragglers, merge
-correctness, partial results, and whether parallelism improves wall-clock time.
-
-### Producer and reviewer
-
-Measure reviewer detection and false-rejection rates, correlated failures,
-rubber-stamping, correction effectiveness, and retry loops.
-
-### Quorum or voting
-
-Measure error correlation, calibration, tie policy, minority correctness,
-aggregation sensitivity, and performance against the strongest single member.
-
-### Hierarchy and handoff
-
-Measure information loss at every level, summary fidelity, ownership transfer,
-compounded latency, and whether escalation reaches the correct authority.
-
-### Blackboard and event-driven systems
-
-Measure stale reads, conflicting writes, provenance loss, poisoning, duplicate
-or reordered events, feedback loops, convergence, and recovery after consumer
-outage.
-
-### Recursive task trees
-
-Measure decomposition quality, useful versus redundant nodes, depth and fan-out
-distributions, subtree cancellation, synthesis completeness, and worst-case
-resource expansion.
-
-### Dynamic membership and allocation
-
-Measure admission correctness, compatibility, registry failure, substitution,
-selection regret, malicious or misleading capability claims, reproducibility,
-quarantine, and behavior when no valid member is available.
-
-## Fault injection
+## Inject faults
 
 System suites SHOULD inject:
 
-- Member timeout, crash, malformed output, and budget exhaustion
-- Slow or unavailable registry, model, tool, queue, or artifact store
-- Duplicate, missing, delayed, and reordered messages
-- Stale graph version or member manifest mismatch
-- Conflicting evidence and simultaneous writes
-- Worker loss before and after dispatch or side effect
-- Approval expiry or argument tampering
-- Telemetry and audit export failure
-- Quarantine or kill switch during active work
+- member timeout, crash, malformed output, and budget exhaustion;
+- a slow or unavailable registry, model, tool, queue, or artifact store;
+- duplicate, missing, delayed, and reordered messages;
+- a stale graph version or member manifest mismatch;
+- conflicting evidence and simultaneous writes;
+- worker loss before and after dispatch or side effect;
+- approval expiry or argument tampering;
+- telemetry and audit export failure; and
+- quarantine or a kill switch during active work.
 
-Assertions cover final status, state integrity, budget reconciliation, side
-effects, recovery, alerts, and evidence retained for investigation.
+Assert on final status, state integrity, budget reconciliation, side effects,
+recovery, alerts, and the evidence retained for investigation.
 
-## Adversarial evaluation
+## Attack across agents
 
 Include cross-agent scenarios for:
 
-- Direct and indirect prompt injection propagation
-- Instruction, identity, approval, and authority laundering
-- Confused-deputy use of a more privileged member
-- Shared-memory or blackboard poisoning
-- Data exfiltration through summaries, evidence, bids, or error messages
-- Collusion, false consensus, and reviewer capture
-- Sybil-style dynamic members or registry substitution
-- Denial-of-wallet through recursion, fan-out, retries, or event loops
-- Malicious result timing intended to bypass cancellation or policy
+- direct and indirect prompt injection propagation;
+- instruction, identity, approval, and authority laundering;
+- confused-deputy use of a more privileged member;
+- shared-memory or blackboard poisoning;
+- data exfiltration through summaries, evidence, bids, or error messages;
+- collusion, false consensus, and reviewer capture;
+- Sybil-style dynamic members or registry substitution;
+- denial-of-wallet through recursion, fan-out, retries, or event loops; and
+- malicious result timing intended to bypass cancellation or policy.
 
 Adversarial inputs remain untrusted throughout the graph. Sanitizing or
 summarizing them through another agent does not make them trusted.
 
-## Ablation and topology experiments
+## Prove each part earns its place
 
-For material changes, compare:
+For material changes, run ablation and topology experiments that compare:
 
-- The system against its admission baseline
-- The system with each optional member removed
-- Static and dynamic routing
-- Sequential and parallel execution
-- Alternative aggregation or conflict policies
-- Homogeneous and intentionally diverse member configurations
-- Current and candidate limits for depth, fan-out, rounds, and concurrency
+- the system against its admission baseline;
+- the system with each optional member removed;
+- static and dynamic routing;
+- sequential and parallel execution;
+- alternative aggregation or conflict policies;
+- homogeneous and intentionally diverse member configurations; and
+- current and candidate limits for depth, fan-out, rounds, and concurrency.
 
-Ablation identifies whether each member and architectural mechanism contributes
-enough value to justify its cost and risk.
+Ablation shows whether each member and mechanism contributes enough value to
+justify its cost and risk.
 
-## Repeated runs and distributions
+## Repeat runs and report distributions
 
-Repeat cases affected by models, routing, concurrency, arrival order, dynamic
-selection, reviewer behavior, or stochastic decomposition. Report:
+Follow the Agent Playbook's
+[multi-run evaluation](../agent-playbook/06-evaluation.md#multi-run-evaluation),
+and also repeat cases affected by routing, concurrency, arrival order,
+dynamic selection, reviewer behavior, or stochastic decomposition. Report:
 
 ```text
 end-to-end and hard-gate pass rates
@@ -245,7 +213,8 @@ Rare high-impact failures remain visible; aggregate means MUST NOT hide them.
 
 ## Release policy
 
-A system policy declares absolute and relative requirements, for example:
+Like an agent's [release gates](../agent-playbook/06-evaluation.md#release-gates),
+a system policy declares absolute and relative requirements, for example:
 
 ```yaml
 hard_gates:
@@ -270,19 +239,20 @@ admission:
   maximum_cost_multiplier: 2.0
 ```
 
-Thresholds are system-specific. Release fails on a hard gate, missed absolute
-threshold, excessive regression, absent required scenario coverage, or missing
-provenance.
+Thresholds are system-specific. Release fails on a hard gate, a missed
+absolute threshold, excessive regression, absent required scenario coverage,
+or missing provenance.
 
-## Online evaluation
+## Watch for graph drift online
 
-Online evaluation is asynchronous, side-effect-free, privacy controlled, and
-version attributed. Sampling is stratified by topology, graph version, role,
-interaction, depth, member selection, outcome, risk scenario, and degraded mode.
+Online evaluation follows the Agent Playbook's rules: asynchronous,
+side-effect-free, privacy controlled, and version attributed. Stratify
+sampling by topology, graph version, role, interaction, depth, member
+selection, outcome, risk scenario, and degraded mode.
 
 Monitor graph drift as well as model drift. Unexpected members, edges, depth,
-fan-out, role assignment, selection distribution, or termination status require
-investigation even when final-answer quality appears stable.
+fan-out, role assignment, selection distribution, or termination status
+require investigation even when final-answer quality appears stable.
 
 ## Provenance
 
@@ -299,3 +269,19 @@ baseline and ablation configuration
 run count, concurrency, timing, and random seeds where relevant
 case-level outcomes, traces, latency, usage, and cost
 ```
+
+## Common pitfalls
+
+- **Adding up member scores.** Every member passed, and nobody tested the
+  handoffs where the system failed.
+- **Trusting the coordinator's report.** The evaluator read "completed" from
+  an agent instead of the authoritative result.
+- **Watching answers, not the graph.** Quality held steady while new members
+  and edges appeared in production.
+
+## Before you move on
+
+- [ ] The system beats a simpler baseline by enough to justify its cost.
+- [ ] Deterministic properties have deterministic tests, not judges.
+- [ ] Hard-gate, coordination, topology, fault, and adversarial cases exist.
+- [ ] Ablations and repeated runs back each release decision.

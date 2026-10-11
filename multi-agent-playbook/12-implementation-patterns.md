@@ -1,18 +1,21 @@
 # 12. Implementation patterns
 
-This chapter extends the Agent Playbook's
-[implementation patterns](../agent-playbook/12-implementation-patterns.md) with
-a governed system package. It explains how the parts of a conforming
-multi-agent system fit together and the order in which they are validated. It
-deliberately prescribes no language, SDK, or runtime; teams adapt the patterns
-to the pinned versions of whatever agent runtime and durable execution engine
-they adopt.
+This chapter is for developers building a conforming multi-agent system. It
+shows how the parts fit together as one governed system package and the order
+in which they are assembled and validated. It extends the Agent Playbook's
+[implementation patterns](../agent-playbook/13-implementation-patterns.md),
+which still apply to every member.
+
+The patterns prescribe no language, SDK, or runtime. Adapt them to the pinned
+versions of whatever agent runtime and durable execution engine you adopt. The
+idea that runs through all of them: models propose, and deterministic code
+decides, records, and dispatches.
 
 ## Package
 
-A governed system package keeps member agents, the system composition, durable
-coordination, runtime services, and deterministic policy in clearly separated
-areas:
+Keep member agents, the system composition, durable coordination, runtime
+services, and deterministic policy in clearly separated areas, so a reviewer
+can see at a glance what can change behavior:
 
 ```text
 <organization package>/
@@ -53,7 +56,7 @@ their instructions, tools, or specs into the composition.
 
 ## Typed system metadata and contracts
 
-The System Spec is parsed into schema-validated types before anything else
+Parse the System Spec into schema-validated types before anything else
 happens. System metadata covers the contract version, owners, version,
 execution class (`ephemeral`, `durable`, or `human_governed`), governance tier
 (`low`, `medium`, `high`, or `critical`), risk assessment, threat model,
@@ -63,8 +66,8 @@ runs, delegation depth, parallel agents, rounds, model requests, tool calls,
 input and output tokens, cost, and deadline.
 
 Member, role, interaction, topology, state, and termination sections are
-validated by their own typed contracts. Topology-specific fields are modeled as
-a discriminated union keyed by the topology type rather than one loose mapping
+validated by their own typed contracts. Model topology-specific fields as a
+discriminated union keyed by the topology type rather than one loose mapping
 with many optional keys.
 
 Every interaction has concrete input and output types. A shared envelope, such
@@ -81,10 +84,10 @@ this order:
 1. Load the System Spec and validate its metadata.
 2. Resolve the system's delegation, data-flow, termination, approval, and
    budget policies from the policy registry.
-3. For each member, resolve the pinned capability manifest from the agent registry,
-   verify that it conforms and is compatible with the system's execution class
-   and governance tier, and build a member restricted to the intersection of
-   its own allowlists and the system's restrictions.
+3. For each member, resolve the pinned capability manifest from the agent
+   registry, verify that it conforms and is compatible with the system's
+   execution class and governance tier, and build a member restricted to the
+   intersection of its own allowlists and the system's restrictions.
 4. Build the directed interaction graph and validate it against members,
    policies, and limits.
 5. Verify the effective execution class and governance-tier floors.
@@ -96,20 +99,23 @@ no model or external-service I/O and fails closed on any inconsistency.
 
 ## Deterministic policy boundary
 
-Every proposed delegation passes through one deterministic authorization
-function before dispatch. It requires that the requested edge exists for the
-named interaction, caller, and callee; validates the input against the edge's
-input contract; and computes effective scopes as the intersection of the edge
-maximum, the caller's delegable scopes, the callee's maximum, the authenticated
-actor's scopes, and the scopes allowed by current workflow state. If the edge's
-minimum required scopes are not contained in that intersection, the delegation
-is denied. Only then does it reserve the edge's budget grant under the stable
-delegation ID and return an authorized delegation carrying the effective scopes
-and grant.
+Route every proposed delegation through one deterministic authorization
+function before dispatch. It:
+
+1. requires that the requested edge exists for the named interaction, caller,
+   and callee;
+2. validates the input against the edge's input contract;
+3. computes effective scopes as the intersection of the edge maximum, the
+   caller's delegable scopes, the callee's maximum, the authenticated actor's
+   scopes, and the scopes allowed by current workflow state;
+4. denies the delegation if the edge's minimum required scopes are not
+   contained in that intersection; and only then
+5. reserves the edge's budget grant under the stable delegation ID and returns
+   an authorized delegation carrying the effective scopes and grant.
 
 The complete policy also checks tenant, purpose, data classification, graph
-version, member health, deadline, depth, concurrency, approval, and kill-switch
-state.
+version, member health, deadline, depth, concurrency, approval, and
+kill-switch state.
 
 ## Durable workflow
 
@@ -135,7 +141,7 @@ coordinator does not directly invoke undeclared agents.
 
 ## Dynamic admission
 
-Admitting a member during a run is split between a durable step and the
+Split admitting a member during a run between a durable step and the
 workflow. The durable step authenticates the registry and gathers current
 candidate evidence. The workflow then evaluates a deterministic admission
 policy over that recorded evidence, the current graph, the remaining limits,
@@ -153,11 +159,13 @@ branch runs, then runs the authorized branches concurrently as durable steps,
 capturing failures as values rather than aborting the gather. Results are
 normalized in branch order and accepted under the declared aggregation policy.
 
-Workflow code uses only the concurrency primitives the durable execution engine
-guarantees to be replay-safe, with engine behavior pinned. Logical branch
-order, not completion order, governs aggregation.
+Workflow code uses only the concurrency primitives the durable execution
+engine guarantees to be replay-safe, with engine behavior pinned. Logical
+branch order, not completion order, governs aggregation.
 
 ## Human-governed action
+
+The approval flow binds a human decision to one exact action and composition:
 
 ```text
 members produce evidence and a typed action proposal
@@ -189,9 +197,9 @@ admission and graph-version records.
 
 ## Validation order
 
-Validation proceeds from the cheapest, most deterministic checks to the most
-expensive, integrated evidence. A later stage never compensates for a failed
-earlier stage:
+Validate from the cheapest, most deterministic checks to the most expensive,
+integrated evidence. A later stage never compensates for a failed earlier
+stage:
 
 1. Schema validation of the System Spec, policies, and templates.
 2. Semantic validation of topology, membership, pinned versions, execution and
@@ -210,33 +218,60 @@ earlier stage:
 
 ## Local development
 
-Provide:
+Start from the member
+[local development environment](../agent-playbook/13-implementation-patterns.md),
+including non-production credentials and strict spend limits. For a system,
+also provide:
 
-- A development durable execution environment
-- Mock and sandbox member agents, registries, tools, and external services
-- Non-production credentials and strict spend limits
-- Deterministic model and member doubles for workflow tests
-- Failure-injection controls for members, queues, events, and stores
-- OpenTelemetry collection and graph-aware trace inspection
-- Fast member, interaction, and system smoke evals
+- a development durable execution environment;
+- mock and sandbox member agents, registries, tools, and external services;
+- deterministic model and member doubles for workflow tests;
+- failure-injection controls for members, queues, events, and stores;
+- OpenTelemetry collection and graph-aware trace inspection; and
+- fast member, interaction, and system smoke evals.
 
-Tooling SHOULD let a developer validate the system package, render its
-interaction graph, run system evals, and check a release report against the
-release policy and baseline without deploying.
+Tooling SHOULD let you validate the system package, render its interaction
+graph, run system evals, and check a release report against the release
+policy and baseline without deploying.
 
 ## Initial adoption path
 
-1. Inventory existing members, owners, tools, identities, data, and side effects.
+If you are bringing an existing set of cooperating agents into conformance,
+the [operating model](../foundations/04-operating-model.md#bringing-existing-agents-into-conformance)
+describes staged adoption in general. For a system, work in this order:
+
+1. Inventory existing members, owners, tools, identities, data, and side
+   effects.
 2. Draw the actual interaction and trust graph.
 3. Run the admission test against a simpler baseline.
 4. Create valid Agent Specs and assessments for every member.
 5. Introduce the System Spec, typed envelopes, and deterministic policies.
-6. Move long-running and state-changing coordination behind a durable execution
-   engine.
+6. Move long-running and state-changing coordination behind a durable
+   execution engine.
 7. Add root budgets, capacity limits, termination, and correlated telemetry.
 8. Add interaction, topology, adversarial, durability, and ablation evals.
 9. Complete the system risk assessment and production-readiness checklist.
 10. Start with static membership; enable evaluated dynamic mechanisms where
     their measured benefit justifies the added control surface.
 
-For one opinionated, zero-trust implementation of these patterns, see [Zetra](https://github.com/X-McKay/zetra).
+## Common pitfalls
+
+- **Letting the coordinator call agents directly.** Routing decisions bypassed
+  the policy boundary, so nothing checked the edge or the scopes.
+- **Querying the registry from workflow code.** Replay picked up today's
+  registry state and diverged from the recorded run.
+- **Aggregating in arrival order.** The same inputs produced different
+  outcomes depending on which branch finished first.
+- **Copying member specs into the system.** The composition silently forked
+  from the members' reviewed contracts.
+
+## Before you move on
+
+- [ ] The factory builds the system from pinned, reviewed artifacts and fails
+  closed.
+- [ ] Every delegation passes one deterministic authorization function.
+- [ ] Workflow code reads only the recorded manifest and replays cleanly.
+- [ ] You can run the validation order locally, without deploying.
+
+For one opinionated, zero-trust implementation of these patterns, see
+[Zetra](https://github.com/X-McKay/zetra).

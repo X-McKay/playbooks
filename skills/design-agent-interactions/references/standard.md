@@ -1,6 +1,6 @@
 # Agent Interaction Standard
 
-This file condenses [Multi-Agent Systems Playbook chapter 5, Delegation and interaction standard](https://github.com/X-McKay/playbooks/blob/main/multi-agent-playbook/05-delegation-and-interactions.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+This file condenses [Multi-Agent Systems Playbook chapter 5, Delegation and interactions](https://github.com/X-McKay/playbooks/blob/main/multi-agent-playbook/05-delegation-and-interactions.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
 
 Each interaction declares a stable ID, caller, callee, mode, input and output schema, policy reference, maximum calls, timeout, failure behavior, and observability correlation.
 

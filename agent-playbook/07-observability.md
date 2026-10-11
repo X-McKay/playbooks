@@ -1,0 +1,191 @@
+# 7. Observability
+
+This chapter is for developers who will run and debug an agent in
+production: what telemetry must answer, how to correlate it, and what to keep
+out of it.
+
+Observe the agent as an application, not merely as model calls. The guidance
+is vendor-neutral and based on OpenTelemetry. Any backend that accepts
+OpenTelemetry data and meets the access, redaction, and retention
+requirements below is acceptable; no specific backend is required.
+
+## Objectives
+
+Start from the questions you will be asked during an incident or a cost
+review. Operators must be able to determine:
+
+- Which agent, version, model, skills, and tools handled a request
+- What the agent attempted and where time and money went
+- Which retries occurred and why
+- Whether a workflow resumed after failure
+- Whether approval was required and valid
+- Whether policy and budgets were respected
+- Whether the result was successful and reproducible
+
+## Telemetry types
+
+Production services MUST provide:
+
+- Distributed traces for execution flow
+- Metrics for aggregate health, quality, performance, and cost
+- Structured logs for diagnostics
+- Audit records for consequential operations
+- Evaluation results for behavioral quality
+
+Ordinary telemetry is not a substitute for a tamper-resistant audit record.
+
+## Correlation
+
+The agent framework typically emits agent, model, and tool spans, while the
+durable execution engine emits workflow and durable-step telemetry. Because
+these may execute in different processes and at different times, every span
+MUST also carry stable logical correlation identifiers.
+
+Required resource and run attributes include:
+
+```text
+service.name
+service.version
+deployment.environment.name
+git.commit.sha
+worker.build_id
+agent.name
+agent.version
+agent.contract_version
+agent.manifest_id
+agent.execution_class
+agent.governance_tier
+agent.run_id
+agent.request_id
+workflow.namespace
+workflow.queue
+workflow.type
+workflow.id
+workflow.run_id
+```
+
+Model spans SHOULD use applicable OpenTelemetry generative-AI semantic
+conventions and record provider, request and response model, operation,
+input tokens, output tokens, cached tokens, request number, retry count, and
+estimated cost.
+
+Tool spans record tool name, toolset ID, effect, call ID, durable-step
+attempt, outcome, duration, authorization result, retry safety, and whether
+idempotency was applied.
+
+## Outcomes
+
+Normalize run outcomes so that dashboards and alerts can count them the same
+way across agents:
+
+```text
+success
+needs_information
+escalated
+rejected
+cancelled
+budget_exhausted
+timeout
+policy_blocked
+failed_transient
+failed_permanent
+partial_effect
+compensated
+```
+
+Provider-specific errors map to a stable internal category while retaining
+the original class in restricted diagnostics.
+
+## Metrics
+
+Track at least:
+
+| Area | Metrics |
+| --- | --- |
+| Reliability | Runs, errors, duration, timeouts, cancellations, retries, compensations |
+| Models | Requests, duration, errors, tokens, retries, cost |
+| Tools | Calls, duration, errors, retries, authorization denials, output bytes |
+| Approval | Requested, approved, rejected, expired, wait duration, tampering |
+| Quality | Task success, groundedness, policy adherence, trajectory score |
+| Cost | Total cost, cost per run, cost per successful compliant outcome |
+
+Metrics MUST NOT use request IDs, user IDs, workflow IDs, raw prompts, URLs,
+arbitrary tenant IDs, or error messages as labels. Put high-cardinality
+values in traces or restricted logs.
+
+## Prompts, completions, and redaction
+
+Prompts, completions, and tool payloads are the most useful debugging data
+and the most sensitive. Prompt and completion capture MUST be off by default
+in production. Enabling it requires a documented purpose, approval, data
+classification, redaction, access controls, retention, deletion, sampling,
+and applicable regional review.
+
+Redaction MUST occur before export and cover credentials, headers, cookies,
+personal identifiers, customer content, connection strings, signed URLs,
+tool inputs and outputs, workflow and durable-step payloads, and sensitive
+exception messages.
+
+When content cannot be retained, record a safe hash, size, content type,
+template version, and whether redaction was applied.
+
+## Audit
+
+Approval, consequential tools, authorization overrides, policy changes,
+production promotions, manual workflow intervention, data export, and
+compensation require audit records containing actor, action, target, time,
+workflow and agent identity, approval reference, policy version, canonical
+argument hash, result, and idempotency key.
+
+Audit storage SHOULD be append-only or tamper-evident.
+
+## Sampling and retention
+
+- Aggregate metrics continuously.
+- Retain errors, approval events, and consequential actions at 100%.
+- Sample ordinary successful traces by volume.
+- Independently sample online evals.
+- Apply data-specific retention and deletion policies.
+
+## Dashboards
+
+Every production agent needs dashboards for:
+
+- Operational health and stuck workflows
+- Model, skill, and tool behavior
+- Quality and safety trends
+- Cost, budgets, and cache effectiveness
+
+## Alerts
+
+Urgently alert on unapproved consequential action, cross-tenant access,
+sensitive-data leakage, duplicate side effects, audit failure, worker or
+queue outage, and critical policy violation.
+
+Use lower-urgency alerts for quality regression, token or cost growth, retry
+increases, cache collapse, latency SLO burn, and unexpected skill-loading
+changes.
+
+## Service objectives
+
+Each agent declares availability, completion rate, active-processing
+latency, maximum workflow duration, policy adherence, cost per success, and
+approval wait targets. Human waiting time is measured separately from active
+processing, so a slow approver does not look like a slow agent.
+
+## Common pitfalls
+
+- **Tracing only model calls.** You see tokens but not which workflow, tool,
+  or approval a call belonged to.
+- **Turning on full capture to debug.** It is quick, and it leaves a
+  sensitive data store behind. Record hashes and sizes first.
+- **Relying on traces as the audit trail.** Sampling and retention will
+  delete the record you need.
+
+## Before you move on
+
+- [ ] Every span carries the agent and workflow correlation attributes.
+- [ ] Prompt and completion capture is off by default, and redaction runs
+  before export.
+- [ ] Metric labels contain no IDs, prompts, URLs, or error messages.
+- [ ] Consequential actions write audit records to tamper-evident storage.

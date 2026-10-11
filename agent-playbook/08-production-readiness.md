@@ -1,6 +1,18 @@
-# 11. Production readiness
+# 8. Production readiness
 
-An accountable owner completes and approves this checklist before production launch.
+Use this checklist before an agent's first production launch. It collects the
+earlier chapters' requirements in one place. Work through it as the
+developer, linking evidence for each item; an accountable owner then
+completes and approves it before production launch. An unchecked item is
+either a blocker or a recorded
+[exception](11-security-and-governance.md#exceptions-and-review).
+
+Every agent needs a governance tier from a
+[risk assessment](12-risk-assessment.md), even a read-only one. For a
+low-risk agent the assessment can be short: list its scenarios, show that
+none is material above low, and record who accepted it. Items that depend on
+[Advanced concepts](README.md#part-2-advanced-concepts), such as durable
+execution, apply when your agent uses them.
 
 ## Contract
 
@@ -34,7 +46,8 @@ An accountable owner completes and approves this checklist before production lau
 - [ ] Cancellation and compensation are defined.
 - [ ] Payloads and histories are bounded.
 - [ ] Replay tests pass.
-- [ ] A build that can continue in-flight workflows stays available during rollout.
+- [ ] A build that can continue in-flight workflows stays available during
+  rollout.
 
 ## Evaluation
 
@@ -75,7 +88,8 @@ An accountable owner completes and approves this checklist before production lau
 - [ ] Residual risks have treatments, owners, acceptance, and review dates.
 - [ ] Threat model is current.
 - [ ] Required security, privacy, domain, and risk reviews are complete.
-- [ ] Credentials, storage, filesystem, and network access are least privilege.
+- [ ] Credentials, storage, filesystem, and network access are least
+  privilege.
 - [ ] MCP servers and dependencies are approved and pinned.
 - [ ] Human approval is authenticated and tamper-tested.
 - [ ] Kill switches are tested.
@@ -84,13 +98,45 @@ An accountable owner completes and approves this checklist before production lau
 
 ## Operations
 
-- [ ] Staging, shadow, canary, and promotion criteria match the governance tier.
+- [ ] Staging, shadow, canary, and promotion criteria match the governance
+  tier.
 - [ ] On-call and escalation ownership are established.
 - [ ] Provider and dependency failures are tested.
 - [ ] Worker shutdown, recovery, and replay are tested.
 - [ ] Decommissioning responsibility is assigned.
 
+## Ownership
+
+Every agent names product, engineering, quality, operational, domain, and
+applicable security owners. One person may fill several roles, but
+accountability MUST be explicit.
+
+## Kill switches
+
+Support authenticated, audited
+disabling of an agent, version, model, provider, skill, tool, tenant, workflow
+type, or new workflow starts. Durable controls distinguish stopping new work,
+pausing active work, cancelling it, allowing safe completion, and blocking the
+next side effect.
+
+## Incident response
+
+Write the runbook before launch. The sequence is:
+
+1. Contain.
+2. Preserve evidence.
+3. Identify affected manifests, workflows, tenants, and actions.
+4. Revoke or restrict capabilities.
+5. Stop or isolate unsafe workflows.
+6. Compensate reversible effects.
+7. Notify required stakeholders.
+8. Add regression cases.
+9. Correct and validate the system.
+10. Complete a post-incident review.
+
 ## Approval record
+
+You fill in the record; the approvers sign it. Keep it with the release.
 
 ```text
 Agent:
@@ -113,3 +159,10 @@ Approved by:
 Approval date:
 Next review date:
 ```
+
+## Common pitfalls
+
+- **Ticking boxes without links.** A checked item with no evidence is a claim,
+  not readiness.
+- **Doing the checklist at the end.** Items such as replay tests and kill
+  switches are cheap to design in and expensive to retrofit.
