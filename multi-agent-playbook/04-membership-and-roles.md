@@ -21,7 +21,7 @@ Before admission, every member MUST have:
 
 These are the member's Agent Playbook obligations (see the
 [agent contract](../agent-playbook/03-agent-contract.md) and
-[production readiness](../agent-playbook/11-production-readiness.md)). What
+[production readiness](../agent-playbook/08-production-readiness.md)). What
 the system adds is the check: it MUST validate these requirements rather than
 infer conformance from the presence of files.
 
@@ -106,7 +106,7 @@ An empty intersection is a valid denial. The runtime MUST NOT fall back to the
 member's broader default capability set.
 
 Credentials follow the Agent Playbook's
-[identity and authorization](../agent-playbook/10-security-and-governance.md#identity-and-authorization)
+[identity and authorization](../agent-playbook/05-tools.md#identity-and-authorization)
 rules, scoped to the interaction: they SHOULD be minted or selected for the
 effective scope and lifetime of the interaction. Members MUST NOT receive the
 coordinator's credentials, service identity, full user session, or unrelated

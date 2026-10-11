@@ -1,4 +1,4 @@
-# 6. Durable execution
+# 9. Durable execution and human approval
 
 This chapter is for developers building agents that change external state or
 outlive a single request. It shows how to split work into workflows and

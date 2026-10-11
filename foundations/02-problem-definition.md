@@ -5,8 +5,8 @@ from [strategy and use-case selection](01-strategy-and-use-cases.md) into a
 short brief: the job, what a good result looks like, the limits, the data,
 the risks, and who owns what. The brief feeds the
 [agent contract](../agent-playbook/03-agent-contract.md), the
-[risk assessment](../agent-playbook/13-risk-assessment.md), and the
-[evaluation plan](../agent-playbook/07-evaluation.md). If you cannot write it,
+[risk assessment](../agent-playbook/12-risk-assessment.md), and the
+[evaluation plan](../agent-playbook/06-evaluation.md). If you cannot write it,
 you are not ready to build.
 
 ## Write the brief
@@ -49,13 +49,13 @@ Best practices:
   failures and uncertainty, not only the average.
 - **Keep safety checks pass/fail.** A high average does not cancel a failed
   required safety check (see
-  [multi-run evaluation](../agent-playbook/07-evaluation.md#multi-run-evaluation)
-  and [release gates](../agent-playbook/07-evaluation.md#release-gates)).
+  [multi-run evaluation](../agent-playbook/06-evaluation.md#multi-run-evaluation)
+  and [release gates](../agent-playbook/06-evaluation.md#release-gates)).
 
 ## Set limits on cost, time, and volume
 
 Answer these early; they become the agent's
-[budgets](../agent-playbook/09-cost-optimization.md#budget-hierarchy):
+[budgets](../agent-playbook/10-cost-optimization.md#budget-hierarchy):
 
 - How long can users wait for a complete task, including slow dependencies and
   failures?
@@ -92,7 +92,7 @@ Then narrow the design:
 - **Pair each important risk** with a prevention or detection measure and the
   person responsible for responding.
 
-The [risk assessment](../agent-playbook/13-risk-assessment.md#scenario-method)
+The [risk assessment](../agent-playbook/12-risk-assessment.md#scenario-method)
 turns this list into scored scenarios.
 
 ## Name the owners
@@ -148,7 +148,7 @@ environment.
   with a limited audience and is watched closely.
 
 You record the second decision through the
-[production-readiness checklist](../agent-playbook/11-production-readiness.md).
+[production-readiness checklist](../agent-playbook/08-production-readiness.md).
 
 ## Common pitfalls
 

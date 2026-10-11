@@ -2,7 +2,7 @@
 
 This guide is for developers who run a multi-agent system on a durable
 execution engine. It assumes every member follows the Agent Playbook's
-[durable execution](../agent-playbook/06-durable-execution.md) chapter and
+[durable execution](../agent-playbook/09-durable-execution.md) chapter and
 uses its terms; a *child workflow* is a workflow started and supervised by
 another. Here you will find what changes when one workflow coordinates many
 agents. The engine gives you durability, not authorization, safe delegation,
@@ -237,7 +237,7 @@ shared local state. Parent-close and cancellation behavior MUST be explicit.
 ## Human approval
 
 Follow the Agent Playbook's
-[approval flow](../agent-playbook/06-durable-execution.md#human-approval),
+[approval flow](../agent-playbook/09-durable-execution.md#human-approval),
 and bind each approval to the final typed action and the system context that
 produced it: system and manifest ID, workflow, actor, tenant, policy version,
 arguments, relevant evidence references, and expiry.

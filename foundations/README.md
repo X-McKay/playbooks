@@ -36,8 +36,8 @@ the meaning defined in the Agent Playbook.
 
 | Foundation output | Used by |
 | --- | --- |
-| Use-case charter and value hypothesis | [Agent contract](../agent-playbook/03-agent-contract.md), [risk assessment](../agent-playbook/13-risk-assessment.md) |
-| Problem brief and success criteria | [Evaluation standard](../agent-playbook/07-evaluation.md), [cost optimization](../agent-playbook/09-cost-optimization.md) |
-| Readiness decisions | [Production readiness](../agent-playbook/11-production-readiness.md) |
-| Zero-trust principles | [Principles](../agent-playbook/01-principles-and-scope.md), [tools](../agent-playbook/05-tools.md), [security and governance](../agent-playbook/10-security-and-governance.md) |
-| Decision rights and oversight | [Security and governance](../agent-playbook/10-security-and-governance.md), [observability](../agent-playbook/08-observability.md) |
+| Use-case charter and value hypothesis | [Agent contract](../agent-playbook/03-agent-contract.md), [risk assessment](../agent-playbook/12-risk-assessment.md) |
+| Problem brief and success criteria | [Evaluation standard](../agent-playbook/06-evaluation.md), [cost optimization](../agent-playbook/10-cost-optimization.md) |
+| Readiness decisions | [Production readiness](../agent-playbook/08-production-readiness.md) |
+| Zero-trust principles | [Principles](../agent-playbook/01-principles-and-scope.md), [tools](../agent-playbook/05-tools.md), [security and governance](../agent-playbook/11-security-and-governance.md) |
+| Decision rights and oversight | [Security and governance](../agent-playbook/11-security-and-governance.md), [observability](../agent-playbook/07-observability.md) |

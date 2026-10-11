@@ -1,4 +1,4 @@
-# 7. Evaluation
+# 6. Evaluation
 
 This chapter is for developers deciding whether an agent change is ready to
 ship: how to layer tests and evals, which checks are pass/fail gates, and
@@ -80,7 +80,7 @@ A weighted average MUST NOT hide failure of a hard gate.
 
 ## Risk-based evaluation planning
 
-Your [risk assessment](13-risk-assessment.md) tells you what to test. Every
+Your [risk assessment](12-risk-assessment.md) tells you what to test. Every
 material risk scenario has a stable ID used as an eval tag. The scenario
 links to deterministic invariants, behavioral cases, workflow failure cases,
 production indicators, and recovery evidence appropriate to its dimensions

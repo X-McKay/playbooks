@@ -2,7 +2,7 @@
 
 This guide is for developers who need to show that a multi-agent system
 works, not just that its members do. Every member still needs the evaluation
-the Agent Playbook's [evaluation](../agent-playbook/07-evaluation.md) chapter
+the Agent Playbook's [evaluation](../agent-playbook/06-evaluation.md) chapter
 requires, but passing member evals does not demonstrate that the composition
 works. A system is incomplete until its claimed composition benefit, member
 behavior, interaction contracts, emergent failure modes, operational limits,
@@ -196,7 +196,7 @@ justify its cost and risk.
 ## Repeat runs and report distributions
 
 Follow the Agent Playbook's
-[multi-run evaluation](../agent-playbook/07-evaluation.md#multi-run-evaluation),
+[multi-run evaluation](../agent-playbook/06-evaluation.md#multi-run-evaluation),
 and also repeat cases affected by routing, concurrency, arrival order,
 dynamic selection, reviewer behavior, or stochastic decomposition. Report:
 
@@ -213,7 +213,7 @@ Rare high-impact failures remain visible; aggregate means MUST NOT hide them.
 
 ## Release policy
 
-Like an agent's [release gates](../agent-playbook/07-evaluation.md#release-gates),
+Like an agent's [release gates](../agent-playbook/06-evaluation.md#release-gates),
 a system policy declares absolute and relative requirements, for example:
 
 ```yaml

@@ -37,7 +37,7 @@ workload identity bound to its version and contents. Never share credentials
 between agents or borrow a developer's. Expect to show that the identity is
 bound to the capability manifest and build, with no shared or personal
 credentials (see
-[identity and authorization](../agent-playbook/10-security-and-governance.md#identity-and-authorization)).
+[identity and authorization](../agent-playbook/05-tools.md#identity-and-authorization)).
 
 **Deny by default, least capability by construction.** Explicitly allowlist
 skills, tools, data, network destinations, and credentials. Your starting
@@ -60,7 +60,7 @@ an exact approval bound to that action, its arguments, actor, tenant, and
 policy version. Approvals are single-use and time-limited, and a model cannot
 grant or infer one. Approval records carry the hash, scope, expiry, and
 consumption (see
-[human approval](../agent-playbook/06-durable-execution.md#human-approval)).
+[human approval](../agent-playbook/09-durable-execution.md#human-approval)).
 
 ## Check every call and assume compromise
 
@@ -69,15 +69,15 @@ point that authenticates the caller, checks authorization, and records the
 decision. Treat content from tools and other agents as untrusted. Decision
 logs from a gateway or equivalent, and tests showing that unlisted tools and
 destinations are refused, are the evidence (see
-[untrusted content](../agent-playbook/10-security-and-governance.md#untrusted-content)).
+[untrusted content](../agent-playbook/05-tools.md#untrusted-content)).
 
 **Defense across independent boundaries.** Application authorization, call
 mediation, process isolation, runtime visibility, and destination
 authorization each catch different failures. Do not trust any single layer
 to hold alone. Show a control map plus bypass tests demonstrating the
 intended coverage (see
-[isolation](../agent-playbook/10-security-and-governance.md#isolation) and
-[threat model](../agent-playbook/10-security-and-governance.md#threat-model)).
+[isolation](../agent-playbook/11-security-and-governance.md#isolation) and
+[threat model](../agent-playbook/11-security-and-governance.md#threat-model)).
 
 **Assume breach.** Design as if the agent is already compromised: isolate its
 execution, limit what it can reach, observe what it does, and keep the blast
@@ -88,7 +88,7 @@ observation should all be in place.
 from terminating running work. Control freshness is enforced and recovery is
 tested. Drill results, revocation acknowledgements, and measured stop times
 are the evidence (see
-[kill switches](../agent-playbook/10-security-and-governance.md#kill-switches)).
+[kill switches](../agent-playbook/08-production-readiness.md#kill-switches)).
 
 ## Earn trust with evidence
 
@@ -97,15 +97,15 @@ operational readiness have distinct gates, and good average performance
 cannot offset a failed critical control. Trust is earned per release, not
 inherited. Tie dataset digests, test results, scenario coverage, policy
 verification, and approvals to the release (see
-[release gates](../agent-playbook/07-evaluation.md#release-gates) and
-[production readiness](../agent-playbook/11-production-readiness.md)).
+[release gates](../agent-playbook/06-evaluation.md#release-gates) and
+[production readiness](../agent-playbook/08-production-readiness.md)).
 
 **Observation never grants permission.** Watching the agent run may propose
 the access it seems to need, but you review each proposal against the
 declared purpose and central invariants. Behavior seen in testing is not
 authorization. Reviewed policy diffs should show authority contracting as
 well as expanding (see
-[change classes](../agent-playbook/10-security-and-governance.md#change-classes)).
+[change classes](../agent-playbook/11-security-and-governance.md#change-classes)).
 
 ## Best practices
 

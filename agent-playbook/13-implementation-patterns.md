@@ -1,4 +1,4 @@
-# 12. Implementation patterns
+# 13. Implementation patterns
 
 This chapter is for developers assembling a conforming agent. It shows how
 the standards in this playbook fit together: package layout, the order in
@@ -86,7 +86,7 @@ durability, replay, and approval guarantees.
 
 A consequential action passes through deterministic policy and a bound
 approval before it runs (see
-[human approval](06-durable-execution.md#human-approval)):
+[human approval](09-durable-execution.md#human-approval)):
 
 ```text
 agent proposes typed action

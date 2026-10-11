@@ -2,7 +2,7 @@
 
 This guide is for developers who need a multi-agent system to stay affordable
 and responsive under load. Each member still follows the Agent Playbook's
-[cost optimization](../agent-playbook/09-cost-optimization.md) chapter. For
+[cost optimization](../agent-playbook/10-cost-optimization.md) chapter. For
 the system, optimize total cost and capacity per successful, compliant system
 outcome. A design that improves one quality metric while creating
 uncontrolled fan-out, queueing, retries, or operational burden is not
@@ -42,7 +42,7 @@ zero.
 Every run has a root budget. Shared deployments SHOULD also enforce budgets
 at conversation, actor, tenant, system, environment, and organization scope,
 alongside each member's own
-[budget hierarchy](../agent-playbook/09-cost-optimization.md#budget-hierarchy).
+[budget hierarchy](../agent-playbook/10-cost-optimization.md#budget-hierarchy).
 
 ```yaml
 budgets:

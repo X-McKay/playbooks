@@ -98,7 +98,7 @@ scope to another member. Model output MUST NOT be interpreted as identity,
 authorization, approval, membership, or policy.
 
 Approval works as the Agent Playbook's
-[human approval](../agent-playbook/06-durable-execution.md#human-approval)
+[human approval](../agent-playbook/09-durable-execution.md#human-approval)
 flow describes. In a system, consequential actions are bound to the final
 typed action, arguments, actor, tenant, policy version, approval, and
 composition manifest. A chain of agent recommendations does not constitute
@@ -122,7 +122,7 @@ history, hidden instructions, credentials, unrelated tool results, and raw
 shared memory MUST NOT be forwarded implicitly.
 
 The Agent Playbook's
-[untrusted content](../agent-playbook/10-security-and-governance.md#untrusted-content)
+[untrusted content](../agent-playbook/05-tools.md#untrusted-content)
 rule covers another agent's output too. Content produced by another agent is
 untrusted input: the receiver MUST treat embedded instructions, tool
 requests, approvals, identities, and policy claims as data unless they are
@@ -145,7 +145,7 @@ price is available.
 ## Retries and idempotency
 
 The Agent Playbook's
-[durable execution](../agent-playbook/06-durable-execution.md) chapter
+[durable execution](../agent-playbook/09-durable-execution.md) chapter
 assigns retry ownership to model correction, provider transport, durable
 step, and workflow business retry. A system adds one more layer, the agent
 interaction, so keep ownership explicit across all five:
@@ -218,7 +218,7 @@ Agents MUST NOT extend their own limits.
 ## Telemetry and audit
 
 Per-agent telemetry follows the Agent Playbook's
-[observability](../agent-playbook/08-observability.md) chapter, including
+[observability](../agent-playbook/07-observability.md) chapter, including
 content capture off by default, with safe hashes and authorized artifact
 references in place of raw content. On top of that, every interaction records
 at least:

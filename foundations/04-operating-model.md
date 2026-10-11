@@ -25,7 +25,7 @@ who holds each decision tells you whom to ask before release day.
 | Emergency disable and containment | Incident commander | Make sure disable works; expect to be informed promptly. |
 | Restart after an incident | Named recovery authority | Help diagnose and fix; restart only when authorized. |
 
-The [Agent Playbook](../agent-playbook/10-security-and-governance.md#ownership)
+The [Agent Playbook](../agent-playbook/08-production-readiness.md#ownership)
 requires each agent to name its owners. Treat this table as a starting point
 your organization ratifies; it may already have its own decision process.
 
@@ -57,7 +57,7 @@ agent's telemetry is what answers them:
 To make these views possible, every agent emits consistent metadata: agent
 and release, run, business function, tenant, capability, policy revision,
 governance tier, decision and approval references, and budget counters (see
-[correlation](../agent-playbook/08-observability.md#correlation)). Identifiers
+[correlation](../agent-playbook/07-observability.md#correlation)). Identifiers
 must not carry secrets, sensitive approval payloads, or raw user content.
 
 Best practices:

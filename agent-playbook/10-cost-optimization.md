@@ -1,4 +1,4 @@
-# 9. Cost optimization
+# 10. Cost optimization
 
 This chapter is for developers who need an agent to stay affordable under
 real traffic. It covers the limits you must build in and the order in which
@@ -165,7 +165,7 @@ set of fallback candidates, and idempotent side effects.
 
 Treat optimization as an experiment: baseline, identify the dominant cost,
 change one major variable, run
-[multi-run](07-evaluation.md#multi-run-evaluation) quality, safety, latency,
+[multi-run](06-evaluation.md#multi-run-evaluation) quality, safety, latency,
 and cost evals, roll out gradually, and monitor quality-adjusted cost. Roll
 back when a hard gate or an approved quality threshold regresses.
 

@@ -316,7 +316,7 @@ approval records, deployment records, and incident references.
 ## Ownership rules
 
 Member owners remain accountable for their agent contracts, as the Agent
-Playbook's [ownership](../agent-playbook/10-security-and-governance.md#ownership)
+Playbook's [ownership](../agent-playbook/08-production-readiness.md#ownership)
 rules require. The system adds:
 
 - One accountable product owner and one operational owner for the system.

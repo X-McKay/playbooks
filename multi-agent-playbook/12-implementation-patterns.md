@@ -3,7 +3,7 @@
 This chapter is for developers building a conforming multi-agent system. It
 shows how the parts fit together as one governed system package and the order
 in which they are assembled and validated. It extends the Agent Playbook's
-[implementation patterns](../agent-playbook/12-implementation-patterns.md),
+[implementation patterns](../agent-playbook/13-implementation-patterns.md),
 which still apply to every member.
 
 The patterns prescribe no language, SDK, or runtime. Adapt them to the pinned
@@ -219,7 +219,7 @@ stage:
 ## Local development
 
 Start from the member
-[local development environment](../agent-playbook/12-implementation-patterns.md),
+[local development environment](../agent-playbook/13-implementation-patterns.md),
 including non-production credentials and strict spend limits. For a system,
 also provide:
 

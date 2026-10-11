@@ -6,7 +6,7 @@ who signs it off. The output is one versioned YAML file.
 
 A system risk assessment covers harms created or changed by composing agents.
 It references each member's
-[Agent Playbook risk assessment](../agent-playbook/13-risk-assessment.md) and
+[Agent Playbook risk assessment](../agent-playbook/12-risk-assessment.md) and
 adds scenarios for coordination, interaction, shared state, dynamic admission,
 aggregate authority, and emergent behavior. It complements, and does not
 replace, member assessments or required legal, regulatory, security, privacy,
@@ -144,7 +144,7 @@ not applicable without a reason is incomplete.
 ## Scenario method
 
 Write each scenario in the Agent Playbook
-[scenario form](../agent-playbook/13-risk-assessment.md#scenario-method):
+[scenario form](../agent-playbook/12-risk-assessment.md#scenario-method):
 
 > Because **[composition cause or initiating condition]**, the system could
 > **[unsafe action, output, state, or omission]**, causing **[harm]** to
@@ -169,7 +169,7 @@ and runbook key, incident reference, and reassessment trigger.
 ## Regulatory and prohibited-use screen
 
 Run one system-level screen in addition to the member
-[screens](../agent-playbook/13-risk-assessment.md#regulatory-and-prohibited-use-screen).
+[screens](../agent-playbook/12-risk-assessment.md#regulatory-and-prohibited-use-screen).
 Composition can change regulatory applicability by changing purpose, affected
 population, decision authority, data linkage, autonomy, or scale.
 
@@ -241,7 +241,7 @@ At minimum:
 ## Residual-risk decision
 
 Apply the Agent Playbook's
-[treatment and acceptance rules](../agent-playbook/13-risk-assessment.md).
+[treatment and acceptance rules](../agent-playbook/12-risk-assessment.md).
 Additionally:
 
 - A critical residual composition scenario is `no_go`.

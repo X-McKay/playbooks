@@ -2,7 +2,7 @@
 
 This guide is for developers who will operate a multi-agent system and need
 to explain what it did. Each member still emits the telemetry the Agent
-Playbook's [observability](../agent-playbook/08-observability.md) chapter
+Playbook's [observability](../agent-playbook/07-observability.md) chapter
 requires. On top of that, observe the composition as one governed system and
 each interaction as an attributable boundary, and correlate member telemetry
 with system, workflow, graph, delegation, budget, approval, and outcome data.
@@ -55,7 +55,7 @@ ownership transitions.
 ## Required correlation
 
 In addition to the Agent Playbook's
-[correlation](../agent-playbook/08-observability.md#correlation) fields, spans
+[correlation](../agent-playbook/07-observability.md#correlation) fields, spans
 and material records include:
 
 ```text

@@ -64,9 +64,9 @@ Best practices:
   careful" cannot.
 - **Point to the risk assessment, do not summarize it.** The
   `risk_assessment` path keeps one source of truth (see
-  [risk assessment](13-risk-assessment.md)).
+  [risk assessment](12-risk-assessment.md)).
 - **Set budgets from measurement.** Start from what evaluation runs actually
-  consume, then add headroom (see [cost optimization](09-cost-optimization.md)).
+  consume, then add headroom (see [cost optimization](10-cost-optimization.md)).
 
 ## Model policy
 
@@ -191,7 +191,7 @@ Keep these versions separate, because each answers a different question:
 Behavior-changing edits to instructions, models, skills, tools, or outputs
 require an agent version change and relevant evals. Replay-incompatible
 workflow changes additionally require replay-safe deployment (see
-[durable execution](06-durable-execution.md)).
+[durable execution](09-durable-execution.md)).
 
 ## Common pitfalls
 

@@ -28,20 +28,31 @@ owner.
 
 ## Contents
 
-1. [Principles and scope](01-principles-and-scope.md)
-2. [Reference architecture](02-reference-architecture.md)
-3. [Agent contract](03-agent-contract.md)
-4. [Skills](04-skills.md)
-5. [Tools](05-tools.md)
-6. [Durable execution](06-durable-execution.md)
-7. [Evaluation](07-evaluation.md)
-8. [Observability](08-observability.md)
-9. [Cost optimization](09-cost-optimization.md)
-10. [Security and governance](10-security-and-governance.md)
-11. [Production readiness](11-production-readiness.md)
-12. [Implementation patterns](12-implementation-patterns.md)
-13. [Risk assessment](13-risk-assessment.md)
-14. [References](references.md)
+The playbook has two parts. **Core** is what every agent needs before it
+ships. **Advanced concepts** is what you add once your agent acts on other
+systems, runs for a long time, or carries more risk. Start with Core; read an
+Advanced chapter when your agent needs it.
+
+### Part 1: Core
+
+- [1. Principles and scope](01-principles-and-scope.md)
+- [2. Reference architecture](02-reference-architecture.md)
+- [3. Agent contract](03-agent-contract.md)
+- [4. Skills](04-skills.md)
+- [5. Tools](05-tools.md)
+- [6. Evaluation](06-evaluation.md)
+- [7. Observability](07-observability.md)
+- [8. Production readiness](08-production-readiness.md)
+
+### Part 2: Advanced concepts
+
+- [9. Durable execution and human approval](09-durable-execution.md)
+- [10. Cost optimization](10-cost-optimization.md)
+- [11. Security and governance](11-security-and-governance.md)
+- [12. Risk assessment](12-risk-assessment.md)
+- [13. Implementation patterns](13-implementation-patterns.md)
+
+[References](references.md) lists sources for both parts.
 
 ## Before you start
 
@@ -110,4 +121,4 @@ assurance required by the agent's inherent risk and mandatory floors. Residual
 risk describes what remains after verified controls. They are independent: a
 read-only medical assistant can be ephemeral and high risk, while a reversible
 internal update agent can be durable and medium risk. See the
-[risk assessment](13-risk-assessment.md) chapter.
+[risk assessment](12-risk-assessment.md) chapter.

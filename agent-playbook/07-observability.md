@@ -1,4 +1,4 @@
-# 8. Observability
+# 7. Observability
 
 This chapter is for developers who will run and debug an agent in
 production: what telemetry must answer, how to correlate it, and what to keep

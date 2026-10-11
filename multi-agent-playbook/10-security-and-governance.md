@@ -1,7 +1,7 @@
 # 10. Security and governance
 
 This chapter is for developers who own a multi-agent system. Everything in the
-[Agent Playbook's security chapter](../agent-playbook/10-security-and-governance.md)
+[Agent Playbook's security chapter](../agent-playbook/11-security-and-governance.md)
 still applies to every member; this chapter adds what you design, evidence,
 and get signed off once agents work together. The core idea: no agent is
 trusted merely because it belongs to the same system or was selected by
@@ -29,7 +29,7 @@ out.
 ## Ownership
 
 In addition to the
-[member ownership the Agent Playbook requires](../agent-playbook/10-security-and-governance.md#ownership),
+[member ownership the Agent Playbook requires](../agent-playbook/08-production-readiness.md#ownership),
 your System Spec names:
 
 - accountable product and business owners;
@@ -63,7 +63,7 @@ correlated evidence.
 ## Threat model
 
 Your system threat model includes each member's
-[Agent Playbook threat model](../agent-playbook/10-security-and-governance.md#threat-model)
+[Agent Playbook threat model](../agent-playbook/11-security-and-governance.md#threat-model)
 and adds the threats that only exist between agents. At minimum, assess:
 
 - direct and indirect prompt injection across agent boundaries;
@@ -90,7 +90,7 @@ controls; tests and adversarial evals; and indicators, alerts, and runbooks.
 ## Identity and authorization
 
 The members' rules for
-[identity and authorization](../agent-playbook/10-security-and-governance.md#identity-and-authorization)
+[identity and authorization](../agent-playbook/05-tools.md#identity-and-authorization)
 apply at every hop. Composition adds one more rule: authority can only shrink
 as it moves.
 
@@ -116,7 +116,7 @@ external resource.
 ## Inter-agent content
 
 The Agent Playbook already treats
-[tool results and retrieved content as untrusted](../agent-playbook/10-security-and-governance.md#untrusted-content).
+[tool results and retrieved content as untrusted](../agent-playbook/05-tools.md#untrusted-content).
 Extend that to other agents: all agent-generated content is untrusted.
 Summarization, voting, review, or agreement does not make content trusted.
 
@@ -210,7 +210,7 @@ effect completed.
 
 ## Isolation
 
-Apply the [member isolation controls](../agent-playbook/10-security-and-governance.md#isolation),
+Apply the [member isolation controls](../agent-playbook/11-security-and-governance.md#isolation),
 then isolate members from each other. Use process, container, sandbox,
 account, network, task-queue, namespace, and data-store isolation proportionate
 to risk. Separate agents with different owners, tenants, credentials,
@@ -228,7 +228,7 @@ switches.
 ## Approval and separation of duties
 
 Consequential action uses the Agent Playbook's
-[human approval](../agent-playbook/06-durable-execution.md#human-approval)
+[human approval](../agent-playbook/09-durable-execution.md#human-approval)
 contract and also records the system and causal context. Approval interfaces
 show the final action, arguments, actor, tenant, relevant evidence, material
 disagreement, system and member identities, policy version, expiry, and
@@ -244,7 +244,7 @@ policy approval, production promotion, and residual-risk acceptance roles.
 ## Change classes
 
 Classify each change with the Agent Playbook's
-[change classes](../agent-playbook/10-security-and-governance.md#change-classes).
+[change classes](../agent-playbook/11-security-and-governance.md#change-classes).
 In a multi-agent system, treat these as behavioral or security changes that
 need focused review:
 
@@ -264,7 +264,7 @@ rollout and rollback plans.
 ## Deployment
 
 Follow the member deployment progression in the
-[Agent Playbook](../agent-playbook/10-security-and-governance.md). For the
+[Agent Playbook](../agent-playbook/11-security-and-governance.md). For the
 system, production deployments SHOULD use immutable images and read-only
 application filesystems; pinned manifests, policies, schemas, models, and
 dependencies; separate identities and least-privilege credentials by role;
@@ -279,7 +279,7 @@ system deployment. The admission envelope itself is versioned and released.
 ## Kill switches and quarantine
 
 Each member already has
-[kill switches](../agent-playbook/10-security-and-governance.md#kill-switches).
+[kill switches](../agent-playbook/08-production-readiness.md#kill-switches).
 The system adds controls to:
 
 - stop new system runs;
@@ -300,7 +300,7 @@ member. Removing a member from discovery is not sufficient containment.
 ## Incident response
 
 Use the Agent Playbook's
-[incident runbook sequence](../agent-playbook/10-security-and-governance.md)
+[incident runbook sequence](../agent-playbook/11-security-and-governance.md)
 and add system runbooks for:
 
 - unauthorized member, edge, scope, tenant, or data flow;
@@ -323,7 +323,7 @@ affected-party notification.
 ## Exceptions and review
 
 Record exceptions as the
-[Agent Playbook](../agent-playbook/10-security-and-governance.md) describes,
+[Agent Playbook](../agent-playbook/11-security-and-governance.md) describes,
 naming scope, rationale, compensating controls, evidence, accountable owner,
 approver, start, expiry, monitoring, and rollback trigger. Exceptions MUST NOT
 be granted by an agent or hidden in prompts, registry metadata, or routing

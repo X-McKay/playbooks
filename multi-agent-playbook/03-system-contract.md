@@ -233,7 +233,7 @@ travel across each edge.
 The System Spec declares a root budget for the entire system run. Member and
 interaction limits are subdivisions of the root budget, not additional spend
 (the same idea as the Agent Playbook's
-[budget hierarchy](../agent-playbook/09-cost-optimization.md#budget-hierarchy),
+[budget hierarchy](../agent-playbook/10-cost-optimization.md#budget-hierarchy),
 one level up).
 
 At minimum, bound agent runs, delegation depth, parallel agents, coordination

@@ -1,4 +1,4 @@
-# 13. Risk assessment
+# 12. Risk assessment
 
 This chapter is for developers who own an agent and must assess its risk.
 You run the assessment, because you know what the agent can do and which
@@ -119,7 +119,7 @@ Write each material scenario in this form:
 Consider normal use, foreseeable misuse, adversarial use, dependency failure,
 model error, authorization failure, retry and concurrency behavior, operator
 error, and control failure. The
-[threat model](10-security-and-governance.md#threat-model) supplies
+[threat model](11-security-and-governance.md#threat-model) supplies
 adversarial scenarios. Each scenario records:
 
 - stable ID, title, owner, and status;
@@ -231,7 +231,7 @@ At minimum:
 
 Controls can make a release acceptable without silently lowering the
 assurance level appropriate to the underlying use case. The
-[governance tiers](10-security-and-governance.md#governance-tiers) table
+[governance tiers](11-security-and-governance.md#governance-tiers) table
 lists the controls each tier expects.
 
 ## Residual-risk decision

@@ -144,7 +144,7 @@ Before a skill reaches production, it requires:
 - context-cost measurement; and
 - comparison against the previous version for material changes.
 
-See [evaluation](07-evaluation.md) for how these fit into release gates.
+See [evaluation](06-evaluation.md) for how these fit into release gates.
 
 ## Common pitfalls
 

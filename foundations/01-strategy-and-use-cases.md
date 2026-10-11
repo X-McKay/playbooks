@@ -5,8 +5,8 @@ whether an agent is the right tool for the job, how much authority to give the
 first release, and how you will know it is working. The decisions you make
 here shape the
 [agent contract](../agent-playbook/03-agent-contract.md), the
-[evaluation plan](../agent-playbook/07-evaluation.md), and the
-[risk assessment](../agent-playbook/13-risk-assessment.md), so it pays to make
+[evaluation plan](../agent-playbook/06-evaluation.md), and the
+[risk assessment](../agent-playbook/12-risk-assessment.md), so it pays to make
 them on purpose rather than discover them later.
 
 ## Start from the job, not the model
@@ -113,7 +113,7 @@ pilot_exit:
 ```
 
 The `prohibited` list matters as much as `authority`. Each entry becomes a
-test case and, later, a [hard gate](../agent-playbook/07-evaluation.md#hard-gates).
+test case and, later, a [hard gate](../agent-playbook/06-evaluation.md#hard-gates).
 
 ## Decide how you will know it works
 
@@ -138,7 +138,7 @@ Best practices:
   progress.
 - **Keep safety checks deterministic.** Use pass/fail tests for anything that
   must never happen, and reserve scored or judged evaluation for quality (see
-  [release gates](../agent-playbook/07-evaluation.md#release-gates)).
+  [release gates](../agent-playbook/06-evaluation.md#release-gates)).
 - **Report the denominator.** Zero failures in twenty cases is evidence about
   those twenty cases, not proof the agent is safe.
 - **Track service levels on their own.** Latency, tool error rate, and budget
@@ -171,10 +171,10 @@ Two habits make this easier:
 - **Assuming durability means correctness.** A durable workflow recovers where
   it was, but it does not make actions idempotent or reconcile the business
   record. You still design for both (see
-  [durable execution](../agent-playbook/06-durable-execution.md)).
+  [durable execution](../agent-playbook/09-durable-execution.md)).
 - **Logging everything.** Full prompts and tool results turn telemetry into a
   sensitive data store. Default to metadata and redact content you keep (see
-  [observability](../agent-playbook/08-observability.md)).
+  [observability](../agent-playbook/07-observability.md)).
 - **Hiding the controls.** Controls injected automatically are convenient
   until something fails and nobody can see why. Prefer explicit, versioned
   configuration you can inspect for any release.
@@ -197,4 +197,4 @@ can answer yes to each of these:
 
 This guide does not establish regulatory compliance. If your use case may be
 regulated, involve the people who own that question early (see the
-[regulatory screen](../agent-playbook/13-risk-assessment.md#regulatory-and-prohibited-use-screen)).
+[regulatory screen](../agent-playbook/12-risk-assessment.md#regulatory-and-prohibited-use-screen)).

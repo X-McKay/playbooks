@@ -1,11 +1,18 @@
-# 11. Production readiness
+# 8. Production readiness
 
 Use this checklist before an agent's first production launch. It collects the
 earlier chapters' requirements in one place. Work through it as the
 developer, linking evidence for each item; an accountable owner then
 completes and approves it before production launch. An unchecked item is
 either a blocker or a recorded
-[exception](10-security-and-governance.md#exceptions-and-review).
+[exception](11-security-and-governance.md#exceptions-and-review).
+
+Every agent needs a governance tier from a
+[risk assessment](12-risk-assessment.md), even a read-only one. For a
+low-risk agent the assessment can be short: list its scenarios, show that
+none is material above low, and record who accepted it. Items that depend on
+[Advanced concepts](README.md#part-2-advanced-concepts), such as durable
+execution, apply when your agent uses them.
 
 ## Contract
 
@@ -97,6 +104,35 @@ either a blocker or a recorded
 - [ ] Provider and dependency failures are tested.
 - [ ] Worker shutdown, recovery, and replay are tested.
 - [ ] Decommissioning responsibility is assigned.
+
+## Ownership
+
+Every agent names product, engineering, quality, operational, domain, and
+applicable security owners. One person may fill several roles, but
+accountability MUST be explicit.
+
+## Kill switches
+
+Support authenticated, audited
+disabling of an agent, version, model, provider, skill, tool, tenant, workflow
+type, or new workflow starts. Durable controls distinguish stopping new work,
+pausing active work, cancelling it, allowing safe completion, and blocking the
+next side effect.
+
+## Incident response
+
+Write the runbook before launch. The sequence is:
+
+1. Contain.
+2. Preserve evidence.
+3. Identify affected manifests, workflows, tenants, and actions.
+4. Revoke or restrict capabilities.
+5. Stop or isolate unsafe workflows.
+6. Compensate reversible effects.
+7. Notify required stakeholders.
+8. Add regression cases.
+9. Correct and validate the system.
+10. Complete a post-incident review.
 
 ## Approval record
 

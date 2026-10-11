@@ -1,6 +1,6 @@
 # Production Operations Standard
 
-This file condenses [Agent Playbook chapter 8, Observability](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/08-observability.md), [Agent Playbook chapter 9, Cost optimization](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/09-cost-optimization.md), and [Agent Playbook chapter 10, Security and governance](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/10-security-and-governance.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
+This file condenses [Agent Playbook chapter 7, Observability](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/07-observability.md), [Agent Playbook chapter 10, Cost optimization](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/10-cost-optimization.md), and [Agent Playbook chapter 11, Security and governance](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/11-security-and-governance.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
 
 ## Trace Model
 

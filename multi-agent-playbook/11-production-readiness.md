@@ -3,7 +3,7 @@
 Use this chapter when you are preparing a multi-agent system for its release
 decision. It is a checklist of the evidence you produce and the sign-off you
 need. It assumes each member has already passed the Agent Playbook's
-[production readiness](../agent-playbook/11-production-readiness.md) checklist
+[production readiness](../agent-playbook/08-production-readiness.md) checklist
 and covers only what the composed system adds.
 
 Readiness is a decision about one exact composition manifest, made on
