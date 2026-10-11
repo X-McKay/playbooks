@@ -38,7 +38,7 @@ Interactive terminals receive styled help, semantic colors, responsive tables an
 ```bash
 agentctl --help
 agentctl --no-color --no-animations validate
-agentctl --force-color skills validate skills
+agentctl --force-color skills validate .agents/skills
 agentctl validate --format json
 ```
 
@@ -134,7 +134,7 @@ matching agent name, version, execution class, and governance tier.
 
 ```bash
 scripts/agentctl skills validate --root /path/to/project
-scripts/agentctl skills validate skills/build-agent-evals
+scripts/agentctl skills validate .agents/skills/build-agent-evals
 scripts/agentctl skills validate --run-skills-ref
 ```
 

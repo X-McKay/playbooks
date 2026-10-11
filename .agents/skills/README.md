@@ -1,6 +1,6 @@
 # Agent Development Skills
 
-This library translates the [Agent Playbook](../agent-playbook/README.md) and [Multi-Agent Playbook](../multi-agent-playbook/README.md) into focused workflows that Claude Code and Codex can discover and apply while building agents and governed agent systems.
+This library translates the [Agent Playbook](../../agent-playbook/README.md) and [Multi-Agent Playbook](../../multi-agent-playbook/README.md) into focused workflows that Claude Code and Codex can discover and apply while building agents and governed agent systems.
 
 ## Catalog
 
@@ -23,35 +23,27 @@ This library translates the [Agent Playbook](../agent-playbook/README.md) and [M
 
 Each package follows the [Agent Skills specification](https://agentskills.io/specification): a required `SKILL.md`, concise discovery metadata, progressive disclosure, directly linked references, examples, and no required product-specific frontmatter.
 
-When installed in a repository that includes the companion [`agentctl`](../tools/agentctl/README.md), the design, eval, and readiness skills use its scaffolding and validation commands as reproducible evidence.
+When installed in a repository that includes the companion [`agentctl`](../../tools/agentctl/README.md), the design, eval, and readiness skills use its scaffolding and validation commands as reproducible evidence.
 
-## Use with Codex
+## Install in a Repository
 
-For repository-scoped use, copy or symlink the skill directories into `.codex/skills/`:
-
-```bash
-mkdir -p .codex/skills
-cp -R /path/to/playbooks/skills/*/ .codex/skills/
-```
-
-For personal use across repositories, use `~/.codex/skills/` instead. The optional `agents/openai.yaml` in each package supplies Codex presentation metadata and does not alter the portable `SKILL.md` contract.
-
-Invoke explicitly when useful, for example:
-
-```text
-Use $build-agent-evals to add regression coverage for the refund workflow.
-```
-
-## Use with Claude Code
-
-For repository-scoped use, copy or symlink the skill directories into `.claude/skills/`:
+Codex and Claude Code share one copy of the skills. Codex reads repository skills from `.agents/skills/`; Claude Code reads `.claude/skills/`, so link that path to the shared directory:
 
 ```bash
-mkdir -p .claude/skills
-cp -R /path/to/playbooks/skills/*/ .claude/skills/
+mkdir -p .agents/skills .claude
+cp -R /path/to/playbooks/.agents/skills/*/ .agents/skills/
+ln -s ../.agents/skills .claude/skills
 ```
 
-For personal use, use `~/.claude/skills/`. Claude Code can select a skill from its description or invoke it by name, such as `/build-agent-evals`.
+On Windows checkouts without symlink support (`core.symlinks=false`), copy the skills into `.claude/skills/` instead and keep both copies in sync.
+
+For personal use across repositories, install into `~/.agents/skills/` for Codex and `~/.claude/skills/` for Claude Code.
+
+Keep project instructions in a root `AGENTS.md`, which Codex reads. Claude Code reads `AGENTS.md` only when no `CLAUDE.md` exists and some sessions cannot read it at all, so add a `CLAUDE.md` containing the single line `@AGENTS.md`.
+
+The optional `agents/openai.yaml` in each package supplies Codex presentation metadata and does not alter the portable `SKILL.md` contract.
+
+Invoke a skill explicitly when useful, for example `Use $build-agent-evals to add regression coverage for the refund workflow.` in Codex or `/build-agent-evals` in Claude Code. Both clients also select skills from their descriptions.
 
 ## Use as PydanticAI Runtime Skills
 
@@ -89,7 +81,7 @@ PydanticAI loads the selected `SKILL.md` instructions, but it does not automatic
 From the repository root, validate each package with the reference validator when installed:
 
 ```bash
-for skill in skills/*/; do
+for skill in .agents/skills/*/; do
   skills-ref validate "$skill"
 done
 ```
@@ -103,4 +95,4 @@ Also run the repository's Markdown checks. A valid package is only the starting 
 - [OpenAI skills guide](https://developers.openai.com/api/docs/guides/tools-skills)
 - [OpenAI plugin skill authoring](https://developers.openai.com/plugins/build/skills)
 - [PydanticAI Harness skills](https://pydantic.dev/docs/ai/harness/skills/)
-- [Agent Playbook references](../agent-playbook/references.md)
+- [Agent Playbook references](../../agent-playbook/references.md)

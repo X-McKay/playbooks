@@ -27,7 +27,7 @@ participating agent.
 
 ### Agent Development Skills
 
-The [`skills/`](skills/README.md) library turns both playbooks into fourteen
+The [`.agents/skills/`](.agents/skills/README.md) library turns both playbooks into fourteen
 portable Agent Skills for Claude Code, Codex, and compatible runtimes. It
 includes focused workflows for agent and multi-agent design, interactions,
 risk, Temporal execution, evals, production operations, and readiness reviews.

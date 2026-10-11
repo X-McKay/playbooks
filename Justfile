@@ -20,7 +20,7 @@ test:
     uv run --locked python -m unittest discover -s tools/agentctl/tests -v
 
 skills:
-    uv run --locked agentctl --no-animations skills validate skills
+    uv run --locked agentctl --no-animations skills validate .agents/skills
 
 check: lock lint test skills
 
