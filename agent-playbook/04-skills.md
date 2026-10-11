@@ -2,7 +2,7 @@
 
 A skill is a versioned package of specialized instructions that teaches an agent how to approach a class of tasks. Skills provide knowledge and procedure; tools provide executable operations.
 
-Skills SHOULD be exposed as deferred capabilities, following the progressive disclosure model of the Agent Skills specification: the model initially sees their names and descriptions and loads full instructions when relevant.
+Agent frameworks commonly expose skills as deferred capabilities, following the progressive disclosure model of the Agent Skills specification: the model initially sees their names and descriptions and loads full instructions when relevant.
 
 ## Structure
 
