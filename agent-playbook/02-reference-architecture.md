@@ -76,9 +76,10 @@ The workflow owns durable coordination. Durable steps own nondeterministic work 
 - Runtime resource paths SHOULD be resolved relative to the installed package, not a process working-directory assumption.
 - Production images SHOULD be immutable and run with a read-only application filesystem.
 
-## Capability bill of materials
+## Capability manifest
 
-At startup, each agent produces a manifest containing:
+At startup, each agent produces its capability manifest, a bill of materials
+for the running configuration, containing:
 
 ```text
 agent name and version

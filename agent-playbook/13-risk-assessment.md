@@ -17,8 +17,8 @@ privacy, safety, and domain-specific review.
 - **Launch decision** is `go`, `conditional_go`, or `no_go`.
 
 These concepts MUST remain separate. A read-only system can be high risk, and a
-durable system can be medium risk. The Agent Spec `risk_tier` is the governance
-tier. It is anchored to inherent risk and mandatory floors; residual risk
+durable system can be medium risk. The Agent Spec records the `governance_tier`.
+It is anchored to inherent risk and mandatory floors; residual risk
 determines whether the assessed release is acceptable to launch.
 
 ## Assessment principles

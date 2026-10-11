@@ -25,7 +25,7 @@ purpose: Answer account questions and propose support actions.
 non_goals:
   - Issue refunds
 execution_class: ephemeral
-risk_tier: medium
+governance_tier: medium
 risk_assessment: docs/risk-assessments/support-agent.yaml
 input_type: SupportRequest
 dependency_type: SupportDependencies

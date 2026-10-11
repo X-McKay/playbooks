@@ -309,7 +309,7 @@ manifest containing:
 system name, version, contract version, and spec digest
 owner, execution class, governance tier, and risk-assessment digest
 topology and policy versions
-member roles, Agent Spec versions, and agent manifest IDs
+member roles, Agent Spec versions, and capability manifest IDs
 allowed interaction edges and input/output schema hashes
 resolved system, member, and interaction budgets
 workflow, worker, and build versions

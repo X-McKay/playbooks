@@ -1,8 +1,10 @@
 # Durable Agent Execution Standard
 
+This file condenses [Agent Playbook chapter 6, Durable execution standard](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/06-durable-execution.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+
 ## Boundary
 
-Workflow code may coordinate deterministic state, schedule durable steps, wait on timers or external events, expose queries, and decide transitions from recorded inputs. Durable steps perform all model calls, agent runs, tool calls, database and network access, file I/O, randomness, and other nondeterministic operations.
+Workflow code may coordinate deterministic state, schedule durable steps, wait on timers or external events, answer read-only state inspection, and decide transitions from recorded inputs. Durable steps perform all model calls, agent runs, tool calls, database and network access, file I/O, randomness, and other nondeterministic operations.
 
 ## Durable Step Design
 
@@ -35,14 +37,14 @@ Persist an approval request identifier, requested action, actor requirements, ex
 
 - Keep workflow identifiers stable for business processes.
 - Version payload schemas compatibly.
-- Use the engine's versioning or patching mechanism for nondeterministic workflow changes.
+- Use the engine's mechanism for versioning workflow code for nondeterministic workflow changes.
 - Run replay tests against representative production histories before deployment.
 - Continue as a new run for unbounded loops or histories approaching operational limits.
 
 ## Required Tests
 
 - Workflow transition unit tests.
-- Time-skipping tests for timers and expiry.
+- Controlled-clock tests for timers and expiry.
 - Durable-step retry and terminal failure tests.
 - Duplicate-delivery and idempotency tests.
 - Worker termination and resumption.

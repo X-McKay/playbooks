@@ -4,37 +4,11 @@ This chapter shows how the standards in this playbook fit together in a working 
 
 ## Agent package
 
-A conforming project keeps each agent's declaration, typed contracts, and assembly logic together, and keeps shared capabilities and policy in clearly owned locations:
+A conforming project follows the [repository structure](02-reference-architecture.md#repository-structure): each agent's declaration, typed contracts, and assembly logic stay together, and shared capabilities and policy live in clearly owned locations. Within that structure, the patterns below rely on a few parts that the tree leaves implicit:
 
-```text
-<package>/
-├── agents/
-│   └── customer-support/
-│       ├── agent.yaml               # Declarative Agent Spec
-│       ├── factory                  # Controlled assembly
-│       ├── dependencies             # Typed runtime context
-│       ├── types                    # Typed inputs and outputs
-│       └── instructions/
-├── skills/
-│   └── customer-policy/
-│       └── SKILL.md
-├── tools/
-│   └── customer-records/
-│       ├── types                    # Typed domain inputs and results
-│       ├── policy                   # Tool effect, retry safety, scopes
-│       ├── service                  # Client for the external system
-│       ├── tools                    # Agent-facing tool adapters
-│       └── toolset                  # Registration under a stable ID
-├── workflows/
-│   └── support                      # Deterministic orchestration
-├── runtime/
-│   ├── worker                       # Worker process registration
-│   └── registries                   # Approved models, skills, tools, policies
-└── policy/
-    ├── agent-metadata               # Typed governance metadata
-    ├── execution                    # Execution-class rules
-    └── approval                     # Approval policies
-```
+- Each tool package separates its typed domain inputs and results, its policy (effect, retry safety, and scopes), the client for the external system, the agent-facing tool adapters, and the toolset that registers them under a stable ID.
+- The runtime holds worker registration and the registries of approved models, skills, tools, and policies.
+- The policy area holds typed governance metadata, execution-class rules, and approval policies.
 
 ## Governance metadata
 

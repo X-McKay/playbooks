@@ -5,7 +5,7 @@ An accountable owner completes and approves this checklist before production lau
 ## Contract
 
 - [ ] Agent name and version are stable.
-- [ ] Owner, execution class, and risk tier are declared.
+- [ ] Owner, execution class, and governance tier are declared.
 - [ ] The Agent Spec references a current, approved risk assessment.
 - [ ] Governance tier matches the assessment and all mandatory floors.
 - [ ] Inputs, dependencies, outputs, and errors are typed.
@@ -34,7 +34,7 @@ An accountable owner completes and approves this checklist before production lau
 - [ ] Cancellation and compensation are defined.
 - [ ] Payloads and histories are bounded.
 - [ ] Replay tests pass.
-- [ ] Compatible worker deployment is planned.
+- [ ] A build that can continue in-flight workflows stays available during rollout.
 
 ## Evaluation
 
@@ -84,7 +84,7 @@ An accountable owner completes and approves this checklist before production lau
 
 ## Operations
 
-- [ ] Staging, shadow, canary, and promotion criteria match the risk tier.
+- [ ] Staging, shadow, canary, and promotion criteria match the governance tier.
 - [ ] On-call and escalation ownership are established.
 - [ ] Provider and dependency failures are tested.
 - [ ] Worker shutdown, recovery, and replay are tested.
@@ -97,7 +97,7 @@ Agent:
 Version:
 Manifest ID:
 Execution class:
-Risk tier:
+Governance tier:
 Risk assessment and version:
 Maximum residual risk:
 Residual-risk acceptance:

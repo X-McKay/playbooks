@@ -1,6 +1,6 @@
 ---
 name: design-agent-contract
-description: Design, scaffold, or refactor a production agent's contract and package. Use when defining a declarative agent specification, dependencies, typed input and output, prompts, execution classes, risk tiers, capability allowlists, or package boundaries, independent of the agent framework in use.
+description: Design, scaffold, or refactor a production agent's contract and package. Use when defining a declarative agent specification, dependencies, typed input and output, prompts, execution classes, governance tiers, capability allowlists, or package boundaries, independent of the agent framework in use.
 ---
 
 # Design an Agent Contract

@@ -6,13 +6,15 @@ A durable execution engine records the progress of a workflow so that it can res
 
 | Term           | Meaning                                                                                           |
 | -------------- | ------------------------------------------------------------------------------------------------- |
-| Workflow       | Deterministic orchestration whose progress is recorded in history and rebuilt by replay           |
+| Workflow       | Deterministic orchestration whose progress is recorded so it can be recovered after failure       |
 | Durable step   | A unit of nondeterministic work or I/O whose result is recorded once it completes                 |
 | External event | An authenticated message delivered to a running workflow, such as an approval decision            |
 | Worker         | A process that executes workflows and durable steps from a worker queue                           |
 | Worker queue   | A named queue that routes work to compatible workers                                              |
-| Replay         | Re-executing workflow code against recorded history to reconstruct state after failure            |
+| Replay         | Recovering workflow state after failure from what the engine recorded, as described below         |
 | New run        | Continuing a long-lived workflow as a new run with fresh history while keeping its chain identity |
+
+Engines recover in different ways. Many re-execute workflow code against the recorded results of completed steps; others resume from a saved checkpoint or advance a declarative state machine. This standard uses *replay* for whichever mechanism the engine provides. Where the engine re-executes workflow code, the determinism rules below apply directly. Where it resumes from checkpoints, changed code must still be able to continue persisted state, and replay tests become checkpoint-compatibility tests.
 
 ## Workflow boundary
 
@@ -33,7 +35,7 @@ These identifiers MUST be explicit and stable:
 - External event names
 - Durable model registry keys
 
-Agent frameworks that integrate with a durable execution engine often derive durable-step names from agent names and toolset IDs. Renaming them can break replay of active workflows.
+If an integration derives durable-step names from agent names or toolset IDs, renaming either can break replay of active workflows.
 
 A workflow ID SHOULD be unique and traceable:
 
@@ -176,16 +178,16 @@ For durable user-facing streaming, prefer a streaming mechanism that the durable
 
 Before deploying a workflow change:
 
-- Replay representative histories against the new worker.
+- Replay representative histories against the new build.
 - Verify stable agent names and toolset IDs.
 - Identify changes to workflow command ordering.
-- Use the engine's worker-versioning or code-patching mechanism for incompatible changes.
-- Retain compatible workers until older workflows finish or migrate.
+- Use the engine's mechanism for versioning workflow code, such as version markers in code or routing new runs to a new build, for incompatible changes.
+- Keep a build that can continue older workflows available until they finish or migrate.
 - Test workflows waiting on approvals, timers, and retries.
 
 ## Required tests
 
-- Workflow tests with skipped time
+- Workflow tests with a controlled clock for timers and deadlines
 - Durable-step unit tests
 - Retry and permanent-failure tests
 - Idempotency and duplicate-execution tests

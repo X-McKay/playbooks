@@ -26,7 +26,7 @@ description: Investigate incidents, gather evidence, assess severity, and recomm
 metadata:
   owner: reliability-engineering
   version: 1.2.0
-  risk_tier: medium
+  governance_tier: medium
 ---
 
 ## Use this skill when
