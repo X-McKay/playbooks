@@ -168,7 +168,7 @@ scenarios:
           and approval scopes before dispatching the executor.
         owner: customer-platform
         evidence:
-          - tests/system/test_authority_attenuation.py
+          - tests/system/authority-attenuation
           - evals/systems/customer_resolution_system/cases/AUTH-001.yaml
         effectiveness: verified # planned | implemented | verified | ineffective
       - id: SYS-CTRL-APPROVAL-001
@@ -176,7 +176,7 @@ scenarios:
         description: Bind authenticated approval to action, arguments, tenant, actor, policy, and manifest.
         owner: customer-platform
         evidence:
-          - tests/workflow/test_approval_binding.py
+          - tests/workflow/approval-binding
         effectiveness: verified
     residual:
       impact: 3
@@ -204,7 +204,7 @@ evidence_summary:
   hard_gates:
     report: artifacts/evals/customer-resolution-system.json
     status: pending
-  temporal_replay:
+  durable_replay:
     report: artifacts/replay/customer-resolution-system.json
     status: pending
   security_review:

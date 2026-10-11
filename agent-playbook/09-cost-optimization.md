@@ -32,7 +32,7 @@ budgets:
     maximum_cost_usd: 75
 ```
 
-Use PydanticAI `UsageLimits` for run-level requests, tools, tokens, and cost. Use shared `SpendLimits` storage for budgets spanning runs or workers. In-memory spend counters are insufficient for a production worker fleet or a durable workflow that may resume elsewhere.
+Enforce run-level request, tool, token, and cost limits within the agent runtime. Use a shared, durable spend store for budgets spanning runs or workers. In-memory spend counters are insufficient for a production worker fleet or a durable workflow that may resume elsewhere.
 
 Cost and token limits may be known only after a response, so the request crossing a threshold may still be billed. Treat spend limits as a runtime brake and reconcile with provider billing.
 
@@ -87,7 +87,7 @@ dynamic user content
 
 Do not inject timestamps, random IDs, request metadata, nondeterministically ordered tools, or frequently changing flags into stable prefixes. Track cache reads, writes, hit ratio, savings, and cache-bust warnings.
 
-Long Temporal waits may outlive a provider cache; resumed-workflow estimates SHOULD assume a miss unless observed otherwise.
+Long durable-workflow waits may outlive a provider cache; resumed-workflow estimates SHOULD assume a miss unless observed otherwise.
 
 ## Application caching
 
@@ -100,13 +100,13 @@ Do not cache consequential execution, poorly versioned authorization decisions, 
 Calculate the upper bound:
 
 ```text
-semantic attempts
-× Temporal activity attempts
+output-correction attempts
+× durable-step attempts
 × provider transport attempts
 × model fallbacks
 ```
 
-The default under Temporal is bounded semantic retries, bounded activity retries, disabled provider transport retries, limited fallback candidates, and idempotent side effects.
+The default under durable execution is bounded output-correction retries, bounded durable-step retries, disabled provider transport retries, limited fallback candidates, and idempotent side effects.
 
 ## Durable-workflow economics
 
@@ -114,7 +114,7 @@ The default under Temporal is bounded semantic retries, bounded activity retries
 - Count ambiguous timeouts as potentially billable.
 - Use a shared durable spend store.
 - Keep large artifacts outside workflow history.
-- Use `Continue-As-New` for long histories.
+- Continue as a new run when histories grow long.
 - Expect prompt-cache expiry during long approval waits.
 - Make spend-event consumers idempotent.
 

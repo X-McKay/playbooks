@@ -14,31 +14,26 @@ The effective execution class of an agent MUST be at least the minimum required 
 
 ## Retry classification
 
-```python
-from enum import StrEnum
-from pydantic import BaseModel
+Every tool declares its retry safety alongside its effect:
 
+| Retry safety               | Meaning                                                      |
+| -------------------------- | ------------------------------------------------------------ |
+| `safe`                     | Repeating the call cannot create an additional effect        |
+| `idempotency_key_required` | Repeating is safe only when a stable idempotency key is sent |
+| `unsafe`                   | Repeating may duplicate an effect; no automatic retry        |
 
-class ToolEffect(StrEnum):
-    READ = "read"
-    WRITE_REVERSIBLE = "write_reversible"
-    WRITE_CONSEQUENTIAL = "write_consequential"
+A tool policy is a typed, reviewable record:
 
-
-class RetrySafety(StrEnum):
-    SAFE = "safe"
-    IDEMPOTENCY_KEY_REQUIRED = "idempotency_key_required"
-    UNSAFE = "unsafe"
-
-
-class ToolPolicy(BaseModel):
-    name: str
-    owner: str
-    effect: ToolEffect
-    retry_safety: RetrySafety
-    authorization_scopes: set[str]
-    timeout_seconds: float
-    data_classification: str
+```yaml
+tool_policy:
+  name: update-customer-address
+  owner: customer-platform
+  effect: write_reversible        # read | write_reversible | write_consequential
+  retry_safety: idempotency_key_required # safe | idempotency_key_required | unsafe
+  authorization_scopes:
+    - customer.address.write
+  timeout_seconds: 10
+  data_classification: confidential
 ```
 
 ## Required behavior
@@ -61,24 +56,24 @@ Tools MUST NOT depend on a persona, hide side effects behind a read-like name, i
 ```text
 src/<package>/tools/
 ├── common/
-│   ├── errors.py
-│   ├── policy.py
-│   └── telemetry.py
+│   ├── errors        # Shared error categories
+│   ├── policy        # Shared policy enforcement
+│   └── telemetry     # Shared span and metric helpers
 └── crm/
-    ├── models.py
-    ├── service.py
-    ├── tools.py
-    ├── toolset.py
-    └── policy.py
+    ├── types         # Typed domain inputs and results
+    ├── service       # Client for the external system
+    ├── tools         # Agent-facing tool adapters
+    ├── toolset       # Registration under a stable toolset ID
+    └── policy        # Tool policies for this domain
 ```
 
 The service layer handles the external system. The tool layer adapts typed domain behavior for the agent. The toolset registers tools with a stable ID. This separation keeps infrastructure clients independently testable.
 
-## Temporal and side effects
+## Durable execution and side effects
 
 For durable agents:
 
-- Tool I/O executes in activities.
+- Tool I/O executes in durable steps.
 - Read tools SHOULD be safely retryable.
 - Reversible writes require idempotency or a durable operation record.
 - Consequential writes require valid approval and an idempotency key.

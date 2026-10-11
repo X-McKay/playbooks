@@ -16,7 +16,7 @@ composition works.
 | Interaction tests | Handoffs, delegation, data flow, and failures | Mocked members |
 | Coordination tests | Routing, aggregation, termination, and state | Mocked and real members |
 | End-to-end system evals | Outcome quality and composition benefit | Real system |
-| Temporal scenarios | Retry, replay, concurrency, cancellation, recovery | Mocked and real members |
+| Durable execution scenarios | Retry, replay, concurrency, cancellation, recovery | Mocked and real members |
 | Adversarial system evals | Cross-agent attacks and emergent failure | Realistic sandbox |
 | Online evals | Drift, graph behavior, and unknown failures | Sampled production |
 
@@ -58,13 +58,13 @@ evals/systems/<system_name>/
 │   ├── dynamic-admission/
 │   └── regressions/
 ├── evaluators/
-│   ├── deterministic.py
-│   ├── outcome.py
-│   ├── graph.py
-│   ├── interaction.py
-│   ├── safety.py
-│   ├── operational.py
-│   └── temporal.py
+│   ├── deterministic/
+│   ├── outcome/
+│   ├── graph/
+│   ├── interaction/
+│   ├── safety/
+│   ├── operational/
+│   └── durability/
 ├── experiments/
 │   ├── baseline/
 │   ├── ablations/
@@ -91,7 +91,7 @@ The following are binary release gates when applicable:
 - Cancellation and kill switches stop new dispatch and propagate correctly.
 - Required members, evidence, and reviews cannot be silently skipped.
 - System state reaches an accurate terminal or escalation status.
-- Temporal replay passes for supported histories.
+- Durable replay passes for supported histories.
 - Critical system-risk cases have zero known failures.
 
 One hard-gate failure blocks release. Average member quality, majority votes, or
@@ -254,7 +254,7 @@ hard_gates:
   unapproved_consequential_actions: 0
   duplicate_side_effects: 0
   termination_limit_violations: 0
-  temporal_replay_pass_rate: 1.0
+  durable_replay_pass_rate: 1.0
 quality:
   task_success_rate_min: 0.92
   regression_allowed: 0.02

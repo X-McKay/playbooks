@@ -11,7 +11,7 @@ System cost includes:
 ```text
 member model requests and reasoning tokens
 tool, retrieval, MCP, and external API usage
-workflow, activity, queue, storage, and artifact infrastructure
+workflow, durable step, queue, storage, and artifact infrastructure
 failed, cancelled, duplicate, speculative, and retried work
 review, approval, evaluation, monitoring, and recovery
 idle reservations and unavailable capacity
@@ -112,7 +112,7 @@ Spend and capacity are separate controls. Bound:
 - Active members and branches per run
 - Per-role, member, model, tool, tenant, and provider concurrency
 - Queue depth and maximum queue age
-- Workflow tasks, activities, and child workflows
+- Workflow tasks, durable steps, and child workflows
 - Registry, artifact, and blackboard operations
 - Token and request rate
 

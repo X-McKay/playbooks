@@ -25,20 +25,14 @@
             packages = with pkgs; [
               git
               just
+              lychee
+              markdownlint-cli2
               nixfmt-rfc-style
-              python312
-              shellcheck
-              uv
             ];
-
-            env = {
-              UV_PYTHON = "${pkgs.python312}/bin/python";
-              UV_PYTHON_DOWNLOADS = "never";
-            };
 
             shellHook = ''
               echo "Playbooks development shell"
-              echo "Run 'just bootstrap' once, then 'just check'."
+              echo "Run 'just check' to lint Markdown and check links."
             '';
           };
         }

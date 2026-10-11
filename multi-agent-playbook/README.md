@@ -1,11 +1,13 @@
 # Multi-Agent Systems Playbook
 
 - **Status:** Draft
-- **Version:** 0.1
-- **Last updated:** 2026-09-25
+- **Version:** 0.2
+- **Last updated:** 2026-10-11
 
-This playbook defines a production standard for systems in which multiple AI
-agents coordinate to produce one governed outcome. It extends the
+This playbook is a technology-neutral standard for governed multi-agent
+systems: systems in which multiple AI agents coordinate to produce one governed
+outcome. It describes requirements, practices, and evidence rather than any
+particular SDK, framework, runtime, or vendor. It extends the
 [Agent Playbook](../agent-playbook/README.md); it does not replace it.
 
 A multi-agent system conforms only when every participating agent conforms to
@@ -30,7 +32,7 @@ owner.
 9. [Cost and capacity standard](09-cost-and-capacity.md)
 10. [Security and governance](10-security-and-governance.md)
 11. [Production readiness](11-production-readiness.md)
-12. [Reference implementation](12-reference-implementation.md)
+12. [Implementation patterns](12-implementation-patterns.md)
 13. [System risk assessment](13-system-risk-assessment.md)
 14. [References](references.md)
 
@@ -69,8 +71,8 @@ Every production multi-agent system:
    deterministic design.
 2. Has a stable name, version, owner, System Spec, composition manifest, and
    system risk assessment.
-3. References versioned, independently conforming Agent Specs rather than
-   duplicating their contracts.
+3. References versioned, independently conforming declarative agent
+   specifications (Agent Specs) rather than duplicating their contracts.
 4. Uses a reviewed topology with explicitly pinned or policy-admitted membership
    and interaction edges.
 5. Treats every inter-agent boundary as an untrusted, typed, bounded API.
@@ -79,8 +81,8 @@ Every production multi-agent system:
    deterministic control.
 8. Enforces system-wide and per-interaction limits for depth, fan-out,
    concurrency, rounds, requests, tools, time, tokens, and spend.
-9. Uses Temporal for long-running coordination or any path capable of an
-   externally visible side effect.
+9. Uses a durable execution engine for long-running coordination or any path
+   capable of an externally visible side effect.
 10. Evaluates system outcomes, coordination, failure propagation, security,
     durability, latency, and total cost against an appropriate baseline.
 11. Emits correlated telemetry for the complete delegation graph and retains
@@ -105,20 +107,9 @@ multi-agent system conformance =
 Passing member-agent checks does not establish system conformance. A composition
 can introduce risks, costs, and failure modes that no member has in isolation.
 
-## Executable companion
+## Skills and implementations
 
-The repository's [`agentctl`](../tools/agentctl/README.md) implements the first
-executable System Spec contract:
-
-```bash
-scripts/agentctl system scaffold research-system \
-  --member planner-agent:coordinator \
-  --member researcher-agent:worker
-scripts/agentctl system validate
-scripts/agentctl system graph src/acme_agents/systems/research_system/system.yaml
-scripts/agentctl eval run research-system --system
-```
-
-The packaged schema and semantic checks cover topology, membership, pinned
-versions, execution and governance floors, policies, limits, referenced member
-contracts, system risk, and composition-level evaluation provenance.
+Optional workflow skills that help teams apply this playbook are described in
+[skills](../skills/README.md). The playbook itself stays technology-neutral.
+For one opinionated, zero-trust implementation of these standards, see
+[Zetra](https://github.com/X-McKay/zetra).

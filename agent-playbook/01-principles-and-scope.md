@@ -13,7 +13,7 @@ This playbook standardizes how teams design, implement, evaluate, deploy, and op
 
 ## Scope
 
-The standard applies to production agents built with PydanticAI, including agents exposed through APIs, user interfaces, background jobs, schedules, and event-driven workflows.
+The standard applies to production agents regardless of the framework, language, or model provider used to build them, including agents exposed through APIs, user interfaces, background jobs, schedules, and event-driven workflows.
 
 It covers single-agent and multi-agent systems. In a multi-agent system, each agent MUST satisfy the agent contract independently, and the coordinating workflow MUST satisfy the requirements associated with the highest effective execution class and risk tier.
 
@@ -21,7 +21,7 @@ It covers single-agent and multi-agent systems. In a multi-agent system, each ag
 
 ### Declarative intent, typed enforcement
 
-Use a PydanticAI Agent Spec to declare identity, instructions, model defaults, retry budgets, timeouts, capabilities, and metadata. Use Python and Pydantic types to enforce runtime inputs, dependencies, outputs, policies, and tool contracts.
+Use a declarative agent specification (the Agent Spec) to declare identity, instructions, model defaults, retry budgets, timeouts, capabilities, and metadata. Use schema-validated types to enforce runtime inputs, dependencies, outputs, policies, and tool contracts.
 
 ### Least capability
 
@@ -33,7 +33,7 @@ Use deterministic code for authorization, budget enforcement, approval, routing 
 
 ### Durable side effects
 
-Any agent that can modify external state MUST run through Temporal. Model requests and I/O execute as activities; deterministic coordination executes in workflows.
+Any agent that can modify external state MUST run on a durable execution engine. Model requests and I/O execute as durable steps; deterministic coordination executes in workflows.
 
 ### Human control for consequential action
 
@@ -57,7 +57,7 @@ Every production run can be attributed to a specific agent, configuration, model
 
 Use for short-lived, low-risk, request-response work.
 
-- Temporal is optional.
+- Durable execution is optional.
 - Tools MUST be read-only.
 - The agent MUST NOT create externally visible side effects.
 - Failure may require the caller to retry the run.
@@ -68,9 +68,9 @@ Typical uses include classification, extraction, summarization, and read-only re
 
 Use for long-running work, recoverable processes, or any side effect.
 
-- The run MUST execute inside a Temporal workflow.
-- Model, tool, MCP, database, filesystem, and network I/O MUST execute in activities.
-- Side-effecting activities MUST be idempotent or use stable idempotency keys.
+- The run MUST execute inside a durable workflow.
+- Model, tool, MCP, database, filesystem, and network I/O MUST execute in durable steps.
+- Side-effecting durable steps MUST be idempotent or use stable idempotency keys.
 - Retry, timeout, cancellation, and compensation behavior MUST be explicit.
 
 ### Human-governed

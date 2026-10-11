@@ -12,7 +12,7 @@
 
 ## Dataset Taxonomy
 
-Every material behavior should have cases for happy paths, boundaries, ambiguous inputs, missing evidence, adversarial content, permission denial, dependency failure, historical regressions, and high-risk operations. Workflow agents also need duplicate delivery, retry, timeout, cancellation, signal race, and worker recovery cases.
+Every material behavior should have cases for happy paths, boundaries, ambiguous inputs, missing evidence, adversarial content, permission denial, dependency failure, historical regressions, and high-risk operations. Workflow agents also need duplicate delivery, retry, timeout, cancellation, external-event race, and worker recovery cases.
 
 Each case should include:
 

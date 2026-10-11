@@ -23,7 +23,7 @@
 - No nondeterministic I/O in workflow code.
 - Explicit timeouts, retry policies, and shared retry budgets.
 - Bounded payloads and histories.
-- Signal authorization and approval expiry.
+- Approval-event authorization and approval expiry.
 - Worker-loss, duplicate-delivery, and replay test evidence.
 
 ### Evaluation

@@ -26,7 +26,7 @@ Every agent names product, engineering, quality, operational, domain, and applic
 
 ## Threat model
 
-Medium-, high-, and critical-risk agents maintain a threat model covering users, trust boundaries, providers, tools, MCP, skills, retrieval, memory, Temporal, approval, telemetry, audit, deployment, and dependencies.
+Medium-, high-, and critical-risk agents maintain a threat model covering users, trust boundaries, providers, tools, MCP, skills, retrieval, memory, durable execution, approval, telemetry, audit, deployment, and dependencies.
 
 At minimum, consider:
 
@@ -73,7 +73,7 @@ External capabilities require an owner, immutable identity or version, trust cla
 
 MCP servers MUST be allowlisted, authenticated, pinned where possible, and monitored for unexpected tool-list changes. Server descriptions and results are untrusted. Dynamic production installation is prohibited.
 
-PydanticAI Harness features used by this playbook may be on `0.x` releases; production projects SHOULD pin versions, review release notes, and run full compatibility evals before upgrades.
+Agent frameworks, SDKs, and runtime libraries evolve quickly, and pre-1.0 releases may change behavior without notice. Production projects SHOULD pin versions, review release notes, and run full compatibility evals before upgrades, treating each upgrade as a behavioral change.
 
 ## Isolation
 
@@ -86,7 +86,7 @@ Production agents SHOULD use outbound network allowlists, restricted filesystems
 | Non-behavioral     | Unit/static checks and peer review                                |
 | Behavioral         | Agent version, offline evals, baseline comparison, staged rollout |
 | Security-sensitive | Security review, adversarial evals, threat-model update           |
-| Temporal-sensitive | Replay tests, versioning/patch plan, compatible worker retention  |
+| Replay-sensitive   | Replay tests, versioning/patch plan, compatible worker retention  |
 
 A change may belong to more than one class.
 
@@ -98,7 +98,7 @@ Use a risk-appropriate progression:
 local → integration → staging → shadow → canary → gradual rollout → full release
 ```
 
-Shadow mode MUST disable side effects. Canary promotion depends on operational and behavioral health. Rollback plans MUST account for active Temporal histories; retaining compatible workers may be necessary even after routing new work to an earlier build.
+Shadow mode MUST disable side effects. Canary promotion depends on operational and behavioral health. Rollback plans MUST account for active workflow histories; retaining compatible workers may be necessary even after routing new work to an earlier build.
 
 ## Kill switches
 

@@ -4,13 +4,13 @@ Evaluation is part of the agent contract. A production agent is incomplete until
 
 ## Evaluation layers
 
-| Layer              | Purpose                                         | Model/API usage    |
-| ------------------ | ----------------------------------------------- | ------------------ |
-| Unit tests         | Deterministic code and policy                   | None               |
-| Component tests    | Agent assembly with controlled models and tools | Mocked             |
-| Offline evals      | Behavior on curated datasets                    | Real model         |
-| Temporal scenarios | Failure recovery and side-effect safety         | Mocked and real    |
-| Online evals       | Production drift and unknown failures           | Sampled production |
+| Layer                | Purpose                                         | Model/API usage    |
+| -------------------- | ----------------------------------------------- | ------------------ |
+| Unit tests           | Deterministic code and policy                   | None               |
+| Component tests      | Agent assembly with controlled models and tools | Mocked             |
+| Offline evals        | Behavior on curated datasets                    | Real model         |
+| Durability scenarios | Failure recovery and side-effect safety         | Mocked and real    |
+| Online evals         | Production drift and unknown failures           | Sampled production |
 
 ## Dataset structure
 
@@ -24,12 +24,12 @@ evals/
 │   ├── adversarial/
 │   └── durability/
 ├── evaluators/
-│   ├── deterministic.py
-│   ├── quality.py
-│   ├── trajectory.py
-│   ├── safety.py
-│   ├── operational.py
-│   └── temporal.py
+│   ├── deterministic/
+│   ├── quality/
+│   ├── trajectory/
+│   ├── safety/
+│   ├── operational/
+│   └── durability/
 ├── experiments/
 ├── fixtures/
 └── baselines/
@@ -47,7 +47,7 @@ Prefer, in order:
 4. LLM-as-a-judge
 5. Human review
 
-Pydantic Evals supports output assertions, duration limits, tool correctness, trajectory matching, argument correctness, model/tool-call limits, span-based evaluation, and online evaluation.
+A capable evaluation harness supports output assertions, duration limits, tool correctness, trajectory matching, argument correctness, model/tool-call limits, span-based evaluation over trace data, and online evaluation.
 
 ## Hard gates
 
@@ -60,8 +60,8 @@ The following are binary release gates:
 - Request, tool, token, time, and cost budgets are respected.
 - Secrets and prohibited data are not returned.
 - Required evidence is present.
-- Temporal replay passes.
-- Activity retry creates no duplicate side effect.
+- Workflow replay passes.
+- Durable-step retry creates no duplicate side effect.
 - Critical safety cases have zero known failures.
 
 A weighted average MUST NOT hide failure of a hard gate.
@@ -154,7 +154,7 @@ Values are use-case specific. A release fails when any hard gate fails, an absol
 ## CI strategy
 
 - Pull request: unit, component, smoke, and focused regression suites.
-- Main branch: broad offline and Temporal tests.
+- Main branch: broad offline and durable-execution tests.
 - Pre-release: capability, safety, adversarial, and multi-run suites.
 - Scheduled: provider comparisons and drift detection.
 - Production: privacy-filtered online sampling.

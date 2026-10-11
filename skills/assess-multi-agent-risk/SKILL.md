@@ -16,7 +16,7 @@ Assess risks created or amplified by composition while retaining all member-leve
 5. Score inherent impact and likelihood with the published matrix; do not average scenarios.
 6. Link preventive, detective, and corrective controls to implementation and eval evidence.
 7. Score residual risk only after verified controls. Derive system tier and go, conditional-go, or no-go separately.
-8. Use `agentctl system validate` to check cross-artifact consistency.
+8. Check cross-artifact consistency with the project's own validation tooling or CI, and cite its output as evidence.
 
 ## Required Output
 

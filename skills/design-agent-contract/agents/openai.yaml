@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Agent Contract"
+  short_description: "Design a typed, reviewable agent contract"
+  default_prompt: "Use $design-agent-contract to design a production-ready agent specification and package."

@@ -5,16 +5,16 @@
 ```markdown
 ### [P1] Prevent duplicate payment execution
 
-Evidence: `src/tools/issue_payment.py` retries POST requests after an unknown
+Evidence: the `issue-payment` tool implementation retries POST requests after an unknown
 timeout outcome, and the request has no idempotency key.
 
-Impact: A Temporal activity retry can issue the same payment more than once.
+Impact: A durable-step retry can issue the same payment more than once.
 
 Remediation: Derive an idempotency key from the business operation ID, send it
 to the payment API, and reconcile unknown outcomes before retrying.
 
 Verification: Add a failure-injection test in which the provider commits and
-then times out; assert that one payment exists after activity retry.
+then times out; assert that one payment exists after the durable step retries.
 ```
 
 ## Recommendation Example

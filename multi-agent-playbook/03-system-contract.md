@@ -1,7 +1,7 @@
 # 3. Canonical system contract
 
 Every production multi-agent system is represented by a reviewable package
-containing a declarative System Spec, typed interaction models, deterministic
+containing a declarative System Spec, typed interaction contracts, deterministic
 coordination and policy code, and a controlled assembly function.
 
 ## System Spec
@@ -21,8 +21,8 @@ metadata:
   threat_model: docs/threat-models/customer-resolution-system.md
   evaluation_policy: evals/systems/customer_resolution_system/release-policy.yaml
   data_classification: confidential
-  temporal_enabled: true
-  approval_policy: src/acme_agents/policy/approvals/customer_resolution.yaml
+  durable_execution_enabled: true
+  approval_policy: policy/approvals/customer-resolution.yaml
 
 justification:
   claimed_benefits:
@@ -123,13 +123,13 @@ The following versions remain separate:
 - `contract_version`: System Spec schema and semantics.
 - System version: membership, topology, policies, schemas, and behavior.
 - Member agent version: each agent's independent contract and capabilities.
-- Workflow and worker build: Temporal replay and deployment compatibility.
+- Workflow and worker build: durable replay and deployment compatibility.
 - Composition manifest ID: exact resolved release contents.
 
 Changes to membership, roles, interaction edges, schemas, routing, aggregation,
 state ownership, limits, or termination require a system version change and
-relevant evals. Temporal-incompatible changes additionally require replay-safe
-deployment.
+relevant evals. Changes that are incompatible with in-flight workflow histories
+additionally require replay-safe deployment.
 
 Production System Specs MUST pin acceptable member versions or immutable agent
 manifest IDs. Floating references such as `latest` are prohibited.
@@ -266,7 +266,7 @@ The system factory:
 7. Computes effective execution class and governance-tier floors.
 8. Verifies authority attenuation and data-flow constraints.
 9. Validates combined budget, retry, concurrency, and termination bounds.
-10. Attaches Temporal, observability, audit, budget, and policy services.
+10. Attaches durable execution, observability, audit, budget, and policy services.
 11. Produces the immutable composition manifest.
 
 Construction MUST fail closed on a missing member, version mismatch, undeclared

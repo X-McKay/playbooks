@@ -16,7 +16,7 @@ Evaluate the composition, not only its members.
 5. Inject member failures, malformed and late results, duplicates, reordered events, crashes, stale approvals, registry poisoning, and partial effects.
 6. Measure task quality, risk-scenario pass rates, latency distribution, total and per-success cost, model and tool calls, fan-out, depth, and human intervention.
 7. Require exact composition provenance: system, members, versions, prompts, policies, graph, datasets, evaluator, models, and settings.
-8. Use `agentctl eval run <name> --system` and `release check` when available.
+8. Run system evals and release checks through the project's own validation tooling or CI so results carry provenance and gates fail closed.
 
 ## Required Output
 
