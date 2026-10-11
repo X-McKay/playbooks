@@ -92,23 +92,57 @@ Rules:
 The comparison found these conflicts. Each must be settled once, in chapter 0
 or the owning chapter, before that chapter is merged.
 
-| #   | Conflict                                                                                                                                                                                          | Recommendation                                                                                                                      |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Does a member agent run as a Temporal **activity**, or as a loop inside the workflow with each model and tool call as its own activity? MA 01 says the former, AP 01/02 the latter, MA 06 hedges. | Loop in the workflow (AP model), with child workflows for members that need their own durability. Activities stay single I/O steps. |
-| 2   | `risk_tier` vs `governance_tier`                                                                                                                                                                  | `governance_tier` everywhere; it is distinct from inherent and residual risk.                                                       |
-| 3   | `budgets` vs `limits`; `max_requests` vs `max_model_requests`; time budget missing from the Agent Spec                                                                                            | `limits`, with one field set shared by agents and systems, including `deadline_seconds`.                                            |
-| 4   | Workflow ID format (`<workflow-type>` vs `<system>`)                                                                                                                                              | `<environment>:<tenant>:<workflow-type>:<business-id>:<request-id>`; systems use their system name as the type.                     |
-| 5   | Retry layers (4 in AP, 5 in MA 05, 7 in MA 06) and non-retryable lists                                                                                                                            | One ordered list in chapter 9, extended (not redefined) for interactions.                                                           |
-| 6   | Final status and outcome enums (7 vs 11 states; `timeout` vs `deadline_exceeded`; overlapping partial-effect states)                                                                              | One enum in chapter 3, shared by contracts, telemetry, and evals.                                                                   |
-| 7   | Approval invalidation: MA lets a policy declare a change "immaterial"                                                                                                                             | Keep the stricter AP rule: any change to material arguments, security context, composition, or policy invalidates approval.         |
-| 8   | Tier requirements table vs text: threat model (Medium or High?), risk assessment (all agents or Medium+?), kill switch (all or Critical?)                                                         | Risk assessment and tested kill switch for every agent; threat model from Medium. Fix the table to match.                           |
-| 9   | Review intervals: "suggested" (AP 10) vs "maximum" (AP 13)                                                                                                                                        | Maximum.                                                                                                                            |
-| 10  | Independent review tied to governance tier (AP 10) or residual risk (AP 13)                                                                                                                       | Both, stated once in chapter 16 as separate triggers.                                                                               |
-| 11  | Threat model required for all systems (MA) vs Medium+ agents (AP)                                                                                                                                 | Medium+ for agents; every multi-agent system, because composition adds trust boundaries.                                            |
-| 12  | Release thresholds differ (success 0.90 vs 0.92, p95 25 s vs 30 s, cost $0.20 vs $1.50)                                                                                                           | Treat all as illustrative; teams set them in their evaluation policy.                                                               |
-| 13  | Cost growth alerts: low urgency (AP) vs urgent page for runaway spend (MA)                                                                                                                        | Both: gradual growth is low urgency; budget exhaustion or runaway spend pages.                                                      |
-| 14  | Template field drift (`requirement`/`due_by` vs `description`/`due_at`/`consequence_if_unmet`)                                                                                                    | Adopt the MA template fields, which match the text of AP 13.                                                                        |
-| 15  | Versions (AP v0.3, MA v0.1)                                                                                                                                                                       | Merged playbook is v0.4.                                                                                                            |
+| #   | Conflict                                                                                                                                                                                          | Recommendation                                                                                                              |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Does a member agent run as a Temporal **activity**, or as a loop inside the workflow with each model and tool call as its own activity? MA 01 says the former, AP 01/02 the latter, MA 06 hedges. | **Deferred.** See [Deferred: agent execution on Temporal](#deferred-agent-execution-on-temporal).                           |
+| 2   | `risk_tier` vs `governance_tier`                                                                                                                                                                  | `governance_tier` everywhere; it is distinct from inherent and residual risk.                                               |
+| 3   | `budgets` vs `limits`; `max_requests` vs `max_model_requests`; time budget missing from the Agent Spec                                                                                            | `limits`, with one field set shared by agents and systems, including `deadline_seconds`.                                    |
+| 4   | Workflow ID format (`<workflow-type>` vs `<system>`)                                                                                                                                              | `<environment>:<tenant>:<workflow-type>:<business-id>:<request-id>`; systems use their system name as the type.             |
+| 5   | Retry layers (4 in AP, 5 in MA 05, 7 in MA 06) and non-retryable lists                                                                                                                            | One ordered list in chapter 9, extended (not redefined) for interactions.                                                   |
+| 6   | Final status and outcome enums (7 vs 11 states; `timeout` vs `deadline_exceeded`; overlapping partial-effect states)                                                                              | One enum in chapter 3, shared by contracts, telemetry, and evals.                                                           |
+| 7   | Approval invalidation: MA lets a policy declare a change "immaterial"                                                                                                                             | Keep the stricter AP rule: any change to material arguments, security context, composition, or policy invalidates approval. |
+| 8   | Tier requirements table vs text: threat model (Medium or High?), risk assessment (all agents or Medium+?), kill switch (all or Critical?)                                                         | Risk assessment and tested kill switch for every agent; threat model from Medium. Fix the table to match.                   |
+| 9   | Review intervals: "suggested" (AP 10) vs "maximum" (AP 13)                                                                                                                                        | Maximum.                                                                                                                    |
+| 10  | Independent review tied to governance tier (AP 10) or residual risk (AP 13)                                                                                                                       | Both, stated once in chapter 16 as separate triggers.                                                                       |
+| 11  | Threat model required for all systems (MA) vs Medium+ agents (AP)                                                                                                                                 | Medium+ for agents; every multi-agent system, because composition adds trust boundaries.                                    |
+| 12  | Release thresholds differ (success 0.90 vs 0.92, p95 25 s vs 30 s, cost $0.20 vs $1.50)                                                                                                           | Treat all as illustrative; teams set them in their evaluation policy.                                                       |
+| 13  | Cost growth alerts: low urgency (AP) vs urgent page for runaway spend (MA)                                                                                                                        | Both: gradual growth is low urgency; budget exhaustion or runaway spend pages.                                              |
+| 14  | Template field drift (`requirement`/`due_by` vs `description`/`due_at`/`consequence_if_unmet`)                                                                                                    | Adopt the MA template fields, which match the text of AP 13.                                                                |
+| 15  | Versions (AP v0.3, MA v0.1)                                                                                                                                                                       | Merged playbook is v0.4.                                                                                                    |
+
+## Deferred: agent execution on Temporal
+
+Decision 1 is deferred until a spike against a running Temporal server. The
+research so far (PydanticAI 2.55, Google ADK 2.11, OpenAI Agents SDK, and the
+Temporal documentation, October 2026):
+
+- All three official integrations run the agent loop in workflow code and run
+  each model call, I/O tool call, and MCP call as an activity.
+- Temporal advises a single workflow by default and child workflows only for
+  separate workers or deploys, history partitioning, independent lifecycle, or
+  per-resource entities.
+- PydanticAI's `TemporalAgent` is deprecated in favour of the
+  `TemporalDurability` capability. Its defaults are unlimited activity retries
+  and a 60-second timeout.
+- A PydanticAI sub-agent called from a tool runs inside the parent's tool
+  activity without durability, and its usage is not counted against the
+  parent's budget.
+- Default tool placement differs: PydanticAI runs function tools as
+  activities; ADK and the OpenAI Agents SDK run them in the workflow unless
+  wrapped.
+- Limits: 51,200 events or 50 MB of history (warning at 10,240 events or
+  10 MB), 2 MB per payload, 2,000 pending activities or children.
+
+Candidate rule: agent loop in the workflow by default; members called from
+workflow code; child workflows only for the reasons above; per-session entity
+workflows for conversations; Nexus across team boundaries; whole-agent
+activities only for read-only, idempotent `ephemeral` agents; an agent with
+side effects never runs inside another activity.
+
+The spike should confirm sub-agent durability when called from a
+workflow-side tool, measure per-step overhead and history growth, and try the
+experimental ADK integration. It needs `temporal.download` allowed for the
+Temporal development server.
 
 ## Skills mapping
 
