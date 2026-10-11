@@ -1,60 +1,36 @@
 # Playbooks
 
-Guides, best practices, and education for designing, building, and operating
-production AI agents and multi-agent systems.
+This playbook is a guide, with best practices, for developing production-grade
+AI agents. It is split into three sections:
 
-The playbooks are technology-neutral. They explain what good looks like and
-why: the contracts, controls, evidence, and decisions that make an agent safe
-to run. They do not prescribe SDKs, frameworks, products, or languages, so the
-guidance stays valid as tools change and applies to any stack.
+- **Core concepts**: what every agent needs before it ships. Start with the
+  [Foundations](foundations/README.md) guides on whether an agent is worth
+  building, defining the problem, zero-trust principles, and who owns which
+  decisions. Then work through [Agent Playbook Part 1](agent-playbook/README.md#part-1-core):
+  principles, reference architecture, the agent contract, skills, tools,
+  evaluation, observability, and production readiness.
+- **Advanced concepts**: what you add as your agent takes on more.
+  [Agent Playbook Part 2](agent-playbook/README.md#part-2-advanced-concepts)
+  covers durable execution and human approval, cost optimization, security and
+  governance, risk assessment, and implementation patterns.
+- **Multi-agent systems**: what changes when several agents work together.
+  The [Multi-Agent Systems Playbook](multi-agent-playbook/README.md) covers how
+  to choose a topology, give each agent a role, hand work from one agent to
+  another, narrow permissions as work is passed along, share state, and set
+  limits for the system as a whole. Every agent in the system still follows the
+  Core and Advanced guidance.
 
-For one opinionated implementation of these ideas, with a focus on zero-trust
-agents, see [Zetra](https://github.com/X-McKay/zetra). Zetra is where SDK
-adapters, tooling, reference code, and deployment evidence live.
+The guidance is technology-neutral. It explains what good looks like and why,
+and does not prescribe SDKs, frameworks, products, or languages, so it stays
+valid as tools change and applies to any stack.
 
-## What's here
-
-### Foundations: before you build
-
-The [Foundations](foundations/README.md) guides come before the playbooks. They
-cover when an agent is worth building, how to define the problem and the
-readiness decisions, zero-trust principles for agents, and the operating model
-of ownership, decision rights, oversight, and staged adoption. Start here if
-you are deciding whether or how to adopt agents.
-
-### Agent Playbook
-
-The [Agent Playbook](agent-playbook/README.md) is a guide and standard for
-production AI agents, in two parts:
-
-- **Core**, what every agent needs to ship: principles, reference
-  architecture, the agent contract, skills, tools, evaluation, observability,
-  and production readiness.
-- **Advanced concepts**, what you add as your agent takes on more: durable
-  execution and human approval, cost optimization, security and governance,
-  risk assessment, and implementation patterns.
-
-### Multi-Agent Systems Playbook
-
-The [Multi-Agent Systems Playbook](multi-agent-playbook/README.md) extends the
-Agent Playbook for governed compositions of multiple agents. It adds standards
-for topology selection, membership, roles, typed delegation, authority
-attenuation, dynamic composition, shared state, system-wide limits, and
-composition manifests while retaining the Agent Playbook contract for every
-participating agent.
-
-### Agent Development Skills
-
-The [`skills/`](skills/README.md) library turns both playbooks into fourteen
-portable Agent Skills for Claude Code, Codex, and compatible runtimes. They
-guide design, interactions, risk, durable execution, evals, production
-operations, and readiness reviews without assuming a particular stack.
+The [`skills/`](skills/README.md) library condenses the guidance into fourteen
+portable Agent Skills that help you design, assess, test, and review agents
+while you work.
 
 ## Scope
 
-Content belongs here when it would still be true on a different stack. Content
-that only makes sense for a particular SDK, framework, product, or language
-belongs in an implementation such as Zetra. See
+Content belongs here when it would still be true on a different stack. See
 [CONTRIBUTING.md](CONTRIBUTING.md) for the test to apply and how to handle
 examples.
 

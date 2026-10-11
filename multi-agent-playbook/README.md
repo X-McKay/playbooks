@@ -121,9 +121,7 @@ Passing member-agent checks does not establish system conformance. A
 composition can introduce risks, costs, and failure modes that no member has
 in isolation.
 
-## Skills and implementations
+## Skills
 
 Optional workflow skills that help you apply this playbook are described in
 [skills](../skills/README.md). The playbook itself stays technology-neutral.
-For one opinionated, zero-trust implementation of these standards, see
-[Zetra](https://github.com/X-McKay/zetra).

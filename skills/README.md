@@ -25,8 +25,6 @@ Each package follows the [Agent Skills specification](https://agentskills.io/spe
 
 These skills are technology-neutral: they teach practices and checks, not a particular SDK, framework, or language. Where a skill asks for validation evidence, it expects the project's own validation tooling or CI to produce it.
 
-[Zetra](https://github.com/X-McKay/zetra) provides implementation-specific skills for its own stack.
-
 ## Use with Codex
 
 For repository-scoped use, copy or symlink the skill directories into `.codex/skills/`:
