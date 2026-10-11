@@ -1,14 +1,14 @@
 # 10. Security and governance
 
-Execution class determines how work runs. The Agent Spec risk tier is the
-governance tier and determines how rigorously the agent must be governed.
+Execution class determines how work runs. The governance tier determines how
+rigorously the agent must be governed.
 
-## Risk tiers
+## Governance tiers
 
 Use the [agent risk-assessment standard](13-risk-assessment.md) to identify harm
 scenarios across eight dimensions, score inherent and residual risk, apply
 mandatory floors, link controls to evidence, and record acceptance. The Agent
-Spec risk tier is the assessment's governance tier. The highest material
+Spec declares the assessment's governance tier. The highest material
 scenario determines the tier; dimensions and scenarios MUST NOT be averaged.
 
 | Tier     | Typical controls                                                                                             |
@@ -86,7 +86,7 @@ Production agents SHOULD use outbound network allowlists, restricted filesystems
 | Non-behavioral     | Unit/static checks and peer review                                |
 | Behavioral         | Agent version, offline evals, baseline comparison, staged rollout |
 | Security-sensitive | Security review, adversarial evals, threat-model update           |
-| Replay-sensitive   | Replay tests, versioning/patch plan, compatible worker retention  |
+| Replay-sensitive   | Replay tests, code-versioning plan, compatible build retention    |
 
 A change may belong to more than one class.
 
@@ -98,7 +98,7 @@ Use a risk-appropriate progression:
 local → integration → staging → shadow → canary → gradual rollout → full release
 ```
 
-Shadow mode MUST disable side effects. Canary promotion depends on operational and behavioral health. Rollback plans MUST account for active workflow histories; retaining compatible workers may be necessary even after routing new work to an earlier build.
+Shadow mode MUST disable side effects. Canary promotion depends on operational and behavioral health. Rollback plans MUST account for active workflow histories; keeping a build that can continue in-flight workflows may be necessary even after routing new work to an earlier build.
 
 ## Kill switches
 
@@ -127,4 +127,4 @@ Suggested maximum review intervals are 12 months for low risk, 6 months for medi
 
 ## Decommissioning
 
-Stop new starts, inventory active workflows, complete/cancel/migrate them, retain compatible workers as required, revoke access, remove tool and MCP registrations, retain required audit and eval artifacts, delete data by policy, and mark the agent manifest retired.
+Stop new starts, inventory active workflows, complete/cancel/migrate them, keep a compatible build available as required, revoke access, remove tool and MCP registrations, retain required audit and eval artifacts, delete data by policy, and mark the capability manifest retired.

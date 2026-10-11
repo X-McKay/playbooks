@@ -15,7 +15,9 @@ This playbook standardizes how teams design, implement, evaluate, deploy, and op
 
 The standard applies to production agents regardless of the framework, language, or model provider used to build them, including agents exposed through APIs, user interfaces, background jobs, schedules, and event-driven workflows.
 
-It covers single-agent and multi-agent systems. In a multi-agent system, each agent MUST satisfy the agent contract independently, and the coordinating workflow MUST satisfy the requirements associated with the highest effective execution class and risk tier.
+In a multi-agent system, each agent MUST satisfy the agent contract independently. The composition is governed by the companion [Multi-Agent Systems Playbook](../multi-agent-playbook/README.md).
+
+This standard assumes the use case, problem brief, and ownership are already settled. The [Foundations](../foundations/README.md) guides cover those decisions and the [zero-trust principles](../foundations/03-zero-trust-principles.md) that the core principles below put into practice.
 
 ## Core principles
 

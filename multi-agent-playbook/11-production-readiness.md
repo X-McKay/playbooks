@@ -62,7 +62,7 @@ quality does not establish system readiness.
 - [ ] Budget reservation and reconciliation survive worker loss and duplicate delivery.
 - [ ] Cancellation propagates and compensation behavior is tested.
 - [ ] Payloads and histories are bounded; large artifacts remain outside workflow history.
-- [ ] Representative static and dynamic histories replay against the proposed worker.
+- [ ] Representative static and dynamic histories replay against the proposed build.
 
 ## Termination and degraded modes
 

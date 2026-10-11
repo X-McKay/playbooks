@@ -1,5 +1,7 @@
 # Agent Contract Design Standard
 
+This file condenses [Agent Playbook chapter 2, Reference architecture](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/02-reference-architecture.md) and [Agent Playbook chapter 3, Canonical agent contract](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/03-agent-contract.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
+
 ## Illustrative Package Layout
 
 Adapt names and file types to the project's language and conventions; the separation of concerns matters more than the exact paths.
@@ -65,7 +67,7 @@ Choose `ephemeral` only when work is short-lived and has no externally visible s
 
 Assess concrete harm scenarios across financial, operational, reputational,
 legal, security, privacy, regulatory, and human-impact/safety dimensions. The
-specification's risk tier is the governance tier derived from the highest inherent
+specification's governance tier is derived from the highest inherent
 scenario and mandatory floors. Residual risk is scored after verified controls
 and determines the launch decision. Do not average dimensions or scenarios.
 

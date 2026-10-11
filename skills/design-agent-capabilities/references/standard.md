@@ -1,5 +1,7 @@
 # Agent Capability Standard
 
+This file condenses [Agent Playbook chapter 4, Skill standard](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/04-skills.md) and [Agent Playbook chapter 5, Tool standard](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/05-tools.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
+
 ## Placement Decision
 
 | Need | Primary mechanism |
@@ -41,7 +43,7 @@ Follow the Agent Skills specification:
 - Include common requests and edge cases.
 - Never include secrets or assume a capability that is not actually available.
 
-For widest portability, keep required frontmatter to `name` and `description`. Record owner, semantic version, and risk tier in an approved governance manifest or portable `metadata` when all target clients support it. Put product-specific presentation metadata in its product-defined location, such as `agents/openai.yaml`.
+For widest portability, keep required frontmatter to `name` and `description`. Record owner, semantic version, and governance tier in an approved governance manifest or portable `metadata` when all target clients support it. Put product-specific presentation metadata in its product-defined location, such as `agents/openai.yaml`.
 
 ## Allowlist Pattern
 

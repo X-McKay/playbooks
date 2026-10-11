@@ -81,7 +81,7 @@ this order:
 1. Load the System Spec and validate its metadata.
 2. Resolve the system's delegation, data-flow, termination, approval, and
    budget policies from the policy registry.
-3. For each member, resolve the pinned agent manifest from the agent registry,
+3. For each member, resolve the pinned capability manifest from the agent registry,
    verify that it conforms and is compatible with the system's execution class
    and governance tier, and build a member restricted to the intersection of
    its own allowlists and the system's restrictions.

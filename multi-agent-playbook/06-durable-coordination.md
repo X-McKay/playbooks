@@ -7,7 +7,7 @@ durability; it does not provide authorization, safe delegation, convergence, or
 bounded autonomy by itself.
 
 Terminology follows the Agent Playbook: a *workflow* is deterministic
-orchestration code whose history can be replayed; a *durable step* performs
+orchestration code whose recorded progress can be replayed after failure; a *durable step* performs
 nondeterministic work and records its result; a *child workflow* is a workflow
 started and supervised by another; an *external event* is a recorded message,
 such as a human approval, delivered to a running workflow; and a *worker queue*
@@ -293,13 +293,14 @@ Before deployment:
 - Verify stable system, member, role, interaction, workflow, and durable step IDs.
 - Verify graph and policy decisions do not call mutable registries during replay.
 - Test in-flight approvals, budget reservations, timers, and substitutions.
-- Use the engine's worker versioning or code-patching mechanism for
-  incompatible changes.
-- Retain compatible workers until pinned executions complete or migrate.
+- Use the engine's mechanism for versioning workflow code for incompatible
+  changes.
+- Keep a build that can continue pinned executions available until they
+  complete or migrate.
 
 ## Required tests
 
-- Workflow tests with skipped time
+- Workflow tests with a controlled clock for timers and deadlines
 - Static and dynamic graph materialization tests
 - Admission and graph-version replay tests
 - Concurrent fan-out and deterministic aggregation tests

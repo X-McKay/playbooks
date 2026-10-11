@@ -1,5 +1,7 @@
 # Production Operations Standard
 
+This file condenses [Agent Playbook chapter 8, Observability standard](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/08-observability.md), [Agent Playbook chapter 9, Cost optimization standard](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/09-cost-optimization.md), and [Agent Playbook chapter 10, Security and governance](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/10-security-and-governance.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
+
 ## Trace Model
 
 Use a hierarchy that preserves one correlation path:
@@ -21,7 +23,7 @@ Use safe identifiers or hashes for:
 
 - agent, prompt, policy, skill-set, tool-set, and release versions;
 - model provider and model name;
-- execution class and risk tier;
+- execution class and governance tier;
 - workflow and durable-step type;
 - capability name and outcome;
 - input and output token counts;

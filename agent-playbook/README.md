@@ -29,6 +29,13 @@ The playbook is intentionally opinionated. Teams may adopt stricter controls. Ex
 13. [Agent risk assessment](13-risk-assessment.md)
 14. [References](references.md)
 
+## Before you start
+
+The [Foundations](../foundations/README.md) guides cover what this standard
+assumes is already settled: whether an agent is the right answer, the problem
+brief and readiness criteria, zero-trust principles, and who owns which
+decisions.
+
 ## Skills and implementations
 
 - The companion [skills library](../skills/README.md) translates this standard into focused workflows for clients that support the Agent Skills specification.

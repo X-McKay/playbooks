@@ -14,6 +14,14 @@ adapters, tooling, reference code, and deployment evidence live.
 
 ## What's here
 
+### Foundations: before you build
+
+The [Foundations](foundations/README.md) guides come before the playbooks. They
+cover when an agent is worth building, how to define the problem and the
+readiness decisions, zero-trust principles for agents, and the operating model
+of ownership, decision rights, oversight, and staged adoption. Start here if
+you are deciding whether or how to adopt agents.
+
 ### Agent Playbook
 
 The [Agent Playbook](agent-playbook/README.md) is a standard for production AI
@@ -61,6 +69,12 @@ just check
 
 ## Status
 
-The Agent Playbook is currently **v0.4 — draft**. Feedback and contributions
+| Content | Version | Status |
+| --- | --- | --- |
+| Foundations | Unversioned | Draft |
+| Agent Playbook | 0.4 | Draft |
+| Multi-Agent Systems Playbook | 0.2 | Draft |
+
+Feedback and contributions
 are welcome through [issues](https://github.com/X-McKay/playbooks/issues) and
 [pull requests](https://github.com/X-McKay/playbooks/pulls).

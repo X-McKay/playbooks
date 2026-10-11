@@ -290,7 +290,7 @@ Every report records:
 
 ```text
 system and composition manifest versions
-member agent manifests and models
+member capability manifests and models
 topology, graph, schemas, and policies
 workflow and worker build
 datasets, cases, evaluators, and risk tags

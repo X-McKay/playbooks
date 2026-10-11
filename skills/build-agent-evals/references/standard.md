@@ -1,5 +1,7 @@
 # Agent Evaluation Standard
 
+This file condenses [Agent Playbook chapter 7, Evaluation standard](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/07-evaluation.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+
 ## Evaluation Layers
 
 | Layer | Purpose | Typical evidence |

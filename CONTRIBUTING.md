@@ -32,6 +32,11 @@ concept and link to the implementation for the specifics.
   each playbook's README.
 - Version the playbook in its README when a change alters what conformance
   requires.
+- When a change alters a chapter, update the skill reference that condenses
+  it. Each `skills/*/references/standard.md` names its source chapter.
+- Use the terms the playbooks define: **governance tier** (not risk tier) for
+  the assurance level, and **capability manifest** for the per-agent bill of
+  materials produced at startup.
 
 ## Checks
 

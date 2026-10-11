@@ -6,7 +6,7 @@
 agent.name: "support-agent"
 agent.version: "2026-09-25.1"
 agent.execution_class: "ephemeral"
-agent.risk_tier: "medium"
+agent.governance_tier: "medium"
 llm.model: "configured-model-alias"
 llm.input_tokens: 1840
 llm.output_tokens: 212

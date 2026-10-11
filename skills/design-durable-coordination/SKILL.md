@@ -17,7 +17,7 @@ Keep durable coordination deterministic and isolate all nondeterminism in durabl
 6. Use child workflows only for independently durable sub-processes; bound their number and recursion depth.
 7. Bind approvals to action hashes, actor, tenant, manifest, expiry, and current workflow state.
 8. Implement cancellation, late result, duplicate result, timeout, partial-effect, and compensation paths.
-9. Add replay, worker-restart, external-event-ordering, duplicate-delivery, and continue-as-new-run tests.
+9. Add replay, worker-restart, external-event-ordering, duplicate-delivery, and new-run (history rollover) tests.
 
 ## Required Output
 

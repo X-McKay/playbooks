@@ -1,5 +1,7 @@
 # Durable Multi-Agent Coordination Standard
 
+This file condenses [Multi-Agent Systems Playbook chapter 6, Durable coordination standard](https://github.com/X-McKay/playbooks/blob/main/multi-agent-playbook/06-durable-coordination.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+
 The workflow owns composition manifest, graph version, state transitions, system budgets, delegation lifecycle, aggregation, approvals, cancellation, and termination. Durable steps own all nondeterministic execution.
 
 Persist stable delegation IDs, attempt numbers, parent IDs, depth, requested authority, reserved budget, deadlines, and result references. Reserve budget atomically before dispatch and reconcile actual use afterward.

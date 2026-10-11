@@ -1,5 +1,7 @@
 # Agent Risk Assessment Standard
 
+This file condenses [Agent Playbook chapter 13, Agent risk assessment](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/13-risk-assessment.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+
 ## Required distinctions
 
 - Execution class describes how work executes.
@@ -8,7 +10,7 @@
 - Residual risk describes what remains after verified controls.
 - Launch decision states whether the assessed release may proceed.
 
-The Agent Spec `risk_tier` is the governance tier. Determine it from the highest
+Record the governance tier as the Agent Spec `governance_tier`. Determine it from the highest
 inherent scenario, applicable legal or policy floor, and organizational
 capability floors. Use residual risk for `go`, `conditional_go`, or `no_go`.
 

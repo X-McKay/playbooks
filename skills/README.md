@@ -7,7 +7,7 @@ This library translates the [Agent Playbook](../agent-playbook/README.md) and [M
 | Skill | Use it for |
 | --- | --- |
 | [`assess-agent-risk`](assess-agent-risk/SKILL.md) | Scenario-based inherent and residual risk assessment across eight dimensions |
-| [`design-agent-contract`](design-agent-contract/SKILL.md) | Declarative agent specifications, typed contracts, package structure, execution classes, and risk tiers |
+| [`design-agent-contract`](design-agent-contract/SKILL.md) | Declarative agent specifications, typed contracts, package structure, execution classes, and governance tiers |
 | [`design-agent-capabilities`](design-agent-capabilities/SKILL.md) | Skill-versus-tool decisions, tool contracts, capability allowlists |
 | [`design-durable-execution`](design-durable-execution/SKILL.md) | Engine-neutral workflows, durable steps, retries, approvals, replay, and recovery |
 | [`build-agent-evals`](build-agent-evals/SKILL.md) | Datasets, evaluators, trajectory checks, release gates, and online evals |
@@ -68,6 +68,7 @@ Agent frameworks that support the Agent Skills specification can also expose the
 5. Add scripts only for deterministic work that instructions and existing tools cannot perform reliably.
 6. Keep credentials, authorization, and enforcement outside skill text.
 7. Validate changes and test both expected triggers and non-triggers.
+8. Keep `references/standard.md` in step with the playbook chapter it condenses. Each one links its source chapter; the chapter is canonical.
 
 ## Validation
 

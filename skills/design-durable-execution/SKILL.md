@@ -10,14 +10,14 @@ Use a durable execution engine to make orchestration recoverable while keeping m
 ## Workflow
 
 1. Confirm that the agent needs durable execution. Use `ephemeral` execution only for bounded work without externally visible side effects; use `durable` or `human_governed` execution for engine-backed paths.
-2. Draw the workflow boundary. Put only deterministic coordination, durable state transitions, timers, external events, queries, and durable-step scheduling in workflow code.
+2. Draw the workflow boundary. Put only deterministic coordination, durable state transitions, timers, external events, read-only state inspection, and durable-step scheduling in workflow code.
 3. Put model inference, agent runs, database access, network I/O, file I/O, random values, and wall-clock decisions in durable steps.
 4. Define versioned, schema-validated payloads for workflow inputs, step inputs, results, external events, and externally stored state.
 5. Assign stable business identifiers to workflows and idempotency keys to side-effecting steps.
 6. Configure timeouts and retries by failure class. Never blindly retry authentication failures, invalid input, policy denial, or non-idempotent writes.
 7. Model human approval as an explicit workflow state with an external event, timeout, authorized actor, and audit record.
 8. Bound histories and payload sizes. Use external artifact storage and continue as a new run when histories can grow indefinitely.
-9. Add unit, integration, time-skipping, failure-injection, idempotency, and replay tests.
+9. Add unit, integration, controlled-clock, failure-injection, idempotency, and replay tests.
 10. Document deployment compatibility for in-flight workflows.
 
 ## Required Separation

@@ -43,7 +43,7 @@ agent.version
 agent.contract_version
 agent.manifest_id
 agent.execution_class
-agent.risk_tier
+agent.governance_tier
 agent.run_id
 agent.request_id
 workflow.namespace
