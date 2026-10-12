@@ -1,6 +1,6 @@
 # Agent Development Skills
 
-This library translates the [Agent Playbook](../agent-playbook/README.md) and [Multi-Agent Playbook](../multi-agent-playbook/README.md) into focused workflows that Claude Code and Codex can discover and apply while building agents and governed agent systems.
+This library translates the playbook's [Core](../core/README.md), [Advanced](../advanced/README.md), and [Multi-agent systems](../multi-agent/README.md) sections into focused workflows that Claude Code and Codex can discover and apply while building agents and governed agent systems.
 
 ## Catalog
 
@@ -86,4 +86,4 @@ Also run the repository's Markdown checks. A valid package is only the starting 
 - [Claude Code skills](https://code.claude.com/docs/en/skills)
 - [OpenAI skills guide](https://developers.openai.com/api/docs/guides/tools-skills)
 - [OpenAI plugin skill authoring](https://developers.openai.com/plugins/build/skills)
-- [Agent Playbook references](../agent-playbook/references.md)
+- [Core and Advanced references](../core/references.md)

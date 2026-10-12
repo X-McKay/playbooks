@@ -1,6 +1,6 @@
 # Agent Capability Standard
 
-This file condenses [Agent Playbook chapter 4, Skills](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/04-skills.md) and [Agent Playbook chapter 5, Tools](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/05-tools.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
+This file condenses [Core chapter 8, Skills](https://github.com/X-McKay/playbooks/blob/main/core/08-skills.md) and [Core chapter 9, Tools](https://github.com/X-McKay/playbooks/blob/main/core/09-tools.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
 
 ## Placement Decision
 

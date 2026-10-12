@@ -1,6 +1,6 @@
 # Multi-Agent Readiness Standard
 
-This file condenses [Multi-Agent Systems Playbook chapter 11, Production readiness](https://github.com/X-McKay/playbooks/blob/main/multi-agent-playbook/11-production-readiness.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+This file condenses [Multi-agent systems chapter 11, Production readiness](https://github.com/X-McKay/playbooks/blob/main/multi-agent/11-production-readiness.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
 
 ## Required Evidence Domains
 

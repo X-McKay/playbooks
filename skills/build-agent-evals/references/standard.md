@@ -1,6 +1,6 @@
 # Agent Evaluation Standard
 
-This file condenses [Agent Playbook chapter 6, Evaluation](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/06-evaluation.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+This file condenses [Core chapter 10, Evaluation](https://github.com/X-McKay/playbooks/blob/main/core/10-evaluation.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
 
 ## Evaluation Layers
 

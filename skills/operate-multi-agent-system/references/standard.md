@@ -1,6 +1,6 @@
 # Multi-Agent Operations Standard
 
-This file condenses [Multi-Agent Systems Playbook chapter 8, Observability](https://github.com/X-McKay/playbooks/blob/main/multi-agent-playbook/08-observability.md), [Multi-Agent Systems Playbook chapter 9, Cost and capacity](https://github.com/X-McKay/playbooks/blob/main/multi-agent-playbook/09-cost-and-capacity.md), and [Multi-Agent Systems Playbook chapter 10, Security and governance](https://github.com/X-McKay/playbooks/blob/main/multi-agent-playbook/10-security-and-governance.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
+This file condenses [Multi-agent systems chapter 8, Observability](https://github.com/X-McKay/playbooks/blob/main/multi-agent/08-observability.md), [Multi-agent systems chapter 9, Cost and capacity](https://github.com/X-McKay/playbooks/blob/main/multi-agent/09-cost-and-capacity.md), and [Multi-agent systems chapter 10, Security and governance](https://github.com/X-McKay/playbooks/blob/main/multi-agent/10-security-and-governance.md). The chapters are canonical: if they differ from this file, follow the chapters and update this file.
 
 Correlate every event with system run, workflow, manifest, graph version, delegation, parent delegation, member, attempt, tenant, actor, policy decision, and budget ledger identifiers as applicable.
 

@@ -1,8 +1,8 @@
 # Multi-Agent System Design Standard
 
-This file condenses [Multi-Agent Systems Playbook chapters 1 to 4](https://github.com/X-McKay/playbooks/blob/main/multi-agent-playbook/README.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+This file condenses [Multi-agent systems chapters 1 to 4](https://github.com/X-McKay/playbooks/blob/main/multi-agent/README.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
 
-Read the repository's Multi-Agent Playbook chapters on principles, reference architecture, System Specs, membership, cost, and governance.
+Read the repository's Multi-agent systems chapters on principles, reference architecture, System Specs, membership, cost, and governance.
 
 ## Decision Order
 
