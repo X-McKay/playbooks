@@ -10,12 +10,12 @@ used a different SDK, framework, product, or language?**
 
 - **Yes**: it belongs here. Principles, normative requirements, decision
   criteria, failure modes, checklists, templates, and worked scenarios.
-- **No**: it belongs in an implementation, such as
-  [Zetra](https://github.com/X-McKay/zetra). Install steps, API calls, code,
-  configuration for a named product, version pins, and tool commands.
+- **No**: it does not belong in this repository. Install steps, API calls,
+  code, configuration for a named product, version pins, and tool commands
+  belong in the documentation for that stack.
 
 When a concept is easiest to explain with a concrete tool, describe the
-concept and link to the implementation for the specifics.
+concept in neutral terms instead.
 
 ## Writing rules
 
@@ -47,5 +47,4 @@ just check
 
 `just check` lints Markdown and verifies that relative links and anchors
 resolve. Skill packages follow the
-[Agent Skills specification](https://agentskills.io/specification); Zetra's
-tooling can validate them.
+[Agent Skills specification](https://agentskills.io/specification).

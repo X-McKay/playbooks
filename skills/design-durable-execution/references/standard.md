@@ -1,6 +1,6 @@
 # Durable Agent Execution Standard
 
-This file condenses [Agent Playbook chapter 9, Durable execution and human approval](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/09-durable-execution.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+This file condenses [Advanced chapter 1, Durable execution and human approval](https://github.com/X-McKay/playbooks/blob/main/advanced/01-durable-execution.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
 
 ## Boundary
 

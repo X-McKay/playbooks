@@ -1,6 +1,6 @@
 # Agent Readiness Review Standard
 
-This file condenses [Agent Playbook chapter 8, Production readiness](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/08-production-readiness.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+This file condenses [Core chapter 12, Production readiness](https://github.com/X-McKay/playbooks/blob/main/core/12-production-readiness.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
 
 ## Required Evidence
 

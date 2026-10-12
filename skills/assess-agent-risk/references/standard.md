@@ -1,6 +1,6 @@
 # Agent Risk Assessment Standard
 
-This file condenses [Agent Playbook chapter 12, Risk assessment](https://github.com/X-McKay/playbooks/blob/main/agent-playbook/12-risk-assessment.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
+This file condenses [Advanced chapter 4, Risk assessment](https://github.com/X-McKay/playbooks/blob/main/advanced/04-risk-assessment.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
 
 ## Required distinctions
 

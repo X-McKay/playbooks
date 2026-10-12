@@ -1,6 +1,6 @@
 # Agent Development Skills
 
-This library translates the [Agent Playbook](../agent-playbook/README.md) and [Multi-Agent Playbook](../multi-agent-playbook/README.md) into focused workflows that Claude Code and Codex can discover and apply while building agents and governed agent systems.
+This library translates the playbook's [Core](../core/README.md), [Advanced](../advanced/README.md), and [Multi-agent systems](../multi-agent/README.md) sections into focused workflows that Claude Code and Codex can discover and apply while building agents and governed agent systems.
 
 ## Catalog
 
@@ -24,8 +24,6 @@ This library translates the [Agent Playbook](../agent-playbook/README.md) and [M
 Each package follows the [Agent Skills specification](https://agentskills.io/specification): a required `SKILL.md`, concise discovery metadata, progressive disclosure, directly linked references, examples, and no required product-specific frontmatter.
 
 These skills are technology-neutral: they teach practices and checks, not a particular SDK, framework, or language. Where a skill asks for validation evidence, it expects the project's own validation tooling or CI to produce it.
-
-[Zetra](https://github.com/X-McKay/zetra) provides implementation-specific skills for its own stack.
 
 ## Use with Codex
 
@@ -88,4 +86,4 @@ Also run the repository's Markdown checks. A valid package is only the starting 
 - [Claude Code skills](https://code.claude.com/docs/en/skills)
 - [OpenAI skills guide](https://developers.openai.com/api/docs/guides/tools-skills)
 - [OpenAI plugin skill authoring](https://developers.openai.com/plugins/build/skills)
-- [Agent Playbook references](../agent-playbook/references.md)
+- [Core and Advanced references](../core/references.md)
