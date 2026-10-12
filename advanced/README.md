@@ -11,8 +11,22 @@ read an Advanced chapter when your agent needs it.
 
 Core and Advanced share one set of terms: the
 [normative language](../core/README.md#normative-language),
-[execution classes](../core/README.md#execution-classes), and governance tiers
+[execution classes](../core/05-principles-and-scope.md#execution-classes), and governance tiers
 defined in Core apply here unchanged.
+
+## Advanced concepts in one page
+
+On top of [Core concepts in one page](../core/README.md#core-concepts-in-one-page),
+an agent that acts on other systems, runs for a long time, or carries more
+risk:
+
+1. Uses a durable execution engine for long-running work or any externally
+   visible side effect.
+2. Requires human approval for consequential operations.
+3. Enforces request, tool, token, time, and spend budgets.
+4. Is evaluated for durability: replay, retries, and recovery.
+5. Has an evidence-based risk assessment, and cannot ship until its residual
+   risks are accepted.
 
 ## Contents
 

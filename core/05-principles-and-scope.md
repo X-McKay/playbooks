@@ -97,6 +97,17 @@ The execution class describes how your agent's work runs. Pick the lowest
 class that covers what the agent can do; the most consequential tool you
 enable sets the floor.
 
+| Class            | Durable execution |                  Side effects |                     Human approval |
+| ---------------- | ----------------: | ----------------------------: | ---------------------------------: |
+| `ephemeral`      |          Optional |                    Prohibited |                           Optional |
+| `durable`        |          Required | Allowed through durable steps |                       Policy-based |
+| `human_governed` |          Required |        Allowed after approval | Required for consequential actions |
+
+An individual workflow may elevate an agent's declared execution class, but
+it MUST NOT silently downgrade it. The effective class is at least the
+minimum required by the most consequential enabled tool. The sections below
+say what each class requires.
+
 ### Ephemeral
 
 For short-lived, low-risk, request-response work such as classification,
@@ -136,6 +147,15 @@ Best practices:
 - **Treat a class change as a new release decision.** Moving from ephemeral
   to durable, or adding a consequential tool, changes your risk assessment
   and evaluation plan, not just configuration.
+
+### Execution class and risk
+
+Execution class describes **how work executes**. Governance tier describes the
+assurance required by the agent's inherent risk and mandatory floors. Residual
+risk describes what remains after verified controls. They are independent: a
+read-only medical assistant can be ephemeral and high risk, while a reversible
+internal update agent can be durable and medium risk. See the
+[risk assessment](../advanced/04-risk-assessment.md) chapter in Advanced concepts.
 
 ## What conformance means
 

@@ -50,6 +50,28 @@ owner.
 
 [References](references.md) lists sources for Core and Advanced concepts.
 
+## Core concepts in one page
+
+Every production agent:
+
+1. Has a stable name, version, owner, execution class, and governance tier.
+2. Uses a declarative agent specification for its definition and
+   schema-validated types for runtime validation.
+3. Explicitly allowlists its skills and tools.
+4. Classifies every tool as read-only, reversible write, or consequential
+   write.
+5. Acts with its own trusted identity and least privilege, and treats tool
+   output and retrieved content as untrusted data.
+6. Is evaluated for outcomes, trajectory, safety, latency, and cost.
+7. Emits correlated OpenTelemetry data across requests, models, skills, and
+   tools.
+8. Has named owners, a kill switch, and an incident plan, and cannot ship
+   until its production-readiness checklist is complete.
+
+[Advanced concepts](../advanced/README.md#advanced-concepts-in-one-page) adds
+what an agent needs once it acts on other systems, runs for a long time, or
+carries more risk.
+
 ## How the chapters connect
 
 | Output of chapters 1 to 4 | Used by |
@@ -60,60 +82,19 @@ owner.
 | Zero-trust principles | [Principles](05-principles-and-scope.md), [tools](09-tools.md), [security and governance](../advanced/03-security-and-governance.md) |
 | Decision rights and oversight | [Security and governance](../advanced/03-security-and-governance.md), [observability](11-observability.md) |
 
+## Normative language
+
+The chapters use **MUST**, **SHOULD**, and **MAY** to show how strongly each
+practice applies:
+
+- **MUST / MUST NOT:** always do this, or never do it. Skipping it leaves a
+  real gap in safety or reliability, so a reviewer should treat it as a
+  blocker.
+- **SHOULD / SHOULD NOT:** do this unless you have a documented reason not
+  to.
+- **MAY:** optional; use it when it helps.
+
 ## Skills
 
 The companion [skills library](../skills/README.md) turns this guidance into
 focused workflows for clients that support the Agent Skills specification.
-
-## Normative language
-
-The terms **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY**
-indicate requirement strength:
-
-- **MUST / MUST NOT:** required for conformance.
-- **SHOULD / SHOULD NOT:** expected unless a documented reason justifies an
-  exception.
-- **MAY:** optional.
-
-## Every production agent, in one page
-
-Every production agent:
-
-1. Has a stable name, version, owner, execution class, and evidence-based risk
-   assessment.
-2. Uses a declarative agent specification for its definition and schema-validated
-   types for runtime validation.
-3. Explicitly allowlists its skills and tools.
-4. Classifies every tool as read-only, reversible write, or consequential write.
-5. Uses a durable execution engine for long-running work or any externally
-   visible side effect.
-6. Requires human approval for consequential operations.
-7. Enforces request, tool, token, time, and spend budgets.
-8. Is evaluated for outcomes, trajectory, safety, durability, latency, and cost.
-9. Emits correlated OpenTelemetry data across requests, workflows, models,
-   skills, and tools.
-10. Cannot ship until residual risks are accepted and its production-readiness
-    checklist is complete.
-
-## Execution classes
-
-| Class            | Durable execution |                  Side effects |                     Human approval |
-| ---------------- | ----------------: | ----------------------------: | ---------------------------------: |
-| `ephemeral`      |          Optional |                    Prohibited |                           Optional |
-| `durable`        |          Required | Allowed through durable steps |                       Policy-based |
-| `human_governed` |          Required |        Allowed after approval | Required for consequential actions |
-
-An individual workflow may elevate an agent's declared execution class, but
-it MUST NOT silently downgrade it. The effective class is at least the
-minimum required by the most consequential enabled tool. See
-[execution classes](05-principles-and-scope.md#execution-classes) for what
-each class requires.
-
-## Relationship between execution class and risk
-
-Execution class describes **how work executes**. Governance tier describes the
-assurance required by the agent's inherent risk and mandatory floors. Residual
-risk describes what remains after verified controls. They are independent: a
-read-only medical assistant can be ephemeral and high risk, while a reversible
-internal update agent can be durable and medium risk. See the
-[risk assessment](../advanced/04-risk-assessment.md) chapter in Advanced concepts.
