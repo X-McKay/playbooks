@@ -113,7 +113,7 @@ well as expanding (see
   and identity propagation can combine privileges across tools or agents,
   and a generic code runner can bypass a narrow tool interface. The
   [Multi-agent systems](../multi-agent/05-delegation-and-interactions.md#authority-attenuation)
-  requires authority to attenuate, never amplify, across delegation.
+  section requires authority to attenuate, never amplify, across delegation.
 - **Fail closed at consequential boundaries.** When the authorization or
   policy service is unavailable or stale, block new consequential actions
   rather than falling back to weaker controls, and tell users why.

@@ -46,7 +46,7 @@ next step genuinely depends on what the previous one found.
 Each step up the table adds work you will own. A multi-step agent has to
 explain when it stops, when it escalates, what it consumes, and how it recovers
 from failure. Several coordinating agents add more again; the
-[Multi-agent systems](../multi-agent/01-principles-and-scope.md)
+[Multi-agent systems](../multi-agent/01-principles-and-scope.md) section
 asks you to justify that choice separately.
 
 ## Start narrow and earn more authority
