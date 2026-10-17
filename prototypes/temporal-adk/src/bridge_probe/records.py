@@ -135,3 +135,24 @@ def describe(kind, executor, request, *, index, invocation="probe-invocation", m
         operation_id=f"{invocation}:{index:08d}",
         request_digest=digest(identity),
     )
+
+
+def verify_operation(operation, *, manifest, index=None):
+    """Recompute identity from canonical semantic input before authorizing execution."""
+    try:
+        invocation, _suffix = operation["operation_id"].rsplit(":", 1)
+        expected = describe(
+            operation["kind"],
+            operation["executor"],
+            operation["request"],
+            index=operation["index"],
+            invocation=invocation,
+            manifest=manifest,
+        )
+        if operation != expected or (index is not None and operation["index"] != index):
+            raise ValueError("operation identity mismatch")
+        if operation["kind"] not in ("model", "tool") or operation["index"] >= 64:
+            raise ValueError("operation outside admitted profile")
+        return json.loads(canonical_bytes(operation))
+    except (KeyError, TypeError) as exc:
+        raise ValueError("invalid operation descriptor") from exc
