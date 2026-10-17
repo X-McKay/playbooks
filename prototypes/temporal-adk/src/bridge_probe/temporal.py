@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from temporalio import workflow
 from temporalio.common import RetryPolicy
-from temporalio.exceptions import ActivityError, ApplicationError
+from temporalio.exceptions import ActivityError, ApplicationError, is_cancelled_exception
 
 SAFE_RETRY = RetryPolicy(maximum_attempts=3)
 ONCE = RetryPolicy(maximum_attempts=1)
@@ -26,13 +26,26 @@ class SessionWorkflow:
         self.resumed = True
 
     async def call(self, name, arg, *, effect=False):
+        if sum(p.ByteSize() for p in workflow.payload_converter().to_payloads([arg])) > 262144:
+            raise ApplicationError("converted command exceeds payload limit", non_retryable=True)
         return await workflow.execute_activity(
             name,
             arg,
-            start_to_close_timeout=timedelta(seconds=45),
-            schedule_to_close_timeout=timedelta(seconds=100),
+            start_to_close_timeout=timedelta(
+                seconds=240
+                if name in ("provision_session", "rebind_session")
+                else 120
+                if name == "close_session"
+                else 45
+            ),
+            schedule_to_close_timeout=timedelta(
+                seconds=600
+                if name in ("provision_session", "rebind_session", "close_session")
+                else 100
+            ),
             heartbeat_timeout=timedelta(seconds=10),
             retry_policy=ONCE if effect else SAFE_RETRY,
+            cancellation_type=workflow.ActivityCancellationType.WAIT_CANCELLATION_COMPLETED,
         )
 
     @workflow.run
@@ -47,10 +60,19 @@ class SessionWorkflow:
                     await workflow.wait_condition(
                         lambda: self.resumed, timeout=timedelta(minutes=2)
                     )
-                advanced = await self.call(
-                    "advance_runner",
-                    {"binding": binding, "position": self.position, "pending": self.pending},
-                )
+                command = {"binding": binding, "position": self.position, "pending": self.pending}
+                try:
+                    advanced = await self.call("advance_runner", command)
+                except ActivityError as exc:
+                    if is_cancelled_exception(exc) or (
+                        isinstance(exc.cause, ApplicationError) and exc.cause.non_retryable
+                    ):
+                        raise
+                    binding = await self.call(
+                        "rebind_session",
+                        {"start": start, "binding": binding, "position": self.position},
+                    )
+                    advanced = await self.call("advance_runner", {**command, "binding": binding})
                 if advanced["status"] == "done":
                     if self.pending is not None:
                         raise ApplicationError(
@@ -93,7 +115,9 @@ class SessionWorkflow:
                 self.pending = None
             else:
                 raise ApplicationError("boundary budget exhausted", non_retryable=True)
-        except ActivityError:
+        except ActivityError as exc:
+            if is_cancelled_exception(exc):
+                raise
             # Execute Activities have no automatic retry. Missing completion is
             # uncertainty, not permission to repeat an effect on a new sandbox.
             result = {

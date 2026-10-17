@@ -1,0 +1,382 @@
+"""Single-session OpenShell adapter. Official exec RPC carries bounded control messages.
+
+Immutable artifacts are copied separately and hash-verified in the external store
+before an Activity can report success. Neither copy selects an accepted position.
+"""
+
+import asyncio
+import base64
+import hashlib
+import json
+from contextlib import closing
+
+import grpc
+from openshell import ExecChunk, ExecResult
+from openshell._proto import openshell_pb2, sandbox_pb2
+
+from .artifacts import Position, Ref
+from .chunks import CHUNK_BYTES
+from .records import canonical_bytes
+from .transport import Authority, ProtocolError
+
+PYTHON = "/app/.venv/bin/python"
+
+
+def policy():
+    return sandbox_pb2.SandboxPolicy(
+        version=1,
+        filesystem=sandbox_pb2.FilesystemPolicy(
+            include_workdir=False,
+            read_only=["/usr", "/bin", "/lib", "/lib64", "/etc", "/proc", "/app", "/dev/urandom"],
+            read_write=["/sandbox", "/tmp", "/dev/null"],
+        ),
+        landlock=sandbox_pb2.LandlockPolicy(compatibility="hard_requirement"),
+        process=sandbox_pb2.ProcessPolicy(run_as_user="1500", run_as_group="1500"),
+    )
+
+
+class OpenShellSession:
+    def __init__(
+        self,
+        client,
+        store,
+        *,
+        session,
+        manifest,
+        key,
+        image="adk-bridge-probe:local",
+        sandbox_policy=None,
+    ):
+        self.client = client
+        self.store = store
+        self.session = session
+        self.manifest = manifest
+        self.key = key
+        self.image = image
+        self.policy = sandbox_policy or policy()
+        self.configure_generation(1)
+        self.uploaded = set()
+        self.binding = None
+        self.creations = set()
+        self.closing = False
+
+    def configure_generation(self, generation):
+        if type(generation) is not int or not 1 <= generation <= 64:
+            raise ProtocolError("invalid generation")
+        self.generation = generation
+        self.authority = Authority(self.key, self.session, generation=generation)
+        self.name = "b-" + hashlib.sha256(f"{self.session}:{generation}".encode()).hexdigest()[:16]
+
+    def select_binding(self, binding):
+        if binding["session"] != self.session:
+            raise ProtocolError("wrong session")
+        self.configure_generation(binding["generation"])
+        if binding["name"] != self.name:
+            raise ProtocolError("wrong binding name")
+        self.binding = binding
+
+    async def replace(self, command):
+        closed = await self.close({"binding": command["binding"]})
+        if closed["cleanup"] != "DELETED":
+            raise ProtocolError("old writer not confirmed stopped")
+        return await self.provision(
+            {
+                **command["start"],
+                "position": command["position"],
+                "generation": command["binding"]["generation"] + 1,
+            }
+        )
+
+    async def create_settled(self, **kwargs):
+        # Cancelling to_thread does not stop its RPC. Keep it tracked until the
+        # bounded SDK call settles, including before terminal reconciliation.
+        if self.closing:
+            raise ProtocolError("session is closing")
+        task = asyncio.create_task(asyncio.to_thread(self.client.create, **kwargs))
+        self.creations.add(task)
+        try:
+            return await asyncio.shield(task)
+        except asyncio.CancelledError:
+            await asyncio.shield(asyncio.gather(task, return_exceptions=True))
+            raise
+        finally:
+            if task.done():
+                self.creations.discard(task)
+
+    async def provision(self, start):
+        if self.closing:
+            raise ProtocolError("session is closing")
+        self.configure_generation(start.get("generation", 1))
+        if start["session"] != self.session:
+            raise ValueError("wrong provision session")
+        try:
+            ref = await asyncio.to_thread(self.client.get, self.name, workspace="default")
+        except grpc.RpcError as exc:
+            if exc.code() != grpc.StatusCode.NOT_FOUND:
+                raise
+            ref = await self.create_settled(
+                workspace="default",
+                name=self.name,
+                labels={
+                    "bridge-session": hashlib.sha256(self.session.encode()).hexdigest()[:32],
+                    "bridge-generation": str(self.generation),
+                },
+                spec=openshell_pb2.SandboxSpec(
+                    template=openshell_pb2.SandboxTemplate(image=self.image),
+                    policy=self.policy,
+                    environment={
+                        "BRIDGE_SESSION": self.session,
+                        "BRIDGE_GENERATION": str(self.generation),
+                        "BRIDGE_MANIFEST": self.manifest,
+                        "BRIDGE_KEY": self.key.hex(),
+                        "BRIDGE_MESSAGE": start["message"],
+                    },
+                    command=[PYTHON, "-m", "bridge_probe.runtime"],
+                ),
+            )
+        if (
+            ref.labels.get("bridge-session")
+            != hashlib.sha256(self.session.encode()).hexdigest()[:32]
+        ):
+            raise ProtocolError("existing sandbox belongs to another session")
+        ready = await asyncio.to_thread(
+            self.client.wait_ready, self.name, workspace="default", timeout_seconds=180
+        )
+        if ready.id != ref.id or ready.phase != 2:
+            raise ValueError("sandbox is not running")
+        self.binding = {
+            "session": self.session,
+            "generation": self.generation,
+            "name": self.name,
+            "sandbox_id": ref.id,
+            "position": start["position"],
+        }
+        # Readiness means the supervisor is ready; wait for this service's socket.
+        result = await asyncio.to_thread(
+            self.client.exec,
+            self.name,
+            [
+                PYTHON,
+                "-c",
+                (
+                    'import pathlib,time; p=pathlib.Path("/sandbox/bridge.sock"); '
+                    '\nfor _ in range(100):\n if p.exists(): break\n time.sleep(.1)\nelse: raise RuntimeError("runtime socket not ready")'
+                ),
+            ],
+            workspace="default",
+            timeout_seconds=15,
+            no_login_shell=True,
+        )
+        if result.exit_code:
+            raise RuntimeError(result.stderr[:300])
+        return self.binding
+
+    async def checked_exec(self, binding, mode, data):
+        if binding["session"] != self.session or binding["name"] != self.name:
+            raise ProtocolError("wrong binding")
+        current = await asyncio.to_thread(self.client.get, self.name, workspace="default")
+        if current.id != binding["sandbox_id"]:
+            raise ProtocolError("stale sandbox identity")
+        command = (
+            [PYTHON, "-m", "bridge_probe.replay"]
+            if mode == "replay"
+            else [PYTHON, "-m", "bridge_probe.remote_io", mode]
+        )
+        maximum = Ref.model_validate_json(data).byte_length if mode == "get" else 262144
+
+        name = binding["name"]
+
+        def bounded():
+            stdout = []
+            size = 0
+            errors = 0
+            completed = None
+            with closing(
+                self.client.exec_stream(
+                    name,
+                    command,
+                    workspace="default",
+                    stdin=data,
+                    timeout_seconds=40,
+                    no_login_shell=True,
+                )
+            ) as stream:
+                for item in stream:
+                    if isinstance(item, ExecChunk):
+                        if item.stream == "stdout":
+                            size += len(item.data)
+                            if size > maximum:
+                                raise ProtocolError("exec output too large")
+                            stdout.append(item.data)
+                        else:
+                            errors += len(item.data)
+                            if errors > 65536:
+                                raise ProtocolError("exec diagnostics too large")
+                    elif isinstance(item, ExecResult):
+                        completed = item
+            if completed is None or completed.exit_code:
+                raise RuntimeError(
+                    "sandbox RPC failed: "
+                    + (completed.stderr[:300] if completed else "missing completion")
+                )
+            return b"".join(stdout)
+
+        return await asyncio.to_thread(bounded)
+
+    def references(self, position):
+        position = Position.model_validate(position)
+        refs = {}
+        if position.workspace:
+            refs[position.workspace.sha256] = position.workspace
+        current = position.head
+        while current:
+            if current.sha256 in refs:
+                raise ValueError("tape cycle")
+            refs[current.sha256] = current
+            node = json.loads(self.store.get(current))
+            for key in ("operation", "outcome"):
+                if "ref" in node[key]:
+                    ref = Ref.model_validate(node[key]["ref"])
+                    refs[ref.sha256] = ref
+            current = Ref.model_validate(node["previous"]) if node["previous"] else None
+        return refs.values()
+
+    async def call(self, action, command):
+        binding = command["binding"]
+        self.select_binding(binding)
+        if action == "advance":
+            for ref in self.references(command["position"]):
+                if (binding["sandbox_id"], ref.sha256) not in self.uploaded:
+                    data = self.store.get(ref)
+                    for offset in range(0, max(1, len(data)), CHUNK_BYTES):
+                        response = await self.checked_exec(
+                            binding,
+                            "put-chunk",
+                            canonical_bytes(
+                                {
+                                    "ref": ref.model_dump(),
+                                    "offset": offset,
+                                    "data": base64.b64encode(
+                                        data[offset : offset + CHUNK_BYTES]
+                                    ).decode(),
+                                }
+                            ),
+                        )
+                    uploaded = json.loads(response)
+                    if not uploaded.get("complete") or Ref.model_validate(uploaded["ref"]) != ref:
+                        raise ProtocolError("artifact upload mismatch")
+                    self.uploaded.add((binding["sandbox_id"], ref.sha256))
+        envelope = self.authority.sign(
+            action, {**command, **({"prepare_only": True} if action == "advance" else {})}, ttl=45
+        )
+        data = await self.checked_exec(binding, "rpc", canonical_bytes(envelope))
+        if len(data) > 262144:
+            raise ProtocolError("control response too large")
+        response = json.loads(data)
+        if "ok" not in response:
+            raise ProtocolError(response.get("message", "remote failure"))
+        result = response["ok"]
+        if action == "advance":
+            if result != {"status": "prepared"}:
+                raise ProtocolError("runtime not prepared")
+            data = await self.checked_exec(
+                binding,
+                "replay",
+                canonical_bytes(
+                    {
+                        "from_store": True,
+                        "position": command["position"],
+                        "pending": command["pending"],
+                    }
+                ),
+            )
+            if len(data) > 262144:
+                raise ProtocolError("replay result too large")
+            return json.loads(data)
+        if action == "execute":
+            if len(result["objects"]) > 16:
+                raise ProtocolError("too many candidate objects")
+            for raw in result["objects"]:
+                ref = Ref.model_validate(raw)
+                data = await self.checked_exec(binding, "get", canonical_bytes(ref.model_dump()))
+                if self.store.put(data) != ref:
+                    raise ProtocolError("artifact download mismatch")
+                self.uploaded.add((binding["sandbox_id"], ref.sha256))
+            return result["receipt"]
+        return result
+
+    async def close(self, command):
+        if "start" in command:
+            if command["start"]["session"] != self.session:
+                raise ProtocolError("wrong cleanup session")
+            return await self.close_all()
+        binding = command.get("binding")
+        if binding:
+            self.select_binding(binding)
+        try:
+            current = await asyncio.to_thread(self.client.get, self.name, workspace="default")
+        except grpc.RpcError as exc:
+            if exc.code() == grpc.StatusCode.NOT_FOUND:
+                return {"cleanup": "DELETED"}
+            raise
+        if (
+            current.labels.get("bridge-session")
+            != hashlib.sha256(self.session.encode()).hexdigest()[:32]
+        ):
+            return {"cleanup": "REMEDIATION_REQUIRED"}
+        if binding and current.id != binding["sandbox_id"]:
+            return {"cleanup": "REMEDIATION_REQUIRED"}
+        # Names are never reused for another session; delete then wait for the
+        # immutable instance to disappear before allowing a replacement writer.
+        try:
+            await asyncio.to_thread(
+                self.client.delete, self.name, workspace="default", allow_missing=True
+            )
+        except grpc.RpcError as exc:
+            if exc.code() not in (grpc.StatusCode.DEADLINE_EXCEEDED, grpc.StatusCode.UNAVAILABLE):
+                raise
+            # An acknowledgement can be lost while deletion continues. Reconcile
+            # the immutable identity; never equate a timeout with success.
+
+        await asyncio.to_thread(
+            self.client.wait_deleted,
+            self.name,
+            workspace="default",
+            expected_sandbox_id=current.id,
+            timeout_seconds=60,
+        )
+        return {"cleanup": "DELETED"}
+
+    async def reconcile_closed(self, temporal):
+        """External cleanup reconciler; hard Workflow termination runs no finally block."""
+        from temporalio.client import WorkflowExecutionStatus
+
+        description = await temporal.get_workflow_handle(self.session).describe()
+        if description.status == WorkflowExecutionStatus.RUNNING:
+            return {"cleanup": "ACTIVE"}
+        # Temporal unavailability raises before deletion. Only observed terminal
+        # state permits cleanup; this routine never advances an invocation.
+        return await self.close_all()
+
+    async def close_all(self):
+        self.closing = True
+        if self.creations:
+            await asyncio.shield(asyncio.gather(*self.creations, return_exceptions=True))
+            self.creations = {task for task in self.creations if not task.done()}
+        resources = await asyncio.to_thread(lambda: self.client.list(workspace="default").all())
+        owner = hashlib.sha256(self.session.encode()).hexdigest()[:32]
+        for ref in resources:
+            if ref.labels.get("bridge-session") != owner:
+                continue
+            generation = int(ref.labels["bridge-generation"])
+            self.configure_generation(generation)
+            binding = {
+                "session": self.session,
+                "generation": generation,
+                "name": ref.name,
+                "sandbox_id": ref.id,
+            }
+            result = await self.close({"binding": binding})
+            if result["cleanup"] != "DELETED":
+                return result
+        return {"cleanup": "DELETED"}

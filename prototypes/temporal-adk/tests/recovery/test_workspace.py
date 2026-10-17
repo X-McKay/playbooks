@@ -101,3 +101,43 @@ async def test_failed_checkpoint_never_returns_success(tmp_path, monkeypatch):
     with pytest.raises(OutcomeUnknown):
         await dispatcher.execute(describe("tool", "write", {}, index=0), "a")
     await dispatcher.close()
+
+
+@pytest.mark.parametrize("name", ["x" * 256, "/".join(["x"] * 33), "/".join(["x" * 100] * 11)])
+def test_unrestorable_path_limits_rejected(tmp_path, name):
+    store = FileStore(tmp_path / "objects")
+    root = tmp_path / "ws"
+    root.mkdir()
+    ref = store.put(
+        json.dumps(
+            {"version": 1, "files": [{"path": name, "data": "eA=="}], "directories": []}
+        ).encode()
+    )
+    with pytest.raises(WorkspaceError):
+        Workspace(root, store).restore(ref)
+    assert not list(root.iterdir())
+
+
+def test_implicit_parents_count_toward_entry_budget(tmp_path):
+    store = FileStore(tmp_path / "objects")
+    root = tmp_path / "ws"
+    root.mkdir()
+    ref = store.put(
+        json.dumps(
+            {"version": 1, "files": [{"path": "a/b/c", "data": "eA=="}], "directories": []}
+        ).encode()
+    )
+    with pytest.raises(WorkspaceError):
+        Workspace(root, store, max_files=2).restore(ref)
+
+
+def test_capture_ignores_access_time_changed_by_its_own_read(tmp_path):
+    import os
+
+    store = FileStore(tmp_path / "objects")
+    root = tmp_path / "ws"
+    root.mkdir()
+    path = root / "report"
+    path.write_text("unchanged")
+    os.utime(path, (1, path.stat().st_mtime))
+    assert Workspace(root, store).capture()

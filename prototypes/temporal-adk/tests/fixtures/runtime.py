@@ -1,5 +1,6 @@
 """Trusted local test service. Not a production sandbox implementation."""
 
+import asyncio
 import json
 import shutil
 
@@ -20,6 +21,8 @@ class FixtureRuntime:
         self.root = root
         self.session = session
         self.case = FixtureCase()
+        self.delay_next = 0
+        self.started = asyncio.Event()
         self.store = FileStore(root / "objects")
         self.tape = Tape(self.store, manifest="probe-v1")
         self.workspace_root = root / "workspace"
@@ -29,6 +32,11 @@ class FixtureRuntime:
         model = ScriptedModel(self.case)
 
         async def execute_model(payload, state, key):
+            self.started.set()
+            if self.delay_next:
+                delay = self.delay_next
+                self.delay_next = 0
+                await asyncio.sleep(delay)
             # JSON decode unfreezes the canonical readonly input into a fresh LlmRequest.
             request = decode_model(LlmRequest, json.loads(json.dumps(thaw(payload))))
             responses = [r async for r in model.generate_content_async(request)]
@@ -47,6 +55,7 @@ class FixtureRuntime:
         self.dispatcher = Dispatcher(registry, manifest="probe-v1", workspace=self.workspace)
         self.authority = Authority(b"x" * 32, session, generation=1)
         self.fail_after_candidate = False
+        self.fail_at = None
         self.candidates = []
 
     async def provision(self, start):
@@ -54,6 +63,8 @@ class FixtureRuntime:
 
     async def handle(self, request):
         action, payload = self.authority.verify(await request.json())
+        if action == "close":
+            return web.json_response(await self.close(payload))
         if payload["binding"]["session"] != self.session:
             raise ValueError("wrong binding")
         position = Position.model_validate(payload["position"])
@@ -65,7 +76,11 @@ class FixtureRuntime:
                 raise ValueError(result["error"])
             result = {k: v for k, v in result.items() if k in ("status", "operation", "result")}
         elif action == "execute":
+            if self.fail_at == "before_dispatch":
+                raise web.HTTPServiceUnavailable()
             outcome = await self.dispatcher.execute(payload["operation"], payload["attempt_id"])
+            if self.fail_at == "after_effect":
+                raise web.HTTPServiceUnavailable()
             receipt = self.tape.append_candidate(
                 position,
                 payload["operation"],
@@ -73,7 +88,7 @@ class FixtureRuntime:
                 self.dispatcher.checkpoint(payload["operation"]),
             )
             self.candidates.append(receipt)
-            if self.fail_after_candidate:
+            if self.fail_after_candidate or self.fail_at == "after_candidate":
                 raise web.HTTPServiceUnavailable(text="completion lost")
             result = receipt.model_dump()
         else:

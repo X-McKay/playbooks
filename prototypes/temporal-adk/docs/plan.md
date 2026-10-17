@@ -12,6 +12,16 @@
 
 The smallest useful result is a single-session demonstration with measured recovery evidence, not a general SDK. Phases 1–5 build that result. Phase 6 extracts only the interfaces that the demonstration proves are worth sharing. Each phase has a stop condition; infrastructure work must not conceal an ADK conformance failure.
 
+## Implementation status
+
+The implemented slice and measured deviations are recorded in the
+[evidence report](evidence.md). Tasks 1–9 have a restricted scripted implementation
+and fault tests; the full production cleanup and hostile-process guarantees are
+not claimed. Task 10 remains open for a selected live provider and latency
+qualification. Task 11 remains deferred until those results justify SDK extraction.
+The checklist below preserves the proposed plan rather than implying every gate
+has been satisfied.
+
 ## Global constraints
 
 - The spec's reference ADK version is `google-adk==2.12.0`; its OpenShell documentation baseline is `0.1.4`. Resolve exact compatible runtime and transitive versions into a lock before testing. These baselines are not a claim that the combination already works.

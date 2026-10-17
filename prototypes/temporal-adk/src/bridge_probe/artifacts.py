@@ -56,6 +56,11 @@ class FileStore:
             except FileExistsError:
                 pass
             self.get(ref)
+            directory = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
         finally:
             os.unlink(tmp)
         return ref

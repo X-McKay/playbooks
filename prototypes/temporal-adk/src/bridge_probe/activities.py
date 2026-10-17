@@ -1,6 +1,7 @@
 """Activity transport facade: heartbeat remote work and validate artifact receipts."""
 
 import asyncio
+import json
 from contextlib import suppress
 
 from temporalio import activity
@@ -8,6 +9,8 @@ from temporalio.exceptions import ApplicationError
 
 from .artifacts import Position, Receipt
 from .records import canonical_bytes, verify_operation
+from .transport import enforce_payload_size
+from .workspace import validate_snapshot
 
 
 class Activities:
@@ -16,7 +19,7 @@ class Activities:
         self.transport = transport
         self.tape = tape
 
-    async def remote(self, action, payload):
+    async def heartbeating(self, operation):
         async def heartbeat():
             while True:
                 activity.heartbeat()
@@ -24,7 +27,7 @@ class Activities:
 
         task = asyncio.create_task(heartbeat())
         try:
-            return await self.transport.call(action, payload)
+            return await operation
         except ValueError as exc:
             raise ApplicationError(str(exc), non_retryable=True) from exc
         finally:
@@ -32,10 +35,16 @@ class Activities:
             with suppress(asyncio.CancelledError):
                 await task
 
+    async def remote(self, action, payload):
+        return await self.heartbeating(self.transport.call(action, payload))
+
     @activity.defn
     async def provision_session(self, start: dict) -> dict:
-        activity.heartbeat()
-        return await self.lifecycle.provision(start)
+        return await self.heartbeating(self.lifecycle.provision(start))
+
+    @activity.defn
+    async def rebind_session(self, command: dict) -> dict:
+        return await self.heartbeating(self.lifecycle.replace(command))
 
     @activity.defn
     async def advance_runner(self, command: dict) -> dict:
@@ -50,7 +59,7 @@ class Activities:
             raise ApplicationError("invalid advance response", non_retryable=True)
         if len(canonical_bytes(result)) > 262144:
             raise ApplicationError("response exceeds protocol limit", non_retryable=True)
-        return result
+        return enforce_payload_size(result, activity.payload_converter())
 
     async def execute(self, command):
         result = await self.remote("execute", command)
@@ -60,6 +69,10 @@ class Activities:
         op = verify_operation(
             command["operation"], manifest=self.tape.manifest, index=previous.cursor
         )
+        self.tape.load(previous)
+        node = json.loads(self.tape.store.get(receipt.position.head))
+        if node["previous"] != (previous.head.model_dump() if previous.head else None):
+            raise ApplicationError("candidate does not extend accepted head", non_retryable=True)
         entries = self.tape.load(receipt.position)
         if (
             receipt.previous != previous.head
@@ -67,6 +80,9 @@ class Activities:
             or receipt.position.cursor != previous.cursor + 1
         ):
             raise ApplicationError("invalid candidate chain", non_retryable=True)
+        if receipt.position.workspace is None:
+            raise ApplicationError("candidate has no workspace checkpoint", non_retryable=True)
+        validate_snapshot(self.tape.store.get(receipt.position.workspace))
         return receipt.model_dump()
 
     @activity.defn
@@ -79,12 +95,12 @@ class Activities:
 
     @activity.defn
     async def close_session(self, command: dict) -> dict:
-        activity.heartbeat()
-        return await self.lifecycle.close(command)
+        return await self.heartbeating(self.lifecycle.close(command))
 
     def registered(self):
         return [
             self.provision_session,
+            self.rebind_session,
             self.advance_runner,
             self.execute_model,
             self.execute_tool,

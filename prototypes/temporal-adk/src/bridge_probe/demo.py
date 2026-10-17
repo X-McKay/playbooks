@@ -1,0 +1,82 @@
+"""Small admitted example: static ADK factory and an immutable executor registry."""
+
+from pathlib import Path
+
+from google.adk.agents import LlmAgent
+from google.adk.models.llm_request import LlmRequest
+from google.adk.models.llm_response import LlmResponse
+from google.genai import types
+
+from .capture import BridgeModel, BridgeTool
+from .records import decode_model, encode_model
+
+
+def functions(root):
+    root = Path(root)
+
+    async def inspect_repository(path: str) -> dict:
+        """List files in the session workspace."""
+        if path != ".":
+            raise ValueError("only the session root is admitted")
+        return {"files": sorted(p.name for p in root.iterdir() if p.is_file())}
+
+    async def write_report(content: str) -> dict:
+        """Write a plain text report in the session workspace."""
+        (root / "report.md").write_text(content)
+        return {"path": "report.md"}
+
+    return [inspect_repository, write_report]
+
+
+def factory(bridge, root):
+    return LlmAgent(
+        name="reporter",
+        instruction="Inspect the workspace and write a report.",
+        model=BridgeModel(bridge),
+        tools=[BridgeTool(fn, bridge) for fn in functions(root)],
+    )
+
+
+def registry(root):
+    async def model(payload, state, key):
+        request = decode_model(LlmRequest, thaw(payload))
+        completed = [
+            p.function_response.name
+            for c in request.contents
+            for p in (c.parts or [])
+            if p.function_response
+        ]
+        if "write_report" in completed:
+            part = types.Part(text="Report ready.")
+        elif "inspect_repository" in completed:
+            part = types.Part(
+                function_call=types.FunctionCall(
+                    name="write_report", args={"content": "Workspace inspected."}, id="write-1"
+                )
+            )
+        else:
+            part = types.Part(
+                function_call=types.FunctionCall(
+                    name="inspect_repository", args={"path": "."}, id="inspect-1"
+                )
+            )
+        return encode_model(LlmResponse(content=types.Content(role="model", parts=[part])))
+
+    result = {"fixture": model}
+    for fn in functions(root):
+
+        async def execute(args, state, key, function=fn):
+            return await function(**dict(args))
+
+        result[fn.__name__] = execute
+    return result
+
+
+def thaw(value):
+    from collections.abc import Mapping
+
+    if isinstance(value, Mapping):
+        return {k: thaw(v) for k, v in value.items()}
+    if isinstance(value, tuple):
+        return [thaw(v) for v in value]
+    return value

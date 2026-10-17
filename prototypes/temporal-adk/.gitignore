@@ -6,3 +6,5 @@ reports/
 *.egg-info/
 
 reports-*.log
+
+.state/

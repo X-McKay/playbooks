@@ -82,3 +82,11 @@ class HttpTransport:
             if len(response.content) > 262144:
                 raise ProtocolError("response too large")
             return response.json()
+
+
+def enforce_payload_size(value, converter):
+    """Measure actual default-codec Temporal protobuf payload bytes, including metadata."""
+    size = sum(payload.ByteSize() for payload in converter.to_payloads([value]))
+    if size > 262144:
+        raise ProtocolError("converted Temporal payload exceeds 256 KiB")
+    return value

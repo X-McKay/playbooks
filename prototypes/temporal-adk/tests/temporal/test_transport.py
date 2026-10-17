@@ -24,3 +24,15 @@ def test_protocol_size_and_command_allowlist():
         authority.sign("shell", {}, now=100)
     with pytest.raises(ProtocolError):
         authority.sign("advance", {"huge": "x" * 262144}, now=100)
+
+
+def test_temporal_wire_size_checks_converted_unicode_not_only_canonical_json():
+    from temporalio.converter import DataConverter
+
+    from bridge_probe.records import canonical_bytes
+    from bridge_probe.transport import enforce_payload_size
+
+    value = {"text": "界" * 60000}
+    assert len(canonical_bytes(value)) < 262144
+    with pytest.raises(ProtocolError):
+        enforce_payload_size(value, DataConverter.default.payload_converter)
