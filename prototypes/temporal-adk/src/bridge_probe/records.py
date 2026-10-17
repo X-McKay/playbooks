@@ -117,3 +117,12 @@ def decode_model[M: BaseModel](cls: type[M], value: dict) -> M:
         return result
     except (KeyError, TypeError, AttributeError) as exc:
         raise ValueError("invalid model envelope") from exc
+
+
+def describe(kind, executor, request, *, index, invocation='probe-invocation', manifest='probe-v1'):
+    if type(index) is not int or index < 0:
+        raise ValueError("invalid operation index")
+    identity = {"kind": kind, "executor": executor, "executor_version": "1",
+                "request": json.loads(canonical_bytes(request)), "manifest_digest": manifest}
+    return dict(identity, index=index, operation_id=f"{invocation}:{index:08d}",
+                request_digest=digest(identity))

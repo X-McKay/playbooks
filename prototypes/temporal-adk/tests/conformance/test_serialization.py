@@ -72,3 +72,13 @@ def test_mutated_default_lists_survive_encoding():
     restored = records.decode_model(Session, records.encode_model(session))
     assert len(restored.events) == 1
     assert restored.events[0].author == "user"
+
+
+def test_logical_identity_is_position_based_and_manifest_is_bound():
+    from bridge_probe.records import describe
+    a = describe('tool', 'inspect', {'path': '.'}, index=0, invocation='inv', manifest='image-a')
+    b = describe('tool', 'inspect', {'path': '.'}, index=1, invocation='inv', manifest='image-a')
+    c = describe('tool', 'inspect', {'path': '.'}, index=0, invocation='inv', manifest='image-b')
+    assert a['operation_id'] == 'inv:00000000'
+    assert b['operation_id'] == 'inv:00000001'
+    assert a['request_digest'] != c['request_digest']

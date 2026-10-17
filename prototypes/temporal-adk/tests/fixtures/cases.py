@@ -1,6 +1,7 @@
 """Trusted scripted agent. Native execution is independent of bridge replay."""
 
 import hashlib
+import copy
 from dataclasses import dataclass, field
 
 from google.adk.agents import LlmAgent
@@ -10,7 +11,7 @@ from google.adk.models.llm_response import LlmResponse
 from google.genai import types
 from pydantic import PrivateAttr
 
-from bridge_probe.records import encode_model
+from bridge_probe.records import encode_model, describe
 
 
 @dataclass
@@ -53,8 +54,8 @@ class FixtureCase:
         ]
 
     def record(self, kind, name, request, result):
-        self.operations.append({"kind": kind, "executor": name, "request": request})
-        self.outcomes.append(result)
+        self.operations.append(describe(kind, name, request, index=len(self.operations)))
+        self.outcomes.append(copy.deepcopy(result))
         self.effects.append(name)
 
 
