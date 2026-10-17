@@ -53,3 +53,52 @@ async def run_agent(factory, message="Inspect this repository"):
         finally:
             await iterator.aclose()
             await runner.close()
+
+
+def validate_profile(agent, app_config=None, run_config=None):
+    from google.adk.agents import LlmAgent
+    from google.adk.agents.run_config import RunConfig
+    from google.adk.apps import App
+
+    from .capture import BridgeModel, BridgeTool, UnsupportedProfile
+
+    if type(agent) is not LlmAgent or type(agent.model) is not BridgeModel:
+        raise UnsupportedProfile("agent and model must use the admitted bridge")
+    allowed = {
+        "name",
+        "description",
+        "model",
+        "instruction",
+        "tools",
+        "before_agent_callback",
+        "after_agent_callback",
+        "before_model_callback",
+        "after_model_callback",
+        "before_tool_callback",
+        "after_tool_callback",
+    }
+    baseline = LlmAgent(name="baseline")
+    for name in type(agent).model_fields:
+        if name not in allowed and getattr(agent, name) != getattr(baseline, name):
+            raise UnsupportedProfile(f"unsupported agent feature: {name}")
+    if not isinstance(agent.instruction, str) or not all(
+        type(t) is BridgeTool for t in agent.tools
+    ):
+        raise UnsupportedProfile("dynamic instructions or unwrapped tools")
+    if app_config is not None:
+        if type(app_config) is not App or app_config.root_agent is not agent:
+            raise UnsupportedProfile("unbound app")
+        if any(
+            getattr(app_config, key)
+            for key in (
+                "plugins",
+                "events_compaction_config",
+                "context_cache_config",
+                "resumability_config",
+            )
+        ):
+            raise UnsupportedProfile("unsupported App feature")
+    if run_config is not None and (
+        type(run_config) is not RunConfig or run_config != RunConfig(max_llm_calls=64)
+    ):
+        raise UnsupportedProfile("unsupported RunConfig feature")

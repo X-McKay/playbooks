@@ -1,7 +1,7 @@
 """Trusted scripted agent. Native execution is independent of bridge replay."""
 
-import hashlib
 import copy
+import hashlib
 from dataclasses import dataclass, field
 
 from google.adk.agents import LlmAgent
@@ -11,7 +11,7 @@ from google.adk.models.llm_response import LlmResponse
 from google.genai import types
 from pydantic import PrivateAttr
 
-from bridge_probe.records import encode_model, describe
+from bridge_probe.records import describe, encode_model
 
 
 @dataclass
