@@ -4,6 +4,7 @@ import random
 import uuid
 from contextlib import contextmanager
 
+from google.adk.agents.run_config import RunConfig
 from google.adk.platform import reset_random_provider, set_random_provider
 from google.adk.platform.time import reset_time_provider, set_time_provider
 from google.adk.platform.uuid import reset_id_provider, set_id_provider
@@ -29,9 +30,9 @@ def deterministic_runtime(invocation="probe-invocation"):
         reset_random_provider()
 
 
-async def run_agent(factory, message="Inspect this repository"):
+async def run_agent(factory, message="Inspect this repository", *, invocation="probe-invocation"):
     """Drain ADK to exhaustion, closing its iterator and resources on cancellation."""
-    with deterministic_runtime():
+    with deterministic_runtime(invocation):
         agent = factory()
         sessions = InMemorySessionService()
         await sessions.create_session(app_name="probe", user_id="user", session_id="session")
@@ -40,6 +41,7 @@ async def run_agent(factory, message="Inspect this repository"):
             user_id="user",
             session_id="session",
             new_message=types.Content(role="user", parts=[types.Part(text=message)]),
+            run_config=RunConfig(max_llm_calls=64),
         )
         text = ""
         try:

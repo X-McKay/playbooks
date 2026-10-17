@@ -3,10 +3,20 @@ name = "temporal-adk-bridge-probe"
 version = "0.1.0"
 description = "Conformance-first experiment for remote durable ADK execution"
 requires-python = ">=3.12,<3.13"
-dependencies = ["google-adk==2.12.0", "temporalio>=1.20,<2"]
+dependencies = [
+    "google-adk==2.12.0",
+    "httpx==0.28.1",
+    "openshell==0.1.4",
+    "temporalio>=1.20,<2",
+]
 
 [dependency-groups]
-dev = ["pytest>=8,<10", "pytest-asyncio>=1,<2", "ruff>=0.14"]
+dev = [
+    "aiohttp==3.13.3",
+    "pytest>=8,<10",
+    "pytest-asyncio>=1,<2",
+    "ruff>=0.14",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -19,6 +29,7 @@ packages = ["src/bridge_probe"]
 asyncio_mode = "auto"
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = ["cluster: requires a real Temporal service via TEMPORAL_ADDRESS"]
 
 [tool.ruff]
 target-version = "py312"

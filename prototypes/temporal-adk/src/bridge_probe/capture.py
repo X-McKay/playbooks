@@ -28,14 +28,27 @@ def copy_json(value):
 
 
 class TapeBridge:
-    def __init__(self, tape, expected_pending=None):
+    def __init__(
+        self, tape, expected_pending=None, *, invocation="probe-invocation", manifest="probe-v1"
+    ):
+        self.invocation = invocation
+        self.manifest = manifest
         self.tape = copy_json(tape)
         self.expected_pending = copy_json(expected_pending)
         self.cursor = 0
         self.boundary = asyncio.get_running_loop().create_future()
 
     async def invoke(self, kind, executor, request):
-        operation = describe(kind, executor, request, index=self.cursor)
+        if self.cursor >= 64:
+            raise UnsupportedProfile("boundary budget exhausted")
+        operation = describe(
+            kind,
+            executor,
+            request,
+            index=self.cursor,
+            invocation=self.invocation,
+            manifest=self.manifest,
+        )
         if self.cursor < len(self.tape):
             entry = self.tape[self.cursor]
             if canonical_bytes(operation) != canonical_bytes(entry["operation"]):
@@ -90,8 +103,16 @@ class BridgeTool(FunctionTool):
         )
 
 
-async def capture_boundary(factory, tape, expected_pending=None):
-    bridge = TapeBridge(tape, expected_pending)
+async def capture_boundary(
+    factory,
+    tape,
+    expected_pending=None,
+    *,
+    invocation="probe-invocation",
+    manifest="probe-v1",
+    message="Inspect this repository",
+):
+    bridge = TapeBridge(tape, expected_pending, invocation=invocation, manifest=manifest)
 
     def admitted_factory():
         agent = factory(bridge)
@@ -99,7 +120,7 @@ async def capture_boundary(factory, tape, expected_pending=None):
         guard_callbacks(agent)
         return agent
 
-    task = asyncio.create_task(run_agent(admitted_factory))
+    task = asyncio.create_task(run_agent(admitted_factory, message, invocation=invocation))
     try:
         async with asyncio.timeout(30):
             done, _ = await asyncio.wait(
