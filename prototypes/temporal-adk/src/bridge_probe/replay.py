@@ -22,12 +22,15 @@ async def main():
             session=os.environ["BRIDGE_SESSION"],
             manifest=os.environ["BRIDGE_MANIFEST"],
             message=os.environ["BRIDGE_MESSAGE"],
+            provider=os.environ.get("BRIDGE_PROVIDER", "scripted"),
         )
         request["tape"] = Tape(FileStore("/sandbox/objects"), manifest=request["manifest"]).load(
             Position.model_validate(position)
         )
     result = await capture_boundary(
-        lambda bridge: factory(bridge, request["workspace"]),
+        lambda bridge: factory(
+            bridge, request["workspace"], provider=request.get("provider", "scripted")
+        ),
         request["tape"],
         request["pending"],
         invocation=request["session"],

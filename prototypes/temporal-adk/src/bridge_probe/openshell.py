@@ -35,6 +35,30 @@ def policy():
     )
 
 
+def vllm_policy():
+    approved = policy()
+    approved.network_policies["vllm"].CopyFrom(
+        sandbox_pb2.NetworkPolicyRule(
+            name="vllm-chat-only",
+            endpoints=[
+                sandbox_pb2.NetworkEndpoint(
+                    host="llm.almckay.io",
+                    port=443,
+                    protocol="rest",
+                    enforcement=sandbox_pb2.NETWORK_ENFORCEMENT_MODE_ENFORCE,
+                    rules=[
+                        sandbox_pb2.L7Rule(
+                            allow=sandbox_pb2.L7Allow(method="POST", path="/v1/chat/completions")
+                        )
+                    ],
+                )
+            ],
+            binaries=[sandbox_pb2.NetworkBinary(path="/usr/local/bin/python3.12")],
+        )
+    )
+    return approved
+
+
 class OpenShellSession:
     def __init__(
         self,
@@ -46,14 +70,23 @@ class OpenShellSession:
         key,
         image="adk-bridge-probe:local",
         sandbox_policy=None,
+        provider="scripted",
     ):
+        if provider not in ("scripted", "vllm"):
+            raise ValueError("unsupported provider")
+        if provider == "vllm":
+            from .vllm import MANIFEST
+
+            if manifest != MANIFEST:
+                raise ValueError("live profile manifest mismatch")
+        self.provider = provider
         self.client = client
         self.store = store
         self.session = session
         self.manifest = manifest
         self.key = key
         self.image = image
-        self.policy = sandbox_policy or policy()
+        self.policy = sandbox_policy or (vllm_policy() if provider == "vllm" else policy())
         self.configure_generation(1)
         self.uploaded = set()
         self.binding = None
@@ -126,6 +159,7 @@ class OpenShellSession:
                     policy=self.policy,
                     environment={
                         "BRIDGE_SESSION": self.session,
+                        "BRIDGE_PROVIDER": self.provider,
                         "BRIDGE_GENERATION": str(self.generation),
                         "BRIDGE_MANIFEST": self.manifest,
                         "BRIDGE_KEY": self.key.hex(),

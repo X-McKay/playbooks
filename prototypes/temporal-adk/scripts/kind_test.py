@@ -56,7 +56,10 @@ with (
 ):
     env = os.environ.copy()
     env.update(
-        TEMPORAL_ADDRESS=temporal, OPENSHELL_ADDRESS=openshell, OPENSHELL_TLS_DIR=str(state / "tls")
+        TEMPORAL_ADDRESS=temporal,
+        OPENSHELL_ADDRESS=openshell,
+        OPENSHELL_TLS_DIR=str(state / "tls"),
+        BRIDGE_KUBECONFIG=str(state / "kubeconfig"),
     )
     for namespace, service, key in [
         ("temporal", "temporal-frontend", "TEMPORAL_CLUSTER_IP"),

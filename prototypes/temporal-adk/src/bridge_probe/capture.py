@@ -65,8 +65,8 @@ class TapeBridge:
 class BridgeModel(BaseLlm):
     _bridge: object = PrivateAttr()
 
-    def __init__(self, bridge):
-        super().__init__(model="fixture")
+    def __init__(self, bridge, model="fixture"):
+        super().__init__(model=model)
         self._bridge = bridge
 
     @property

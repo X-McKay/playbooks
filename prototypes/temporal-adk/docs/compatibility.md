@@ -34,3 +34,22 @@ can reuse the conformance corpus without making delivery depend on acceptance.
 The requested integration environment is a dedicated kind cluster running
 Temporal and OpenShell. Its CNI must actually enforce ingress and egress
 NetworkPolicy. Local ADK tests do not establish Kubernetes or sandbox behavior.
+
+## Live vLLM connector
+
+The live executor uses the installed ADK `LiteLlm` and its `LiteLLMClient` seam;
+there is no vendored request/response converter. LiteLLM 1.95.0 and its transitive
+OpenAI client are pinned in `uv.lock`. A small client subclass rejects truncated,
+empty, parallel, unknown-tool and malformed-JSON responses before ADK conversion
+can repair tool arguments. Request generation and transport overrides are rejected
+so the pinned profile controls cannot be changed by a captured request.
+
+Real HTTP fixture tests verify one request on 429 and 500 responses with both SDK
+retry layers disabled. Accepted live responses are preserved as ADK LlmResponse
+values, including call identities and usage. The committed synthetic recording
+checks every prefix in a fresh process without inference or tool execution.
+
+The manifest pins the endpoint, served model name and generation settings. A
+served name is not an immutable weights digest; the operator must separately pin
+the deployed model revision for reproducible future inference. Recorded outcomes
+remain the source for replay even when new inference would differ.

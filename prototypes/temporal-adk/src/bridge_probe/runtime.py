@@ -30,18 +30,19 @@ class TrackingStore(FileStore):
 
 
 class Runtime:
-    def __init__(self, root, *, session, manifest, key, message, generation=1):
+    def __init__(self, root, *, session, manifest, key, message, generation=1, provider="scripted"):
         self.root = Path(root)
         self.session = session
         self.manifest = manifest
         self.message = message
+        self.provider = provider
         self.store = TrackingStore(self.root / "objects")
         self.tape = Tape(self.store, manifest=manifest)
         self.workdir = self.root / "workspace"
         self.workdir.mkdir(exist_ok=True)
         self.workspace = Workspace(self.workdir, self.store)
         self.dispatcher = Dispatcher(
-            registry(self.workdir), manifest=manifest, workspace=self.workspace
+            registry(self.workdir, provider=provider), manifest=manifest, workspace=self.workspace
         )
         self.authority = Authority(key, session, generation=generation)
         self.lock = asyncio.Lock()
@@ -78,6 +79,7 @@ class Runtime:
                         "session": self.session,
                         "manifest": self.manifest,
                         "message": self.message,
+                        "provider": self.provider,
                     },
                     timeout=30,
                 )
@@ -122,6 +124,7 @@ async def main():
         key=bytes.fromhex(os.environ["BRIDGE_KEY"]),
         message=os.environ["BRIDGE_MESSAGE"],
         generation=int(os.environ.get("BRIDGE_GENERATION", "1")),
+        provider=os.environ.get("BRIDGE_PROVIDER", "scripted"),
     )
 
     async def connected(reader, writer):

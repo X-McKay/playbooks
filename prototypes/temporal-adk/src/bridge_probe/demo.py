@@ -28,16 +28,27 @@ def functions(root):
     return [inspect_repository, write_report]
 
 
-def factory(bridge, root):
+def factory(bridge, root, *, provider="scripted"):
+    if provider not in ("scripted", "vllm"):
+        raise ValueError("unsupported provider")
+    from .vllm import MODEL
+
     return LlmAgent(
         name="reporter",
-        instruction="Inspect the workspace and write a report.",
-        model=BridgeModel(bridge),
+        instruction=(
+            "Inspect the workspace with inspect_repository using path '.'. "
+            "Then call write_report once with a brief report listing the filenames. "
+            "Finally give a short confirmation. Use exactly these two tools in order, "
+            "one tool call per turn. Do not repeat completed tools."
+        )
+        if provider == "vllm"
+        else "Inspect the workspace and write a report.",
+        model=BridgeModel(bridge, model=MODEL if provider == "vllm" else "fixture"),
         tools=[BridgeTool(fn, bridge) for fn in functions(root)],
     )
 
 
-def registry(root):
+def registry(root, *, provider="scripted"):
     async def model(payload, state, key):
         request = decode_model(LlmRequest, thaw(payload))
         completed = [
@@ -62,7 +73,14 @@ def registry(root):
             )
         return encode_model(LlmResponse(content=types.Content(role="model", parts=[part])))
 
-    result = {"fixture": model}
+    if provider == "vllm":
+        from .vllm import MODEL, VllmExecutor
+
+        result = {MODEL: VllmExecutor()}
+    elif provider == "scripted":
+        result = {"fixture": model}
+    else:
+        raise ValueError("unsupported provider")
     for fn in functions(root):
 
         async def execute(args, state, key, function=fn):

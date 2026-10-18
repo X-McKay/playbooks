@@ -13,7 +13,8 @@ The scripted demo performs three model operations and two tool operations.
 Prerequisites: Python 3.12, uv, Docker, kind 0.31.0, kubectl, Helm 3, curl and rg.
 The tested host is macOS arm64 with Colima; the Linux VM must support mandatory
 Landlock and OpenShell's seccomp requirements. Allocate at least 4 CPUs and 8 GiB
-for this small single-node test.
+for this small single-node test. LiteLLM 1.95.0 supplies Linux wheels; on macOS,
+`uv sync` builds its native component and requires a Rust toolchain.
 
 From this directory:
 
@@ -47,6 +48,41 @@ Remove the local `.state` directory separately when its synthetic evidence and
 client certificates are no longer needed. Sandbox tests remove their session
 containers and workspace volumes; the shared cluster services stay available.
 
+## Live vLLM gate
+
+The opt-in live profile uses `Qwen3.6-35B-A3B-NVFP4` at
+`https://llm.almckay.io/v1`. It uses ADK's official `LiteLlm` connector inside the
+sandbox model executor. The captured model identity and profile manifest bind
+that configuration; Temporal's acceptance protocol is unchanged.
+
+After building/loading the image with `kind-up.sh`, run the complete suite with
+live inference enabled:
+
+```bash
+BRIDGE_LIVE_VLLM=1 BRIDGE_LIVE_EVIDENCE_DIR=.state/live \
+  uv run python scripts/kind_test.py
+```
+
+For only the three live scenarios, append `tests/sandbox/test_live.py`.
+These send synthetic repository prompts to the local model. The current endpoint
+accepts requests without a secret; the client uses a nonsecret placeholder key.
+No provider credential is checked into the repository. Model usage, accepted
+records and report artifacts from successful runs are written to `.state/live`.
+
+The agent policy permits the Python executable to make only
+`POST https://llm.almckay.io:443/v1/chat/completions`. The tests require
+HTTP 403 for the tested unapproved path and method. For the tested unapproved
+host, they require a connection failure plus the exact policy-denial record
+from that sandbox's supervisor; a network failure alone is insufficient. The model
+uses nonstreaming responses, at most one tool call, 512 output tokens, temperature zero and disabled thinking. Both
+LiteLLM and the underlying OpenAI client have retries disabled; a lost completion
+remains unknown. No public model provider or additional durability service is used.
+
+The live gate covers normal completion, cold sandbox replacement after the first
+tool, and loss of the first model's completion after candidate upload. A committed
+synthetic provider recording also reconstructs every prefix in fresh offline
+processes, including tool-call IDs and usage metadata.
+
 ## Contracts
 
 - `capture.py` admits a deliberately narrow, serial ADK profile and captures the
@@ -79,7 +115,8 @@ containers and workspace volumes; the shared cluster services stay available.
 ## Scope and remaining gates
 
 This slice uses one invocation, an empty base ADK session, static agent/tool
-registration, a scripted model and plain text workspace files. It does not admit
+registration, either the scripted model or the pinned live vLLM profile, and plain
+text workspace files. It does not admit
 streaming, parallel tools, arbitrary subprocess-spawning tools/callbacks, live
 sessions, native ADK resumability, approval UI, external write tools, administrative
 Reset or Workflow execution retries. Workspace metadata such as executable bits
@@ -92,9 +129,9 @@ individual boundaries, enforce a sandbox lease independent of worker availabilit
 and run the cleanup reconciler continuously. This prototype tests the reconciler
 explicitly; it does not install a production janitor service.
 
-The live-provider gate requires a selected provider and an existing scoped secret.
-The wrapper SDK, developer template and second example agent remain deferred until
-that gate and review are accepted. Shared platform code lives in this package;
+The live-provider integration is implemented; the 64-boundary latency qualification
+and production cleanup/lease gates remain open. The wrapper SDK, developer
+template and second example agent remain deferred. Shared platform code lives in this package;
 agent-specific factory/tool definitions are illustrated in `demo.py`. No upstream
 ADK or Temporal fork is maintained. See [compatibility](docs/compatibility.md) for
 why the existing integration cannot simply move into an untrusted remote process.

@@ -1,7 +1,8 @@
 # Prototype evidence and remaining gates
 
-This report records the implementation experiment on 2026-10-17. It qualifies a
-restricted scripted profile, not arbitrary ADK agents or a production SDK.
+This report records the implementation experiment on 2026-10-17. It qualifies
+restricted scripted and live vLLM profiles, not arbitrary ADK agents or a
+production SDK.
 The reproducible commands are in the [README](../README.md).
 
 ## Tested topology
@@ -19,6 +20,7 @@ the host; this is not yet an all-components Kubernetes deployment.
 | Python | 3.12.14 |
 | Google ADK / Google Gen AI | 2.12.0 / 2.31.0 |
 | Temporal Python SDK | 1.34.0 |
+| LiteLLM / OpenAI client | 1.95.0 / 2.54.0 |
 | OpenShell Python SDK / chart | 0.1.4 / 0.1.4 |
 | kind / Kubernetes node | 0.31.0 / 1.35.0 |
 | Cilium | 1.20.3 |
@@ -33,12 +35,12 @@ The tested host uses macOS arm64, Colima, four CPUs and approximately 8 GiB RAM.
 
 ## Evidence matrix
 
-Final consolidated run: **87 passed, zero failed, zero skipped**, in 506.74 seconds
+Initial scripted-only consolidated run: **87 passed, zero failed, zero skipped**, in 506.74 seconds
 (8 minutes 26 seconds), against the rebuilt image and real kind services. One
 upstream ADK experimental function-schema warning remains visible. The preceding
 83-test run also passed before the final lifecycle regressions were added.
 
-Ruff lint and formatting checks pass for all 50 Python files; shell syntax checks
+At that checkpoint, Ruff lint and formatting checks passed for all 50 Python files; shell syntax checks
 pass. `nix develop --command just check` passes: 87 Markdown files, no lint issues,
 and no broken relative links or anchors. The default checkout test runner was
 also verified against its ignored `.state` configuration.
@@ -56,6 +58,73 @@ port-forwards were stopped. The dedicated kind cluster remains available.
 | OpenShell | Real mTLS, mandatory Landlock, non-root execution, allowed workspace access, denied outside paths, denied network destinations, distinct agent policy, stale sandbox identity |
 | Session recovery | Five accepted model/tool boundaries, cold generation replacement with a checkpoint larger than 1 MiB, terminal cancellation and hard-termination reconciliation |
 | Lifecycle regression | Failed replacement readiness, cancellation during creation, delayed lookup after terminal cleanup, immutable deletion acknowledgement reconciliation |
+
+## Live vLLM qualification
+
+The live profile selects `openai/Qwen3.6-35B-A3B-NVFP4` through ADK's official
+LiteLlm adapter, with API base `https://llm.almckay.io/v1`. The provider client
+executes inside the session sandbox; Temporal remains the only owner of accepted
+progress. No provider secret was required by the endpoint during these synthetic
+tests. Inference hosting itself remains outside kind.
+
+The final normal and cold-replacement cases completed with five accepted
+boundaries each: model, inspect tool, model, report tool, model. They reported
+1,526 and 1,530 total tokens respectively. Output prose was not required to match
+between independent live runs. Each case verified report contents, accepted
+response serialization, Temporal history replay, and `DELETED` cleanup.
+
+The response from the initial normal case is committed as
+`tests/fixtures/vllm_recording.json`. It contains synthetic inputs and results,
+not repository secrets or credentials. Every recorded prefix reconstructs in a
+fresh process with the same next descriptor; the full tape returns the recorded
+answer without running `write_report` or calling inference.
+
+Provider HTTP fixtures independently test call identities, token metadata,
+nonstreaming/single-call controls, malformed JSON, unknown tools, truncated
+responses, and retries. Real HTTP 429 and 500 fixtures produce exactly one request
+with LiteLLM and OpenAI retries disabled. Generation and transport overrides are
+rejected before inference. Client telemetry is disabled and the packaged model
+cost map is used; no extra model-service egress is granted.
+
+The sandbox policy allows the Python executable to make only
+`POST /v1/chat/completions` to `llm.almckay.io:443`. Tests require HTTP 403
+for another path and the wrong method. OpenShell transparent networking rejects
+an unapproved hostname before HTTP: the live probe receives a connection error
+and must also find `transparent_tcp_policy_denied` for `example.com:443` in that
+immutable sandbox instance's trusted supervisor log. A generic connection failure
+alone does not count as proof of enforcement. This distinction was found when
+tightening the test after independent review; the initial assumption that every
+denial would produce HTTP 403 was incorrect.
+
+The live completion-loss case removes the first model's completion after real
+inference and candidate upload, before Temporal accepts it. It requires
+`OUTCOME_UNKNOWN`, zero accepted boundaries, exactly one model dispatch, and
+confirmed cleanup. The artifact candidate never becomes an implicit commit.
+Token usage from accepted responses is evidence, not a total GPU-cost accounting
+system; inference whose completion is lost can still consume compute.
+
+Final verification covered **104 distinct tests**, split into two successful runs:
+
+| Run | Result | Duration |
+| --- | --- | --- |
+| Complete regression suite excluding the three opt-in live cases | 101 passed | 496.05 seconds |
+| Live normal, replacement and completion-loss cases | 3 passed | 240.22 seconds |
+
+Neither run skipped tests or reported failures. The regression run emitted one
+upstream ADK experimental function-schema warning. Both used the final integrated
+image and real kind services. Ruff lint and format checks passed for all 54 Python
+files; shell syntax and repository Markdown/link checks passed. The final cluster
+inspection found only the shared OpenShell gateway pod and its data PVC; no
+session workloads, supervisors or workspace PVCs remained. Temporal and
+PostgreSQL were healthy. Test-owned port-forwards were stopped by the runner.
+
+The two verification commands were:
+
+```bash
+uv run python scripts/kind_test.py tests --ignore=tests/sandbox/test_live.py -x
+BRIDGE_LIVE_VLLM=1 BRIDGE_LIVE_EVIDENCE_DIR=.state/live-final \
+  uv run python scripts/kind_test.py tests/sandbox/test_live.py -x
+```
 
 ## Initial observed timing
 
@@ -107,9 +176,9 @@ accepted progress; hash-addressed files hold data only. The local artifact store
 fsyncs files and their directory, but this is not a replicated object store or a
 host-power-loss qualification. Retaining those files is required for recovery.
 
-The supported profile is one static serial agent, one invocation, a scripted
-model, and cooperative registered tools. Model and tool execution share their
-sandbox's security domain. The bridge is not tamper-proof against arbitrary
+The supported profile is one static serial agent, one invocation, a scripted or
+pinned live vLLM model, and cooperative registered tools. Model and tool execution
+share their sandbox's security domain. The bridge is not tamper-proof against arbitrary
 Python inside that domain. Background-process spawning tools are excluded;
 per-boundary descendant quiescence still needs a separate qualification.
 
@@ -126,8 +195,9 @@ supply bounded Workflow execution timeouts; there is no production admission API
 enforcing the global invocation limit. No 64-boundary latency distribution has
 been measured, so Gate E's latency requirement remains open.
 
-Live-provider credentials have not been used. A selected live model, sanitized
-provider fixture, provider retry accounting, and its conformance rerun remain
-Gate E work. The wrapper SDK and second-agent template (Gate F) remain deferred.
+The live provider, sanitized recording and retry checks are now implemented.
+Gate E still requires the full 64-boundary latency qualification; production
+cleanup/lease hardening also remains outside this experiment. The wrapper SDK and
+second-agent template (Gate F) remain deferred.
 No upstream Temporal or ADK code is forked or vendored. The narrow compatibility
 surface and shared tests make future upstream seam changes reviewable.
