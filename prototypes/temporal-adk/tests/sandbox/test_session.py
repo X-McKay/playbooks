@@ -20,7 +20,7 @@ from bridge_probe.workspace import Workspace
 pytestmark = pytest.mark.cluster
 
 
-@pytest.mark.parametrize("replace", [False, True])
+@pytest.mark.parametrize("replace", [False, True, "worker"])
 async def test_temporal_owned_sandbox_and_cold_replacement(tmp_path, replace):
     if not os.environ.get("OPENSHELL_TLS_DIR") or not os.environ.get("TEMPORAL_ADDRESS"):
         pytest.skip("requires real OpenShell and Temporal in kind")
@@ -29,7 +29,7 @@ async def test_temporal_owned_sandbox_and_cold_replacement(tmp_path, replace):
     base = tmp_path / "base"
     base.mkdir()
     (base / "README.md").write_text("Synthetic input")
-    if replace:
+    if replace is True:
         (base / "large.txt").write_text("x" * 900000)
     tape = Tape(store, manifest="demo-v1")
     position = tape.empty(Workspace(base, store).capture())
@@ -38,9 +38,8 @@ async def test_temporal_owned_sandbox_and_cold_replacement(tmp_path, replace):
         os.environ.get("OPENSHELL_ADDRESS", "127.0.0.1:18080"),
         tls=TlsConfig(ca_path=tls / "ca.crt", cert_path=tls / "tls.crt", key_path=tls / "tls.key"),
     )
-    remote = OpenShellSession(
-        client, store, session=session, manifest="demo-v1", key=secrets.token_bytes(32)
-    )
+    key = secrets.token_bytes(32)
+    remote = OpenShellSession(client, store, session=session, manifest="demo-v1", key=key)
     temporal = await Client.connect(os.environ["TEMPORAL_ADDRESS"])
     activities = Activities(remote, remote, tape)
     start = {"session": session, "message": "Inspect", "position": position.model_dump()}
@@ -69,9 +68,28 @@ async def test_temporal_owned_sandbox_and_cold_replacement(tmp_path, replace):
                             break
                         await asyncio.sleep(0.5)
                 old = remote.binding.copy()
-                assert (await remote.close({"binding": old}))["cleanup"] == "DELETED"
+                if replace is True:
+                    assert (await remote.close({"binding": old}))["cleanup"] == "DELETED"
+                if replace != "worker":
+                    await handle.signal(SessionWorkflow.resume)
+            if replace != "worker":
+                result = await handle.result()
+        if replace == "worker":
+            # The sandbox remains parked while the application Worker stops.
+            # Recreate adapter caches too; only stable credentials/artifacts survive.
+            remote = OpenShellSession(client, store, session=session, manifest="demo-v1", key=key)
+            activities = Activities(remote, remote, tape)
+            assert remote.binding is None and not remote.uploaded
+            async with Worker(
+                temporal,
+                task_queue=session,
+                workflows=[SessionWorkflow],
+                activities=activities.registered(),
+            ):
                 await handle.signal(SessionWorkflow.resume)
-            result = await handle.result()
+                result = await handle.result()
+            assert remote.binding["generation"] == 1
+            assert remote.binding["sandbox_id"] == old["sandbox_id"]
         assert result["status"] == "SUCCEEDED", result
         assert result["cleanup"] == "DELETED"
         assert result["position"]["cursor"] == 5
@@ -83,7 +101,7 @@ async def test_temporal_owned_sandbox_and_cold_replacement(tmp_path, replace):
             )
         )
         assert (restored / "report.md").read_text() == "Workspace inspected."
-        if replace:
+        if replace is True:
             assert (
                 remote.binding["generation"] == 2
                 and remote.binding["sandbox_id"] != old["sandbox_id"]
@@ -93,7 +111,7 @@ async def test_temporal_owned_sandbox_and_cold_replacement(tmp_path, replace):
         completed = [
             e for e in history.events if e.HasField("activity_task_completed_event_attributes")
         ]
-        assert len(completed) == (14 if replace else 13)
+        assert len(completed) == (14 if replace is True else 13)
         # The Workflow's committed position, not a sandbox cache, chose the five boundaries.
     finally:
         await remote.close({"binding": remote.binding})

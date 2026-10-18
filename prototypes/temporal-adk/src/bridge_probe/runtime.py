@@ -7,11 +7,12 @@ import shutil
 from pathlib import Path
 
 from .artifacts import FileStore, Position, Tape
-from .demo import registry
+from .demo import factory, registry
 from .dispatch import Dispatcher
-from .process import run_child
+from .inline import inline_objects
 from .records import canonical_bytes
 from .transport import Authority
+from .warm import WarmRunner
 from .workspace import Workspace
 
 ROOT = Path("/sandbox")
@@ -46,15 +47,37 @@ class Runtime:
         )
         self.authority = Authority(key, session, generation=generation)
         self.lock = asyncio.Lock()
+        self.closing = False
         self.pending = None
         self.position = None
         self.effects = []
+        self.candidate = None
+        self.warm = WarmRunner(
+            lambda bridge: factory(bridge, self.workdir, provider=self.provider),
+            invocation=session,
+            manifest=manifest,
+            message=message,
+        )
+
+    async def close(self):
+        self.closing = True
+        # Execute holds the command lock while awaiting its shielded task. Stop
+        # that task first so shutdown can acquire the lock. No new executor can
+        # start after the closing fence: admission through task creation is
+        # synchronous, and queued handlers check closing under the lock.
+        await self.dispatcher.close()
+        async with self.lock:
+            await self.warm.close()
 
     async def handle(self, envelope):
         action, command = self.authority.verify(envelope)
         if command["binding"]["session"] != self.session:
             raise ValueError("wrong binding")
         async with self.lock:
+            if self.closing:
+                raise RuntimeError("runtime is closing; replace sandbox")
+            if self.warm.poisoned:
+                raise RuntimeError("poisoned warm cache; replace sandbox")
             position = Position.model_validate(command["position"])
             if action == "advance":
                 if any(not item[2].done() for item in self.dispatcher.tasks.values()):
@@ -63,36 +86,22 @@ class Runtime:
                 tape = self.tape.load(position)
                 if position.workspace is None:
                     raise ValueError("missing workspace")
+                # Only the exact locally observed candidate can continue a warm
+                # task. Every discontinuity first stops it and reconstructs cold.
+                # The candidate is still not accepted until supplied by the caller.
+                if position != self.position and position != self.candidate:
+                    await self.warm.close()
                 shutil.rmtree(self.workdir)
                 self.workdir.mkdir()
                 self.workspace.restore(position.workspace)
-                self.position = position
-                if command.get("prepare_only"):
-                    (self.root / "pending.json").unlink(missing_ok=True)
-                    return {"status": "prepared"}
-                result = await run_child(
-                    "bridge_probe.replay",
-                    {
-                        "tape": tape,
-                        "pending": command["pending"],
-                        "workspace": str(self.workdir),
-                        "session": self.session,
-                        "manifest": self.manifest,
-                        "message": self.message,
-                        "provider": self.provider,
-                    },
-                    timeout=30,
-                )
+                self.pending = None
+                result = await self.warm.advance(tape, command["pending"])
                 self.pending = result.get("operation")
                 self.position = position
+                if position == self.candidate:
+                    self.candidate = None
                 return result
             if action == "execute":
-                pending_file = self.root / "pending.json"
-                if pending_file.exists():
-                    captured = json.loads(pending_file.read_bytes())
-                    if captured["position"] != position.model_dump():
-                        raise ValueError("stale captured position")
-                    self.pending = captured["operation"]
                 if command["operation"] != self.pending or position != self.position:
                     raise ValueError("execution requires the captured pinned descriptor")
                 self.store.written.clear()
@@ -109,9 +118,12 @@ class Runtime:
                 # Include the checkpoint on duplicate delivery even if its put was cached.
                 refs = dict(self.store.written)
                 refs[receipt.position.workspace.sha256] = receipt.position.workspace
+                self.candidate = receipt.position
+                objects = [ref.model_dump() for ref in refs.values()]
                 return {
                     "receipt": receipt.model_dump(),
-                    "objects": [ref.model_dump() for ref in refs.values()],
+                    "objects": objects,
+                    "inline_objects": inline_objects(self.store, objects),
                 }
             raise ValueError("unsupported runtime action")
 
@@ -145,8 +157,11 @@ async def main():
 
     server = await asyncio.start_unix_server(connected, path=SOCKET, limit=262145)
     os.chmod(SOCKET, 0o600)
-    async with server:
-        await server.serve_forever()
+    try:
+        async with server:
+            await server.serve_forever()
+    finally:
+        await runtime.close()
 
 
 if __name__ == "__main__":

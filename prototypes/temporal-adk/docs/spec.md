@@ -8,6 +8,17 @@ The initial implementation supports a bounded, serial `LlmAgent` profile. Each a
 
 All protocol names, bridge classes, configuration fields, and code snippets below are proposed unless explicitly identified as existing APIs. Snippets illustrate contracts and control flow; they are not a tested implementation. Normative requirements use MUST, SHOULD, and MAY.
 
+## Implemented warm-path amendment
+
+The user subsequently authorized a measured warm-execution optimization. The
+[warm execution contract](warm-execution.md) supersedes this original draft’s
+fresh-process-per-advance requirement and deferral of parked continuations. The
+implementation keeps a volatile task, accepts outcomes only through a subsequent
+Temporal-authorized advance, fences interrupted cleanup, and reconstructs cold
+on cache discontinuity. Execution still uses canonical descriptors. The original
+protocol rationale and proposed SDK below remain design material; the
+[evidence report](evidence.md) defines the narrower tested scope.
+
 ## Review decisions and prototype scope
 
 The independent review retained Temporal-only progress ownership and one sandbox per session. It identified four correctness gaps and selected a simpler initial runtime. These changes are integrated into the protocol and examples rather than left as a parallel set of recommendations.

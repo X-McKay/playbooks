@@ -1,139 +1,183 @@
-# Initial latency measurements
+# Latency measurements: cold and warm execution
 
-The current prototype adds approximately **20 seconds of active latency across
-five model/tool boundaries**, or about **4 seconds per boundary averaged over this
-short run**. This is a measured implementation cost, not an inherent Temporal
-latency requirement. Fresh ADK processes and many small OpenShell exec exchanges
-dominate this experiment.
+For this five-boundary scripted agent, the warm implementation reduced median
+**full-session time from 60.14 to 44.96 seconds** and median **active time from
+21.99 to 5.51 seconds**. Those are approximately 25% and 75% reductions in these
+small local samples. Active OpenShell exec exchanges fell from **28 to 12**.
+Confirmed deletion still costs about 30 seconds and dominates caller-visible time.
 
-## Comparison
+This measures the combined effect of continuation reuse and bounded artifact
+batching. It does not isolate their individual contributions or establish a
+latency SLO. The [warm contract](warm-execution.md) describes the preserved
+acceptance and recovery rules; the [evidence report](evidence.md) records the
+correctness qualification.
 
-Measured on 2026-10-17 using the previously verified implementation at `1717557`,
-the existing kind cluster, four Colima CPUs and approximately 8 GiB RAM. The
-application worker runs on the macOS host; Temporal and OpenShell run in kind;
-vLLM remains at `llm.almckay.io`. No production code or image was changed for this
-benchmark. Version details are in the [evidence report](evidence.md).
+## Environment and comparison method
 
-Both modes execute the same report agent: three model calls, one inspect tool and
-one report-writing tool. Native ADK uses ordinary function tools and the same
-model executor. It runs in a separate OpenShell sandbox with the same image and
+Both studies ran on 2026-10-17 using the same dedicated kind cluster, macOS arm64
+host, four Colima CPUs and approximately 8 GiB RAM. The application worker and
+artifact directory run on the host; Temporal and OpenShell run in kind; vLLM
+remains at `llm.almckay.io`. Dependency versions are in the evidence report.
+
+The cold baseline is the **earlier measurement** of runtime commit `1717557`,
+archived with benchmark commit `4084c86`; it was not rerun concurrently with the
+warm version. The warm rerun used the same unchanged benchmark harness and the
+new image identified in its raw JSON metadata. The correctness suite finished
+before the benchmark began. Background machine/model variability is not controlled.
+
+Each durable sample starts a fresh session sandbox and executes three model calls,
+one inspect tool and one report-writing tool. All four warm durable runs completed
+five accepted boundaries, passed Temporal history replay and had exactly 13
+successful Activity completions with no retries. Native ADK uses ordinary tools
+and the same model executor in a separate sandbox with the same image and
 filesystem restrictions, using the live profile's network policy. Scripted calls
-use no network. The native baseline includes one Python process startup and its
-OpenShell exec round trip. Active durable time starts when the first advance is
-scheduled and ends when the final advance completes; both exclude provisioning
-and deletion.
+use no network.
 
-| Measurement | Native ADK | Durable bridge | Difference |
-| --- | --- | --- | --- |
-| Scripted, median of 3 runs | 1.93 s | 21.99 s | +20.06 s |
-| Scripted, observed range | 1.85–2.54 s | 20.81–22.24 s | — |
-| Live vLLM, 1 run per mode | 7.87 s | 30.61 s | +22.74 s |
+Active durable time starts when the first advance is scheduled and ends when the
+final advance completes. It excludes provisioning and deletion. Full-session time
+is caller-observed completion and includes cleanup. The native comparison times
+one OpenShell exec, including Python/ADK import and response transfer.
 
-The scripted comparison isolates bridge overhead without model-service variation.
-The live difference also includes inference variability between independent
-requests; it is not a precise estimate of infrastructure overhead alone. These
-small samples establish scale, not p95/p99 latency, a throughput limit or an SLO.
-The arithmetic per-boundary average includes the extra final advance and should
-not be extrapolated linearly to arbitrary workloads.
+The old runtime already imported ADK during provisioning through its demo registry.
+Warm execution reuses those resident libraries and removes the additional imports
+in six replay processes. Its active interval excludes runtime startup, while the
+native fresh-exec interval includes its own startup. Therefore subtracting native
+exec time is a useful comparison for this harness, **not a matched steady-state
+native comparison or a pure infrastructure-overhead measurement**.
 
-## Session lifecycle and caller-visible time
+## Full-session and active results
 
-| Durable measurement | Scripted median (range), 3 runs | Live, 1 run |
+Scripted values are medians of three runs. Live values are one run per version;
+independent inference variability is included in their differences.
+
+| Measurement | Earlier cold path | Warm rerun |
 | --- | --- | --- |
-| Provision Activity | 9.06 s (7.95–10.43 s) | 10.31 s |
-| Active agent work | 21.99 s (20.81–22.24 s) | 30.61 s |
-| Workflow start to answer-ready milestone | 30.00 s (29.95–32.78 s) | 40.99 s |
-| Confirmed deletion Activity | 30.03 s (29.99–30.04 s) | 30.08 s |
-| Caller-observed completion, including cleanup | 60.14 s (60.01–62.95 s) | 71.11 s |
+| Scripted full session, including cleanup | 60.14 s | 44.96 s |
+| Scripted provision Activity | 9.06 s | 9.26 s |
+| Scripted active work | 21.99 s | 5.51 s |
+| Scripted Workflow start to answer-ready milestone | 30.00 s | 14.85 s |
+| Scripted confirmed deletion Activity | 30.03 s | 30.14 s |
+| Live full session, including cleanup | 71.11 s | 50.43 s |
+| Live provision Activity | 10.31 s | 9.20 s |
+| Live active work | 30.61 s | 11.07 s |
+| Live Workflow start to answer-ready milestone | 40.99 s | 20.35 s |
+| Live confirmed deletion Activity | 30.08 s | 29.92 s |
 
-The current Workflow returns its result **after cleanup**. The answer-ready row is
-an internal history milestone, not an earlier response exposed by the current
-API. Provisioning and deletion are separate lifecycle costs; a native deployment
-with the same per-session sandbox requirement would also incur them. Medians in
-different rows need not sum to the median total.
+The current Workflow returns **after cleanup**. Answer-ready is an internal history
+milestone, not an earlier response exposed by the API. A native deployment requiring
+a fresh sandbox per session would also have lifecycle costs; this harness does not
+measure a complete native session lifecycle. Medians across rows need not add up.
+
+The individual warm scripted samples, in execution order, were:
+
+| Sample | Active | Full session | Active exec exchanges |
+| --- | --- | --- | --- |
+| 1 | 5.517 s | 45.690 s | 12 |
+| 2 | 5.506 s | 44.965 s | 12 |
+| 3 | 5.309 s | 44.842 s | 12 |
+
+The earlier cold active samples ranged from 20.81 to 22.24 seconds and full-session
+samples from 60.01 to 62.95 seconds. Every individual timing is retained in the
+linked raw datasets. These samples support observations about scale, not p95/p99,
+statistical significance, throughput or long-session behavior.
+
+## Native reference and startup accounting
+
+| Measurement | Earlier study | Warm rerun |
+| --- | --- | --- |
+| Native scripted exec, median of 3 | 1.93 s | 2.51 s |
+| Durable scripted active minus native exec medians | 20.06 s | 2.99 s |
+| Native scripted body only, median of 3 | 0.69 s | 0.76 s |
+| Durable scripted active minus native body medians | 21.30 s | 4.74 s |
+| Native live exec, one run | 7.87 s | 7.32 s |
+| Durable live active minus native exec | 22.74 s | 3.75 s |
+
+The warm-study native scripted exec samples were 2.513, 2.243 and 2.564 seconds;
+the earlier samples were 1.925, 1.854 and 2.545 seconds. The body-only diagnostic
+excludes imports and exec transport. Its difference from durable active time
+includes those transport costs and is **also not a matched native baseline**.
+Neither subtraction isolates Temporal overhead. The live subtraction additionally
+contains inference variation; one sample cannot quantify that uncertainty.
 
 ## Where active time goes
 
-The middle scripted run took 21.99 seconds. Its 28 serial OpenShell exec exchanges
-accounted for 21.65 seconds:
+For the middle scripted run of each study:
 
-| Measured region | Count | Total |
+| Measured region | Cold count / time | Warm count / time |
 | --- | --- | --- |
-| Cold ADK replay/finalization processes | 6 | 13.74 s |
-| Prepare/execute control RPC processes | 11 | 4.08 s |
-| Candidate artifact download processes | 10 | 3.51 s |
-| Initial workspace upload process | 1 | 0.32 s |
-| All remaining active work | — | 0.33 s |
+| Separate ADK replay/finalization execs | 6 / 13.74 s | 0 / 0 s |
+| Advance and execute control execs | 11 / 4.08 s | 11 / 4.86 s |
+| Candidate artifact download execs | 10 / 3.51 s | 0 / 0 s |
+| Initial workspace upload exec | 1 / 0.32 s | 1 / 0.35 s |
+| All remaining active work | — / 0.33 s | — / 0.29 s |
 
-These categories come from host-side timers around the unchanged adapter's
-`checked_exec` calls. They include identity checks, transport, remote process
-execution and response transfer, rather than measuring network transit alone.
-The remainder includes validation, local storage work, Workflow transitions and
-unobserved gaps. It is **not** an isolated measurement of Temporal overhead.
-History schedule-to-start durations are also recorded, but eager dispatch can
-make those timestamps unsuitable as a standalone network-latency estimate.
+All warm durable runs, including live inference, used 12 active exec exchanges.
+That count excludes lifecycle calls and the immutable-identity lookup before each
+exec; it is not the total network request count. Larger artifacts still require
+separate transfers, as verified by the large-checkpoint recovery test.
 
-## Reconstruction as history grows
+Timers wrap the adapter's `checked_exec` calls and include identity checks,
+transport, process execution and response transfer. The warm control total also
+contains ADK continuation work and inline candidate bytes formerly handled by
+other execs. It is not a network-transit-only measure. Remaining time includes
+validation, storage, Workflow transitions and unobserved gaps. History
+schedule-to-start durations are retained, but eager dispatch can make them
+unsuitable as standalone network-latency estimates.
 
-A separate microbenchmark used a static agent alternating model and read-tool
-boundaries. Each measurement started a fresh Python process inside OpenShell.
-Recorded tool outcomes were injected; the tool body raises if replay executes it.
-Each row has three samples. Core time includes parsing the selected prefix and
-ADK reconstruction, but excludes imports, fixture-file reads and prefix selection,
-OpenShell transport, external artifact transfer and workspace restoration.
+## Cold reconstruction as history grows
 
-| Accepted boundaries | Serialized prefix | Median core wall time | Median core CPU time |
+The unchanged microbenchmark starts a fresh process inside OpenShell and injects
+recorded outcomes; the tool body raises if replay executes it. Three samples were
+collected at each prefix in both studies. The warm-study rerun measured:
+
+| Accepted boundaries | Serialized prefix | Median core wall | Median core CPU |
 | --- | --- | --- | --- |
-| 0 | 2 bytes | 0.68 s | 0.64 s |
-| 1 | 9.2 kB | 0.70 s | 0.65 s |
-| 8 | 51.7 kB | 0.65 s | 0.61 s |
-| 32 | 421.4 kB | 0.85 s | 0.80 s |
-| 63, captures boundary 64 | 1.42 MB | 0.89 s | 0.86 s |
-| 64, rejects attempted boundary 65 | 1.42 MB | 0.89 s | 0.85 s |
+| 0 | 2 bytes | 0.77 s | 0.72 s |
+| 1 | 9.2 kB | 0.64 s | 0.60 s |
+| 8 | 51.7 kB | 0.66 s | 0.62 s |
+| 32 | 421.4 kB | 0.72 s | 0.68 s |
+| 63, captures boundary 64 | 1.42 MB | 1.06 s | 0.92 s |
+| 64, rejects attempted boundary 65 | 1.42 MB | 0.88 s | 0.84 s |
 
-Median library import times by row were 1.20–1.36 seconds. In this small-output
-trace, fixed process/ADK setup costs outweighed the additional reconstruction
-cost at longer prefixes. Nonmonotonic small differences are sample variability.
-Larger model responses, tool outputs and workspaces may behave differently.
+Core timing includes prefix parsing and ADK reconstruction, but excludes imports,
+fixture-file reads/prefix selection, transport, external artifact transfer and
+workspace restoration. Median imports by row were 1.18–1.51 seconds. Nonmonotonic
+small differences reflect sample variability. The earlier core wall medians were
+0.68, 0.70, 0.65, 0.85, 0.89 and 0.89 seconds at these same prefixes.
 
-This is **not a full 64-boundary Temporal/OpenShell run**. It does not measure
-cumulative artifact I/O, workspace cost, payload-limit behavior or loaded-cluster
-latency at that length. The broader Gate E qualification remains open.
+This is **not a full 64-boundary Temporal/OpenShell run**. It does not qualify
+cumulative artifact I/O, repeated workspace restoration, warm cache memory,
+payload-limit behavior or loaded-cluster latency at that length. Gate E's broader
+end-to-end qualification remains open.
 
-## Changes worth testing next
+## Remaining work
 
-1. Reduce exec exchanges by batching bounded artifact transfers and reusing an
-   authenticated session transport. Preserve hash verification, payload limits,
-   command scope and external acceptance checks.
-2. Investigate a warm ADK continuation or reusable replay process within each
-   session. Preserve the Workflow's authority to accept progress, gate each next
-   effect, and retain cold reconstruction for recovery. State reset, cancellation
-   and stale-result behavior must pass the existing conformance/fault suite.
-3. Investigate the approximately 30-second deletion wait. Measure process shutdown
-   before changing grace periods. An earlier result notification could be a
-   separate API feature, but it must not claim confirmed cleanup prematurely.
-
-These are optimization proposals, not implemented performance claims. First
-improve the measured process/transport costs, then rerun these comparisons and
-the full correctness suite before extracting the wrapper SDK.
+The approximately 30-second deletion wait is now the largest lifecycle cost.
+Measure shutdown behavior before changing grace periods. An earlier result
+notification could be a separate API feature, but cannot claim confirmed cleanup
+before deletion finishes. Further transport reuse and long-session profiling
+remain possible follow-ups; the current measurements do not justify weakening
+per-boundary acceptance or sandbox isolation.
 
 ## Reproduction and evidence
 
-With the current image loaded and the existing kind setup configured:
+After building/loading the current image and configuring the existing kind setup:
 
 ```bash
-BRIDGE_LATENCY=1 uv run python scripts/kind_test.py benchmarks/test_latency.py -s -x
+BRIDGE_LATENCY=1 BRIDGE_LATENCY_OUTPUT=.state/warm-latency.json \
+  uv run python scripts/kind_test.py benchmarks/test_latency.py -s -x
 ```
 
-This sends synthetic prompts to the live model. Output goes to
-`.state/latency.json`; set `BRIDGE_LATENCY_OUTPUT` to select another path.
-The opt-in benchmark lives outside the default test suite and changes no runtime
-code. It verified successful five-boundary completion and Temporal history replay
-for all four durable runs, native report creation, cold prefix reconstruction,
-and boundary-budget rejection. The benchmark passed in **365.71 seconds**.
-Final cluster inspection found no session workloads, supervisors or workspace PVCs.
+This sends synthetic live-model prompts. The opt-in benchmark lives outside the
+default correctness suite and adds only host-side timing observation and sandbox
+probes. The warm benchmark passed in **291.75 seconds**. All session sandboxes
+and workspace volumes were removed; shared cluster services remained healthy.
 
-[Raw measurements](../benchmarks/results/kind-local.json) and the
-[benchmark harness](../benchmarks/test_latency.py) are committed alongside this
-report. The earlier 104-test correctness result still applies to the unchanged
-production code; this measurement does not expand its supported agent profile.
+- [Earlier cold measurements](../benchmarks/results/kind-local.json)
+- [Warm measurements and image identity](../benchmarks/results/kind-warm.json)
+- [Unchanged benchmark harness](../benchmarks/test_latency.py)
+
+The [evidence report](evidence.md) records 124 distinct correctness tests, including
+warm recovery and live completion loss. The optimization retains the restricted
+cooperative agent profile; it does not qualify the wrapper SDK or production
+lease/janitor guarantees.

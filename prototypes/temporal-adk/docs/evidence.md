@@ -33,7 +33,7 @@ the setup script verifies downloaded controller and Temporal chart checksums.
 Images and OCI charts still use version tags, not universally immutable digests.
 The tested host uses macOS arm64, Colima, four CPUs and approximately 8 GiB RAM.
 
-## Evidence matrix
+## Initial cold-path evidence matrix
 
 Initial scripted-only consolidated run: **87 passed, zero failed, zero skipped**, in 506.74 seconds
 (8 minutes 26 seconds), against the rebuilt image and real kind services. One
@@ -59,7 +59,7 @@ port-forwards were stopped. The dedicated kind cluster remains available.
 | Session recovery | Five accepted model/tool boundaries, cold generation replacement with a checkpoint larger than 1 MiB, terminal cancellation and hard-termination reconciliation |
 | Lifecycle regression | Failed replacement readiness, cancellation during creation, delayed lookup after terminal cleanup, immutable deletion acknowledgement reconciliation |
 
-## Live vLLM qualification
+## Initial live vLLM qualification
 
 The live profile selects `openai/Qwen3.6-35B-A3B-NVFP4` through ADK's official
 LiteLlm adapter, with API base `https://llm.almckay.io/v1`. The provider client
@@ -153,9 +153,9 @@ fault windows and Kubernetes termination grace periods.
 
 - Full Pydantic values and field-set masks are required. `exclude_unset` loses ADK
   events appended to default lists.
-- Replay runs through OpenShell's supervisor exec API. Its seccomp policy denies
-  workload `killpg`; weakening that policy to accommodate the local harness would
-  change the isolation assumptions.
+- The initial cold path used OpenShell's supervisor exec API because its seccomp
+  policy denies workload `killpg`. The warm follow-up removes that per-advance
+  replay process; it retains the same seccomp policy and official exec transport.
 - OpenShell's gRPC request limit requires artifact chunking. Uploads use 128 KiB
   chunks with final hash verification; control messages remain separately bounded.
 - Temporal's actual converted payload size matters. Non-ASCII JSON can expand
@@ -172,6 +172,64 @@ fault windows and Kubernetes termination grace periods.
 - Kubernetes deletion can outlive the SDK's acknowledgement timeout. The adapter
   confirms immutable instance removal before permitting replacement or reporting
   `DELETED`.
+
+## Warm-path qualification
+
+The [warm execution amendment](warm-execution.md) keeps ADK parked at each
+boundary and resumes only when a subsequent signed advance selects the exact
+Temporal-accepted candidate. A missing or discontinuous cache reconstructs cold.
+Inline candidate objects have a 128 KiB raw-byte budget; the worker verifies
+hashes and receipt/checkpoint semantics before acceptance. Large checkpoints use
+the original transfer path. The policy, Temporal credentials and one-attempt
+execute contract are unchanged.
+
+Independent review found three shutdown hazards, each reproduced by a failing
+regression before correction: caller cancellation could leave a reusable live
+finalizer; runtime shutdown lacked a terminal command fence; acquiring the
+command lock before cancelling execution could deadlock cleanup. The final
+implementation fences before yielding, permanently poisons interrupted warm
+cleanup, rejects commands after runtime shutdown begins, and cancels admitted
+executors before waiting for their command lock. The reviewer then independently
+passed all 17 focused warm/runtime/inline tests with no remaining blockers.
+
+The cluster worker-restart case stops and recreates both the Temporal application
+Worker and its host OpenShell adapter. The sandbox remains the same immutable
+instance and resumes from the Workflow-selected position with empty host caches.
+This is distinct from the existing SIGKILL worker test and the cold sandbox
+replacement case, which requires deletion and a new generation.
+
+The new `vllm_warm_recording.json` stores synthetic accepted responses from a
+real warm run. Both original and warm recordings pass every-prefix fresh-process
+reconstruction and warm continuation with cache loss: four provider-recording
+tests passed in 11.87 seconds, with no inference or tool-body execution.
+
+The full real-kind suite passed **122 tests in 741.20 seconds**, with zero
+failures or skips and one upstream ADK experimental warning. It included live
+normal, replacement and completion-loss cases, unchanged policy enforcement,
+large-checkpoint cold replacement, the new worker/adapter restart, Temporal
+history replay, cancellation and terminal reconciliation. The two newly added
+warm-recording parameter cases were verified in the four-case provider run
+above, giving **124 distinct correctness tests** on the final implementation.
+The recording check ran alongside the latter part of the full suite; it did not
+send inference or modify the sandbox image.
+
+The live normal and replacement runs each reported 1,525 accepted-response tokens,
+five accepted boundaries and `DELETED` cleanup. The live completion-loss case
+still required exactly one model dispatch, zero accepted boundaries and
+`OUTCOME_UNKNOWN` before confirmed cleanup.
+
+```bash
+BRIDGE_LIVE_VLLM=1 BRIDGE_LIVE_EVIDENCE_DIR=.state/warm-live \
+  uv run python scripts/kind_test.py tests -x
+uv run pytest tests/provider/test_recorded_vllm.py -q
+```
+
+The current checkout collects 124 tests. A subsequent full run includes both
+recordings automatically. The unchanged latency benchmark separately passed in
+291.75 seconds. Scripted median full-session time fell from 60.14 to 44.96 seconds,
+active time from 21.99 to 5.51 seconds, and active exec exchanges from 28 to 12.
+The [latency report](latency.md) includes lifecycle accounting, native-startup
+scope differences, raw samples and the single live comparison.
 
 ## Explicit limitations and plan refinements
 

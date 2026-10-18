@@ -326,3 +326,22 @@ The first review package is Gate A, not a live model demo. The smallest end-to-e
 Implement Tasks 1–3 as one conformance milestone, with a test/review/commit boundary after each task. Review Gate A before Tasks 4–5; review Gate B before Tasks 6–7; review Gate C before Tasks 8–9. Run Task 10 only after actual sandbox policy and cleanup evidence exists. Decide on Task 11 from the prototype results.
 
 For implementation, a fresh reviewer at each gate is more valuable than parallel work on speculative adapters. The tasks share evolving wire and lifecycle contracts, so keep the critical path sequential. Independent implementation/review agents can be used after an execution approach is selected, but there is no need to build SDK and infrastructure branches in parallel before conformance passes.
+
+## Approved warm-execution follow-up
+
+After the initial five-boundary latency study, the user explicitly requested
+warm execution and fewer OpenShell exchanges before SDK extraction. This is the
+separate measured optimization contemplated by Gate E, not implicit expansion of
+the admitted profile. The [warm contract](warm-execution.md) supersedes the
+original fresh-process-per-advance implementation choice.
+
+The follow-up adds native/cold/warm conformance, candidate-versus-accepted resume
+checks, interrupted-finalizer and shutdown fences, inline artifact integrity and
+large-object fallback tests. Cluster qualification reruns worker restart with a
+fresh host adapter, sandbox replacement, live-model completion loss and isolation
+checks. The unchanged benchmark measures the same three scripted samples and one
+live sample per mode, with lifecycle costs reported separately. Actual results
+are recorded in [evidence](evidence.md) and [latency](latency.md).
+
+This follow-up does not close the full 64-boundary end-to-end gate, add a janitor
+or distributed lease, or begin the wrapper SDK and second-agent template.

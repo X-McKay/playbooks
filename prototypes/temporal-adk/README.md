@@ -4,8 +4,9 @@ An isolated implementation experiment requested for this repository. Existing
 playbooks remain guidance-only. This prototype is not a production SDK.
 
 The external Temporal worker owns accepted progress. One OpenShell sandbox holds
-the entire ADK agent, model executor and tool executor for a session. Each advance
-reconstructs ADK in a fresh process from the invocation input and accepted tape.
+the entire ADK agent, model executor and tool executor for a session. A warm ADK task
+parks at each model/tool boundary and resumes only from an explicitly supplied
+Temporal-accepted result. Cache loss reconstructs from the accepted tape.
 The scripted demo performs three model operations and two tool operations.
 
 ## Run
@@ -79,14 +80,17 @@ LiteLLM and the underlying OpenAI client have retries disabled; a lost completio
 remains unknown. No public model provider or additional durability service is used.
 
 The live gate covers normal completion, cold sandbox replacement after the first
-tool, and loss of the first model's completion after candidate upload. A committed
-synthetic provider recording also reconstructs every prefix in fresh offline
-processes, including tool-call IDs and usage metadata.
+tool, and loss of the first model's completion after candidate upload. Committed
+synthetic provider recordings from cold and warm runs reconstruct every prefix
+in fresh offline processes and through warm cache loss, including tool-call IDs
+and usage metadata.
 
 ## Measured latency
 
-The initial benchmark measured about 20 seconds of added active time across five
-boundaries, plus separate sandbox lifecycle costs. See the
+For the five-boundary scripted agent, warm execution reduced median full-session
+time from 60.14 to 44.96 seconds and active time from 21.99 to 5.51 seconds.
+Active OpenShell exec exchanges fell from 28 to 12; deletion still takes about
+30 seconds. These are small local samples, not an SLO. See the
 [latency report](docs/latency.md) for native-versus-durable comparisons, live vLLM
 timing, reconstruction growth, raw samples and the opt-in reproduction command.
 
@@ -108,10 +112,12 @@ timing, reconstruction growth, raw samples and the opt-in reproduction command.
   files. Failed capture blocks completion.
 - `activities.py` verifies the actual predecessor, operation, artifact bytes and
   workspace schema before returning a receipt. Execute Activities have one attempt.
-- `openshell.py` uses official mTLS-authenticated lifecycle and exec APIs. Replay
-  executes under OpenShell's supervisor because workload seccomp forbids `killpg`.
-  The session-local service retains only volatile execution knowledge. Artifact
-  transfer uses 128 KiB chunks below OpenShell's 1 MiB request limit.
+- `warm.py` holds one volatile continuation per sandbox, fences interrupted
+  cancellation and preserves cold reconstruction. It never selects accepted progress.
+- `openshell.py` uses official mTLS-authenticated lifecycle and exec APIs. Each
+  advance uses one control RPC. Execute replies inline up to 128 KiB of candidate
+  bytes; larger artifacts retain verified downloads and chunked recovery uploads.
+  See the [warm execution contract](docs/warm-execution.md).
 - A failed safe advance can replace the sandbox only after old-instance deletion
   is confirmed. The new binding is a Temporal Activity result. Lost execution
   completion remains `OUTCOME_UNKNOWN`; it does not automatically replace/retry.

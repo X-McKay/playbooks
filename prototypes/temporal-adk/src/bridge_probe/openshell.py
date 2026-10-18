@@ -1,7 +1,7 @@
 """Single-session OpenShell adapter. Official exec RPC carries bounded control messages.
 
-Immutable artifacts are copied separately and hash-verified in the external store
-before an Activity can report success. Neither copy selects an accepted position.
+Immutable artifacts are copied inline or separately and hash-verified in the
+external store before an Activity can report success. Neither copy selects an accepted position.
 """
 
 import asyncio
@@ -16,6 +16,7 @@ from openshell._proto import openshell_pb2, sandbox_pb2
 
 from .artifacts import Position, Ref
 from .chunks import CHUNK_BYTES
+from .inline import verify_inline
 from .records import canonical_bytes
 from .transport import Authority, ProtocolError
 
@@ -211,11 +212,7 @@ class OpenShellSession:
         current = await asyncio.to_thread(self.client.get, self.name, workspace="default")
         if current.id != binding["sandbox_id"]:
             raise ProtocolError("stale sandbox identity")
-        command = (
-            [PYTHON, "-m", "bridge_probe.replay"]
-            if mode == "replay"
-            else [PYTHON, "-m", "bridge_probe.remote_io", mode]
-        )
+        command = [PYTHON, "-m", "bridge_probe.remote_io", mode]
         maximum = Ref.model_validate_json(data).byte_length if mode == "get" else 262144
 
         name = binding["name"]
@@ -300,9 +297,7 @@ class OpenShellSession:
                     if not uploaded.get("complete") or Ref.model_validate(uploaded["ref"]) != ref:
                         raise ProtocolError("artifact upload mismatch")
                     self.uploaded.add((binding["sandbox_id"], ref.sha256))
-        envelope = self.authority.sign(
-            action, {**command, **({"prepare_only": True} if action == "advance" else {})}, ttl=45
-        )
+        envelope = self.authority.sign(action, command, ttl=45)
         data = await self.checked_exec(binding, "rpc", canonical_bytes(envelope))
         if len(data) > 262144:
             raise ProtocolError("control response too large")
@@ -310,29 +305,15 @@ class OpenShellSession:
         if "ok" not in response:
             raise ProtocolError(response.get("message", "remote failure"))
         result = response["ok"]
-        if action == "advance":
-            if result != {"status": "prepared"}:
-                raise ProtocolError("runtime not prepared")
-            data = await self.checked_exec(
-                binding,
-                "replay",
-                canonical_bytes(
-                    {
-                        "from_store": True,
-                        "position": command["position"],
-                        "pending": command["pending"],
-                    }
-                ),
-            )
-            if len(data) > 262144:
-                raise ProtocolError("replay result too large")
-            return json.loads(data)
         if action == "execute":
-            if len(result["objects"]) > 16:
-                raise ProtocolError("too many candidate objects")
+            bundled = verify_inline(result["objects"], result.get("inline_objects", []))
             for raw in result["objects"]:
                 ref = Ref.model_validate(raw)
-                data = await self.checked_exec(binding, "get", canonical_bytes(ref.model_dump()))
+                data = bundled.get(ref.sha256)
+                if data is None:
+                    data = await self.checked_exec(
+                        binding, "get", canonical_bytes(ref.model_dump())
+                    )
                 if self.store.put(data) != ref:
                     raise ProtocolError("artifact download mismatch")
                 self.uploaded.add((binding["sandbox_id"], ref.sha256))

@@ -1,6 +1,6 @@
 # ADK conformance gate
 
-Gate A passed on 17 October 2026: **32 tests passed**, with one upstream
+The initial Gate A run passed on 17 October 2026: **32 tests passed**, with one upstream
 experimental function-schema warning, in 84.40 seconds.
 
 Run from this directory's parent:
@@ -37,3 +37,14 @@ hidden I/O. The factory/configuration is trusted and version-bound.
 The initial factory uses an empty base and one fixed fixture input. Parameterized
 invocation identity, input and model selection must be wired before live execution.
 The existing dependency lock includes the exact Python package versions.
+
+## Warm-path extension
+
+The [warm amendment](warm-execution.md) adds native-state and callback-trace
+comparisons for a parked continuation, duplicate advance, prefix mismatch, cache
+loss, and failed/interrupted finalization. Runtime tests separately fence
+shutdown and active execution. Both the original live-provider recording and a
+recording captured from a real warm sandbox run reconstruct every prefix in a
+fresh process and recover through a warm cache reset. See the
+[evidence report](evidence.md) for the latest suite results; the historical
+32-test count above describes the initial cold conformance milestone.

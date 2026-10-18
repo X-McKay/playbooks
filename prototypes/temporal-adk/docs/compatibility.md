@@ -53,3 +53,12 @@ The manifest pins the endpoint, served model name and generation settings. A
 served name is not an immutable weights digest; the operator must separately pin
 the deployed model revision for reproducible future inference. Recorded outcomes
 remain the source for replay even when new inference would differ.
+
+## Warm continuation seam
+
+`ContinuingBridge` reuses the cold `TapeBridge` descriptor, profile, budget and
+pending checks. One `WarmRunner` owns one interpreter because the deterministic
+ADK providers are process-global. Native, cold and warm traces must agree for the
+admitted serial profile. The warm task reuses ADK already imported by runtime startup; no upstream
+ADK or Temporal code is forked. See the [warm contract](warm-execution.md) for
+acceptance, cancellation fences and the large-artifact fallback.
