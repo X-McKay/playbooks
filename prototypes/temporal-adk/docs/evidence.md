@@ -126,6 +126,10 @@ BRIDGE_LIVE_VLLM=1 BRIDGE_LIVE_EVIDENCE_DIR=.state/live-final \
   uv run python scripts/kind_test.py tests/sandbox/test_live.py -x
 ```
 
+The subsequent [latency study](latency.md) compares native ADK and the durable
+path, separates lifecycle costs, and measures core reconstruction through the
+64-boundary budget. It does not close the full end-to-end latency gate.
+
 ## Initial observed timing
 
 One real five-boundary cold-replacement history measured the following Activity

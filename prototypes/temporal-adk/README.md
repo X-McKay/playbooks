@@ -83,6 +83,13 @@ tool, and loss of the first model's completion after candidate upload. A committ
 synthetic provider recording also reconstructs every prefix in fresh offline
 processes, including tool-call IDs and usage metadata.
 
+## Measured latency
+
+The initial benchmark measured about 20 seconds of added active time across five
+boundaries, plus separate sandbox lifecycle costs. See the
+[latency report](docs/latency.md) for native-versus-durable comparisons, live vLLM
+timing, reconstruction growth, raw samples and the opt-in reproduction command.
+
 ## Contracts
 
 - `capture.py` admits a deliberately narrow, serial ADK profile and captures the

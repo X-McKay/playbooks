@@ -18,7 +18,9 @@ The implemented slice and measured deviations are recorded in the
 [evidence report](evidence.md). Tasks 1–9 have a restricted scripted implementation
 and fault tests; the full production cleanup and hostile-process guarantees are
 not claimed. Task 10 now includes the selected local vLLM integration and live/recovery tests;
-its 64-boundary latency qualification remains open. Task 11 remains deferred until
+its full 64-boundary latency qualification remains open. An initial
+[native-versus-durable latency study](latency.md), including core replay growth,
+is now available. Task 11 remains deferred until
 the remaining results justify SDK extraction.
 The checklist below preserves the proposed plan rather than implying every gate
 has been satisfied.
