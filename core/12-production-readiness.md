@@ -51,12 +51,16 @@ execution, apply when your agent uses them.
 
 ## Evaluation
 
+- [ ] The dataset includes real requests, hard cases, and past failures, and
+  its labels have been reviewed.
 - [ ] Every material risk scenario maps to required eval and control evidence.
 - [ ] Eval reports identify covered and uncovered risk scenario IDs.
 - [ ] Unit, component, smoke, regression, capability, and safety suites pass.
 - [ ] Trajectory and tool-argument checks pass.
 - [ ] Durable-execution failure scenarios pass.
 - [ ] Required multi-run evaluations pass.
+- [ ] LLM judges use versioned rubrics calibrated against human labels.
+- [ ] The release is compared with the current baseline on the same cases.
 - [ ] Quality, cost, and latency meet thresholds.
 - [ ] Critical hard gates have no known failures.
 - [ ] Results include complete provenance.

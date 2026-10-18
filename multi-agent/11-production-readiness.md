@@ -132,6 +132,8 @@ Skip this section only if membership and graph are fully static.
   reproducibility.
 - [ ] Stochastic paths use repeated runs and report distributions and worst
   cases.
+- [ ] Recurring system failures are attributed to where they first went
+  wrong and reproduced at the narrowest layer.
 - [ ] Material risk scenarios map to cases, gates, indicators, alerts, and
   runbooks.
 - [ ] Reports contain complete system, member, model, graph, policy, dataset,

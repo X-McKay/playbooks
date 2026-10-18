@@ -2,6 +2,10 @@
 
 This file condenses [Core chapter 10, Evaluation](https://github.com/X-McKay/playbooks/blob/main/core/10-evaluation.md). The chapter is canonical: if the two differ, follow the chapter and update this file.
 
+## Start from Failures
+
+Build the first cases from the problem brief and from people who do the task today. Run the agent, read every transcript, group failures into named modes, and write an evaluator for each mode that matters. Keep reading transcripts after scores are automated.
+
 ## Evaluation Layers
 
 | Layer | Purpose | Typical evidence |
@@ -26,18 +30,32 @@ Each case should include:
 - allowed variation;
 - redaction and retention classification.
 
+Have a second person review expected results, keep a held-out set for release decisions, refresh the dataset when it saturates, and sanitize production cases into minimal reproductions.
+
 Every material scenario in the agent risk assessment should map to one or more
 case IDs, deterministic invariants where possible, and a release or monitoring
 decision. Report uncovered scenario IDs explicitly; average quality must not
 hide missing risk coverage.
 
+## Grade Outcomes Where They Happen
+
+Run cases against controlled, resettable fixtures and assert on the resulting state, including the number of side effects. Simulated tools return realistic errors and denials. Multi-turn tasks use a simulated user with a goal. Retrieval quality is measured separately from answer quality.
+
 ## Evaluator Selection
 
 Use the least subjective evaluator that captures the claim. Deterministic evaluators should own schemas, exact values, forbidden actions, authorization, citations, and budget limits. Use model judges for relevance, tone, or completeness only with a documented rubric, representative calibration set, and periodic human review.
 
+A judge rubric checks one criterion, uses pass/fail or a short described scale, asks for a reason before the score, and includes real passing and failing examples. Calibrate against human labels, study disagreements, and recalibrate when the rubric, judge model, or typical agent output changes. Run pairwise comparisons in both orders to control position bias.
+
 ## Stochastic Measurement
 
-Run critical cases multiple times. Report attempt count, pass rate, distribution, variance, and confidence bounds when useful. Keep sampling parameters fixed for comparisons. Store model, provider, prompt, tool, skill, policy, and dataset versions with results.
+Run critical cases multiple times. Report attempt count, pass rate, distribution, variance, and confidence bounds when useful. Use all-attempts pass rates for critical behavior: a 90% per-run success rate passes five of five attempts only about 59% of the time. Keep sampling parameters fixed for comparisons. Store model, provider, prompt, tool, skill, policy, and dataset versions with results.
+
+Compare baseline and candidate on identical cases and read the flipped cases. Size datasets so the allowed regression is larger than measurement noise. Treat model changes as releases: run the full suite on the new model with unchanged instructions first, retune afterwards, and roll out gradually.
+
+## Checking the Evals
+
+Each evaluator must fail on a known-bad result. Investigate sudden score jumps for broken fixtures or graders. Pair each safety metric with a usefulness metric so refusing everything does not score well. Label infrastructure failures separately from agent failures.
 
 ## Release Gates
 

@@ -10,21 +10,25 @@ Convert product claims and operational risks into reproducible evidence and rele
 ## Workflow
 
 1. Extract testable claims from the Agent Spec. Include quality, safety, tool use, latency, cost, escalation, and recovery claims.
-2. Separate hard invariants from graded quality. A policy violation must not be averaged away by a high mean score.
-3. Build a dataset with happy paths, boundaries, adversarial inputs, historical regressions, tool failures, permission denials, and durable-execution cases.
-4. Attach stable case IDs, provenance, risk tags, capability tags, expected invariants, and dataset version.
-5. Prefer evaluators in this order:
+2. Run the agent on a first set of realistic cases, read the transcripts, and group what went wrong into named failure modes. Write evaluators for the failure modes that matter, not generic metrics.
+3. Separate hard invariants from graded quality. A policy violation must not be averaged away by a high mean score.
+4. Build a dataset with happy paths, boundaries, out-of-scope requests, missing or conflicting evidence, adversarial inputs, historical regressions, tool failures, permission denials, and durable-execution cases. Have expected results reviewed and keep a held-out set.
+5. Attach stable case IDs, provenance, risk tags, capability tags, expected invariants, and dataset version.
+6. Prefer evaluators in this order:
    - deterministic assertions;
    - structured-output checks;
    - tool and trajectory checks;
    - task-specific graders;
    - model-based judges for qualities that cannot be measured directly.
-6. Test the full execution path when it matters, including tool results and durable-execution recovery behavior, not only the final answer.
-7. Repeat stochastic cases and report pass rate, variance, and confidence—not one lucky run.
-8. Track quality beside latency, tokens, tool calls, retries, and estimated cost.
-9. Run evals and release checks through the project's own validation tooling or CI so provenance is normalized and gates fail closed; treat that output as release evidence.
-10. Establish a trusted baseline and fail CI on hard-gate violations or material regressions beyond an explicit tolerance.
-11. Sample production traces into reviewed datasets while redacting sensitive data and separating monitoring from release evidence.
+7. Test the full execution path when it matters, including tool results and durable-execution recovery behavior, not only the final answer. Grade actions on the resulting state in controlled fixtures, not on the agent's description of them.
+8. Calibrate every model judge against human-labeled examples, with a versioned rubric that checks one criterion and asks for a reason before the score.
+9. Repeat stochastic cases and report pass rate, variance, and confidence—not one lucky run. Use all-attempts pass rates for critical behavior.
+10. Compare candidates with the baseline on the same cases, and read the cases that flipped.
+11. Track quality beside latency, tokens, tool calls, retries, and estimated cost.
+12. Run evals and release checks through the project's own validation tooling or CI so provenance is normalized and gates fail closed; treat that output as release evidence.
+13. Establish a trusted baseline and fail CI on hard-gate violations or material regressions beyond an explicit tolerance.
+14. Show each evaluator a known failure and confirm it fails.
+15. Sample production traces into reviewed datasets while redacting sensitive data and separating monitoring from release evidence.
 
 ## Required Output
 
@@ -38,6 +42,8 @@ Read [the eval standard](references/standard.md) before choosing metrics. Use [t
 - Do not rely solely on a model judge.
 - Do not edit expected results merely to make a failing change pass.
 - Do not compare model variants without controlling prompts, tools, datasets, and run counts.
+- Do not treat a difference smaller than the measurement noise as a regression or an improvement.
+- Do not tune prompts against the held-out cases used for release decisions.
 - Do not log sensitive production content into eval datasets without a review and retention policy.
 
 ## Completion Check

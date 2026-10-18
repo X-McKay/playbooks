@@ -46,9 +46,9 @@ just check
 
 | Content | Version | Status |
 | --- | --- | --- |
-| Core concepts | 0.4 | Draft |
+| Core concepts | 0.5 | Draft |
 | Advanced concepts | 0.4 | Draft |
-| Multi-agent systems | 0.2 | Draft |
+| Multi-agent systems | 0.3 | Draft |
 
 Feedback and contributions
 are welcome through [issues](https://github.com/X-McKay/playbooks/issues) and

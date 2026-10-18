@@ -248,6 +248,15 @@ Before deploying a workflow change:
 - Captured-history replay tests
 - End-to-end tests against a local instance of the durable execution engine
 
+Most of these tests use mocked models, because they check your workflow code
+rather than model behavior. Also run a sample of your behavioral
+[evaluation](../core/10-evaluation.md) cases through the durable path with a
+real model, injecting failures at the riskiest points: after a model request,
+after a tool call starts, and while waiting for approval. Assert on the final
+status, the number of side effects in the target system, and the recorded
+evidence, not on the transcript. The durable
+[hard gates](../core/10-evaluation.md#hard-gates) apply to these runs.
+
 ## Common pitfalls
 
 - **Enabling durability without a workflow.** The run looks durable in

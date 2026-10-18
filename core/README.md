@@ -1,8 +1,8 @@
 # Core concepts
 
 - **Status:** Draft
-- **Version:** 0.4
-- **Last updated:** 2026-10-12
+- **Version:** 0.5
+- **Last updated:** 2026-10-18
 
 This is the first of the playbook's three sections. It covers what every
 production agent needs before it ships: deciding whether an agent is worth

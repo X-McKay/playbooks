@@ -111,6 +111,33 @@ The final evaluator receives the authoritative system result, relevant
 evidence, and a normalized execution summary. It MUST NOT infer success from
 an agent's self-reported status.
 
+## Find where the system failed
+
+A wrong final answer from a multi-agent system can start anywhere: a routing
+choice, a handoff that dropped a constraint, a member that misread its task,
+an aggregator that discarded the right answer, or a reviewer that approved a
+bad one. Start system evaluation the way the single-agent chapter
+[starts from failures](../core/10-evaluation.md#start-from-failures-not-metrics),
+but read whole traces, and for each failure record where it first went wrong:
+
+| First point of failure | Typical evidence in the trace |
+| --- | --- |
+| Routing or decomposition | The task went to the wrong member, was split badly, or was not delegated when it should have been |
+| Handoff | The receiving member lacked a fact, constraint, or piece of evidence that the sender had |
+| Member | The member had what it needed and still produced a wrong or unsafe result |
+| Aggregation or review | A correct member result was lost, outvoted, or approved along with an incorrect one |
+| Termination | The system stopped too early, looped, or ran out of budget before finishing |
+
+Counting failures by their first point tells you where to invest. If most
+failures start in handoffs, improving a member's model will not help. Turn
+each recurring failure into a case at the narrowest layer that reproduces
+it: a handoff failure becomes an interaction test with mocked members, not
+only another end-to-end case.
+
+To check a handoff, compare what the receiver needed with what it received.
+Write down, for each interaction type, the facts and constraints that must
+survive it, and assert that they appear in the receiving member's input.
+
 ## Evaluate the path through the graph
 
 Evaluate the system's path as well as its answer:
@@ -193,6 +220,28 @@ For material changes, run ablation and topology experiments that compare:
 Ablation shows whether each member and mechanism contributes enough value to
 justify its cost and risk.
 
+## Keep system evals affordable
+
+End-to-end runs multiply cost and time by the number of members, rounds, and
+repeats, so a suite that runs every case end to end becomes a suite nobody
+runs. Spend real-system runs only where they are needed:
+
+- **Test interactions with mocked or recorded members.** Most routing,
+  handoff, aggregation, and termination behavior can be checked by replaying
+  recorded member outputs, or by simulated members that return fixed,
+  malformed, slow, or adversarial results.
+- **Use member evals for member behavior.** When a member changes, rerun
+  its own suite and the interaction tests around it; run the full system
+  suite before release, not on every edit.
+- **Keep a small end-to-end smoke set** on every change, and the full
+  outcome, adversarial, and ablation suites for pre-release.
+- **Set an eval budget per suite** and report eval cost beside system cost,
+  so growth in either is visible.
+
+Recorded member outputs go stale when members change. Re-record them when a
+member's version changes, and record the member version with each
+recording.
+
 ## Repeat runs and report distributions
 
 Follow the single-agent
@@ -210,6 +259,10 @@ routing, handoff, conflict, and termination metrics
 ```
 
 Rare high-impact failures remain visible; aggregate means MUST NOT hide them.
+Compare against the baseline on the same cases, and read results with the
+uncertainty described in
+[reading results](../core/10-evaluation.md#reading-results): system datasets
+are usually smaller than member datasets, so their error bars are wider.
 
 ## Release policy
 
@@ -278,10 +331,16 @@ case-level outcomes, traces, latency, usage, and cost
   an agent instead of the authoritative result.
 - **Watching answers, not the graph.** Quality held steady while new members
   and edges appeared in production.
+- **Fixing the wrong layer.** Failures started in handoffs, and the team
+  upgraded a member's model.
+- **Running everything end to end.** The suite became too slow and costly to
+  run, so it stopped being run.
 
 ## Before you move on
 
 - [ ] The system beats a simpler baseline by enough to justify its cost.
 - [ ] Deterministic properties have deterministic tests, not judges.
+- [ ] Failures are attributed to the point where they first went wrong, and
+  reproduced at the narrowest layer.
 - [ ] Hard-gate, coordination, topology, fault, and adversarial cases exist.
 - [ ] Ablations and repeated runs back each release decision.

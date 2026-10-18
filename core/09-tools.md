@@ -152,7 +152,8 @@ A production tool requires:
 - Negative evals proving when the tool must not be called
 
 Teams often skip the negative evals, yet a tool called when it should not be
-is as much a defect as a wrong result (see [evaluation](10-evaluation.md)).
+is as much a defect as a wrong result (see
+[skill and tool evals](10-evaluation.md#skill-and-tool-evals)).
 
 ## Common pitfalls
 

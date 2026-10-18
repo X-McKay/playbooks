@@ -13,10 +13,11 @@ Evaluate the composition, not only its members.
 2. Preserve member-level gates, then add interaction, coordination, durability, adversarial, and end-to-end datasets.
 3. Compare against deterministic and single-agent baselines using matched tasks and budgets.
 4. Test routing choices, undeclared-edge denial, context minimization, authority narrowing, aggregation, dissent, termination, and budget enforcement.
-5. Inject member failures, malformed and late results, duplicates, reordered events, crashes, stale approvals, registry poisoning, and partial effects.
-6. Measure task quality, risk-scenario pass rates, latency distribution, total and per-success cost, model and tool calls, fan-out, depth, and human intervention.
-7. Require exact composition provenance: system, members, versions, prompts, policies, graph, datasets, evaluator, models, and settings.
-8. Run system evals and release checks through the project's own validation tooling or CI so results carry provenance and gates fail closed.
+5. Read whole traces and attribute each failure to where it first went wrong: routing, handoff, member, aggregation, review, or termination. Reproduce recurring failures at the narrowest layer.
+6. Inject member failures, malformed and late results, duplicates, reordered events, crashes, stale approvals, registry poisoning, and partial effects.
+7. Measure task quality, risk-scenario pass rates, latency distribution, total and per-success cost, model and tool calls, fan-out, depth, and human intervention.
+8. Require exact composition provenance: system, members, versions, prompts, policies, graph, datasets, evaluator, models, and settings.
+9. Run system evals and release checks through the project's own validation tooling or CI so results carry provenance and gates fail closed.
 
 ## Required Output
 

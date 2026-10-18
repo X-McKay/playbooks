@@ -1,8 +1,8 @@
 # Multi-agent systems
 
 - **Status:** Draft
-- **Version:** 0.2
-- **Last updated:** 2026-10-11
+- **Version:** 0.3
+- **Last updated:** 2026-10-18
 
 This section is a guide for developers who compose several AI agents into
 one system that produces one governed outcome. It explains how to decide
