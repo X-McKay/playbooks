@@ -1,20 +1,60 @@
-# Latency measurements: cold, warm and orderly cleanup
+# Latency measurements: execution, cleanup and provisioning
 
-The latest cleanup change reduced median scripted **confirmed deletion from
-30.14 to 2.72 seconds**, and **full-session time from 44.96 to 16.24 seconds**.
-These are approximately 91% and 64% reductions in small local samples. Active
-execution is unchanged in design: it still uses 12 OpenShell exec exchanges and
-measured 5.39 seconds, versus 5.51 in the earlier warm run.
+The latest image compiles trusted Python bytecode at build time while retaining
+a fresh sandbox/workspace per session. A separate interleaved provisioning
+comparison measured scripted median **9.77 to 8.36 seconds** and vLLM-profile
+median **8.88 to 8.30 seconds**. See the [provisioning investigation](provisioning.md)
+for individual samples, phase timings, isolation checks and image-size cost.
 
-The earlier warm implementation reduced active time from 21.99 to 5.51 seconds
-by combining continuation reuse and bounded artifact batching. It reduced full
-session time from 60.14 to 44.96 seconds but retained direct deletion's roughly
-30-second delay. The latest change uses OpenShell's supported stop-before-delete
-ordering; it preserves grace periods, policy and immutable deletion confirmation.
-See the [cleanup investigation](cleanup.md), [warm contract](warm-execution.md)
-and [correctness evidence](evidence.md).
+The unchanged end-to-end benchmark then passed in **109.03 seconds**, after the
+full **134-test** correctness suite. Every durable sample accepted five boundaries,
+replayed its Temporal history and completed exactly 13 Activities without retries.
+The three scripted runs and one live run used fresh sandboxes and the final image.
 
-## Latest cleanup rerun
+## Latest precompiled-image rerun
+
+| Measurement | Earlier orderly-cleanup image | Precompiled image |
+| --- | --- | --- |
+| Scripted full session, median of 3 | 16.24 s | 13.98 s |
+| Scripted provision Activity, median | 7.82 s | 8.86 s |
+| Scripted active work, median | 5.39 s | 2.39 s |
+| Scripted answer-ready milestone, median | 13.39 s | 11.37 s |
+| Scripted confirmed deletion, median | 2.72 s | 2.55 s |
+| Live full session, one run | 21.33 s | 19.15 s |
+| Live provision Activity, one run | 8.71 s | 7.62 s |
+| Live active work, one run | 10.86 s | 8.27 s |
+| Live answer-ready milestone, one run | 19.70 s | 15.97 s |
+| Live confirmed deletion, one run | 1.54 s | 3.09 s |
+| Active OpenShell exec exchanges | 12 | 12 |
+
+These end-to-end baselines are historical, not interleaved. In particular, the
+latest scripted provisioning median is higher than the earlier cleanup study,
+while the separate interleaved A/B found a lower median with the precompiled image.
+Small samples, cluster scheduling and one-second readiness polling affect results.
+The active interval is also faster in this run, without changing the exec count;
+build-time code caches are available to fresh control processes as well as the
+main runtime. This experiment does not isolate how much of the active-time change
+comes from bytecode versus load. Live comparisons also include inference variation.
+
+Latest native scripted fresh-exec median was 0.99 seconds (body-only 0.34 seconds);
+native live fresh-exec was 6.68 seconds. Native includes its own imports while
+durable active excludes runtime startup, so subtracting these measurements does
+not isolate Temporal overhead. The new [raw dataset](../benchmarks/results/kind-bytecode.json)
+retains every sample, the 18 reconstruction probes and exact image identity.
+
+All images were preloaded into kind. The optimized image is 34.72 MB larger,
+so cold pulls may offset startup savings. There is no warmed session pool,
+initialized interpreter snapshot or shared writable cache. Isolation policy,
+per-boundary acceptance and confirmed deletion are unchanged. These observations
+are not an SLO, significance test or full 64-boundary qualification.
+
+The earlier sections below retain the warm-execution and cleanup studies. Warm
+continuation reduced active exec exchanges from 28 to 12. Orderly shutdown reduced
+scripted median cleanup from 30.14 to 2.72 seconds without shortening grace periods
+or skipping immutable deletion confirmation. See the [cleanup investigation](cleanup.md),
+[warm contract](warm-execution.md) and [correctness evidence](evidence.md).
+
+## Earlier cleanup rerun
 
 The same unchanged benchmark collected three scripted samples and one live sample
 per mode after the full 133-test correctness run. Each durable run used a fresh
@@ -53,7 +93,7 @@ sections preserve the earlier cold-to-warm analysis for comparison.
 
 ## Environment and comparison method
 
-All three studies ran on 2026-10-17 using the same dedicated kind cluster, macOS arm64
+All studies ran on 2026-10-17 using the same dedicated kind cluster, macOS arm64
 host, four Colima CPUs and approximately 8 GiB RAM. The application worker and
 artifact directory run on the host; Temporal and OpenShell run in kind; vLLM
 remains at `llm.almckay.io`. Dependency versions are in the evidence report.
@@ -202,23 +242,26 @@ justify weakening per-boundary acceptance or sandbox isolation.
 After building/loading the current image and configuring the existing kind setup:
 
 ```bash
-BRIDGE_LATENCY=1 BRIDGE_LATENCY_OUTPUT=.state/cleanup-latency.json \
+BRIDGE_LATENCY=1 BRIDGE_LATENCY_OUTPUT=.state/provision-latency.json \
   uv run python scripts/kind_test.py benchmarks/test_latency.py -s -x
 ```
 
 This sends synthetic live-model prompts. The opt-in benchmark lives outside the
 default correctness suite and adds only host-side timing observation and sandbox
-probes. The latest cleanup benchmark passed in **145.47 seconds**; the earlier
+probes. The latest precompiled-image benchmark passed in **109.03 seconds**, the cleanup
+benchmark in **145.47 seconds**, and the earlier
 warm benchmark passed in **291.75 seconds**. All session sandboxes
 and workspace volumes were removed; shared cluster services remained healthy.
 
 - [Earlier cold measurements](../benchmarks/results/kind-local.json)
 - [Warm measurements and image identity](../benchmarks/results/kind-warm.json)
 - [Orderly cleanup measurements and image identity](../benchmarks/results/kind-cleanup.json)
+- [Precompiled-image measurements and image identity](../benchmarks/results/kind-bytecode.json)
+- [Interleaved provisioning comparison](../benchmarks/results/kind-provisioning-ab.json)
 - [Cleanup diagnostic observations](../benchmarks/results/cleanup-diagnostics.json)
 - [Unchanged benchmark harness](../benchmarks/test_latency.py)
 
-The [evidence report](evidence.md) records 133 passing correctness tests, including
+The [evidence report](evidence.md) records 134 passing correctness tests, including
 warm recovery and live completion loss. The optimization retains the restricted
 cooperative agent profile; it does not qualify the wrapper SDK or production
 lease/janitor guarantees.

@@ -244,7 +244,7 @@ source-level ordering, diagnostic numbers and failure-path timeout caveat.
 
 Nine new lifecycle cases cover stop ordering, waiting for confirmation, four
 stop-failure statuses, changed owner/identity, permission failure and confirmation
-timeout. The full final checkout passed **133 tests in 403.24 seconds**, with
+timeout. The cleanup revision passed **133 tests in 403.24 seconds**, with
 zero failures or skips and the same single upstream ADK experimental warning.
 This run included both recorded-response fixtures, all conformance/recovery tests,
 live model calls, worker restart, sandbox replacement, completion loss, isolation
@@ -277,6 +277,66 @@ Final cluster inspection found no session Sandbox resources, workload/supervisor
 pods, workspace PVCs or workspace PVs. Only the shared OpenShell gateway pod and
 data volume remained in its namespace; Temporal and PostgreSQL were healthy.
 This is separate resource-lifecycle evidence, not a secure storage-erasure claim.
+
+## Precompiled-image qualification
+
+The [provisioning investigation](provisioning.md) measured fresh PVC/bootstrap,
+OpenShell readiness and runtime-socket waits. The implementation only adds
+build-time compilation of trusted Python bytecode; no provisioning, bridge,
+readiness or cleanup code changes. Session keys, writable filesystems, process
+state and workspace volumes are still created separately for each session.
+
+The new two-live-session regression first failed against the original image
+because trusted bytecode was absent, then passed against the new image in
+**22.79 seconds**. It verifies distinct sandbox/pod/PVC/PV identities, initially
+empty workspace/artifact directories, absent workspace/tmp markers, read-only
+code caches and same-session retry preserving its marker and binding. Both
+sessions require confirmed cleanup. It does not test concurrent creation races.
+
+The separate interleaved provisioning benchmark passed **1 test in 128.53
+seconds** with ten fresh, uniquely identified sandboxes and confirmed deletion.
+It measured three scripted and two vLLM-profile provisions per image, without
+inference. Scripted median provisioning fell from 9.77 to 8.36 seconds; vLLM
+profile median fell from 8.88 to 8.30 seconds. Both variants used identical
+policy hashes for each provider. Independent Sol review recalculated the
+results and found no safety or evidence blockers.
+
+The comparison candidate was
+`sha256:4e915b0f83f3acbf9b213104f7e76ac97a58bfd632b2a425716370f1738f075c`.
+The final image was
+`sha256:955f53047cd4442280f9d7dd9f3254d5632b692b235d73122c6b3915680d5eae`;
+Docker inspection confirmed identical candidate/final runtime configuration and
+filesystem layers, and identical baseline/final runtime configuration. Image
+size increased by 34.72 MB. Images were preloaded, so these results exclude
+cold pulls and do not establish an SLO or statistical significance.
+
+The final image passed the full real-kind suite: **134 tests in 404.36 seconds**,
+with zero failures or skips and one upstream ADK experimental warning. This
+includes conformance, worker restart/SIGKILL, cold replacement, completion loss,
+large-checkpoint recovery, cancellation, terminal reconciliation, Temporal replay,
+live model calls and isolation policy checks. The live normal and replacement
+runs accepted five boundaries each, reported 1,525 and 1,530 accepted-response
+tokens respectively, and confirmed `DELETED` cleanup. Live completion loss still
+required one model dispatch, zero accepted boundaries and `OUTCOME_UNKNOWN`.
+
+```bash
+BRIDGE_LIVE_VLLM=1 BRIDGE_LIVE_EVIDENCE_DIR=.state/provision-live \
+  uv run python scripts/kind_test.py tests -x
+```
+
+The unchanged end-to-end benchmark subsequently passed **1 test in 109.03
+seconds**. All four durable histories accepted five boundaries, replayed
+successfully, completed 13 Activities without retries and used 12 active exec
+exchanges. Scripted median full-session time was 13.98 seconds and active time
+2.39 seconds; the single live session took 19.15 seconds. The [latency report](latency.md)
+keeps these historical comparisons separate from the interleaved provisioning A/B.
+
+Ruff lint and formatting pass for all 61 Python files; shell syntax, 91 Markdown
+files and relative links pass. Final cluster inspection found no session Sandbox
+resources, workload/supervisor pods, workspace PVCs or workspace PVs. Only the
+shared OpenShell gateway and its data volume remained in that namespace; Temporal
+and PostgreSQL remained healthy. This confirms resource lifecycle removal, not
+secure storage erasure.
 
 ## Explicit limitations and plan refinements
 

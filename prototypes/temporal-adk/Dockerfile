@@ -11,7 +11,9 @@ RUN mkdir /private-canary /restricted-write && echo denied > /private-canary/rea
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
 COPY src ./src
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable
+# Cache trusted code at build time, never a running agent or session workspace.
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --no-editable --compile-bytecode
+RUN /app/.venv/bin/python -m compileall -q /usr/local/lib/python3.12
 ENV PATH="/app/.venv/bin:$PATH" PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /sandbox
 USER agent

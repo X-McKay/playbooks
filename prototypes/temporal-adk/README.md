@@ -87,15 +87,23 @@ and usage metadata.
 
 ## Measured latency
 
-For the five-boundary scripted agent, orderly stop before deletion reduced median
-cleanup from 30.14 to 2.72 seconds and full-session time from 44.96 to 16.24 seconds.
-The warm path still uses 12 active OpenShell exec exchanges and measured 5.39 seconds
-of active work, versus 21.99 seconds for the original cold path. Grace periods,
-isolation policy and immutable deletion confirmation are unchanged.
+The latest precompiled-image run measured a scripted full-session median of
+13.98 seconds, including 2.39 seconds of active work, and one live session at
+19.15 seconds. The warm path uses 12 active OpenShell exec exchanges, versus
+28 in the original cold path. Earlier orderly shutdown reduced roughly
+30-second cleanup to a few seconds while preserving immutable deletion confirmation.
 
 These are small local samples, not an SLO. See the [latency report](docs/latency.md)
-for comparisons and raw measurements, and the [cleanup investigation](docs/cleanup.md)
-for the diagnosis, shutdown ordering and failure-path limitations.
+for historical comparisons and raw measurements, and the [cleanup investigation](docs/cleanup.md)
+for shutdown ordering and failure-path limitations.
+
+Build-time Python bytecode compilation also reduced provisioning in a separate
+interleaved comparison: scripted median 9.77 to 8.36 seconds (three samples per
+image), and vLLM-profile median 8.88 to 8.30 seconds (two per image, no inference).
+Every trial created a fresh sandbox/workspace and confirmed deletion. Images were
+preloaded; the 34.72 MB image increase may offset savings on an uncached node.
+See the [provisioning investigation](docs/provisioning.md) for phase timings,
+isolation checks, raw evidence and reproduction.
 
 ## Contracts
 

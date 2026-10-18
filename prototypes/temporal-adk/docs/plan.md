@@ -353,5 +353,18 @@ rerun the full live/recovery suite and unchanged benchmark before updating the P
 The [cleanup report](cleanup.md) documents the diagnosis, precise confirmation
 scope and failure-path latency caveat. Production lease/janitor work remains open.
 
+### Authorized provisioning optimization
+
+Profile fresh PVC/bootstrap, OpenShell readiness and Python startup separately.
+The selected bounded change compiles trusted code into the image at build time;
+it retains fresh sandbox/workspace creation and all readiness checks. An
+interleaved old/new image comparison measures provisioning separately from the
+unchanged end-to-end benchmark. A cluster regression keeps two sessions alive
+and verifies distinct workspace resources, absent prior state, protected code
+caches and idempotent same-session attachment. See the
+[provisioning report](provisioning.md) for measurements, image-size cost and the
+remaining Kubernetes startup floor. Sandbox pooling and controller changes are
+outside this optimization.
+
 This follow-up does not close the full 64-boundary end-to-end gate, add a janitor
 or distributed lease, or begin the wrapper SDK and second-agent template.

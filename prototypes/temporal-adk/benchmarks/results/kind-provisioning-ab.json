@@ -1,0 +1,365 @@
+{
+  "images": {
+    "baseline": "adk-bridge-probe:local",
+    "candidate": "adk-bridge-probe:bytecode"
+  },
+  "samples": [
+    {
+      "provider": "scripted",
+      "variant": "baseline",
+      "sandbox_id": "0c578f4f-569f-4e74-b749-afb680220958",
+      "provision_seconds": 9.771342083346099,
+      "calls": [
+        {
+          "method": "get",
+          "seconds": 0.04826479218900204
+        },
+        {
+          "method": "create",
+          "seconds": 0.5107082496397197
+        },
+        {
+          "method": "wait_ready",
+          "seconds": 8.062641290947795
+        },
+        {
+          "method": "exec",
+          "seconds": 1.1463869577273726
+        }
+      ],
+      "fresh_import": {
+        "import_seconds": 1.1826989069959382,
+        "import_user_cpu_seconds": 1.0523280000000002,
+        "prebuilt_bytecode": [
+          false,
+          false,
+          false
+        ]
+      },
+      "policy_sha256": "8096e18204b06a375cb2702063468606f61c6dea531830bb0537c3112b50513d"
+    },
+    {
+      "provider": "scripted",
+      "variant": "candidate",
+      "sandbox_id": "9d7ea588-81bb-4856-ab76-38119d5843b5",
+      "provision_seconds": 8.357826750259846,
+      "calls": [
+        {
+          "method": "get",
+          "seconds": 0.002223541960120201
+        },
+        {
+          "method": "create",
+          "seconds": 1.2885389169678092
+        },
+        {
+          "method": "wait_ready",
+          "seconds": 7.0291093327105045
+        },
+        {
+          "method": "exec",
+          "seconds": 0.035991750191897154
+        }
+      ],
+      "fresh_import": {
+        "import_seconds": 1.0370490260029328,
+        "import_user_cpu_seconds": 0.568866,
+        "prebuilt_bytecode": [
+          true,
+          true,
+          true
+        ]
+      },
+      "policy_sha256": "8096e18204b06a375cb2702063468606f61c6dea531830bb0537c3112b50513d"
+    },
+    {
+      "provider": "scripted",
+      "variant": "candidate",
+      "sandbox_id": "7ea978a5-2959-4710-bd99-e1a7079b242b",
+      "provision_seconds": 8.724662625230849,
+      "calls": [
+        {
+          "method": "get",
+          "seconds": 0.001727208960801363
+        },
+        {
+          "method": "create",
+          "seconds": 0.32482620794326067
+        },
+        {
+          "method": "wait_ready",
+          "seconds": 8.053829917218536
+        },
+        {
+          "method": "exec",
+          "seconds": 0.3429102501831949
+        }
+      ],
+      "fresh_import": {
+        "import_seconds": 0.5480313489970285,
+        "import_user_cpu_seconds": 0.430234,
+        "prebuilt_bytecode": [
+          true,
+          true,
+          true
+        ]
+      },
+      "policy_sha256": "8096e18204b06a375cb2702063468606f61c6dea531830bb0537c3112b50513d"
+    },
+    {
+      "provider": "scripted",
+      "variant": "baseline",
+      "sandbox_id": "9f875dae-8a98-4a5b-b0b6-b8615d5544a4",
+      "provision_seconds": 9.266379124950618,
+      "calls": [
+        {
+          "method": "get",
+          "seconds": 0.0018285000696778297
+        },
+        {
+          "method": "create",
+          "seconds": 0.2730405000038445
+        },
+        {
+          "method": "wait_ready",
+          "seconds": 8.055729374755174
+        },
+        {
+          "method": "exec",
+          "seconds": 0.9342224998399615
+        }
+      ],
+      "fresh_import": {
+        "import_seconds": 1.654281039001944,
+        "import_user_cpu_seconds": 1.439921,
+        "prebuilt_bytecode": [
+          false,
+          false,
+          false
+        ]
+      },
+      "policy_sha256": "8096e18204b06a375cb2702063468606f61c6dea531830bb0537c3112b50513d"
+    },
+    {
+      "provider": "scripted",
+      "variant": "baseline",
+      "sandbox_id": "0c9cd548-08f2-4b7d-8344-bf6680594d12",
+      "provision_seconds": 11.341389582958072,
+      "calls": [
+        {
+          "method": "get",
+          "seconds": 0.03124341694638133
+        },
+        {
+          "method": "create",
+          "seconds": 1.7961860839277506
+        },
+        {
+          "method": "wait_ready",
+          "seconds": 9.13799420883879
+        },
+        {
+          "method": "exec",
+          "seconds": 0.34257574984803796
+        }
+      ],
+      "fresh_import": {
+        "import_seconds": 1.6249247770028887,
+        "import_user_cpu_seconds": 1.407442,
+        "prebuilt_bytecode": [
+          false,
+          false,
+          false
+        ]
+      },
+      "policy_sha256": "8096e18204b06a375cb2702063468606f61c6dea531830bb0537c3112b50513d"
+    },
+    {
+      "provider": "scripted",
+      "variant": "candidate",
+      "sandbox_id": "8511d14c-5008-4841-85bc-acb478fcca19",
+      "provision_seconds": 7.123266541399062,
+      "calls": [
+        {
+          "method": "get",
+          "seconds": 0.0047057499177753925
+        },
+        {
+          "method": "create",
+          "seconds": 0.3070427090860903
+        },
+        {
+          "method": "wait_ready",
+          "seconds": 6.07281900011003
+        },
+        {
+          "method": "exec",
+          "seconds": 0.7363610831089318
+        }
+      ],
+      "fresh_import": {
+        "import_seconds": 0.48302578699804144,
+        "import_user_cpu_seconds": 0.40476999999999996,
+        "prebuilt_bytecode": [
+          true,
+          true,
+          true
+        ]
+      },
+      "policy_sha256": "8096e18204b06a375cb2702063468606f61c6dea531830bb0537c3112b50513d"
+    },
+    {
+      "provider": "vllm",
+      "variant": "candidate",
+      "sandbox_id": "954da99e-894c-4a4b-8fbd-48bba73a151a",
+      "provision_seconds": 8.257537540979683,
+      "calls": [
+        {
+          "method": "get",
+          "seconds": 0.0037099169567227364
+        },
+        {
+          "method": "create",
+          "seconds": 0.42461904184892774
+        },
+        {
+          "method": "wait_ready",
+          "seconds": 7.078346457798034
+        },
+        {
+          "method": "exec",
+          "seconds": 0.7488260408863425
+        }
+      ],
+      "fresh_import": {
+        "import_seconds": 0.5548540390009293,
+        "import_user_cpu_seconds": 0.429288,
+        "prebuilt_bytecode": [
+          true,
+          true,
+          true
+        ]
+      },
+      "policy_sha256": "fe6f7b41ff223ef430fe11d10bfdac1010c2437545b8e6756c2e1a8af1eb3f03"
+    },
+    {
+      "provider": "vllm",
+      "variant": "baseline",
+      "sandbox_id": "a4af4af3-ee48-41f6-8ba5-2d269afafa24",
+      "provision_seconds": 9.103701916988939,
+      "calls": [
+        {
+          "method": "get",
+          "seconds": 0.004225957673043013
+        },
+        {
+          "method": "create",
+          "seconds": 0.20185866672545671
+        },
+        {
+          "method": "wait_ready",
+          "seconds": 8.058016791939735
+        },
+        {
+          "method": "exec",
+          "seconds": 0.8382813753560185
+        }
+      ],
+      "fresh_import": {
+        "import_seconds": 1.3468981600017287,
+        "import_user_cpu_seconds": 1.190752,
+        "prebuilt_bytecode": [
+          false,
+          false,
+          false
+        ]
+      },
+      "policy_sha256": "fe6f7b41ff223ef430fe11d10bfdac1010c2437545b8e6756c2e1a8af1eb3f03"
+    },
+    {
+      "provider": "vllm",
+      "variant": "baseline",
+      "sandbox_id": "d93327b4-11fc-4ad6-afa7-5a58debc4493",
+      "provision_seconds": 8.64845895813778,
+      "calls": [
+        {
+          "method": "get",
+          "seconds": 0.0014141248539090157
+        },
+        {
+          "method": "create",
+          "seconds": 0.25029125018045306
+        },
+        {
+          "method": "wait_ready",
+          "seconds": 8.064139791764319
+        },
+        {
+          "method": "exec",
+          "seconds": 0.3307072501629591
+        }
+      ],
+      "fresh_import": {
+        "import_seconds": 1.2435394720014301,
+        "import_user_cpu_seconds": 1.103715,
+        "prebuilt_bytecode": [
+          false,
+          false,
+          false
+        ]
+      },
+      "policy_sha256": "fe6f7b41ff223ef430fe11d10bfdac1010c2437545b8e6756c2e1a8af1eb3f03"
+    },
+    {
+      "provider": "vllm",
+      "variant": "candidate",
+      "sandbox_id": "f4ab4c2f-7da3-4edd-9057-1f11005a8188",
+      "provision_seconds": 8.342613833025098,
+      "calls": [
+        {
+          "method": "get",
+          "seconds": 0.003123832866549492
+        },
+        {
+          "method": "create",
+          "seconds": 0.24445195915177464
+        },
+        {
+          "method": "wait_ready",
+          "seconds": 8.053250167053193
+        },
+        {
+          "method": "exec",
+          "seconds": 0.03963937517255545
+        }
+      ],
+      "fresh_import": {
+        "import_seconds": 0.5044184080034029,
+        "import_user_cpu_seconds": 0.40543,
+        "prebuilt_bytecode": [
+          true,
+          true,
+          true
+        ]
+      },
+      "policy_sha256": "fe6f7b41ff223ef430fe11d10bfdac1010c2437545b8e6756c2e1a8af1eb3f03"
+    }
+  ],
+  "measurement_metadata": {
+    "date_local": "2026-10-17",
+    "implementation_base_commit": "67f42385bb4d8a1a878c9de5d9fefb13ad2c2cdf",
+    "implementation_change": "Build-time compilation of trusted application/dependency and Python standard-library bytecode; no session snapshots or pooling.",
+    "baseline_image_id": "sha256:5556ea7fa538fd87a79eb92edb347594c55c69ed6be0498cb74c29537af6487f",
+    "candidate_image_id": "sha256:4e915b0f83f3acbf9b213104f7e76ac97a58bfd632b2a425716370f1738f075c",
+    "final_image_id": "sha256:955f53047cd4442280f9d7dd9f3254d5632b692b235d73122c6b3915680d5eae",
+    "candidate_and_final_runtime_config_and_rootfs_match": true,
+    "baseline_saved_as": "adk-bridge-probe:before-bytecode",
+    "docker_reported_image_bytes": {
+      "baseline": 145360571,
+      "candidate": 180078073
+    },
+    "scope": "Interleaved three scripted and two vLLM-profile provisions per image. Each creates a fresh sandbox and PVC; no model inference. Images already loaded into the kind node. Import is a separate post-readiness process, not runtime-startup time. No timing thresholds.",
+    "verification": "1 passed in 128.53s; all ten sandboxes had distinct IDs and confirmed deletion.",
+    "baseline_and_final_runtime_config_match": true
+  }
+}

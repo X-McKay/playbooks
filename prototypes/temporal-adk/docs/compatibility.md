@@ -71,3 +71,12 @@ teardown delay. Stop alone never confirms deletion; the existing immutable-ID
 check remains required. No driver or policy is patched. See the
 [cleanup investigation](cleanup.md) for source references and failure semantics;
 requalify ordering and latency when upgrading OpenShell.
+
+## Precompiled image
+
+The image build compiles installed application/dependency and standard-library
+Python bytecode. These read-only files contain code, not initialized ADK state.
+No bridge, provisioning SDK or readiness behavior changes. The
+[provisioning qualification](provisioning.md) checks fresh workspace isolation
+and records the cost of the larger preloaded image; cold image-pull performance
+is outside those measurements.
