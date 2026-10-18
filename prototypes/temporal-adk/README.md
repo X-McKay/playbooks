@@ -87,12 +87,15 @@ and usage metadata.
 
 ## Measured latency
 
-For the five-boundary scripted agent, warm execution reduced median full-session
-time from 60.14 to 44.96 seconds and active time from 21.99 to 5.51 seconds.
-Active OpenShell exec exchanges fell from 28 to 12; deletion still takes about
-30 seconds. These are small local samples, not an SLO. See the
-[latency report](docs/latency.md) for native-versus-durable comparisons, live vLLM
-timing, reconstruction growth, raw samples and the opt-in reproduction command.
+For the five-boundary scripted agent, orderly stop before deletion reduced median
+cleanup from 30.14 to 2.72 seconds and full-session time from 44.96 to 16.24 seconds.
+The warm path still uses 12 active OpenShell exec exchanges and measured 5.39 seconds
+of active work, versus 21.99 seconds for the original cold path. Grace periods,
+isolation policy and immutable deletion confirmation are unchanged.
+
+These are small local samples, not an SLO. See the [latency report](docs/latency.md)
+for comparisons and raw measurements, and the [cleanup investigation](docs/cleanup.md)
+for the diagnosis, shutdown ordering and failure-path limitations.
 
 ## Contracts
 

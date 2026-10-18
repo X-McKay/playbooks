@@ -1,20 +1,59 @@
-# Latency measurements: cold and warm execution
+# Latency measurements: cold, warm and orderly cleanup
 
-For this five-boundary scripted agent, the warm implementation reduced median
-**full-session time from 60.14 to 44.96 seconds** and median **active time from
-21.99 to 5.51 seconds**. Those are approximately 25% and 75% reductions in these
-small local samples. Active OpenShell exec exchanges fell from **28 to 12**.
-Confirmed deletion still costs about 30 seconds and dominates caller-visible time.
+The latest cleanup change reduced median scripted **confirmed deletion from
+30.14 to 2.72 seconds**, and **full-session time from 44.96 to 16.24 seconds**.
+These are approximately 91% and 64% reductions in small local samples. Active
+execution is unchanged in design: it still uses 12 OpenShell exec exchanges and
+measured 5.39 seconds, versus 5.51 in the earlier warm run.
 
-This measures the combined effect of continuation reuse and bounded artifact
-batching. It does not isolate their individual contributions or establish a
-latency SLO. The [warm contract](warm-execution.md) describes the preserved
-acceptance and recovery rules; the [evidence report](evidence.md) records the
-correctness qualification.
+The earlier warm implementation reduced active time from 21.99 to 5.51 seconds
+by combining continuation reuse and bounded artifact batching. It reduced full
+session time from 60.14 to 44.96 seconds but retained direct deletion's roughly
+30-second delay. The latest change uses OpenShell's supported stop-before-delete
+ordering; it preserves grace periods, policy and immutable deletion confirmation.
+See the [cleanup investigation](cleanup.md), [warm contract](warm-execution.md)
+and [correctness evidence](evidence.md).
+
+## Latest cleanup rerun
+
+The same unchanged benchmark collected three scripted samples and one live sample
+per mode after the full 133-test correctness run. Each durable run used a fresh
+sandbox, accepted five boundaries, replayed its Temporal history and completed
+exactly 13 Activities without retries. Earlier warm numbers are historical, not
+concurrent A/B measurements; load, provisioning and inference variability remain.
+
+| Measurement | Earlier warm path | Warm with orderly cleanup |
+| --- | --- | --- |
+| Scripted full session, median | 44.96 s | 16.24 s |
+| Scripted provision Activity, median | 9.26 s | 7.82 s |
+| Scripted active work, median | 5.51 s | 5.39 s |
+| Scripted answer-ready milestone, median | 14.85 s | 13.39 s |
+| Scripted confirmed deletion Activity, median | 30.14 s | 2.72 s |
+| Live full session, one run | 50.43 s | 21.33 s |
+| Live provision Activity, one run | 9.20 s | 8.71 s |
+| Live active work, one run | 11.07 s | 10.86 s |
+| Live answer-ready milestone, one run | 20.35 s | 19.70 s |
+| Live confirmed deletion Activity, one run | 29.92 s | 1.54 s |
+
+The three new scripted cleanup samples were 2.862, 2.713 and 2.719 seconds;
+full-session times were 16.239, 16.220 and 18.983 seconds. The deletion Activity
+includes orderly stop, post-stop revalidation, deletion and confirmation. The
+27.42-second reduction between cleanup medians accounts for most of the observed
+full-session improvement; the latter also includes provisioning/load variation.
+The Workflow still returns only after cleanup. Faster stop is not treated as
+proof of deletion, and failure paths retain their longer timeout/reconciliation
+behavior.
+
+The new native scripted fresh-exec median was 1.96 seconds, with a 0.65-second
+body-only median; native live fresh-exec was 8.09 seconds. As explained below,
+these startup scopes differ from durable active time and cannot isolate Temporal
+overhead. The native and reconstruction results are retained in the new raw
+[cleanup benchmark dataset](../benchmarks/results/kind-cleanup.json). The remaining
+sections preserve the earlier cold-to-warm analysis for comparison.
 
 ## Environment and comparison method
 
-Both studies ran on 2026-10-17 using the same dedicated kind cluster, macOS arm64
+All three studies ran on 2026-10-17 using the same dedicated kind cluster, macOS arm64
 host, four Colima CPUs and approximately 8 GiB RAM. The application worker and
 artifact directory run on the host; Temporal and OpenShell run in kind; vLLM
 remains at `llm.almckay.io`. Dependency versions are in the evidence report.
@@ -152,32 +191,34 @@ end-to-end qualification remains open.
 
 ## Remaining work
 
-The approximately 30-second deletion wait is now the largest lifecycle cost.
-Measure shutdown behavior before changing grace periods. An earlier result
-notification could be a separate API feature, but cannot claim confirmed cleanup
-before deletion finishes. Further transport reuse and long-session profiling
-remain possible follow-ups; the current measurements do not justify weakening
-per-boundary acceptance or sandbox isolation.
+Provisioning is now the largest lifecycle cost in the latest samples. Further
+startup work, transport reuse and long-session profiling remain possible follow-ups.
+An earlier result notification would be a separate API feature and could not
+claim confirmed cleanup before deletion finishes. None of these measurements
+justify weakening per-boundary acceptance or sandbox isolation.
 
 ## Reproduction and evidence
 
 After building/loading the current image and configuring the existing kind setup:
 
 ```bash
-BRIDGE_LATENCY=1 BRIDGE_LATENCY_OUTPUT=.state/warm-latency.json \
+BRIDGE_LATENCY=1 BRIDGE_LATENCY_OUTPUT=.state/cleanup-latency.json \
   uv run python scripts/kind_test.py benchmarks/test_latency.py -s -x
 ```
 
 This sends synthetic live-model prompts. The opt-in benchmark lives outside the
 default correctness suite and adds only host-side timing observation and sandbox
-probes. The warm benchmark passed in **291.75 seconds**. All session sandboxes
+probes. The latest cleanup benchmark passed in **145.47 seconds**; the earlier
+warm benchmark passed in **291.75 seconds**. All session sandboxes
 and workspace volumes were removed; shared cluster services remained healthy.
 
 - [Earlier cold measurements](../benchmarks/results/kind-local.json)
 - [Warm measurements and image identity](../benchmarks/results/kind-warm.json)
+- [Orderly cleanup measurements and image identity](../benchmarks/results/kind-cleanup.json)
+- [Cleanup diagnostic observations](../benchmarks/results/cleanup-diagnostics.json)
 - [Unchanged benchmark harness](../benchmarks/test_latency.py)
 
-The [evidence report](evidence.md) records 124 distinct correctness tests, including
+The [evidence report](evidence.md) records 133 passing correctness tests, including
 warm recovery and live completion loss. The optimization retains the restricted
 cooperative agent profile; it does not qualify the wrapper SDK or production
 lease/janitor guarantees.

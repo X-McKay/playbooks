@@ -62,3 +62,12 @@ ADK providers are process-global. Native, cold and warm traces must agree for th
 admitted serial profile. The warm task reuses ADK already imported by runtime startup; no upstream
 ADK or Temporal code is forked. See the [warm contract](warm-execution.md) for
 acceptance, cancellation fences and the large-artifact fallback.
+
+## OpenShell cleanup seam
+
+The adapter uses the pinned 0.1.4 SDK's public `stop`, `get`, `delete` and
+`wait_deleted` APIs. Supervisor-first stop avoids the measured concurrent
+teardown delay. Stop alone never confirms deletion; the existing immutable-ID
+check remains required. No driver or policy is patched. See the
+[cleanup investigation](cleanup.md) for source references and failure semantics;
+requalify ordering and latency when upgrading OpenShell.

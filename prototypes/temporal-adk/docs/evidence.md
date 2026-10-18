@@ -224,12 +224,59 @@ BRIDGE_LIVE_VLLM=1 BRIDGE_LIVE_EVIDENCE_DIR=.state/warm-live \
 uv run pytest tests/provider/test_recorded_vllm.py -q
 ```
 
-The current checkout collects 124 tests. A subsequent full run includes both
-recordings automatically. The unchanged latency benchmark separately passed in
+That warm-path checkout collected 124 tests, including both recordings.
+The unchanged latency benchmark separately passed in
 291.75 seconds. Scripted median full-session time fell from 60.14 to 44.96 seconds,
 active time from 21.99 to 5.51 seconds, and active exec exchanges from 28 to 12.
 The [latency report](latency.md) includes lifecycle accounting, native-startup
 scope differences, raw samples and the single live comparison.
+
+## Orderly cleanup qualification
+
+The [cleanup investigation](cleanup.md) isolated the 30-second delay to direct
+deletion of an exercised sandbox. Calling the supported OpenShell stop API first
+avoided that path in the diagnostic, without shortening either pod's grace
+period. The adapter then rechecks ownership/identity and retains the original
+delete plus immutable-ID confirmation. Failed/lost stop acknowledgements use
+the existing deletion path; permission errors and unconfirmed deletion fail
+closed. Independent Sol review found no remaining blockers and confirmed the
+source-level ordering, diagnostic numbers and failure-path timeout caveat.
+
+Nine new lifecycle cases cover stop ordering, waiting for confirmation, four
+stop-failure statuses, changed owner/identity, permission failure and confirmation
+timeout. The full final checkout passed **133 tests in 403.24 seconds**, with
+zero failures or skips and the same single upstream ADK experimental warning.
+This run included both recorded-response fixtures, all conformance/recovery tests,
+live model calls, worker restart, sandbox replacement, completion loss, isolation
+policy checks, cancellation, termination reconciliation and Temporal replay.
+
+The live normal and replacement runs each accepted five boundaries, reported
+1,530 accepted-response tokens and returned `DELETED`. Completion loss still
+required one model dispatch, zero accepted boundaries and `OUTCOME_UNKNOWN`,
+followed by confirmed cleanup. No execution/acceptance code or policy changed.
+
+```bash
+BRIDGE_LIVE_VLLM=1 BRIDGE_LIVE_EVIDENCE_DIR=.state/cleanup-live \
+  uv run python scripts/kind_test.py tests -x
+```
+
+The sandbox image used for this qualification was
+`sha256:5556ea7fa538fd87a79eb92edb347594c55c69ed6be0498cb74c29537af6487f`.
+The host adapter is the changed component; rebuilding/loading the image also
+kept its installed package consistent with the checkout.
+
+The unchanged benchmark then passed **1 test in 145.47 seconds**. All four
+durable samples accepted five boundaries and replayed their histories with no
+Activity retries. Scripted median cleanup fell from 30.14 to 2.72 seconds and
+full-session time from 44.96 to 16.24 seconds; active work measured 5.39 seconds
+with the same 12 exec exchanges. The single live session took 21.33 seconds,
+including 1.54 seconds of cleanup. See the [latency report](latency.md) for
+sample sizes, historical-baseline limits, startup scope and raw data.
+
+Final cluster inspection found no session Sandbox resources, workload/supervisor
+pods, workspace PVCs or workspace PVs. Only the shared OpenShell gateway pod and
+data volume remained in its namespace; Temporal and PostgreSQL were healthy.
+This is separate resource-lifecycle evidence, not a secure storage-erasure claim.
 
 ## Explicit limitations and plan refinements
 

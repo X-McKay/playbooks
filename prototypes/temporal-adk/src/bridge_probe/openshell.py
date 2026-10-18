@@ -341,11 +341,40 @@ class OpenShellSession:
             return {"cleanup": "REMEDIATION_REQUIRED"}
         if binding and current.id != binding["sandbox_id"]:
             return {"cleanup": "REMEDIATION_REQUIRED"}
-        # Names are never reused for another session; delete then wait for the
-        # immutable instance to disappear before allowing a replacement writer.
+        # OpenShell 0.1.4 stop orders supervisor shutdown before workload removal.
+        # Direct deletion tears them down concurrently and can consume the whole
+        # Kubernetes grace period after a used workload loses its control channel.
+        # Stop is only an optimization: it is never proof of session deletion.
+        name = self.name
+        try:
+            await asyncio.to_thread(self.client.stop, name, workspace="default")
+        except grpc.RpcError as exc:
+            if exc.code() not in (
+                grpc.StatusCode.FAILED_PRECONDITION,  # Not ready, failed, or already deleting.
+                grpc.StatusCode.NOT_FOUND,
+                grpc.StatusCode.DEADLINE_EXCEEDED,
+                grpc.StatusCode.UNAVAILABLE,
+            ):
+                raise
+            # A failed/lost stop acknowledgement must not strand partial resources.
+            # The original delete-and-confirm path remains the fallback.
+        try:
+            after_stop = await asyncio.to_thread(self.client.get, name, workspace="default")
+        except grpc.RpcError as exc:
+            if exc.code() == grpc.StatusCode.NOT_FOUND:
+                return {"cleanup": "DELETED"}
+            raise
+        if (
+            after_stop.id != current.id
+            or after_stop.labels.get("bridge-session")
+            != (hashlib.sha256(self.session.encode()).hexdigest()[:32])
+        ):
+            return {"cleanup": "REMEDIATION_REQUIRED"}
+        # Names are never reused for another session. Recheck after stop, then
+        # wait for the immutable instance to disappear before a replacement writer.
         try:
             await asyncio.to_thread(
-                self.client.delete, self.name, workspace="default", allow_missing=True
+                self.client.delete, name, workspace="default", allow_missing=True
             )
         except grpc.RpcError as exc:
             if exc.code() not in (grpc.StatusCode.DEADLINE_EXCEEDED, grpc.StatusCode.UNAVAILABLE):
@@ -355,7 +384,7 @@ class OpenShellSession:
 
         await asyncio.to_thread(
             self.client.wait_deleted,
-            self.name,
+            name,
             workspace="default",
             expected_sandbox_id=current.id,
             timeout_seconds=60,

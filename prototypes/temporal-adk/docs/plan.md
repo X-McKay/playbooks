@@ -343,5 +343,15 @@ checks. The unchanged benchmark measures the same three scripted samples and one
 live sample per mode, with lifecycle costs reported separately. Actual results
 are recorded in [evidence](evidence.md) and [latency](latency.md).
 
+### Authorized cleanup optimization
+
+The subsequent cleanup investigation isolated a 30-second direct-deletion delay
+for exercised OpenShell workloads. Use the public stop API before the existing
+delete-and-confirm path, without changing termination grace periods or policies.
+Add lifecycle regressions for confirmation, fallback and identity changes, then
+rerun the full live/recovery suite and unchanged benchmark before updating the PR.
+The [cleanup report](cleanup.md) documents the diagnosis, precise confirmation
+scope and failure-path latency caveat. Production lease/janitor work remains open.
+
 This follow-up does not close the full 64-boundary end-to-end gate, add a janitor
 or distributed lease, or begin the wrapper SDK and second-agent template.

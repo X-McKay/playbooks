@@ -73,6 +73,12 @@ state through Temporal history. Loss of an execute completion remains
 `OUTCOME_UNKNOWN`, even if the sandbox has a candidate or cached task. Neither
 replacement nor a cache miss authorizes redispatch of an uncertain effect.
 
+Session teardown uses OpenShell's official stop-then-delete sequence to avoid
+the observed concurrent shutdown delay. Stop does not authorize replacement:
+the adapter still requires immutable-instance deletion confirmation. Grace
+periods and isolation policies are unchanged. See the
+[cleanup investigation](cleanup.md) for ordering, fallback and timeout behavior.
+
 The one-second cancellation bound assumes cooperative async callbacks. Blocking
 Python or hostile background writers remain outside the admitted profile;
 external exec/Activity deadlines and sandbox deletion remain the containment
