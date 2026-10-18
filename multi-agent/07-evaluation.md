@@ -10,6 +10,11 @@ and recovery behavior are represented in reproducible tests and evals.
 
 ## Test each layer with the right tool
 
+The single-agent [types of evaluation](../core/10-evaluation.md#types-of-evaluation)
+(smoke, capability, regression, safety, adversarial, operational,
+comparison, acceptance, and online) apply to a system too. Test each of
+them at the layer where the behavior lives:
+
 | Layer | Purpose | Typical execution |
 | --- | --- | --- |
 | Policy and schema tests | Deterministic contracts, graph, scopes, and budgets | No model |

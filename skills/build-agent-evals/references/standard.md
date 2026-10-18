@@ -6,6 +6,24 @@ This file condenses [Core chapter 10, Evaluation](https://github.com/X-McKay/pla
 
 Build the first cases from the problem brief and from people who do the task today. Run the agent, read every transcript, group failures into named modes, and write an evaluator for each mode that matters. Keep reading transcripts after scores are automated.
 
+## Types of Evaluation
+
+Classify each eval by purpose, scope, setup, and stage.
+
+| Purpose | Question | Failure response |
+| --- | --- | --- |
+| Smoke | Does it run end to end? | Stop; something is broken |
+| Capability | How well can it do this task? | Keep improving; not a blocker alone |
+| Regression | Does it still do what it did? | Block, or accept explicitly |
+| Safety and policy | Does it stay within its limits? | Block release |
+| Adversarial | Does it resist misuse? | Block release; update threat model |
+| Operational | Fast, cheap, reliable enough? | Block or tune |
+| Comparison | Is B better than A? | Keep the baseline |
+| Acceptance | Do real users get the job done? | Not ready for production |
+| Online monitoring | Still working on real traffic? | Investigate; may roll back |
+
+Scopes are component, outcome, trajectory, and conversation. Stages run from prototype through development, each change, pre-release, user testing, rollout (shadow, canary), production, and after incidents. Choose evals from what is changing: instructions need a regression comparison; tools need positive and negative tool evals; data sources need retrieval, groundedness, and injection cases; model changes need every suite with repeated runs. Keep each type's cases separate, and promote capability cases to regression once they pass reliably.
+
 ## Evaluation Layers
 
 | Layer | Purpose | Typical evidence |

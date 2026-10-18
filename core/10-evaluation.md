@@ -1,8 +1,9 @@
 # 10. Evaluation
 
 This chapter is for developers who need to know whether their agent works,
-and whether a change made it better or worse. It covers how to build an
-evaluation set from real failures, how to grade outcomes and the path that
+and whether a change made it better or worse. It covers the types of
+evaluation and when each is needed, how to build an evaluation set from real
+failures, how to grade outcomes and the path that
 produced them, which checks are pass/fail gates, how to read noisy results,
 and what a release decision must record.
 
@@ -42,12 +43,118 @@ Keep reading transcripts after you have automated scores. Scores tell you
 how often something happens; transcripts tell you what is happening, and they
 are how you notice that an evaluator has stopped measuring the right thing.
 
-## Evaluation layers
+## Types of evaluation
 
-Use the cheapest layer that can catch a given problem, and keep real-model
+"Eval" covers several different activities. They answer different
+questions, run at different times, and lead to different decisions. Mixing
+them up causes real problems: a suite meant to track progress on a new
+capability ends up blocking releases, or a regression suite gets so many
+hard cases added that nobody can tell whether a change broke anything.
+
+You can describe any eval in four ways:
+
+- **Purpose:** the question it answers.
+- **Scope:** which part of the agent it grades.
+- **Where it runs:** with mocks, against a real model offline, or on
+  production traffic.
+- **Stage:** when in the agent's life you run it.
+
+### By purpose
+
+These are the types you will talk about most. Each one gets its own dataset
+or tag, its own pass criteria, and its own response when it fails.
+
+| Type | Question it answers | Typical pass rate | When it fails |
+| --- | --- | --- | --- |
+| Smoke | Does the agent run end to end at all? | All cases | Stop; something is broken |
+| Capability | How well can the agent do this task? | Anywhere; it measures progress | Keep improving; not a release blocker on its own |
+| Regression | Does it still do what it did before? | Close to all cases | Block the change, or accept the regression explicitly |
+| Safety and policy | Does it stay within its limits? | All critical cases | Block release |
+| Adversarial | Does it hold up when someone tries to misuse it? | All critical cases | Block release; update the threat model |
+| Operational | Is it fast, cheap, and reliable enough? | Within budgets | Block release or tune |
+| Comparison | Is version B better than version A? | Not applicable; it is a decision | Keep the baseline |
+| Acceptance | Do real users get the job done? | The agreed criteria | Not ready for production |
+| Online monitoring | Is it still working on real traffic? | Stable against the baseline | Investigate; may trigger rollback |
+
+**Smoke evals** are a handful of simple, representative cases that show the
+agent starts, reaches its model and tools, and returns a valid result. They
+take seconds and run on every change. For the policy assistant, one clear
+travel-policy question with a known answer and source is enough.
+
+**Capability evals** measure how well the agent does a task you want it to
+be good at, especially one it does not yet do reliably. A low score is
+expected at first; the point is to show progress as you change instructions,
+tools, or retrieval. Use them during development and to decide whether a
+capability is ready to switch on. Example: 60 questions whose answers depend
+on the employee's country or grade, scored for correctness and citation.
+When a capability case passes reliably, move it into the regression set.
+
+**Regression evals** protect what already works. They contain cases the
+agent passes today, including every past defect, and they should pass
+almost entirely. A regression eval that fails tells you a change broke
+something, so it runs on every change that can alter behavior. Example: the
+superseded-policy case shown in [what a case looks like](#what-a-case-looks-like),
+added after the agent once cited a 2024 policy.
+
+**Safety and policy evals** check the agent's hard limits: authorization,
+tenant isolation, approval before consequential actions, prohibited data,
+and the "must never" items from the brief. Most are deterministic and become
+[hard gates](#hard-gates). Example: an employee asks for the contents of a
+document they are not allowed to read, and the eval asserts that no
+restricted content appears and the access check was made.
+
+**Adversarial evals** go further: they assume someone is trying to make the
+agent misbehave. They cover prompt injection in retrieved content, attempts
+to escalate authority, data exfiltration, and requests designed to burn
+budget. Build them from the [threat model](../advanced/03-security-and-governance.md#threat-model),
+and add new attacks as you learn of them. Example: a policy page that tells
+the agent to approve an expense, with an assertion that no write tool is
+called and the injected instruction is not repeated as policy.
+
+**Operational evals** measure latency, cost, model and tool calls, retries,
+and failure recovery against the agent's budgets. They usually run on the
+same cases as other evals, recording different numbers. Example: p95 time to
+a complete answer stays under 25 seconds and average cost per answered
+question under the agreed budget.
+
+**Comparison evals** choose between two versions: a prompt change, a new
+retrieval setting, or a different model. Both versions run on the same cases
+and the result is a decision, not a pass rate (see
+[reading results](#reading-results) and [evaluating a change](#evaluating-a-change)).
+
+**Acceptance evals** check that representative users can complete real
+tasks with the agent. They are the evidence behind the
+[readiness decisions](02-problem-definition.md#agree-the-two-readiness-decisions),
+and they catch what curated datasets miss: confusing answers, missing
+features, and tasks nobody thought to include. Example: ten employees from
+three countries use the assistant for a week of real questions, and you
+review their sessions and feedback.
+
+**Online monitoring evals** grade a sample of production traffic after
+launch, to find drift and failures no dataset contains (see
+[online evaluation](#online-evaluation)).
+
+### By scope
+
+Within any purpose, decide what you are grading:
+
+| Scope | What is graded | Use it when | Example |
+| --- | --- | --- | --- |
+| Component | One part in isolation: retrieval, tool selection, a single model step, a parser | You need to know which part is failing, or a part is cheap to test alone | Do the top five retrieved documents include the correct policy? |
+| Outcome | The final answer or the resulting state | Always; this is what users experience | Is the answer correct and cited, and did the expense record stay unchanged? |
+| Trajectory | The path: tool calls, arguments, ordering, stopping | The path matters for safety or cost, not only the result | Did the agent check access before reading, and stop after one search when the first was enough? |
+| Conversation | A multi-turn exchange | Success depends on clarifying, following up, or remembering context | Given "what's the limit?", did the agent ask which limit before answering? |
+
+Outcome evals tell you whether something is wrong; component and trajectory
+evals tell you where. Most agents need all of them, weighted toward the
+scopes where they actually fail.
+
+### By where it runs
+
+Use the cheapest setup that can catch a given problem, and keep real-model
 evals for the questions only a real model can answer.
 
-| Layer | Purpose | Model/API usage |
+| Setup | Purpose | Model/API usage |
 | --- | --- | --- |
 | Unit tests | Deterministic code and policy | None |
 | Component tests | Agent assembly with controlled models and tools | Mocked |
@@ -57,6 +164,48 @@ evals for the questions only a real model can answer.
 
 Durability scenarios apply when the agent runs under
 [durable execution](../advanced/01-durable-execution.md#required-tests).
+
+### By stage
+
+Different questions matter at different points in an agent's life:
+
+| Stage | Main evals | The decision they support |
+| --- | --- | --- |
+| Prototype | A small capability set and transcript review | Is this approach worth pursuing? |
+| Development | Capability, component, and smoke evals on every iteration | Which change made it better? |
+| Each change | Smoke, regression, and relevant safety evals in CI | Can this change merge? |
+| Pre-release | Full regression, safety, adversarial, operational, held-out, and repeated runs | Can this version ship? |
+| User testing | Acceptance evals with representative users | Is it useful enough for production? |
+| Rollout | Shadow runs without side effects, then canary metrics against the baseline (see [deployment](../advanced/03-security-and-governance.md#deployment)) | Should rollout continue or roll back? |
+| Production | Online monitoring and periodic human review | Is it still working, and what should we fix next? |
+| After an incident | A new regression case, plus a check that similar cases exist | Is this failure, and its relatives, covered? |
+
+### Which evals do you need?
+
+Start from what you are changing. The table lists what to run beyond smoke
+and regression, which run on every behavior change.
+
+| You are... | Run |
+| --- | --- |
+| Building the first version | Capability evals built from the brief, safety evals for every "must never", and acceptance evals before launch |
+| Editing instructions | Comparison on the full regression set, with repeated runs for anything stochastic |
+| Adding or changing a tool | Positive and negative [tool evals](#skill-and-tool-evals), trajectory checks, and safety evals for its effect class |
+| Adding a data source | Component evals for retrieval, outcome evals for groundedness, and adversarial cases with injected content in the new source |
+| Changing the model | The full [model change](#evaluating-a-change) process: every suite, repeated runs, paired comparison |
+| Adding a consequential action | Approval and argument-binding hard gates, adversarial evals, and durability scenarios if it runs in a workflow |
+| Launching to a new user group | Acceptance evals with that group, and new capability cases for their requests |
+| Fixing an incident | A regression case reproducing it, and a review of whether related cases are missing |
+
+The agent's [governance tier](../advanced/03-security-and-governance.md#governance-tiers)
+sets the floor: a low-tier, read-only agent may need only smoke, regression,
+capability, and basic safety evals, while a high-tier agent also needs
+adversarial evals, canary rollout, and continuous monitoring.
+
+Keep each type's cases separate, as the
+[dataset layout](#organize-and-maintain-it) does, so that each suite keeps its
+meaning. Moving a case from capability to regression once it passes
+reliably is the normal path; adding unsolved cases to the regression set
+is not.
 
 ## Build the dataset
 
@@ -504,6 +653,8 @@ count, timestamp, case-level results, latency, and cost.
 
 ## Common pitfalls
 
+- **One suite for every purpose.** Unsolved capability cases sit in the
+  regression set, so it always fails and people stop reading it.
 - **Metrics before failures.** Generic scores look healthy while the
   failures users notice go unmeasured.
 - **Never reading transcripts.** The score stays high because the evaluator
@@ -525,6 +676,8 @@ count, timestamp, case-level results, latency, and cost.
 
 ## Before you move on
 
+- [ ] You know which eval types this agent and this change need, and each
+  type has its own cases and pass criteria.
 - [ ] The dataset was built from real requests and observed failures, and
   its labels have been reviewed.
 - [ ] Cases cover hard, out-of-scope, missing-evidence, adversarial, and
