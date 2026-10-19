@@ -10,9 +10,9 @@
 
 A composition is a system, not a set of agents that each pass their own tests. A member can return a well-formed result while the system sends it to the wrong recipient, loses a constraint in a handoff, accepts stale shared state, waits forever for a branch, or consults a supposedly optional reviewer after the answer is already out. Passing member evaluations does not show that the composition is useful, bounded, or operable.
 
-This chapter adds system-level coordination, evidence, and operating decisions, after the topology and interfaces of [9.1](01-when-multiple-agents-help-topologies-and-system-contracts.md) and [9.2](02-delegation-handoffs-and-agent-to-agent-interfaces.md) are chosen. General evaluation method is in Part 4, minimum operational controls in Part 5, and recovery and external-effect rules in Part 7. Apply those to each member and add the composition evidence described here.
+This chapter adds system-level coordination, evidence, and operating decisions after you have chosen the topology and interfaces in [9.1](01-when-multiple-agents-help-topologies-and-system-contracts.md) and [9.2](02-delegation-handoffs-and-agent-to-agent-interfaces.md). Apply Part 4 (evaluation), Part 5 (operations), and Part 7 (recovery and effects) to each member, and add the composition evidence here.
 
-Not every composition needs a durable workflow. A small, read-only, bounded request can be ephemeral, but it still needs a declared state owner, terminal outcomes, controlled handoffs, correlated evidence, and tests of the claims made for adding members. Long-running work, externally visible state changes, approval waits, or recovery across a failure boundary bring in the durable-execution chapters. Composition cannot be used to avoid a member's execution class or governance obligations.
+Not every composition needs a durable workflow. A small, read-only, bounded request can be ephemeral, but it still needs a state owner, terminal outcomes, controlled handoffs, correlated evidence, and tests of the claims made for adding members. Long-running work, externally visible changes, approval waits, or recovery across a failure boundary bring in the durable-execution chapters. Composition cannot avoid a member's execution class or governance obligations.
 
 ## Working model
 
@@ -43,9 +43,9 @@ When an outcome is wrong, find the **first point of failure**: routing or decomp
 
 ### Operate the graph as well as the answer
 
-Operators must be able to go from a symptom to the composition and run that produced it. A root run record connects the composition or run manifest, graph version, member and interaction identities, delegation parentage, policy decisions, state transitions, budget use, terminal outcome, and evidence references. Traces help with diagnosis, especially for asynchronous work, and standard conventions exist for agent and model spans. [2] But traces do not replace authoritative state, an interaction ledger, or the audit record.
+Operators must be able to trace a symptom to the composition and run that produced it. A root run record links the composition or run manifest, graph version, member and interaction identities, delegation parentage, policy decisions, state transitions, budget use, terminal outcome, and evidence references. Traces help with diagnosis, especially for asynchronous work, and standard conventions exist for agent and model spans. [2] But traces do not replace authoritative state, an interaction ledger, or the audit record.
 
-Collect the minimum needed. Inter-agent messages, retrieved content, and summaries are untrusted and can be sensitive. Full content capture or private model reasoning is not a default requirement. Typed decisions, safe summaries, evidence references, hashes, and externally meaningful rationales usually serve investigation better and are easier to govern.
+Collect the minimum needed. Inter-agent messages, retrieved content, and summaries are untrusted and can be sensitive. Do not default to full content capture or private model reasoning; typed decisions, safe summaries, evidence references, hashes, and stated rationales usually serve investigation better and are easier to govern.
 
 Set a failure policy before a fault occurs. Classify members and checks as required, optional, substitutable, or advisory. If a required role is down, the outcome must show the missing guarantee and must not be relabelled as ordinary success to meet an availability target. The same holds for partial effects, cancellation, unknown cost, and budget exhaustion. Part 7 covers reconciling an uncertain external effect, and [8.4](../08-model-context-and-resource-engineering/04-capacity-admission-control-and-backpressure.md) covers shared-capacity admission and backpressure. The composition must carry their outcomes and evidence across its graph and not hide them in a branch. A failure in one branch can cascade through the rest, so bound retries and fan-out across the whole graph. [3]
 
@@ -55,9 +55,9 @@ Choose one authoritative owner for each kind of system state. A coordinator need
 
 Make failure propagation a product decision. Decide whether a failed role blocks completion, has an evaluated substitute, allows a clearly labelled partial answer, or needs escalation. Define how cancellation reaches active descendants and how late results are treated. A late result may be recorded for diagnosis but must not revive a cancelled branch or overwrite later accepted state. If the system has effects, use stable interaction and operation identities and the reconciliation rules in [7.2](../07-durable-execution-and-human-governed-work/02-side-effects-idempotency-and-unknown-outcomes.md); a missing receipt does not show that an effect did not happen.
 
-Test economically without shrinking the claim. Run schema, policy, routing, handoff, aggregation, and fault-injection tests with controlled member doubles where they can answer the question. Re-run real members and full-system evaluations where member behavior, routing, retrieval, or the end-to-end claim is in question. Re-record a controlled member result when the member version or its material contract changes. For variable routing or concurrency, declare the repeated-trial policy in advance and report distributions and critical failures, not a favorable average.
+Test economically without shrinking the claim. Use controlled member doubles for schema, policy, routing, handoff, aggregation, and fault-injection tests where they can answer the question. Use real members and full-system runs where member behavior, routing, retrieval, or the end-to-end claim is in question. Re-record a double when the member version or contract changes. For variable routing or concurrency, declare the repeated-trial policy in advance and report distributions and critical failures, not a favorable average.
 
-Treat graph drift as an operational signal. A new role, member, edge, depth, fan-out pattern, substitution, or change in termination distribution can matter even if final-answer quality has not moved. Respond with investigation, an evaluated rollback, quarantine, a tighter policy, or a reviewed release change, never automatic acceptance because a member claims compatibility. Treat material composition changes like a new candidate.
+Treat graph drift as a signal. A new role, member, edge, depth, fan-out pattern, substitution, or shift in termination distribution can matter even if answer quality has not moved. Respond with investigation, an evaluated rollback, quarantine, a tighter policy, or a reviewed release change, never automatic acceptance because a member claims compatibility.
 
 ## Requirements
 
@@ -91,7 +91,7 @@ Because the example has no external writes and each request is bounded, it can r
 
 ## Evidence and checklist
 
-A proportionate evidence set holds the reviewed composition identity; state and conflict policy; interaction and terminal-outcome definitions; the risk-to-case mapping; member, interaction, coordination, and end-to-end results; fault and recovery results where they apply; the baseline comparison; graph-correlated operational records; and the release decision for the evaluated subject. Exact evaluator, fixture, and policy identities matter: evidence for a nearby topology or an earlier member version does not cover the candidate.
+Keep the composition identity; state and conflict policy; interaction and terminal-outcome definitions; the risk-to-case mapping; member, interaction, coordination, and end-to-end results; fault and recovery results; the baseline comparison; graph-correlated operational records; and the release decision. Evidence for a nearby topology or an earlier member version does not cover the candidate.
 
 Before release or after a material composition change, confirm:
 
