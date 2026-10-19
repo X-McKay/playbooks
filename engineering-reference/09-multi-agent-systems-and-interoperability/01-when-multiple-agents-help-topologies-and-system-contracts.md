@@ -1,54 +1,58 @@
 # 9.1 When Multiple Agents Help, Topologies, and System Contracts
 
-**Status:** 0.5.0 first draft
-**Audience:** System designers, accountable owners, evaluators, and operators of multi-agent systems.
-**Applicability:** Applies when two or more independently contracted, model-driven agents coordinate toward one application outcome. It does not apply merely because one agent calls deterministic code, a conventional service, or a tool. A single agent with bounded parallel work should use [Part 6](../06-reasoning-and-execution-patterns/README.md) instead.
+**Status:** 0.5.0-draft.2 — draft
+**Audience:** System designers, accountable owners, evaluators, and operators of multi-agent systems
+**Applicability:** Applies when two or more independently contracted, model-driven agents work toward one application outcome. It does not apply when one agent calls deterministic code, a conventional service, or a tool. A single agent with bounded parallel work should use [Part 6](../06-reasoning-and-execution-patterns/README.md).
 
 [Part 9 overview](README.md) · [Applicability and conformance](../../applicability.md) · [9.2 Delegation, Handoffs, and Agent-to-Agent Interfaces](02-delegation-handoffs-and-agent-to-agent-interfaces.md) · [9.3 Coordination, System Evaluation, and Operations](03-coordination-system-evaluation-and-operations.md)
 
 ## Purpose and applicability
 
-Adding agents changes the unit being designed and released. A system is no longer only an agent with more prompts. It is a versioned composition of members, roles, interaction edges, shared controls, and a final outcome. Each member still has to satisfy its own [agent contract](../../development-guide/02-agent-basics/02-agent-contracts-and-configuration.md). The composition adds risks that member-level review cannot establish: an unexpected member can join, a valid member can receive work through the wrong edge, nested work can exceed the real budget, or a coordinator can leave work with no terminal owner.
+Adding agents changes what you design and release. The system is a versioned composition of members, roles, interaction edges, shared controls, and a final outcome, not one agent with more prompts. Each member still needs its own [agent contract](../../development-guide/02-agent-basics/02-agent-contracts-and-configuration.md). Composition adds risks that member-level review cannot catch: an unexpected member can join, a valid member can receive work through the wrong edge, nested work can exceed the real budget, or a coordinator can leave work with no terminal owner.
 
-Use composition only when its added boundaries serve a material goal. Useful reasons include isolating a sensitive capability, separating context that should not be broadly shared, obtaining an independently tested check, parallelizing genuinely independent work, or assigning separately governed responsibilities. A role label or a simulated organization chart is not a reason. A deterministic service or ordinary tool remains a component of an agent, not a second agent.
+Use composition only when the extra boundaries serve a real goal: isolating a sensitive capability, keeping context that should not be widely shared apart, getting an independently tested check, parallelizing truly independent work, or assigning separately governed responsibilities. A role label or a simulated org chart is not a reason. A deterministic service or ordinary tool is a component of an agent, not a second agent.
 
-Treat the choice as a design and risk decision, not as a way to make a system appear more capable. This is consistent with the NIST AI RMF’s voluntary framing of trustworthiness considerations across the design, development, use, and evaluation of AI systems.[1]
+Treat the choice as a design and risk decision, not a way to look more capable. This matches the voluntary, lifecycle-wide framing of the NIST AI RMF. [1]
+
+Multi-agent systems also cost much more. One vendor's engineering report measured agents at about 4 times the tokens of a chat, and multi-agent systems at about 15 times. It found the approach worked best on broad, parallelizable, high-value research tasks, and fit poorly where agents must share one tightly coupled context, as in most coding. Its quality gain came from an internal evaluation, so test your own task. [2]
 
 ## Working model
 
-A **member** is one independently contracted model-driven component. A **role** is the narrower responsibility that member has in this particular system. The same member may fill more than one role only when the System Spec says so and the resulting loss of separation is evaluated. A reviewer role, for example, does not become independent simply because it has a different name; shared instructions, evidence, models, or ownership can make its failures correlated.
+A **member** is one independently contracted model-driven component. A **role** is the narrower responsibility a member has in this system. One member may fill several roles only if the System Spec says so and the lost separation is evaluated. A reviewer does not become independent by being renamed; shared instructions, evidence, models, or ownership can make failures correlated.
 
-The **system** is the versioned composition. Its deterministic orchestrator owns coordination state and accepts or rejects proposed state changes. A model-driven coordinator may recommend an allowlisted route or synthesize bounded results, but it is not the source of policy, approval, final truth, or termination. Inter-agent messages, retrieval output, and shared memory remain untrusted data. The detailed interaction envelope, identity, data boundaries, and attenuated authority rules belong to [Chapter 9.2](02-delegation-handoffs-and-agent-to-agent-interfaces.md); system-wide coordination evidence and operations belong to [Chapter 9.3](03-coordination-system-evaluation-and-operations.md).
+The **system** is the versioned composition. Its deterministic orchestrator owns coordination state and accepts or rejects proposed state changes. A model-driven coordinator may recommend an allowlisted route or combine bounded results, but it is not the source of policy, approval, final truth, or termination. Inter-agent messages, retrieval output, and shared memory are untrusted data. The interaction envelope, identity, data boundaries, and authority attenuation are in [9.2](02-delegation-handoffs-and-agent-to-agent-interfaces.md); system-wide coordination evidence and operations are in [9.3](03-coordination-system-evaluation-and-operations.md).
 
-A System Spec describes the intended composition. Resolving it produces a **composition manifest**: the immutable identity of what the system actually assembled for a release or run. It records the pinned member manifests and roles, allowed graph, topology and policy versions, effective limits, and the relevant system version. This gives an evaluator or incident reviewer a subject to examine without copying member contracts into a second, drifting specification.
+A System Spec describes the intended composition. Resolving it produces a **composition manifest**: the immutable record of what the system assembled for a release or run. It lists the pinned member manifests and roles, the allowed graph, topology and policy versions, effective limits, and system version. An evaluator or incident reviewer then has one subject to examine, and member contracts are not copied into a second spec that can drift.
 
 ## Decisions and best practices
 
 ### Start with the least complex workable shape
 
-First compare three designs against the same outcome and hard constraints:
+Compare three designs against the same outcome and hard constraints:
 
-- **One agent** is the default when one bounded contract, context policy, and capability set can meet the need.
-- **Ordinary orchestration** is appropriate when steps are known and deterministic code can invoke a single agent, tools, or conventional services in a fixed flow. Parallel calls do not by themselves make it multi-agent composition.
-- **A multi-agent system** is appropriate only when separately contracted model-driven members and their controlled interactions add a benefit that the simpler alternatives cannot provide.
+- **One agent** is the default when one bounded contract, context policy, and capability set can do the job.
+- **Ordinary orchestration** fits when steps are known and deterministic code can call an agent, tools, or services in a fixed flow. Parallel calls alone do not make it multi-agent.
+- **A multi-agent system** fits only when separately contracted members and their controlled interactions give a benefit the simpler options cannot.
 
-Write down the simpler baseline, the claimed benefit, how the benefit can be disproved, and the owner and review date. A higher average answer-quality result does not justify a composition that breaks a security, latency, reliability, cost, or other declared hard gate. If the claimed benefit is not demonstrated, simplify or record a governed exception rather than treating more components as automatic progress.
+Write down the simpler baseline, the claimed benefit, how the benefit could be disproved, and the owner and review date. Higher average answer quality does not justify a composition that breaks a security, latency, reliability, cost, or other hard gate. Include token cost in the comparison. If the benefit is not shown, simplify or record a governed exception; more components are not progress by themselves.
 
 ### Select a topology by control burden
 
-Use a deterministic pipeline when stages and transitions are known. A model-selected supervisor and bounded workers may be warranted when interpretation determines which of a small set of stable specialists should act. Bounded fan-out and gather fit work that is genuinely independent, provided result ordering, duplicate handling, partial failure, and merge rules are explicit. A producer and reviewer arrangement can add useful behavioral evidence, but its reviewer cannot authorize an action or accept residual risk.
+Use a deterministic pipeline when stages and transitions are known. A model-selected supervisor with bounded workers fits when interpretation decides which of a few stable specialists should act. Bounded fan-out and gather fits truly independent work, if result ordering, duplicate handling, partial failure, and merge rules are explicit. A producer and reviewer pair can add useful evidence, but the reviewer cannot authorize an action or accept residual risk.
 
-Handoffs, shared state, recursive task trees, meshes, and dynamic membership impose progressively stronger demands for state ownership, containment, reproducibility, and termination. They are not maturity levels. Prefer the least dynamic topology that meets the documented benefit. If a topology combines profiles, calculate depth, fan-out, retries, concurrency, and budgets across the whole graph rather than granting each branch a separate ceiling.
+Handoffs, shared state, recursive task trees, meshes, and dynamic membership demand progressively more from state ownership, containment, reproducibility, and termination. They are not maturity levels. Use the least dynamic topology that delivers the documented benefit. If a topology mixes profiles, compute depth, fan-out, retries, concurrency, and budgets across the whole graph, not a separate ceiling per branch.
 
-Static membership is the useful default. Discovery through a registry, network endpoint, user input, or integration does not admit a member. Dynamic membership can be justified by a real need for variable expertise, locality, availability, or capacity, but it must remain inside a reviewed static control envelope. That envelope defines trusted sources, compatible roles and versions, permitted edges, data boundaries, authority ceilings, resource limits, terminal conditions, and the evidence to retain. The actual admitted graph then becomes part of the run record.
+Static membership is the default. Finding a member through a registry, network endpoint, user input, or integration does not admit it. Dynamic membership can be justified by a need for variable expertise, locality, availability, or capacity, but only inside a reviewed static control envelope. The envelope defines trusted sources, compatible roles and versions, permitted edges, data boundaries, authority ceilings, resource limits, terminal conditions, and the evidence to keep. The admitted graph then becomes part of the run record.
 
 ### Make the contract establish system truth
 
-A compact System Spec identifies the system purpose and version, accountable and operational owners, its multi-agent justification and baseline, topology, member-role assignments, allowed directed interactions, state ownership, root limits, and terminal outcomes. It references member contracts rather than reproducing their prompts, tools, or capabilities. It also identifies the relevant risk and evaluation policies, while the detailed risk method and release decision remain owned by Parts 10 and 4.
+A compact System Spec names the system purpose and version, accountable and operational owners, the multi-agent justification and baseline, topology, member-role assignments, allowed directed interactions, state ownership, root limits, and terminal outcomes. It references member contracts and does not repeat their prompts, tools, or capabilities. It also points to the risk and evaluation policies; the risk method and release decision belong to Parts 10 and 4.
 
-Every category of shared system state needs one deterministic owner. At minimum, name the authority for workflow and branch status, accepted evidence, conflict resolution, final outcome, budget accounting, and any externally visible effect. Shared transcripts are not canonical truth merely because several members can read them. If shared memory is used, specify writers, readers, record types, provenance, conflict handling, retention, and deletion; its detailed coordination controls are covered in Chapter 9.3.
+Each category of shared state needs one deterministic owner. At minimum, name the authority for workflow and branch status, accepted evidence, conflict resolution, final outcome, budget accounting, and any externally visible effect. A shared transcript is not truth just because several members can read it. If you use shared memory, specify writers, readers, record types, provenance, conflict handling, retention, and deletion; coordination controls are in 9.3.
 
-The root limits are for the entire system run, not additional allowances per member. Bound agent runs, depth, parallelism, rounds, model and tool requests, input and output volume, time, and spend as applicable. The termination policy must make success, escalation, rejection, cancellation, failure, exhaustion, required-member failure, and late or conflicting results unambiguous. A system that cannot take an allowed next step must stop in a declared outcome; it must not continue by inventing a new member or route.
+Root limits cover the whole system run, not extra allowances per member. Bound agent runs, depth, parallelism, rounds, model and tool requests, input and output volume, time, and spend as they apply. The termination policy must make success, escalation, rejection, cancellation, failure, exhaustion, required-member failure, and late or conflicting results unambiguous. A system with no allowed next step must stop in a declared outcome and must not invent a member or route.
+
+Scale effort to the task. Without explicit rules, agents tend to over-invest in simple queries. Put effort-scaling guidance in the coordinator's instructions and back it with enforced limits, for example one agent and a few calls for a simple lookup, and several workers with a larger cap only for broad, complex tasks. [2]
 
 ## Requirements
 
@@ -66,14 +70,14 @@ The root limits are for the entire system run, not additional allowances per mem
 
 ## Worked example
 
-The internal policy assistant answers questions from approved, current, permission-filtered documents and returns citations plus uncertainty. It has no external write capability. For the `travel-policy-current` fixture, the current approved policy permits a London hotel amount of GBP 220; a superseded document differs.
+The internal policy assistant answers questions from approved, current, permission-filtered documents and returns citations plus uncertainty. It cannot write externally. In the `travel-policy-current` fixture the current approved policy allows GBP 220 for a London hotel, and a superseded document differs. The fixture is fictional.
 
-The initial design is one bounded agent with approved retrieval. Its baseline evaluation asks whether it selects the current, permitted source, gives GBP 220 with a supporting citation, and returns `needs_information` when a current permitted source is absent. The team considers a composition because it hypothesizes that separating evidence preparation from answer checking will catch stale-source and unsupported-claim failures without violating the same latency and cost gates. That is a hypothesis, not a measured benefit or a reason to release the composition before comparison evidence exists.
+The starting design is one bounded agent with approved retrieval. The baseline evaluation asks whether it picks the current, permitted source, gives GBP 220 with a supporting citation, and returns `needs_information` when no current permitted source exists. The team considers composition because it hypothesizes that separating evidence preparation from answer checking will catch stale-source and unsupported-claim failures within the same latency and cost gates. That is a hypothesis, not a measured benefit, so the composition is not released before comparison evidence exists.
 
-The candidate uses a fixed, sequential topology. A policy responder receives a question. An evidence-retriever returns only typed evidence references, document versions, effective dates, and retrieval uncertainty from the approved corpus. The responder produces a cited draft. An answer-checker receives the draft and evidence references and returns a bounded check result. The deterministic orchestrator verifies that the cited document is current and permitted, applies the checker outcome policy, and owns the terminal result. The checker may flag missing support or a stale source; it cannot decide that an unsupported answer is acceptable.
+The candidate uses a fixed, sequential topology. A policy responder receives a question. An evidence-retriever returns only typed evidence references, document versions, effective dates, and retrieval uncertainty from the approved corpus. The responder writes a cited draft. An answer-checker receives the draft and evidence references and returns a bounded check result. The deterministic orchestrator verifies that the cited document is current and permitted, applies the checker outcome policy, and owns the terminal result. The checker may flag missing support or a stale source; it cannot decide that an unsupported answer is acceptable.
 
 ```yaml
-# Illustrative System Spec excerpt; values are example controls, not live settings.
+# System Spec excerpt; values are examples.
 system: policy-answer-composition
 version: 0.5.0-draft-example
 owners:
@@ -124,23 +128,24 @@ termination:
   on_unsupported_or_stale_citation: needs_information
 ```
 
-A meaningful negative case lets the retriever surface the superseded document. The orchestrator must reject it as the final support because it is not current, regardless of how fluent the responder’s draft is. If the checker finds that no current citation supports the answer, the composition terminates with `needs_information` after its declared bounded correction path; it does not start an unbounded reviewer debate. The evaluation compares this candidate with the single-agent baseline on the same current, superseded, permission-denied, missing-evidence, and injected-content cases. It also records what the responder and checker share, so a passing check is not misrepresented as independent review.
+A key negative case lets the retriever surface the superseded document. The orchestrator must reject it as final support because it is not current, however fluent the draft is. If the checker finds no current citation supports the answer, the composition ends with `needs_information` after its declared bounded correction path; it does not start an open-ended reviewer debate. The evaluation compares the candidate with the single-agent baseline on the same current, superseded, permission-denied, missing-evidence, and injected-content cases, and records what the responder and checker share, so a passing check is not passed off as independent review.
 
-This example stays ephemeral because it has no externally visible side effect. If a later variant can prepare or apply a policy update, the system’s effective execution class cannot silently remain ephemeral. It must add the durable execution, exact approval binding, and unknown-outcome handling required by Part 7.
+This example stays ephemeral because it has no externally visible side effect. If a later variant can prepare or apply a policy update, its execution class cannot stay ephemeral. It must add the durable execution, exact approval binding, and unknown-outcome handling required by Part 7.
 
 ## Evidence and checklist
 
-Keep evidence proportionate to the topology, but make the system subject identifiable and testable:
+Keep evidence proportionate to the topology, but make the system identifiable and testable:
 
 - Keep the admission decision and its single-agent or deterministic baseline with the System Spec.
-- Validate construction against pinned members, role restrictions, schema compatibility, declared edges, effective execution class and governance floor, root limits, and terminal outcomes. Fail closed on an invalid composition.
-- Retain the composition manifest ID with evaluation records, traces, approvals when applicable, release records, and incident references.
+- Validate construction against pinned members, role restrictions, schema compatibility, declared edges, execution class and governance floor, root limits, and terminal outcomes. Fail closed on an invalid composition.
+- Keep the composition manifest ID with evaluation records, traces, approvals, release records, and incident references.
 - Test that undeclared edges, unknown or unpinned members, role-based capability expansion, empty effective capability, and over-limit dispatch are denied.
-- Test topology-specific paths: partial and late results, duplicate branches, required-member failure, cancellation, exhaustion, and the declared final outcome. Chapter 9.3 specifies the integrated system evidence and operational interpretation.
-- Reassess the composition when its membership, graph, policies, shared state, or effective capabilities change. A member update is a system behavior change even when the orchestration source is untouched.
+- Test topology-specific paths: partial and late results, duplicate branches, required-member failure, cancellation, exhaustion, and the declared final outcome. 9.3 covers integrated system evidence.
+- Reassess the composition when membership, graph, policies, shared state, or effective capabilities change. A member update changes system behavior even if the orchestration source is untouched.
 
-Next, define the interaction envelopes and authority attenuation in [Chapter 9.2](02-delegation-handoffs-and-agent-to-agent-interfaces.md), then establish integrated coordination evidence and operations in [Chapter 9.3](03-coordination-system-evaluation-and-operations.md).
+Next, define interaction envelopes and authority attenuation in [9.2](02-delegation-handoffs-and-agent-to-agent-interfaces.md), then integrated evidence and operations in [9.3](03-coordination-system-evaluation-and-operations.md).
 
 ## References
 
 [1]: https://www.nist.gov/itl/ai-risk-management-framework "NIST AI Risk Management Framework"
+[2]: https://www.anthropic.com/engineering/multi-agent-research-system "How we built our multi-agent research system"

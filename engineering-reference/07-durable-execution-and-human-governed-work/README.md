@@ -1,12 +1,12 @@
 # Part 7 — Durable Execution and Human-Governed Work
 
-**Status:** 0.5.0 first draft
+**Status:** 0.5.0-draft.2 — draft
 
-**Purpose:** Handle durable recovery, external effects, and human-governed consequential work.
+**Purpose:** Recover durable work, handle external effects, and keep people in control of consequential work.
 
-**Applicability:** When work is long-running, resumable, side-effecting, approval-waiting, or consequential; every agent still declares its execution class.
+**Applicability:** When work is long-running, resumable, side-effecting, waiting for approval or consequential. Every agent still declares its execution class.
 
-**Output:** Execution-class rationale, recovery/effect evidence, and—where used—approval and compatibility records.
+**Output:** Execution-class rationale, recovery and effect evidence, and approval and compatibility records where used.
 
 [Playbook home](../../README.md) · [Section index](../README.md) · [Applicability](../../applicability.md) · [Glossary](../../glossary.md) · [Requirement index](../../requirement-index.md)
 
@@ -16,4 +16,4 @@
 - [7.2 Side Effects, Idempotency, and Unknown Outcomes](02-side-effects-idempotency-and-unknown-outcomes.md)
 - [7.3 Approval, Suspension, and In-Flight Compatibility](03-approval-suspension-and-in-flight-compatibility.md)
 
-Read the chapter applicability statements before treating a reference pattern as required. [Applicability](../../applicability.md) defines the distinction between a missing trigger, a governed exception, and a non-waivable gate.
+Read each chapter's applicability statement before treating a pattern as required. [Applicability](../../applicability.md) explains the difference between a missing trigger, a governed exception and a non-waivable gate.
