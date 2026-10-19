@@ -2,62 +2,55 @@
 
 **Status:** 0.5.0-draft.2 — draft
 **Audience:** System builders, evaluators, operators, and accountable owners
-**Applicability:** All multi-agent systems. Durable-coordination requirements apply when the composed work is long-running or state-changing. Operation and release requirements apply when the system is deployed or proposed for release.
+**Applicability:** All multi-agent systems. Durable-coordination requirements apply to long-running or state-changing work; operation and release requirements to deployed or release-candidate systems.
 
 [Part 9](README.md) · [Applicability](../../applicability.md) · [9.1 System contracts](01-when-multiple-agents-help-topologies-and-system-contracts.md) · [9.2 Delegation and handoffs](02-delegation-handoffs-and-agent-to-agent-interfaces.md) · [Part 4 release evidence](../../development-guide/04-testing-and-evaluation/07-analyzing-results-comparing-versions-and-making-decisions.md)
 
 ## Purpose and applicability
 
-A composition is a system, not a set of agents that each pass their own tests. A member can return a well-formed result while the system sends it to the wrong recipient, loses a constraint in a handoff, accepts stale shared state, waits forever for a branch, or consults a supposedly optional reviewer after the answer is already out. Passing member evaluations does not show that the composition is useful, bounded, or operable.
+Members that pass their own tests do not make a working system: the system can route a good result wrongly, lose a constraint in a handoff, accept stale shared state, wait forever for a branch, or consult an "optional" reviewer after the answer is out.
 
-This chapter adds system-level coordination, evidence, and operating decisions after you have chosen the topology and interfaces in [9.1](01-when-multiple-agents-help-topologies-and-system-contracts.md) and [9.2](02-delegation-handoffs-and-agent-to-agent-interfaces.md). Apply Part 4 (evaluation), Part 5 (operations), and Part 7 (recovery and effects) to each member, and add the composition evidence here.
-
-Not every composition needs a durable workflow. A small, read-only, bounded request can be ephemeral, but it still needs a state owner, terminal outcomes, controlled handoffs, correlated evidence, and tests of the claims made for adding members. Long-running work, externally visible changes, approval waits, or recovery across a failure boundary bring in the durable-execution chapters. Composition cannot avoid a member's execution class or governance obligations.
+This chapter adds system-level coordination, evidence and operations to the topology and interfaces from [9.1](01-when-multiple-agents-help-topologies-and-system-contracts.md) and [9.2](02-delegation-handoffs-and-agent-to-agent-interfaces.md); Parts 4, 5 and 7 still apply to each member. A small, bounded, read-only composition can be ephemeral but still needs a state owner, terminal outcomes, controlled handoffs, correlated evidence and tests of its claims. Long-running work, external changes, approval waits or cross-failure recovery bring in the durable-execution chapters, and composition never avoids a member's execution class or governance obligations.
 
 ## Working model
 
-The unit of control is a **versioned composition**: the resolved members, roles, permitted edges, interaction schemas, policies, limits, and member identities that may handle a run. A static system can resolve this before the run. If membership or edges can change during a run, also keep a run record of each admitted change with the evidence and policy version behind it. A later registry answer, agent recommendation, or trace view must not rewrite the history of a completed run.
+The unit of control is a **versioned composition**: the resolved members, roles, permitted edges, schemas, policies, limits and member identities that may handle a run. A static system resolves it before the run; if membership or edges can change mid-run, also record each admitted change with its evidence and policy version. A later registry answer, recommendation or trace view must not rewrite a completed run's history.
 
 ### Coordinate proposals through an accepted state
 
-Members may propose routes, facts, conflicts, actions, and next steps. A deterministic control boundary decides whether each proposal is permitted, valid, and ready to become accepted state. This matters most when branches run concurrently:
+Members propose routes, facts, conflicts, actions and next steps; a deterministic control boundary decides whether each becomes accepted state. This matters most with concurrent branches:
 
-- **Proposed** material is an untrusted claim from a member, tool, or message.
-- **Observed** material records what a permitted boundary received or did.
-- **Verified** material has passed the declared check for its claim.
-- **Accepted** material is the version the system may use for later policy decisions.
+- **Proposed:** an untrusted claim from a member, tool or message.
+- **Observed:** what a permitted boundary received or did.
+- **Verified:** passed the declared check for its claim.
+- **Accepted:** the version later policy decisions may use.
 
-These are states of evidence, not claims of universal truth. Shared state keeps its provenance, owner, freshness, and conflict status. For example, an aggregator can keep two incompatible document interpretations and return `needs_information` or escalate, instead of picking whichever arrived first. A reviewer vote is an input to a conflict policy; it is not authorization and not proof that a claim is supported.
+These are evidence states, not universal truth. Shared state keeps provenance, owner, freshness and conflict status; an aggregator can keep two incompatible interpretations and return `needs_information` or escalate rather than take the first to arrive. A reviewer vote feeds a conflict policy; it is neither authorization nor proof of support.
 
-Declare coordination up front: branch order, aggregation rule, required barriers, maximum depth and fan-out, no-progress condition, and terminal states. If completion order picks the winner, timing becomes an undeclared business policy. If one member can call another directly, it bypasses the graph, budget, authority, and evidence controls that made the composition reviewable.
+Declare branch order, aggregation rule, barriers, maximum depth and fan-out, no-progress condition and terminal states up front. If completion order picks the winner, timing becomes undeclared business policy; if members call each other directly, they bypass the graph, budget, authority and evidence controls.
 
 ### Evaluate the integration claim
 
-Start with the benefit claimed for the composition. A retrieval specialist plus an answer checker may claim better source handling; a reviewer may claim to catch one class of error; parallel roles may claim less active time. Each claim needs the simpler baseline from 9.1 and composition-level cases. Give the baseline the same permitted sources, tools, and constraints; otherwise the system may win because it had broader capability, not because coordination helped.
+Test the claimed benefit (better source handling, a class of caught errors, less active time) against the 9.1 baseline with the same sources, tools and constraints, so the system cannot win merely through broader capability.
 
-Use the Part 4 claim-to-evaluator method at the layer where the behavior occurs. Deterministic tests cover permitted edges, schema validation, authority attenuation, budget enforcement, branch limits, and termination. Interaction tests can use recorded or simulated member results to reproduce a dropped constraint, late result, malformed output, or unavailable member. End-to-end evaluations test the integrated outcome and the claimed benefit. A semantic evaluator or expert review can judge whether cited evidence supports an answer, but it cannot establish a deterministic authorization or state-transition property. Start with a small set of realistic cases early, since large effects show up in a few runs, and add scale later. [4]
+Apply Part 4's claim-to-evaluator method at the layer where behavior occurs. Deterministic tests cover permitted edges, schema validation, authority attenuation, budgets, branch limits and termination. Interaction tests with recorded or simulated member results reproduce dropped constraints, late or malformed results and unavailable members. End-to-end evaluations test the integrated outcome and claimed benefit; a semantic evaluator or expert can judge evidence support but cannot establish an authorization or state-transition property. Start early with a few realistic cases, since large effects show in a few runs, and scale later.[4]
 
-Use a published failure taxonomy to decide what to test and monitor. A study of more than 1,600 annotated traces from seven multi-agent frameworks (MAST) grouped 14 failure modes into three categories: system design issues (such as repeated steps or not knowing when to stop), inter-agent misalignment (such as dropped context or ignoring another agent's input), and task verification failures (such as weak or missing checks, or stopping early). [1] Map each category to at least one case or trace detector for your system.
+A study of more than 1,600 annotated traces from seven frameworks (MAST) grouped 14 failure modes into system design issues (repeated steps, not knowing when to stop), inter-agent misalignment (dropped context, ignored input) and task verification failures (weak or missing checks, stopping early).[1] Map each category to at least one case or trace detector.
 
-When an outcome is wrong, find the **first point of failure**: routing or decomposition, handoff, member behavior, aggregation or review, or termination. Keep the evidence behind that attribution, then add the narrowest regression that reproduces it. A new end-to-end case is a poor fix for a handoff you could isolate with fixed member outputs.
+When an outcome is wrong, find the **first point of failure** (routing or decomposition, handoff, member behavior, aggregation or review, termination), keep the evidence, and add the narrowest regression that reproduces it; a handoff isolatable with fixed member outputs does not need a new end-to-end case.
 
 ### Operate the graph as well as the answer
 
-Operators must be able to trace a symptom to the composition and run that produced it. A root run record links the composition or run manifest, graph version, member and interaction identities, delegation parentage, policy decisions, state transitions, budget use, terminal outcome, and evidence references. Traces help with diagnosis, especially for asynchronous work, and standard conventions exist for agent and model spans. [2] But traces do not replace authoritative state, an interaction ledger, or the audit record.
+So operators can trace a symptom to its run, a root run record links the manifest, graph version, member and interaction identities, delegation parentage, policy decisions, state transitions, budget, terminal outcome and evidence references. Traces help diagnosis, especially for asynchronous work, and standard conventions exist for agent and model spans,[2] but they do not replace authoritative state, an interaction ledger or the audit record. Messages, retrieved content and summaries are untrusted and possibly sensitive: prefer typed decisions, safe summaries, evidence references, hashes and stated rationales over full content or private reasoning.
 
-Collect the minimum needed. Inter-agent messages, retrieved content, and summaries are untrusted and can be sensitive. Do not default to full content capture or private model reasoning; typed decisions, safe summaries, evidence references, hashes, and stated rationales usually serve investigation better and are easier to govern.
-
-Set a failure policy before a fault occurs. Classify members and checks as required, optional, substitutable, or advisory. If a required role is down, the outcome must show the missing guarantee and must not be relabelled as ordinary success to meet an availability target. The same holds for partial effects, cancellation, unknown cost, and budget exhaustion. Part 7 covers reconciling an uncertain external effect, and [8.4](../08-model-context-and-resource-engineering/04-capacity-admission-control-and-backpressure.md) covers shared-capacity admission and backpressure. The composition must carry their outcomes and evidence across its graph and not hide them in a branch. A failure in one branch can cascade through the rest, so bound retries and fan-out across the whole graph. [3]
+Classify members and checks as required, optional, substitutable or advisory before a fault. A missing required role shows as a missing guarantee, never relabelled as success to meet an availability target, and the same holds for partial effects, cancellation, unknown cost and budget exhaustion. Carry Part 7 effect reconciliation and [8.4](../08-model-context-and-resource-engineering/04-capacity-admission-control-and-backpressure.md) admission outcomes across the graph rather than hide them in a branch, and bound retries and fan-out graph-wide, since one branch's failure can cascade.[3]
 
 ## Decisions and best practices
 
-Choose one authoritative owner for each kind of system state. A coordinator need not own each member's internal state, but the system must say who owns accepted evidence, graph changes, conflict decisions, budget reservations, and the final outcome. For a short static request, a small deterministic controller and a bounded record are enough. For durable work, use a replay-safe coordination boundary with the persisted information needed to resume safely. Do not let a message bus, trace tree, or agent prose become authoritative state by default.
-
-Make failure propagation a product decision. Decide whether a failed role blocks completion, has an evaluated substitute, allows a clearly labelled partial answer, or needs escalation. Define how cancellation reaches active descendants and how late results are treated. A late result may be recorded for diagnosis but must not revive a cancelled branch or overwrite later accepted state. If the system has effects, use stable interaction and operation identities and the reconciliation rules in [7.2](../07-durable-execution-and-human-governed-work/02-side-effects-idempotency-and-unknown-outcomes.md); a missing receipt does not show that an effect did not happen.
-
-Test economically without shrinking the claim. Use controlled member doubles for schema, policy, routing, handoff, aggregation, and fault-injection tests where they can answer the question. Use real members and full-system runs where member behavior, routing, retrieval, or the end-to-end claim is in question. Re-record a double when the member version or contract changes. For variable routing or concurrency, declare the repeated-trial policy in advance and report distributions and critical failures, not a favorable average.
-
-Treat graph drift as a signal. A new role, member, edge, depth, fan-out pattern, substitution, or shift in termination distribution can matter even if answer quality has not moved. Respond with investigation, an evaluated rollback, quarantine, a tighter policy, or a reviewed release change, never automatic acceptance because a member claims compatibility.
+- **One authoritative owner per kind of state:** accepted evidence, graph changes, conflict decisions, budget reservations and the final outcome (not necessarily each member's internals). A short static request needs only a small deterministic controller and bounded record; durable work needs a replay-safe coordination boundary with enough persisted information to resume. A message bus, trace tree or agent prose is not authoritative by default.
+- **Failure propagation is a product decision.** Decide whether a failed role blocks completion, has an evaluated substitute, allows a labelled partial answer or escalates; how cancellation reaches active descendants; and that late results are recorded for diagnosis but never revive a cancelled branch or overwrite accepted state. Effects use stable identities and [7.2](../07-durable-execution-and-human-governed-work/02-side-effects-idempotency-and-unknown-outcomes.md) reconciliation; a missing receipt does not show no effect.
+- **Test economically without shrinking the claim.** Use member doubles for schema, policy, routing, handoff, aggregation and fault tests, and real members for member behavior, routing, retrieval and end-to-end claims. Re-record doubles when member versions or contracts change. For variable routing or concurrency, declare repeated trials in advance and report distributions and critical failures, not a favorable average.
+- **Treat graph drift as a signal.** A new role, member, edge, depth, fan-out pattern, substitution or termination shift matters even if answer quality holds: investigate, roll back, quarantine, tighten policy or ship a reviewed change, never auto-accept a compatibility claim.
 
 ## Requirements
 
@@ -75,37 +68,30 @@ Treat graph drift as a signal. A new role, member, edge, depth, fan-out pattern,
 
 ## Worked example
 
-The internal policy assistant stays read-only. Its bounded composition has two roles: a **retrieval role** returns permission-filtered policy excerpts with source identity and freshness metadata, and an **answer-checking role** checks whether the proposed response is supported by the returned current evidence. A deterministic system controller admits only those two static edges, sets the request and tenant context outside model-generated text, and accepts an answer only after the typed retrieval and checking results validate. The fixture below is fictional.
+The fictional read-only policy assistant has two roles. A **retrieval role** returns permission-filtered excerpts with source identity and freshness metadata; an **answer-checking role** checks the proposed response against the returned current evidence. A deterministic controller admits only those two static edges, sets request and tenant context outside model text, and accepts an answer only after both typed results validate.
 
-For the `travel-policy-current` fixture, the retrieval role returns a current London hotel limit of GBP 220 and also finds a superseded document with a different amount. The shared evidence record keeps both source identities and marks the older document superseded under the fixture's freshness rule. The checking role gets the proposed answer, its cited current source, and the conflicting-source record, with no unrelated user history and no permission to query other sources. The controller accepts `complete` only if the checker confirms that the answer names GBP 220, cites the current source, and does not hide the conflict without explanation.
+For the `travel-policy-current` fixture, retrieval returns a current London hotel limit of GBP 220 and a superseded document with a different amount. The shared evidence record keeps both identities and marks the older one superseded. The checker receives the answer, cited current source and conflict record, with no unrelated history and no other source access. The controller accepts `complete` only if the answer names GBP 220, cites the current source and explains the conflict.
 
-The simpler baseline is one policy-assistant role with the same approved document access, permission filter, answer contract, and limits. The comparison asks whether the added retrieval and checking boundary improves source handling enough to justify its extra latency, cost, and failure modes. An evidence plan:
+The baseline is one role with the same access, filter, contract and limits; the question is whether the boundary improves source handling enough to justify its latency, cost and failure modes:
 
-1. A deterministic graph test denies an undeclared direct call from the retrieval role to the checker and rejects a result with a mismatched schema or tenant.
-2. A handoff test uses fixed retrieval output containing both fixture documents and asserts that the checker receives the current-source identity, freshness metadata, and conflict marker. It can reveal an information-loss defect without running either role.
-3. An end-to-end held-out case assesses whether the final answer is supported by the current approved source and states the required uncertainty. Citation presence alone is not proof of support; use the declared source comparison or a qualified reviewer.
-4. A required-checker outage test produces `needs_information` or another declared non-success outcome with the missing check recorded. The system does not publish an unchecked answer as `complete` just because retrieval succeeded.
-5. The release record binds the static composition version, the two member versions, the baseline configuration, fixture versions, evaluator decision, and outcome distributions. If an authorization, tenant-isolation, or required-handoff gate fails, the candidate is not released even if average answer score improves.
+1. A deterministic graph test denies an undeclared direct retrieval-to-checker call and rejects mismatched schemas or tenants.
+2. A handoff test with fixed retrieval output asserts the checker receives the current-source identity, freshness metadata and conflict marker, exposing information loss without running either role.
+3. An end-to-end held-out case checks that the answer is supported by the current source and states the required uncertainty, using the declared source comparison or a qualified reviewer, not citation presence.
+4. A checker outage yields `needs_information` or another declared non-success outcome recording the missing check, never an unchecked `complete`.
+5. The release record binds the composition version, both member versions, the baseline configuration, fixture versions, evaluator decision and outcome distributions. A failed authorization, tenant-isolation or required-handoff gate blocks release whatever the average score.
 
-Because the example has no external writes and each request is bounded, it can run as an ephemeral composition. If a later version prepares and applies a human-approved policy update, it becomes a durable, human-governed path: the system records the final action and composition context, keeps the approval binding, and reconciles an unknown update result instead of resubmitting it. The composition does not widen an approval into broader authority or make a lost receipt safe to retry.
+With no writes, the composition is ephemeral; a version applying approved updates becomes durable and human-governed, keeping the approval binding and reconciling unknown results rather than resubmitting.
 
 ## Evidence and checklist
 
-Keep the composition identity; state and conflict policy; interaction and terminal-outcome definitions; the risk-to-case mapping; member, interaction, coordination, and end-to-end results; fault and recovery results; the baseline comparison; graph-correlated operational records; and the release decision. Evidence for a nearby topology or an earlier member version does not cover the candidate.
+Keep the composition identity, state and conflict policy, interaction and terminal-outcome definitions, risk-to-case mapping, results at each layer, fault and recovery results, baseline comparison, graph-correlated records and the release decision. Evidence for a nearby topology or earlier member version does not cover the candidate.
 
-Before release or after a material composition change, confirm:
+- [ ] Required, optional, substitutable and advisory interactions have failure and cancellation behavior.
+- [ ] Each failure-taxonomy category maps to a case or trace detector.
+- [ ] Critical failures and inconclusive results are visible, not averaged away.
+- [ ] Durable replay, effect reconciliation, approval, capacity, incident and kill-switch evidence links to the exact candidate where it applies.
 
-- [ ] The composition's owner, members, permitted edges, limits, terminal outcomes, and accepted-state authority are identified.
-- [ ] Shared records have an owner, provenance, data handling, freshness, conflict, and unresolved-outcome policy.
-- [ ] Required, optional, substitutable, and advisory interactions have defined failure and cancellation behavior.
-- [ ] Deterministic graph, scope, schema, limit, and state-transition claims have deterministic tests; semantic outcome claims have a fit evaluator.
-- [ ] The composition and its simpler baseline were evaluated on the same scope, with critical failures and inconclusive results visible and not averaged away.
-- [ ] Failure-taxonomy categories (design, misalignment, verification) each map to a case or trace detector.
-- [ ] Operators can trace a symptom to its composition, graph, interactions, accepted state, policy decisions, and terminal outcome without collecting unrestricted sensitive content.
-- [ ] Durable replay, effect reconciliation, approval, capacity, incident, and kill-switch evidence is linked to the exact candidate where it applies.
-- [ ] The release decision names the evaluated composition and treats failed hard gates, missing evidence, and unevidenced controls as blocking.
-
-For deeper work, see [7.1](../07-durable-execution-and-human-governed-work/01-execution-classes-persistence-and-recovery.md) for persistence and replay, [8.4](../08-model-context-and-resource-engineering/04-capacity-admission-control-and-backpressure.md) for shared capacity, and [10.1](../10-risk-privacy-and-specialized-assurance/01-detailed-risk-assessment-and-governance.md) for the full system risk method.
+See [7.1](../07-durable-execution-and-human-governed-work/01-execution-classes-persistence-and-recovery.md) for persistence and replay and [10.1](../10-risk-privacy-and-specialized-assurance/01-detailed-risk-assessment-and-governance.md) for the full risk method.
 
 ## References
 

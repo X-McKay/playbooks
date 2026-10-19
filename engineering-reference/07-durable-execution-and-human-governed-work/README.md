@@ -2,9 +2,9 @@
 
 **Status:** 0.5.0-draft.2 — draft
 
-**Purpose:** Recover durable work, handle effects and keep people in control of consequential actions.
+**Purpose:** Recover durable work, handle effects, keep humans in control of consequential actions.
 
-**Applicability:** Long-running, resumable, side-effecting, approval-waiting or consequential work. Every agent declares a class.
+**Applicability:** Long-running, resumable, side-effecting, approval-waiting or consequential work; every agent declares a class.
 
 **Output:** Class rationale, recovery and effect evidence, approval and compatibility records.
 
