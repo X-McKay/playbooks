@@ -48,9 +48,9 @@ Keep **state**, **evidence**, and **authority** distinct. State holds what is ne
 
 A repeated agent cycles through observe, propose, validate, execute, observe, and terminate. ReAct research interleaves generated actions with external observations [1]; that supports the shape, not exposing reasoning traces or a claim that the pattern is secure or right for every task.
 
-1. **Initialize the run.** Resolve the declared configuration, receive trusted runtime dependencies, and set final outcomes and stop conditions. If required configuration or trusted context is missing, return the declared bounded result rather than inventing a substitute.
+1. **Initialize the run.** Resolve the declared configuration, receive trusted runtime dependencies, and set terminal outcomes and stop conditions. If required configuration or trusted context is missing, return the declared bounded result rather than inventing a substitute.
 2. **Observe.** Use the request, allowed context, and earlier admitted results. Label each input's role: user task, trusted runtime fact, task evidence, or untrusted content. A previous answer or model assertion is not an authoritative observation.
-3. **Propose.** The model may produce a candidate answer, an information request, a final outcome, or a structured request for an enabled capability. In a fixed workflow, orchestration may pick the next step without the model.
+3. **Propose.** The model may produce a candidate answer, an information request, a terminal outcome, or a structured request for an enabled capability. In a fixed workflow, orchestration may pick the next step without the model.
 4. **Validate and admit.** Check the candidate's shape and the proposed operation's permitted name and arguments. At a protected capability boundary, apply identity, authorization, policy, and approval decisions independently. A rejected proposal stays rejected; do not repair it into a broader request.
 5. **Execute only an admitted operation.** A response-only path has none. Collect a bounded result or a distinct failure as data. A dispatched attempt, a response, and an authoritative external effect are different observations, and a model saying an action succeeded is not evidence that it did.
 6. **Record the next observation.** Add only what the next decision needs, keeping source, capability, and result identity. The application decides whether to continue, clarify, or finish.
@@ -133,7 +133,7 @@ Requester `employee-uk-104` asks for the London hotel limit and may read `travel
 
 ### Read-only, fixed-path version
 
-The smallest version passes the question, trusted requester context, and an already permission-filtered current passage to the model for a structured answer. The output boundary checks that the status is a declared final outcome, that any cited identifier is among the supplied evidence, and that the required uncertainty field is present. Whether the citation supports the answer is an evaluation question.
+The smallest version passes the question, trusted requester context, and an already permission-filtered current passage to the model for a structured answer. The output boundary checks that the status is a declared terminal outcome, that any cited identifier is among the supplied evidence, and that the required uncertainty field is present. Whether the citation supports the answer is an evaluation question.
 
 Expected results: with the current permitted source, `complete` with GBP 220 and the current source identity; with the current source absent, `needs_information`, not an amount rebuilt from the superseded record; for `contractor-uk-204`, the protected retrieval boundary declines access and the candidate returns `declined` without revealing the amount. The model cannot pick a different requester, collection, or capability to get around either outcome.
 
@@ -151,7 +151,7 @@ Adding a policy-update action would create a different candidate needing new con
 
 ## Evidence and checklist
 
-The review is complete when another reader can trace a run from trusted inputs through a proposal/validation boundary to a declared final outcome. Keep design evidence separate from observations of a real system and keep, proportionately and under data-handling rules: an anatomy record naming response and action boundaries; a loop or state sketch; links to the contract, context and capability records, and evidence plan; and planned cases for a normal completion and a meaningful boundary or failure. Do not retain raw hidden reasoning just to make a run inspectable.
+The review is complete when another reader can trace a run from trusted inputs through a proposal/validation boundary to a declared terminal outcome. Keep design evidence separate from observations of a real system and keep, proportionately and under data-handling rules: an anatomy record naming response and action boundaries; a loop or state sketch; links to the contract, context and capability records, and evidence plan; and planned cases for a normal completion and a meaningful boundary or failure. Do not retain raw hidden reasoning just to make a run inspectable.
 
 - [ ] The record marks absent optional components rather than implying tools, retrieval, memory, approval, or durable execution.
 - [ ] Configuration is distinct from run state; run data cannot silently expand a capability or authority boundary.

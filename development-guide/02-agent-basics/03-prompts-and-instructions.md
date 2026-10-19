@@ -38,7 +38,7 @@ An **output schema** describes the expected result shape, making permitted statu
 
 1. **What work belongs here:** the purpose and the exclusions that bound it.
 2. **How to reason from the material:** which facts are evidence, what makes evidence sufficient, and when ambiguity, missing material, or conflict calls for a non-complete outcome.
-3. **How to communicate:** the final outcomes and the fields or prose a caller needs.
+3. **How to communicate:** the terminal outcomes and the fields or prose a caller needs.
 4. **What not to infer:** a request, document, model assertion, or format instruction grants no capability and does not override the contract.
 
 Instructions make behavior legible and testable but cannot make a source current, decide authorization, or prove a tool call happened; a prompt repeating an external rule is guidance, while the rule and its enforcement stay outside.
@@ -47,7 +47,7 @@ Instructions make behavior legible and testable but cannot make a source current
 
 ### Write observable behavior, not aspirations
 
-Start from the contract's final outcomes and replace phrases such as "give a helpful answer" with conditions a reviewer can exercise in a case. "Cite the supplied current approved source for each policy amount; if the available evidence cannot establish that, return `needs_information`" gives an answer behavior, an evidence condition, and a bounded alternative.
+Start from the contract's terminal outcomes and replace phrases such as "give a helpful answer" with conditions a reviewer can exercise in a case. "Cite the supplied current approved source for each policy amount; if the available evidence cannot establish that, return `needs_information`" gives an answer behavior, an evidence condition, and a bounded alternative.
 
 State scope before style: purpose, included and excluded work, evidence or decision rules, uncertainty behavior, then response constraints. This exposes conflicts, such as a booking change being out of scope for a read-only assistant. Do not write "always answer" when a clarification, decline, or bounded failure is legitimate under the contract. Clear wording does not make a source authoritative or a response true.
 

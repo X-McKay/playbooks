@@ -25,7 +25,7 @@ This chapter covers agent-level configuration and the **capability manifest** th
 Keep three records separate:
 
 - **Declared configuration** is the versioned, reviewed design: purpose, accepted input, output contract, owner, execution class, governance tier, risk-record reference, model policy, allowed capabilities, bounds, and version identities.
-- **Runtime state** is per-run: request identifier, authenticated identity and resource scope, deadline, permitted evidence identifiers, usage counters, and final outcome. It must not carry raw secrets or live clients in serializable state.
+- **Runtime state** is per-run: request identifier, authenticated identity and resource scope, deadline, permitted evidence identifiers, usage counters, and terminal outcome. It must not carry raw secrets or live clients in serializable state.
 - **Effective capability manifest** is the immutable record of what construction actually resolved from the declared configuration, including immutable identities or digests where used.
 
 This borrows the separation, not the process or roles, from NIST's configuration baseline: reviewed specifications at a point in time, with change control and monitoring as separate activities. [1] A request must not silently alter the reviewed configuration, and a configuration edit is not run state.
@@ -49,7 +49,7 @@ A tenant label or claimed permission in a request body or model output is task d
 
 ### Outcomes are an interface, not a success-only story
 
-The ordinary final outcomes are:
+The ordinary terminal outcomes are:
 
 - `complete`: the bounded answer plus the evidence identifiers or uncertainty the caller needs.
 - `needs_information`: what input or evidence is missing, ambiguous, or unresolved, with a safe next step where applicable.
@@ -98,7 +98,7 @@ A change to model policy or settings, enabled capability, output contract, or bu
 
 ### A bounded builder workflow
 
-1. Describe the interface: caller input, trusted dependencies with provenance, final outcomes, and caller handling.
+1. Describe the interface: caller input, trusted dependencies with provenance, terminal outcomes, and caller handling.
 2. Declare the configuration and the smallest capability set, leaving unknowns unresolved rather than defaulted.
 3. Validate and resolve as above; on failure keep the bounded reason and no manifest.
 4. Hand off: tool owners get the admitted interface list, security owners the trusted-dependency and protected-operation boundary, and evaluators the manifest identity and the changed claim.
@@ -133,7 +133,7 @@ If the owner, risk-record identity, model policy, output-schema identity, budget
 
 From the contract a reviewer should be able to answer: what task data may a caller supply; which dependencies are trusted, and from where; what outcomes the caller can handle; which capabilities are declared versus admitted; what stops an invalid assembly from accepting work; and which effective configuration a piece of evidence identifies.
 
-Keep the reviewed contract; validation results for missing, malformed, contradictory, and unadmitted configuration; the resolved capability-membership record; output-validation checks for every final outcome; and manifest-linked evaluation or runtime records. Part 4 decides what evidence a real decision needs.
+Keep the reviewed contract; validation results for missing, malformed, contradictory, and unadmitted configuration; the resolved capability-membership record; output-validation checks for every terminal outcome; and manifest-linked evaluation or runtime records. Part 4 decides what evidence a real decision needs.
 
 - Are unresolved construction fields blocking construction rather than getting defaults?
 - Is the desired capability list distinct from the admitted membership, including its execution-class floor?
