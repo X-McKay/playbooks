@@ -1,0 +1,284 @@
+# Illustrative, unexecuted planning record for Chapter 1.4.
+# Adapt fields to the actual use case. A populated field is not approval, evidence,
+# a control result, a risk acceptance, or permission to expose users.
+# This is not the detailed Part 10 assessment.
+planning_record_id: POLICY-PLAN-001
+use_case_id: internal-policy-assistance
+status: illustrative-unexecuted
+record_version: illustrative-0.5.0-draft.2
+record_purpose: >-
+  Show a proportional initial record for a permission-filtered, read-only internal
+  policy-assistance candidate. It does not select an architecture or authorize a pilot.
+
+planning_boundary:
+  intended_use: >-
+    Help an eligible requester obtain a source-grounded response about an internal policy,
+    or a clear next step when permitted current evidence is missing or conflicts.
+  intended_users:
+    - employee-uk-104 in the controlled fictional fixture only
+  affected_people_or_systems:
+    - eligible requester who may rely on a response when preparing a travel-related next step
+    - policy-content owner who may need to resolve stale or conflicting material
+    - support or escalation contact for unresolved questions
+  prohibited_uses:
+    - change employee records
+    - approve spending
+    - decide reimbursement eligibility
+    - disclose restricted policy content
+    - use unapproved or untrusted material as policy authority
+  exclusions_and_open_boundary_questions:
+    - No write or approval capability is proposed in this illustrative record.
+    - Legal, regulatory, contractual, privacy, security, and domain applicability remain unresolved where relevant.
+    - A source's approval, discoverability, or requester visibility does not by itself settle permitted handling.
+
+risk_screen:
+  screen_status: illustrative-planning-hypotheses-not-scored
+  affected_non_users_considered:
+    - policy-content owner
+    - downstream person or process relying on a requester who acts on a response
+    - person whose restricted information could be disclosed
+  scenarios:
+    - scenario_id: illustrative-currentness-or-conflict-error
+      because: >-
+        a current source is missing, a superseded source is treated as current, or equally
+        authoritative current permitted sources conflict
+      the_candidate_could: return a definitive policy amount without adequate current permitted evidence
+      plausible_harm: a requester could make a poor travel or claim-related decision and require correction or rework
+      affected_party_or_asset: requester, policy owner, and downstream claim or travel process
+      reversibility_question: >-
+        Determine whether a corrected answer reaches a requester before reliance and what remains after a decision is made.
+      prevention_detection_recovery_questions:
+        - How is requester permission and source status checked at the protected boundary?
+        - How is missing or conflicting evidence made visible rather than hidden in a confident answer?
+        - Who receives and investigates a report of reliance on incorrect policy guidance?
+      evidence_status: not-yet-observed-or-assessed
+      owner: not-yet-named
+    - scenario_id: illustrative-restricted-content-disclosure
+      because: requester permission is absent, changed, or incorrectly evaluated
+      the_candidate_could: retrieve or disclose restricted policy content
+      plausible_harm: a person or organization could lose confidentiality and need to contain the disclosure
+      affected_party_or_asset: contractor-uk-204 context, policy-content owner, and restricted information
+      reversibility_question: >-
+        Determine containment, notification, and remaining impact; a response can be read-only but still be difficult to undo.
+      prevention_detection_recovery_questions:
+        - Where is the requester-permission decision enforced?
+        - What observation would show an attempted or successful boundary violation?
+        - Who can contain exposure and who coordinates subsequent response?
+      evidence_status: not-yet-observed-or-assessed
+      owner: not-yet-named
+  uncertainty_and_specialist_review:
+    applicability_questions:
+      - Is any proposed use prohibited or regulated in the actual deployment context?
+      - Do the proposed sources include personal, sensitive, non-public, contractual, or other restricted information?
+      - What material human or downstream consequences follow from reliance on an answer?
+    authorized_reviewer_or_owner: not-yet-named
+    disposition: unresolved
+  detailed_assessment_handoff:
+    part_10_assessment_status: not-yet-determined
+    inherent_risk_status: not-assessed-in-this-initial-record
+    governance_tier_status: not-yet-determined
+    residual_risk_status: not-assessed-in-this-initial-record
+    risk_acceptance_status: not-requested-or-granted
+
+information_and_dependencies:
+  sources:
+    - source_id: travel-policy-2026@2026-10-01
+      source_status_in_fixture: current_and_approved
+      purpose: provide answer-bearing current policy evidence in the fictional fixture
+      source_owner: not-yet-named
+      access_boundary: >-
+        Access only through a requester-permission decision; employee-uk-104 has fixture permission,
+        while contractor-uk-204 does not.
+      sensitivity_or_personal_data_concerns: not-yet-determined-for-an-actual-deployment
+      freshness_and_reliability_need: current status and availability affect whether a definitive response is supportable
+      intended_handling:
+        model: not-yet-determined
+        retrieval: requester-permitted source access only
+        storage: not-yet-determined
+        diagnostics: not-yet-determined
+      evidence_status: controlled-fixture-fact-not-a-live-observation
+    - source_id: travel-policy-2024-superseded@2024-01-01
+      source_status_in_fixture: superseded_approved_historical_record
+      purpose: currentness and stale-source variation in the fictional fixture
+      source_owner: not-yet-named
+      access_boundary: requester permission remains relevant even for historical material
+      sensitivity_or_personal_data_concerns: not-yet-determined-for-an-actual-deployment
+      freshness_and_reliability_need: must not be treated as authority for a current-policy answer
+      intended_handling:
+        model: not-yet-determined
+        retrieval: may be visible only in the controlled fixture variation
+        storage: not-yet-determined
+        diagnostics: not-yet-determined
+      evidence_status: controlled-fixture-fact-not-a-live-observation
+    - source_id: untrusted-travel-note@2026-10-18
+      source_status_in_fixture: untrusted_content_fixture
+      purpose: adverse-content scenario only; not a policy authority
+      source_owner: not-applicable-for-the-controlled-fixture
+      access_boundary: must not be admitted as approved policy evidence
+      sensitivity_or_personal_data_concerns: not-yet-determined-for-an-actual-deployment
+      freshness_and_reliability_need: not applicable to policy authority; admission status is material
+      intended_handling:
+        model: not-yet-determined
+        retrieval: not proposed as authoritative retrieval
+        storage: not-yet-determined
+        diagnostics: not-yet-determined
+      evidence_status: controlled-fixture-fact-not-a-live-observation
+  upstream_dependencies:
+    - dependency: current-policy-content-and-source-status-process
+      owner: not-yet-named
+      relevant_failure_or_change_effect: stale, missing, or conflicting source status can require uncertainty or escalation
+      change_notification_or_review_question: not-yet-determined
+    - dependency: requester-permission-decision-at-retrieval-boundary
+      owner: not-yet-named
+      relevant_failure_or_change_effect: an incorrect or unavailable decision can cause disclosure or prevent a supported response
+      change_notification_or_review_question: not-yet-determined
+    - dependency: escalation-and-support-contact
+      owner: not-yet-named
+      relevant_failure_or_change_effect: unresolved conflicts or reports may remain unaddressed
+      change_notification_or_review_question: not-yet-determined
+  downstream_consumers:
+    - consumer: eligible requester
+      decision_or_next_step: prepare a travel-related next step or seek clarification
+      reliance_or_recovery_concern: a response should not conceal missing, conflicting, or inaccessible evidence
+      owner: not-yet-named
+
+execution_and_authority:
+  enabled_capabilities:
+    - capability: retrieve requester-permitted policy evidence
+      permitted_authority: read only approved current evidence available to the requester in the declared context
+      prohibited_authority:
+        - write or change a record
+        - approve spending or reimbursement
+        - disclose material outside requester permission
+        - treat untrusted content as policy authority
+      externally_visible_effects: no external write effect is proposed; informational reliance remains a potential consequence
+      reversibility_questions: determine how incorrect or restricted information is corrected or contained after disclosure or reliance
+      effective_configuration_status: not-implemented
+  required_execution_class:
+    selected_value: not-yet-determined
+    declared_draft_choices:
+      - ephemeral
+      - durable
+      - human_governed
+    rationale: >-
+      The candidate is described as read-only, but that fact alone does not determine execution class,
+      governance tier, approval need, or residual risk. Determine class from the actual execution and effect conditions.
+  approval_and_authorization:
+    approval_capability_proposed: false
+    authority_source_and_enforcement_question: not-yet-determined
+    consequential-action-question: no consequential external action is proposed in this illustrative boundary
+    material-change_rule: >-
+      A later write, approval, or other consequential capability would reopen authority, reversibility,
+      execution, applicability, and detailed-assessment questions.
+
+responsibility_map:
+  business_owner:
+    name_or_staffed_group: not-yet-named
+    decision_and_response_responsibilities: intended outcome, use boundary, and value question
+    reachable_status: not-yet-confirmed
+  technical_owner:
+    name_or_staffed_group: not-yet-named
+    decision_and_response_responsibilities: behavior, data and capability record, and technical-evidence completeness
+    reachable_status: not-yet-confirmed
+  operating_owner:
+    name_or_staffed_group: not-yet-named
+    decision_and_response_responsibilities: support, incident response, containment coordination, and ability to stop exposure
+    reachable_status: not-yet-confirmed
+  source_and_access_owner:
+    name_or_staffed_group: not-yet-named
+    decision_and_response_responsibilities: source status, access-boundary questions, and change communication
+    reachable_status: not-yet-confirmed
+  specialist_review_authority:
+    name_or_staffed_group: not-yet-named
+    decision_and_response_responsibilities: determine any applicable specialist review or policy question
+    status: unresolved
+  release_or_risk_acceptance_authority:
+    name_or_staffed_group: not-yet-named
+    status: not-self-assumed
+  containment_authority:
+    name_or_staffed_group: not-yet-named
+    status: not-yet-confirmed
+  restart_decision_authority:
+    name_or_staffed_group: not-yet-named
+    status: not-yet-confirmed
+  combined_roles:
+    status: none-recorded-yet
+    independent-review-question: record any policy-required independent review if roles are combined
+
+potential_pilot_boundary:
+  authorization_status: not-authorized-illustrative-boundary-only
+  eligible_users_and_tasks:
+    - employee-uk-104 fixture context only, for read-only internal policy questions
+  task_data_and_capability_limits:
+    - requester-permitted current approved policy evidence in the controlled fictional fixture
+    - no record changes, payment, spending, reimbursement, approval, or external action
+    - no use of unapproved, untrusted, or requester-restricted material as authority
+  excluded_users_tasks_or_actions:
+    - contractor-uk-204 fixture context for named restricted policy documents
+    - unresolved equally authoritative current policy conflict as a definitive-answer task
+    - any use outside the declared fictional fixture
+  future_entry_evidence_needed:
+    - evidence design and interpretation under Part 4
+    - applicable boundary and data-control evidence under Part 3
+    - named reachable support and containment coverage
+    - disposition of relevant specialist-review questions
+  future_expansion_evidence_needed:
+    - task-specific evidence for the proposed wider boundary
+    - reassessment of new users, sources, permissions, capabilities, authority, and dependencies
+    - applicable readiness and rollout decision under Part 5
+  support_and_reporting_path: not-yet-named
+  stop_conditions:
+    - suspected disclosure or failed requester-permission enforcement
+    - reliance on superseded or conflicting policy evidence without a bounded response
+    - prohibited use or externally visible effect
+    - unavailable response, containment, or escalation coverage
+    - failed applicable hard gate or missing required evidence
+  containment_method_and_owner: not-yet-determined
+  user_or_operator_notification_question: not-yet-determined
+  restart_authorization: not-yet-named
+
+applicability_and_handoffs:
+  record_state_options:
+    - applicable
+    - not_applicable_with_rationale
+    - unresolved
+  reference_parts:
+    - part: Part 3
+      state: unresolved
+      reason: source, requester-permission, untrusted-content, and data-handling questions need applicable boundary controls
+    - part: Part 4
+      state: applicable
+      reason: future claims, cases, evaluator design, evidence, and interpretation are not supplied by this planning record
+    - part: Part 5
+      state: unresolved
+      reason: applies to any later readiness, release, rollout, support, and lifecycle decision
+    - part: Part 7
+      state: unresolved
+      reason: determine from actual long-running, resumable, side-effecting, approval-waiting, or consequential execution conditions
+    - part: Part 10
+      state: unresolved
+      reason: use the detailed method if the screen identifies its stated triggers or another applicable floor
+  unresolved_questions_and_review_owner:
+    - question: What handling, retention, diagnostic, and access controls are applicable to actual source material?
+      review_owner: not-yet-named
+    - question: Which authority, execution, approval, and recovery conditions apply if the boundary changes?
+      review_owner: not-yet-named
+    - question: Which specialist, legal, contractual, privacy, security, or domain reviews apply in the actual context?
+      review_owner: not-yet-named
+
+reassessment_triggers:
+  - intended or prohibited use changes
+  - affected users, non-users, downstream reliance, or delivery boundary changes
+  - source, source status, permission, sensitivity, or handling changes
+  - new connection, model, tool, capability, authority, or externally visible effect is proposed
+  - dependency, support, containment, or restart coverage changes
+  - new evidence, hard-gate failure, incident, near miss, complaint, or applicable-policy change emerges
+
+observations_and_decisions:
+  observed_results: null
+  control_evidence: null
+  risk_acceptance: null
+  pilot_or_release_decision: null
+  note: >-
+    All fixture facts and planned outcomes in this record are illustrative. They are not evidence that a
+    candidate was run, a control operated, a pilot was authorized, or a decision was made.

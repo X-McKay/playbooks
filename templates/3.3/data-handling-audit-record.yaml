@@ -1,0 +1,287 @@
+# Illustrative planning/build record only. It is not an approved, deployed, or executed system.
+example_id: POLICY-BUILD-001
+use_case_id: internal-policy-assistance
+status: illustrative-unexecuted
+proposal_status: proposed-local-review-unit-not-adopted
+planning_record: POLICY-PLAN-001
+candidate:
+  identity: policy-assistant@candidate-current-selection
+  workflow_shape: fixed-retrieval-and-answer-workflow
+  declared_effect_boundary: read-only; no write, approval, export, or compensation capability enabled
+  accountable_owner: null
+  adoption_or_release_decision: unresolved
+
+purpose_and_scope:
+  declared_task: Answer a requester question from current, approved, requester-permitted internal policy evidence, or return a declared bounded outcome.
+  prohibited_assumptions:
+    - A source being approved means it is current or available to every requester.
+    - A model-visible source excerpt may determine authority, permission, or retention.
+    - A source identifier, hash, encryption marker, or citation makes related content anonymous or safe for a broader audience.
+  shared_fixture_context:
+    permitted_requester: employee-uk-104
+    denied_requester: contractor-uk-204
+    current_source: travel-policy-2026@2026-10-01
+    superseded_source: travel-policy-2024-superseded@2024-01-01
+    fictional_current_london_hotel_amount: GBP 220
+    source_conflict_handling: Clarify or escalate when equally authoritative current permitted sources conflict; do not choose automatically by date.
+
+handling_principles:
+  purpose_first_minimization: planned
+  permission_filter_before_model_exposure: planned
+  production_body_capture_default: disabled
+  raw_hidden_reasoning_in_audit_record: not-required
+  unapproved_or_unresolved_destination: do-not-send
+  legal_applicability: unresolved
+  retention_schedule_or_duration: unresolved
+
+copy_inventory:
+  - copy_id: requester-question-at-intake
+    category: requester free-text question
+    planned_purpose: Interpret the bounded policy question.
+    planned_destinations:
+      - request-assembly-boundary
+      - model-context-after-minimization
+    minimum_representation: Task-needed question text; exclude unrelated attachments and history.
+    access_roles: unresolved
+    production_content_capture: disabled-by-default
+    retention_deletion_rule: unresolved
+    derived_copies_to_review:
+      - diagnostic fields
+      - support material
+      - backup or recovery copy
+
+  - copy_id: trusted-requester-and-permission-context
+    category: authenticated requester, tenant or scope reference, and protected retrieval decision
+    planned_purpose: Filter policy evidence before it can be supplied for the answer.
+    planned_destinations:
+      - protected-retrieval-boundary
+      - non-content diagnostic record
+    minimum_representation: Opaque reference and allow or deny decision; never a reusable credential in model context.
+    access_roles: unresolved
+    production_content_capture: not-applicable-to-credential-body
+    retention_deletion_rule: unresolved
+    derived_copies_to_review:
+      - audit attribution reference
+      - support material
+      - backup or recovery copy
+
+  - copy_id: permitted-policy-evidence
+    category: current permitted policy passage with source identity, revision, status, and locator
+    planned_purpose: Supply task-relevant evidence for a cited answer.
+    planned_destinations:
+      - protected-retrieval-boundary
+      - model-context-after-permission-and-currentness-filtering
+    minimum_representation: Selected answer-bearing passage and the metadata needed to state source identity and currentness.
+    access_roles: unresolved
+    production_content_capture: disabled-by-default
+    retention_deletion_rule: unresolved
+    derived_copies_to_review:
+      - retrieval index
+      - cache
+      - summary or transformation
+      - evaluation fixture
+      - support material
+      - backup or recovery copy
+
+  - copy_id: model-response-and-citation
+    category: proposed policy answer, terminal outcome, and citation reference
+    planned_purpose: Return a bounded user-facing answer or uncertainty outcome.
+    planned_destinations:
+      - response-to-requester
+      - non-content diagnostic record
+    minimum_representation: Answer needed for the requester plus source identifier or locator; do not use citation presence as proof of semantic support.
+    access_roles: unresolved
+    production_content_capture: disabled-by-default
+    retention_deletion_rule: unresolved
+    derived_copies_to_review:
+      - evaluation observation
+      - support material
+      - backup or recovery copy
+
+  - copy_id: diagnostic-metadata
+    category: run reference, candidate/configuration identity, source identifiers, currentness state, boundary decision, terminal outcome, and safe error category
+    planned_purpose: Investigate a bounded operational or source-admission question without retaining request or source bodies.
+    planned_destinations:
+      - restricted-diagnostic-store
+    minimum_representation: Content-free metadata and safe error category.
+    access_roles: unresolved
+    production_content_capture: disabled
+    retention_deletion_rule: unresolved
+    derived_copies_to_review:
+      - support export
+      - aggregate metric
+      - backup or recovery copy
+
+  - copy_id: exceptional-content-capture
+    category: selected request, retrieval, response, or tool payload body
+    planned_purpose: Only a separately approved investigation or reproduction need.
+    planned_destinations:
+      - restricted-capture-store
+    minimum_representation: Unresolved; reduce to the smallest justified body or synthetic reproduction first.
+    access_roles: unresolved
+    production_content_capture: disabled-by-default
+    retention_deletion_rule: unresolved
+    derived_copies_to_review:
+      - redacted-support-export
+      - backup or recovery copy
+
+  - copy_id: audit-evidence
+    category: non-content event attribution and, if triggered, consequential-event binding
+    planned_purpose: Preserve documentary evidence of a review-relevant event without copying raw hidden reasoning or unnecessary bodies.
+    planned_destinations:
+      - restricted-audit-store
+    minimum_representation: Event-specific references and non-content binding.
+    access_roles: unresolved
+    production_content_capture: disabled
+    retention_deletion_rule: unresolved
+    derived_copies_to_review:
+      - integrity-protected replica
+      - backup or recovery copy
+
+  - copy_id: evaluation-and-support-material
+    category: synthetic fixture, redacted export, evaluator observation, or support bundle
+    planned_purpose: Planned review or controlled reproduction.
+    planned_destinations:
+      - controlled-evaluation-boundary
+      - restricted-support-boundary
+    minimum_representation: Synthetic fixture or pre-export-redacted material whenever it satisfies the stated purpose.
+    access_roles: unresolved
+    production_content_capture: unresolved
+    retention_deletion_rule: unresolved
+    derived_copies_to_review:
+      - backup or recovery copy
+
+capture_exception_record:
+  baseline_state: disabled
+  trigger_for_consideration: Non-content diagnostics and synthetic reproduction do not answer a specific, documented investigation question.
+  purpose: unresolved
+  data_classification: unresolved
+  approval_reference: unresolved
+  named_access_scope: unresolved
+  sampling_scope: unresolved
+  redaction_before_export: required-by-proposed-draft
+  retention_rule: unresolved
+  deletion_plan: unresolved
+  verification_status: planned-not-observed
+
+export_boundary:
+  planned_rule: Redact or exclude sensitive content before diagnostic or audit material enters a broader support or review destination.
+  categories_to_exclude_or_redact:
+    - credentials, headers, cookies, tokens, and signed links
+    - personal identifiers and requester content
+    - tenant-restricted source content
+    - sensitive tool or workflow payloads
+    - sensitive exception details
+  safe_alternatives_when_body_is_not_needed:
+    - source or artifact reference
+    - candidate or configuration identity
+    - content type or size
+    - safe error category
+    - redaction status
+    - non-content binding
+  redaction_evidence: planned boundary observation and adverse export case; not yet observed
+
+telemetry_and_audit_separation:
+  diagnostic_lane:
+    question_answered: What bounded operational, admission, or error condition occurred?
+    planned_fields:
+      - run or request reference
+      - candidate and effective-configuration identity
+      - protected retrieval allow or deny outcome
+      - permitted source identifiers and status
+      - terminal outcome
+      - safe error category
+    access_rule: unresolved
+    retention_deletion_rule: unresolved
+  baseline_read_only_audit_lane:
+    question_answered: Which proposed candidate/run and protected retrieval decision are attributable to a reviewed read-only interaction?
+    planned_fields:
+      - actor or workload reference where applicable
+      - run reference
+      - candidate and policy/version reference
+      - source or boundary-decision reference
+      - time reference
+      - terminal outcome
+    access_rule: unresolved
+    retention_deletion_rule: unresolved
+  consequential_event_lane:
+    baseline_applicability: not-applicable; no consequential capability is enabled in this illustrative candidate
+    if_future_trigger_exists:
+      required_binding_fields_under_data_05:
+        - actor
+        - action
+        - target
+        - time
+        - agent or run identity
+        - applicable approval and policy references
+        - canonical argument hash or equivalent non-content binding
+        - result
+      integrity_design: unresolved; append-only or tamper-evident handling is a proposed draft preference, not an observed property
+      raw_hidden_reasoning: not-required
+
+retention_deletion_and_integrity:
+  rule_basis: Purpose-specific and organization-specific; no numerical default is set in this template.
+  stores_requiring_a_copy_decision:
+    - request and response handling
+    - retrieval index, cache, summary, or transformation
+    - diagnostic store
+    - audit store
+    - evaluation material
+    - support export
+    - backup or recovery copy
+  deletion_behavior: unresolved
+  restoration_or_backup_behavior: unresolved
+  preservation_conflict:
+    potential_conflict: Content deletion, deletion request, legal hold, investigation need, or audit-integrity need may point to different outcomes.
+    proposed_resolution: Avoid unnecessary content in durable evidence first; route an actual conflict to the authorized organization-specific policy decision.
+    decision_owner: null
+    status: unresolved
+
+privacy_harm_screen:
+  affected_groups_to_consider:
+    - direct requester
+    - people described in requester content or policy material
+    - people affected by an answer, omission, or inferred category
+    - support or review personnel exposed to exceptional capture
+  plausible_scenarios:
+    - Overbroad prompt, retrieval, or support capture discloses employee-specific or tenant-restricted information.
+    - A cache, index, or backup retains data after its original purpose ends.
+    - An answer or retained metadata reveals a sensitive inference or creates a disparate effect.
+    - A broad audit record preserves more personal or customer content than accountability requires.
+  material_uncertainties:
+    - actual data categories in requester questions
+    - applicable legal, contractual, or sector requirements
+    - retention and deletion authority
+    - whether a specialized Part 10 assessment is triggered
+  part_4_case_handoff: planned; cases should distinguish permitted, denied, stale, conflicting, and export-redaction conditions
+  part_10_handoff: unresolved pending the materiality assessment
+
+planned_completion_evidence:
+  status: illustrative-and-unexecuted
+  review_artifacts:
+    - completed copy inventory with approved destinations or explicit unresolved status
+    - capture-exception record if body capture is proposed
+    - export redaction boundary description
+    - separate diagnostic and audit field definitions
+    - retention and deletion decisions for derived and backup copies
+    - privacy-harm screen and Part 4 or Part 10 handoff
+  observable_evidence_to_plan:
+    - boundary observation showing permission filtering before model exposure
+    - relevant export-redaction adverse case
+    - applicable audit-record inspection for a consequential event
+    - lifecycle review when a destination, category, or retention purpose changes
+  limits:
+    - A written record, schema, or fixture does not prove that a runtime control is active or effective.
+    - A hash, pseudonym, encryption marker, or redaction label does not itself establish anonymity, authorization, or safe retention.
+    - No actual run, audit event, deletion, export, approval, deployment, or evaluation is asserted by this template.
+
+handoff_and_open_decisions:
+  accountable_owner: null
+  privacy_or_legal_review_owner: null
+  retention_and_deletion_decision_owner: null
+  audit_integrity_decision_owner: null
+  unresolved_questions:
+    - Which organization-specific retention, deletion, backup, and preservation rules apply to each copy?
+    - Which destinations are approved for each data category, including support and recovery paths?
+    - What evidence is sufficient for any specialized Part 10 assessment or external obligation?
+  handoff_status: proposed-local-review-unit-only

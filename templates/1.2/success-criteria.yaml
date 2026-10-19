@@ -1,0 +1,271 @@
+# Illustrative-only, unexecuted planning template for Chapter 1.2.
+# This is a neutral planning aid, not evidence, an adopted policy, or a release decision.
+planning_record_id: POLICY-PLAN-001
+use_case_id: internal-policy-assistance
+status: illustrative-unexecuted
+template_version: 0.5.0-draft.2
+illustrative_only: true
+
+record_purpose: >-
+  Define intended outcomes, acceptance criteria, and interpretable measures before
+  candidate results are read. Replace fictional example text when using the shape
+  for another planning record; retain unknown values as null rather than inventing
+  observations.
+
+related_records:
+  problem_brief: ../1.1/problem-brief.yaml
+  suitability_decision: ../1.3/suitability-decision.yaml
+  initial_scope_record: ../1.4/initial-scope-record.yaml
+  evidence_handoff_owner: ../../development-guide/04-testing-and-evaluation/06-standards-required-coverage-and-execution-cadence.md
+  decision_interpretation_owner: ../../development-guide/04-testing-and-evaluation/07-analyzing-results-comparing-versions-and-making-decisions.md
+
+fictional_context:
+  candidate_description: Permission-filtered, read-only policy assistance with no write or approval capability.
+  fixture: travel-policy-current
+  current_source: travel-policy-2026@2026-10-01
+  current_fixture_fact: London hotel limit is GBP 220.
+  superseded_source: travel-policy-2024-superseded@2024-01-01
+  note: Fictional fixture facts are controlled planning context, not real policy or measured output.
+
+intended_outcome:
+  statement: >-
+    An eligible requester can receive a useful, source-grounded terminal response to a
+    policy question, or a clear next step when supported evidence is unavailable.
+  outcome_owner: null
+  evidence_status: unmeasured
+  exclusions:
+    - Change records or approve spending.
+    - Disclose content from a source the requester cannot access.
+
+acceptance_criteria:
+  functional_behavior:
+    - condition: A current approved source is permitted to the requester and supports the answer.
+      expected_terminal_outcome: complete
+      expected_relation: Provide a response grounded in the current permitted source.
+    - condition: The answer-bearing permitted source is unavailable, or equally authoritative current permitted sources conflict.
+      expected_terminal_outcome: needs_information
+      expected_relation: State useful uncertainty and do not assert a definitive unsupported amount.
+    - condition: The requester is not permitted to read the answer-bearing source.
+      expected_terminal_outcome: declined
+      expected_relation: Do not disclose restricted policy content.
+    - condition: The declared read-only budget is exhausted before a supported response can be delivered.
+      expected_terminal_outcome: failed
+      expected_relation: State useful uncertainty and do not invent an answer or citation.
+  prohibited_behavior:
+    - Restricted disclosure.
+    - Unsupported definitive policy assertion.
+    - Write invocation or approval action.
+  outcome_semantics:
+    terminal_outcomes:
+      - complete
+      - needs_information
+      - declined
+      - failed
+      - declared_bounded_partial_result
+    evaluator_statuses_are_separate_from_terminal_outcomes:
+      - pass
+      - fail
+      - invalid
+      - inconclusive
+  evidence_status: unmeasured
+
+measurement_conventions:
+  candidate_or_period: null
+  measurement_window: null
+  request_episode_unit: One eligible requester episode under the named candidate or period.
+  retry_and_selection_policy: null
+  invalid_status_rule: null
+  refused_status_rule: null
+  escalated_status_rule: null
+  timeout_rule: null
+  critical_slices: []
+  note: >-
+    Populate these rules before interpreting a candidate result. A missing rule is not
+    a favorable result, an exclusion, or a not-applicable finding.
+
+metrics:
+  - metric_id: task_behavior_good_event_under_deadline
+    dimension: task_behavior
+    metric_role: acceptance_metric_candidate
+    claim: The requester receives the correct case-dependent contract outcome by the declared deadline.
+    unit: eligible_request_episode
+    population: All eligible request episodes started in the named candidate or measurement window.
+    eligibility_rule: null
+    exclusion_rule: null
+    formula:
+      type: ratio
+      numerator: >-
+        Eligible episodes with the correct case-dependent terminal outcome, all applicable
+        observable constraints satisfied, and a delivered terminal response by the declared deadline.
+      denominator: All eligible request episodes started in the named candidate or measurement window.
+      aggregation: null
+    treatment_of_statuses:
+      timed_out: Remains in the denominator; cannot receive an invented completion time.
+      refused: Counts in the numerator only when the declared case criterion calls for a decline.
+      escalated: Counts in the numerator only when the declared case criterion calls for escalation.
+      invalid: null
+      retried: null
+    baseline:
+      status: none_available
+      candidate_or_process: null
+      comparability_notes: null
+      observed_value: null
+    target:
+      status: not-yet-selected
+      value: null
+      rationale: null
+    critical_slices: []
+    measurement_method: null
+    responsible_owner: null
+    decision_consequence:
+      when_target_met: null
+      when_target_not_met: null
+      when_evidence_missing_or_insufficient: null
+    observed_result: null
+
+  - metric_id: completed_response_duration_quantile
+    dimension: latency
+    metric_role: operating_constraint_candidate
+    claim: Distribution of observed duration among the declared completed-response population.
+    unit: delivered_terminal_response
+    population: >-
+      Eligible episodes with the named terminal response delivered before the stated
+      measurement cutoff; this is conditional and does not include an episode without
+      that response.
+    observed_population_count: null
+    timing_start: null
+    timing_end: delivered_named_terminal_response
+    measurement_cutoff: null
+    formula:
+      type: quantile
+      numerator: not_applicable_for_a_quantile
+      denominator: not_applicable_for_a_quantile
+      quantile_proportion_p: null
+      estimator_or_interpolation_method: null
+      aggregation: null
+    treatment_of_statuses:
+      timed_out: >-
+        No duration is fabricated; report a timeout or no-terminal-response rate over all
+        eligible episodes separately.
+      failed: >-
+        State whether a visible failed terminal response belongs in the completed-response
+        population; report its rate separately when material.
+      invalid: null
+      retried: null
+    companion_all_eligible_measure:
+      metric_id: timeout_or_no_terminal_response_rate
+      numerator: Eligible episodes without the named terminal response by the cutoff.
+      denominator: All eligible request episodes started in the named candidate or measurement window.
+      observed_result: null
+    baseline:
+      status: none_available
+      candidate_or_process: null
+      comparability_notes: null
+      observed_value: null
+    target:
+      status: not-yet-selected
+      value: null
+      rationale: null
+    critical_slices: []
+    measurement_method: null
+    responsible_owner: null
+    decision_consequence:
+      when_target_met: null
+      when_target_not_met: null
+      when_evidence_missing_or_insufficient: null
+    observed_result: null
+
+  - metric_id: prohibited_boundary_observation_count
+    dimension: safety
+    metric_role: guardrail_candidate
+    claim: The planned no-disclosure and no-write boundaries hold for the declared eligible observations.
+    unit: eligible_request_episode
+    population: Eligible episodes exercising the applicable permission and no-write boundaries.
+    formula:
+      type: count_with_visible_population
+      numerator: Observed prohibited boundary events under the defined observation method.
+      denominator: Count of eligible episodes observed under the defined method.
+      aggregation: null
+    baseline:
+      status: not_applicable_to_boundary_claim
+      candidate_or_process: null
+      comparability_notes: null
+      observed_value: null
+    target:
+      status: not-yet-selected
+      value: null
+      rationale: null
+    critical_slices:
+      - requester_permission_context
+      - missing_or_conflicting_source_context
+    measurement_method: null
+    responsible_owner: null
+    decision_consequence:
+      when_target_met: null
+      when_target_not_met: null
+      when_evidence_missing_or_insufficient: null
+    observed_result: null
+
+  - metric_id: total_cost_per_verified_contract_appropriate_outcome
+    dimension: economics
+    metric_role: decision_metric_candidate
+    claim: Accounted total cost per verified contract-appropriate outcome for the declared population.
+    unit: eligible_request_episode
+    population: All eligible request episodes started in the named candidate or measurement window.
+    formula:
+      type: ratio
+      numerator: >-
+        Accounted cost of all eligible episodes, including applicable model or service use,
+        supporting operations, retries, infrastructure, and material human review or correction.
+      denominator: Verified contract-appropriate outcomes under the declared method.
+      aggregation: null
+      undefined_when_denominator_is_zero: true
+    baseline:
+      status: none_available
+      candidate_or_process: null
+      comparability_notes: null
+      observed_value: null
+    target:
+      status: not-yet-selected
+      value: null
+      rationale: null
+    critical_slices: []
+    measurement_method: null
+    responsible_owner: null
+    decision_consequence:
+      when_target_met: null
+      when_target_not_met: null
+      when_evidence_missing_or_insufficient: null
+    observed_result: null
+
+user_or_business_value:
+  claim: >-
+    Eligible requesters resolve their next step without an unacceptable increase in checking
+    or correction work compared with the current human-supported process.
+  measure_status: not-yet-selected
+  proxy_metrics: []
+  baseline_status: none_available
+  observed_result: null
+  note: A task-quality, citation-presence, or latency measure may inform this claim but does not prove it alone.
+
+evidence_handoff:
+  candidate_identity: null
+  case_and_fixture_references: []
+  evaluator_or_authoritative_observation_references: []
+  coverage_record: null
+  trial_design_reference: null
+  consistency_or_holdout_reference: null
+  evidence_status: no_evaluation_executed
+  note: >-
+    Part 4 owns the evidence map, evaluators, trial design, consistency, holdouts, and
+    interpretation of decision-grade results. This record supplies claims and definitions only.
+
+completion_check:
+  outcome_and_case_dependent_criteria_defined: false
+  prohibited_behavior_defined: false
+  metric_population_and_status_rules_defined: false
+  baseline_status_recorded: false
+  target_rationale_and_decision_consequence_predeclared: false
+  critical_slices_recorded_or_not_applicable_with_rationale: false
+  evidence_handoff_ready: false
+  note: False values in this illustrative template are placeholders, not failed executions or release findings.

@@ -1,0 +1,134 @@
+# Illustrative planning/build template. It contains fictional data, no credentials,
+# and no claim of admission, assembly, execution, evaluation, approval, or deployment.
+example_id: POLICY-BUILD-001
+use_case_id: internal-policy-assistance
+status: illustrative-unexecuted
+planning_status: proposed-local-review-unit
+
+tool_contract:
+  identity:
+    operation_id: search-approved-policy
+    version_or_content_identity: illustrative-v1
+    accountable_owner: null
+    purpose: locate bounded policy evidence for an internal policy answer
+
+  admission:
+    status: not_admitted
+    proposed_capability: policy-search-read-only
+    enabled_write_or_approval_capability: false
+    admission_evidence: null
+
+  interface:
+    input:
+      caller_fields:
+        query: non_empty_text
+      trusted_runtime_context:
+        requester_id: authenticated_request_context
+        tenant_or_resource_scope: authenticated_request_context
+        deadline: runtime_policy
+      rejected_as_authority:
+        - model_generated_identity
+        - request_body_permission_claim
+        - model_generated_tenant_or_scope
+      validation_before_io:
+        - require a non-empty query
+        - normalize any allowed target selector before authorization
+        - reject an unsupported selector or an inconsistent requester scope
+    output:
+      statuses:
+        - matches
+        - no_match
+        - denied
+        - unavailable
+        - timeout
+        - invalid_result
+      model_visible_match_fields:
+        - source_id
+        - source_revision
+        - current_status
+        - bounded_excerpt
+      result_validation:
+        - accept only declared status values
+        - verify required source metadata when a match is returned
+        - reject malformed, oversized, or unrequested fields
+      prohibited_fields:
+        - credentials
+        - unrestricted_raw_response
+        - unneeded_sensitive_content
+
+  effect_semantics:
+    declared_effect: read
+    planned_execution_class_floor: ephemeral
+    external_business_state_change: none_expected_pending_admission_review
+    long_running_or_resumable_handling: unresolved_assess_against_part_7_if_triggered
+    rationale: transport method and operation name do not prove the actual effect
+
+  protected_operation:
+    authorization_boundary: policy_source_access_boundary
+    required_decision_inputs:
+      - authenticated_workload
+      - authenticated_requester
+      - requested_operation
+      - normalized_target
+      - effective_resource_scope
+    decision_timing: before access to each requested protected resource
+    approval_binding: not_applicable_for_this_read_only_candidate
+
+  failures_and_cancellation:
+    deadline_source: trusted_runtime_policy
+    structured_outcomes:
+      validation: invalid_input
+      authorization: denied
+      business: no_match
+      transient: unavailable
+      timeout: timeout
+      malformed_result: invalid_result
+    cancellation_note: cancellation or deadline expiry does not by itself establish whether a dispatch or external observation occurred
+    caller_handling: map each returned status to a declared agent terminal outcome without inventing a policy answer
+
+  retries:
+    declared_safety: safe
+    basis_to_verify_before_admission: repeating the same lookup has no additional relevant effect
+    stable_key_rule: not_applicable_unless_the_verified_target_requires_a_same_intent_key
+    ambiguity_handling: stop automatic repeats when repeat safety or external observation is uncertain
+
+  data_and_attribution:
+    data_classification: null
+    minimum_model_visible_fields:
+      - source_id
+      - source_revision
+      - current_status
+      - bounded_excerpt
+    invocation_attribution:
+      - agent_identity
+      - run_identity
+      - tool_operation_identity
+      - attempt_identity
+      - structured_outcome
+      - latency_when_available
+      - cost_when_relevant_and_available
+    content_capture: not_specified_apply_part_3_3
+
+  evidence_plan:
+    proposed_checks:
+      - valid_and_invalid_input_shape_and_cross_field_cases
+      - no_external_io_before_validation_failure
+      - allowed_and_denied_requester_object_and_scope_cases
+      - bounded_and_malformed_external_result_cases
+      - timeout_and_cancellation_ambiguity_cases
+      - retry_classification_and_negative_invocation_case
+    authoritative_observations_needed: null
+    observed_results: not_executed
+
+  handoffs:
+    source_currentness_and_grounding: chapter_2_6
+    identity_and_authorization: chapter_3_1
+    untrusted_returned_content: chapter_3_2
+    data_handling_and_audit_policy: chapter_3_3
+    uncertain_effects_and_human_governed_work: part_7
+
+  open_questions:
+    accountable_owner: unresolved
+    external_target_repeat_effect: unresolved
+    cancellation_and_deadline_semantics: unresolved
+    data_classification_and_retention: unresolved

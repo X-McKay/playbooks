@@ -1,0 +1,120 @@
+# Illustrative-only, unexecuted planning template. Fictional data; no authority or results asserted.
+# Use it to describe a user problem before selecting a solution. Replace the illustration with a project record.
+template_version: "0.5.0-draft.2"
+template_status: "illustrative-only-unexecuted"
+planning_record_id: "POLICY-PLAN-001"
+use_case_id: "internal-policy-assistance"
+status: "illustrative-unexecuted"
+
+record_context:
+  candidate_description: "Permission-filtered, read-only assistance with internal policy questions."
+  implementation_commitment: "none; a later suitability decision may select a process change, simpler approach, fixed workflow, or agent"
+  authority_note: "No write or approval capability is proposed by this illustrative record."
+  evidence_note: "This template asserts no observed performance, completed review, approval, deployment, or user benefit."
+
+problem_statement:
+  user_need: "Employees need to determine the current policy that applies to their question so they can prepare a travel claim or identify the next source of help."
+  requested_solution_or_feature: "An assistant that answers travel-policy questions."
+  bounded_desired_work_outcome: "Provide an understandable policy answer grounded in a current, approved, requester-permitted source, or make the evidence gap clear."
+  problem_not_solution_note: "The request is a starting point for discovery; it is not a decision to use an agent or a specific implementation."
+
+users_and_stakeholders:
+  user_groups:
+    - id: "employee-policy-requester"
+      task: "Find and understand the current internal policy relevant to a travel question."
+      relevant_context: "May need to act on the answer while preparing a travel claim."
+    - id: "contractor-policy-requester"
+      task: "Seek help about a travel-policy question."
+      relevant_context: "May not be permitted to read the policy documents used in this illustration."
+  other_stakeholders:
+    - role: "policy source owner"
+      interest_or_contribution: "Maintains source status and policy content."
+    - role: "policy support contact"
+      interest_or_contribution: "Receives questions that remain unresolved in the current process."
+
+current_process_and_discovery:
+  current_process: "An employee searches policy documents and may ask a colleague or policy owner when the answer remains unclear."
+  reported_or_observed_difficulties:
+    - statement: "Finding applicable current guidance can require repeated searching."
+      evidence_status: "illustrative premise; frequency, delay, and cost are unmeasured"
+  process_evidence_considered:
+    - type: "representative task walkthrough"
+      status: "not yet performed in this illustrative record"
+    - type: "available request, handoff, or source-status records"
+      status: "not yet reviewed in this illustrative record"
+
+problem_analysis:
+  symptoms:
+    - "The requester may encounter multiple policy documents while seeking a current answer."
+    - "The requester may require help when the answer remains unclear."
+  contributing_cause_hypotheses:
+    - hypothesis: "Current versus superseded source status may be unclear at the point of search."
+      status: "unverified"
+    - hypothesis: "A permitted current source may be missing or conflicting for a given request."
+      status: "unverified outside the fictional fixture variants"
+  process_or_non_agent_options_to_consider:
+    - "Clarify source ownership and current-status publication."
+    - "Improve the intake information or handoff for unresolved questions."
+    - "Provide a permission-aware way to locate the current approved source."
+
+in_scope_task_classes:
+  - id: "current-policy-question"
+    user_group: "employee-policy-requester"
+    representative_input: "What is the hotel limit for a work trip to London?"
+    needed_result: "A clear answer supported by a current approved source available to the requester, or useful uncertainty and a next source of help."
+    material_variations:
+      - type: "missing_information"
+        situation: "The answer-bearing current permitted source is unavailable."
+        needed_result: "Do not present a definitive amount; identify the information gap or request clarification."
+      - type: "conflicting_information"
+        situation: "Two equally authoritative current permitted sources conflict."
+        needed_result: "Identify the conflict and do not select a definitive amount automatically."
+      - type: "permission_boundary"
+        situation: "The requester is not permitted to read the named policy sources."
+        needed_result: "Do not disclose restricted policy content."
+
+fictional_fixture_context:
+  fixture: "travel-policy-current@fixture-2026-10-18.1"
+  permitted_employee: "employee-uk-104"
+  restricted_requester: "contractor-uk-204"
+  current_source: "travel-policy-2026@2026-10-01"
+  superseded_source: "travel-policy-2024-superseded@2024-01-01"
+  controlled_fact: "The fictional current source states a London hotel limit of GBP 220."
+  limitation: "These are fixture facts only, not real policy, observed user behavior, or a candidate result."
+
+scope:
+  included:
+    - "Read-only help with questions about approved, current, requester-permitted internal policy sources."
+    - "Clear uncertainty or help-seeking when evidence is unavailable or conflicts."
+  excluded:
+    - "Changing employee records."
+    - "Approving travel or deciding reimbursement eligibility."
+    - "Answering from documents the requester is not permitted to access."
+  assumptions_to_check:
+    - "A maintained source of current policy content is available for the intended task."
+    - "Requester access can be determined at the relevant information boundary."
+    - "The described task and difficulty are representative of the intended user group."
+
+relationships:
+  upstream_dependencies:
+    - dependency: "Approved policy content and its current or superseded status."
+      relevant_failure_or_change_effect: "Stale, missing, or conflicting status can prevent a reliable definitive answer."
+    - dependency: "Permission information at the retrieval boundary."
+      relevant_failure_or_change_effect: "Incorrect or unavailable permission information can make the requested evidence unavailable or create an access concern."
+  downstream_consumers:
+    - consumer: "Employee policy requester"
+      decision_or_next_step_informed: "May use the answer while preparing a travel claim or deciding to seek help."
+
+open_questions_and_handoff:
+  questions_that_could_change_the_brief:
+    - "Which reported difficulties are observed in representative current tasks?"
+    - "Would source-status or process changes address the difficulty without a new system?"
+    - "Which user groups, source categories, and task variations belong in the intended boundary?"
+  next_planning_decisions:
+    - "Define outcomes, acceptance criteria, and unmeasured baseline status in Chapter 1.2."
+    - "Compare process change, simpler alternatives, fixed workflow, and agent designs in Chapter 1.3."
+    - "Record data, authority, harms, dependencies, and owners in Chapter 1.4."
+  handoff_evidence:
+    - "Reviewed problem brief with evidence status for each material assertion."
+    - "Representative task examples, including plausible hard cases."
+    - "Task-level dependency and downstream-consumer notes."

@@ -1,0 +1,82 @@
+# 8.2 Retrieval, Memory, and Context Optimization
+
+**Status:** 0.5.0 first draft
+**Audience:** Developers, evaluators, and reviewers responsible for context pipelines
+**Applicability:** Apply when an agent retrieves indexed material, transforms or caches context, or retains information across tasks. Retrieval and persistent memory are conditional capabilities; agents without them do not need to add them.
+
+[Part 8 — Model, Context, and Resource Engineering](README.md) · [Applicability](../../applicability.md) · [Context and retrieval fundamentals](../../development-guide/02-agent-basics/06-context-and-retrieval-fundamentals.md) · [8.1 Model Selection, Parameters, and Routing](01-model-selection-parameters-and-routing.md) · [Next: 8.3 Cost, Latency, and Performance Optimization](03-cost-latency-and-performance-optimization.md)
+
+## Purpose and applicability
+
+Retrieval and memory can make relevant information available without putting an entire corpus or conversation into every request. They also introduce failure modes: a source may be split in a way that hides a constraint, ranking may omit a decisive exception, a summary may erase its qualification, a cache may serve a result from the wrong scope, or remembered information may outlive its purpose. Context optimization is therefore a quality and safety decision, not just a way to reduce tokens.
+
+Chapter [2.6](../../development-guide/02-agent-basics/06-context-and-retrieval-fundamentals.md) owns basic source approval, permission scope, provenance, freshness, and missing or conflicting evidence. This chapter covers the engineering choices that shape those materials after selection: chunking, indexing, ranking, context transformations, cache behavior, and memory lifecycle. Apply [3.1](../../development-guide/03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md) and [3.3](../../development-guide/03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md) for canonical authorization and privacy rules. A context record, retrieved passage, cached answer, or memory entry is data to consider; it cannot grant an agent new authority.
+
+## Working model
+
+A retrieval path turns approved source material into a representation that can be searched, then supplies selected evidence to a model. Common stages are source ingestion, normalization, chunking, indexing, candidate retrieval, filtering or reranking, and context assembly. These are separable decision points. Retrieval-augmented generation research illustrates the general pattern of combining a language model with a retrieved non-parametric evidence store, but a retrieval pipeline does not guarantee that a returned passage is current, relevant, or used correctly. [1]
+
+Chunking decides which surrounding text travels together. Fixed-length segments are simple, while document-structure or topic-aware boundaries can keep a clause with its heading, table, exception, or definition. Very small chunks can lose qualifying context; very large chunks can dilute the decisive passage and consume the context budget. Overlap can preserve continuity across a boundary, but can also duplicate evidence. No one boundary rule is best for every corpus: a small, domain-specific study found its comparative results within one clinical reference corpus and query set, and explicitly cautioned about generalization. [3] Treat chunk size, overlap, parent-child context, and metadata as choices to evaluate against the actual documents and questions.
+
+Candidate retrieval asks which indexed units might matter; reranking or other selection then chooses which candidates fit the task and budget. Relevance is not the only criterion. A policy question may require the operative rule, an exception, and an effective date. Keep source and section identity, version/status, and other applicable scope metadata attached through each stage. Authorization and tenant filtering must use trusted controls, not a model's decision about which retrieved items it should see; see the canonical rules linked above.
+
+Context transforms include selecting, ordering, deduplicating, truncating, summarizing, and compacting material. They trade detail for fit. A summary is a derived representation, not a substitute for source lineage: it can omit negation, scope, dates, exceptions, or the fact that two documents disagree. Research on long-context question answering and key-value retrieval found position-related performance changes in the models and tasks studied, with relevant information often used less reliably in the middle of long inputs. This is not a universal property of every model, but it is a reason to test context size and ordering rather than assuming that a larger window means every passage is equally usable. [2]
+
+Caching and memory solve different problems. A prompt/context cache may reuse previously prepared input; an application result cache may reuse an answer or retrieval result; persistent memory retains selected information from prior tasks. Each can become stale or expose data outside its intended scope. Memory should be treated as a deliberately managed data store, not as an implicit extension of the current conversation or a policy authority.
+
+## Decisions and best practices
+
+Begin with the task: what evidence must be available for a correct answer, and what may safely be omitted? If the source set is small enough to inspect directly, retrieval may add unnecessary machinery. If retrieval is useful, preserve meaningful boundaries and the metadata needed to resolve status, applicability, and conflicts. When source structure carries meaning, keep headings, parent sections, table labels, or neighboring clauses available alongside the selected passage.
+
+Tune the whole path, not only a retriever score. Measure whether relevant, permitted evidence is found and whether irrelevant or superseded items intrude; separately assess whether the final response uses the evidence accurately. Test changes to chunking, candidate count, reranking, ordering, or compression on the same versioned cases. A citation-presence assertion can show that an identifier was emitted, but it cannot prove that the cited source supports the associated claim. Evaluation guidance in [4.5 Planning, Designing, and Running Tests and Evaluations](../../development-guide/04-testing-and-evaluation/05-planning-designing-and-running-tests-and-evaluations.md) covers case design and the separation of retrieval from answer quality.
+
+Use deterministic trimming or selection when it preserves required material. Summarizing compaction may save space but costs additional processing and can lose information; the assigned cost guidance recommends evaluating its quality effects and preferring deterministic trimming when that is sufficient. Do not compact away policy constraints, identity/permission scope, required evidence, approval state, or side-effect state. If a transformation cannot retain a material constraint and its source lineage, keep the original available or return a bounded uncertainty outcome.
+
+Cache only when reuse is safe. For data-dependent results, scope cache keys to the effective user or tenant authorization, source/data version, applicable agent and instruction configuration, and relevant query inputs. Define invalidation for source updates, permission changes, and policy changes. Avoid caching unresolved or time-sensitive answers as though they were current. Cache reuse must never bypass a fresh authorization check.
+
+Before adding persistent memory, decide what continuity the task actually needs. Define what may be written, who or what it is about, who can read it, how long it remains useful, and how it can be corrected or removed. Store the smallest useful record with provenance and time context. Resolve disagreement using the applicable source authority and recency rules; do not treat repetition in memory as proof. If no documented rule resolves a material conflict, surface it or ask rather than silently preferring the latest remembered statement.
+
+## Requirements
+
+- **CONTEXT-OPT-01** — **MUST**, when source material is chunked or otherwise transformed for indexing: preserve a stable link from each retrievable unit to its source and relevant version or status metadata, and record the transformation configuration needed to rebuild or diagnose the representation. Removed, superseded, or materially changed source content MUST NOT remain silently represented as current.
+- **CONTEXT-OPT-02** — **MUST**, when retrieval results are assembled for model context: select chunk boundaries and any surrounding context using representative corpus and task cases, and test for lost headings, exceptions, scope conditions, negation, or other constraints material to the answer. No particular chunking method or size is prescribed.
+- **CONTEXT-OPT-03** — **MUST**, when content is summarized, compacted, truncated, reordered, or otherwise transformed before use: preserve material constraints, source lineage, and applicable trust/scope labels; evaluate the transformed context against the untransformed evidence for task-critical omissions. If a required constraint or its provenance cannot be retained, the system MUST keep access to the original evidence or produce a bounded uncertainty outcome rather than treating the transformed text as complete.
+- **CONTEXT-OPT-04** — **MUST**, when retrieved context or generated results are cached: enforce the applicable user/tenant and authorization scope in cache lookup, bind reuse to relevant source and policy versions, and invalidate or bypass entries when source freshness, access, or policy changes make them inapplicable. A cache hit MUST NOT replace execution-time authorization.
+- **CONTEXT-OPT-05** — **MUST**, when information persists as agent memory across tasks: define the memory's purpose, subject/scope, permitted write conditions, access boundary, provenance, and correction, expiry, and deletion handling. Memory MUST NOT authorize tools, change policy, or expose another user's or tenant's information.
+- **CONTEXT-OPT-06** — **MUST**, when a task relies on retrieval or context transformation: evaluate retrieval adequacy separately from final answer support, and include cases that can reveal missing, stale, conflicting, or permission-scoped evidence and material losses caused by transformation. A citation-presence check alone MUST NOT be reported as proof of semantic support.
+- **CONTEXT-OPT-07** — **SHOULD**, when context limits require compaction or repeated context assembly: prefer the least lossy approach that meets the operational constraint, and compare candidate settings against a baseline for task quality, critical constraints, latency, and cost before adoption. Do not assume that fewer tokens or a larger context window alone improves outcomes.
+
+These requirements complement, rather than replace, canonical authorization, privacy, and evidence rules in Parts 3 and 4. Applicability is determined by the trigger; a reference requirement binds when its trigger is present.
+
+## Worked example: the current travel limit survives retrieval and compaction
+
+The fictional policy assistant answers questions from approved, current, permission-filtered documents. It returns citations and uncertainty, has no external write capability, and can finish with `complete`, `needs_information`, `declined`, `failed`, or a declared bounded partial result. The `travel-policy-current` test fixture permits a London hotel amount of GBP 220; a superseded policy gives a different amount. These are fictional test facts, not actual policy.
+
+The index stores sections rather than arbitrary fragments where possible. Each passage retains a source ID, section locator, version, effective/current status, and any access-scope metadata. For the question “What is the hotel limit for a trip to London?”, candidate retrieval locates the relevant travel section and the reranker keeps the operative limit together with its applicability and effective-date clauses. The runtime filters by the employee's trusted permission scope before model context is assembled. The response cites the current source section and states GBP 220 only if the provided evidence supports that answer.
+
+Now add a context budget. A compact summary that says only “London hotel limit: GBP 220” is insufficient if it drops the policy version or an exception that changes who or when the limit applies. The assistant therefore either retains the original policy passage and those qualifiers, or marks the result incomplete and returns `needs_information`. It does not treat an untraceable summary as authoritative. A regression case puts the decisive clause at different positions in a longer assembled context, because evidence position can affect some tested model/task combinations. [2]
+
+A tempting optimization is to cache the answer by normalized question text alone. That could return the current employee's answer to a different tenant, or serve GBP 220 after the source changes. The safer design includes the authorization partition and source/policy version in the relevant cache scope and invalidates entries on updates. The assistant does not need cross-session personal memory for this task, so the example keeps conversational context only for the active interaction and does not create a profile of past questions.
+
+The evaluation separates stages. Retrieval checks assert that the current passage and material qualifiers are available within the caller's permitted scope and that the superseded version is identified or excluded. Answer checks assess whether the response applies the right version and whether its citation supports the claim. Transformation checks compare the compacted context with the original for lost constraints and lineage. Cache tests vary user/tenant, source version, and permission state. A separate conflict case supplies two apparently current passages without an authoritative precedence rule; the correct outcome is to expose the unresolved conflict or ask for clarification, not to select whichever chunk ranks slightly higher. A deterministic citation-presence check remains useful, but it does not establish semantic support.
+
+## Evidence and checklist
+
+Keep a concise, versioned record of the corpus/index inputs, chunking and ranking settings, context assembly and compaction policy, relevant cache scope and invalidation rules, and any memory schema and lifecycle. Evaluation evidence should make it possible to trace representative answers to the passages actually supplied, inspect transformation losses, and reproduce critical retrieval cases without retaining more sensitive content than policy permits.
+
+- [ ] The task has a stated reason to use retrieval, caching, or persistent memory; unused mechanisms are not added by default.
+- [ ] Indexed units retain source identity, version/status, and enough structure to recover applicable context.
+- [ ] Retrieval and answer-support claims have separate checks, including missing, stale, conflicting, and permission-scoped cases.
+- [ ] Chunking, ranking, ordering, and context-budget changes are evaluated on representative cases rather than selected from a generic recipe.
+- [ ] Summaries and compaction are checked for lost constraints, source lineage, scope, and conflict signals.
+- [ ] Cache lookup and invalidation respect effective identity, authorization, source freshness, and policy changes.
+- [ ] Persistent memory has a defined purpose, scope, provenance, access boundary, and correction/expiry/deletion path; it cannot create authority.
+- [ ] Context optimization is compared with a baseline for task quality and relevant operational effects, not only token count.
+
+For broader resource decisions, see [8.3](03-cost-latency-and-performance-optimization.md). For source approval and basic provenance/freshness responsibilities, return to [2.6](../../development-guide/02-agent-basics/06-context-and-retrieval-fundamentals.md).
+
+## References
+
+[1]: https://arxiv.org/abs/2005.11401 "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+[2]: https://aclanthology.org/2024.tacl-1.9/ "Lost in the Middle: How Language Models Use Long Contexts"
+[3]: https://pmc.ncbi.nlm.nih.gov/articles/PMC12649634/ "Comparative Evaluation of Advanced Chunking for Retrieval-Augmented Generation in Large Language Models for Clinical Decision Support"

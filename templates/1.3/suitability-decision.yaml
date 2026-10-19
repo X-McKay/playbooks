@@ -1,0 +1,276 @@
+# Illustrative-only, unexecuted planning template for Chapter 1.3.
+# This is a neutral planning aid, not evidence, an adopted policy, an architecture specification, or a release decision.
+planning_record_id: POLICY-PLAN-001
+use_case_id: internal-policy-assistance
+status: illustrative-unexecuted
+template_version: 0.5.0-draft.2
+illustrative_only: true
+
+record_purpose: >-
+  Compare plausible ways to help a bounded user task and document why a simpler
+  baseline, fixed workflow, adaptive agent, or hybrid is selected, retained,
+  rejected, or remains unproven. Replace fictional details for another use case
+  and leave observations unknown rather than inferring them.
+
+related_planning_records:
+  problem_brief: ../1.1/problem-brief.yaml
+  success_criteria: ../1.2/success-criteria.yaml
+  initial_scope_record: ../1.4/initial-scope-record.yaml
+  evidence_design_owner: ../../development-guide/04-testing-and-evaluation/06-standards-required-coverage-and-execution-cadence.md
+  decision_interpretation_owner: ../../development-guide/04-testing-and-evaluation/07-analyzing-results-comparing-versions-and-making-decisions.md
+
+illustrative_context:
+  candidate_description: Permission-filtered, read-only assistance with internal policy questions.
+  authority_note: No write or approval capability is proposed by this illustrative record.
+  fixture: travel-policy-current
+  current_source: travel-policy-2026@2026-10-01
+  current_fixture_fact: London hotel limit is GBP 220.
+  superseded_source: travel-policy-2024-superseded@2024-01-01
+  fixture_note: Fictional fixture facts are controlled planning context, not real policy or measured output.
+  evidence_note: No candidate, baseline, user, reviewer, or release result is asserted in this record.
+
+comparison_boundary:
+  user_task: >-
+    Help an eligible requester obtain a source-grounded response about current
+    internal policy, or a clear next step when supported evidence is unavailable.
+  current_process: >-
+    An employee searches policy documents and may ask a colleague or policy owner
+    when the answer remains unclear.
+  in_scope_case_conditions:
+    - A current approved source is permitted to the requester.
+    - The answer-bearing permitted source is unavailable.
+    - Equally authoritative current permitted sources conflict.
+    - The requester is not permitted to read the answer-bearing source.
+  exclusions:
+    - Change employee records.
+    - Approve travel or decide reimbursement eligibility.
+    - Disclose content from a source the requester cannot access.
+  known_and_unknown_context:
+    reported_difficulty: Finding applicable current guidance can require repeated searching.
+    evidence_status: illustrative premise; frequency, delay, and cost are unmeasured
+    open_problem_questions:
+      - Would clearer current-source publication or a better handoff address the difficulty without a new system?
+      - Are the described cases representative of the intended requester population?
+      - Which source categories and user contexts belong in the eventual boundary?
+
+operational_classification_convention:
+  fixed_workflow: >-
+    Orchestration-defined transitions, including allowed predeclared branches,
+    bounded retries, and routing through a deterministic or model router.
+  adaptive_agent: >-
+    Model output directs a meaningful next action, sequence, or stopping choice
+    in response to observations.
+  finite_action_set_note: >-
+    A permitted action set may be finite and fully enumerated. Adaptive status
+    depends on model-directed selection or sequencing within that set, not on an
+    unbounded action universe.
+  classification_status: illustrative convention for this planning record; not a universal taxonomy
+
+alternatives_considered:
+  - alternative_id: process-redesign-or-manual-assistance
+    class: process_redesign_or_manual_assistance
+    description: Clarify current-source status, improve unresolved-question handoff, or retain contextual human assistance.
+    simplest_plausible_baseline: true
+    status: retained_for_investigation
+    task_specific_fit_hypothesis: May remove an unclear-source or handoff cause without a new model or system.
+    limitations_or_open_questions: The record has no observed evidence that this resolves the described task cases.
+    observed_comparison_result: null
+
+  - alternative_id: permission-aware-lookup-or-search
+    class: deterministic_lookup_or_search_interface
+    description: Locate a current approved source that the requester is permitted to access.
+    simplest_plausible_baseline: true
+    status: retained_for_investigation
+    task_specific_fit_hypothesis: May serve exact lookups or allow users to interpret an approved current source directly.
+    limitations_or_open_questions: Does not by itself establish how varied wording, missing evidence, or source conflict is handled.
+    observed_comparison_result: null
+
+  - alternative_id: deterministic-rules-or-conventional-automation
+    class: deterministic_rules_or_conventional_automation
+    description: Apply explicit source, status, permission, and case-routing conditions through known transitions.
+    simplest_plausible_baseline: true
+    status: retained_for_investigation
+    task_specific_fit_hypothesis: May fit stable, explicit conditions and bounded exception paths.
+    limitations_or_open_questions: The record has not established which request variation can be stated as durable rules.
+    observed_comparison_result: null
+
+  - alternative_id: traditional-ml-predictor-or-router
+    class: traditional_machine_learning
+    description: Predict or route a recurring bounded request category from examples.
+    simplest_plausible_baseline: false
+    status: not-selected-feasibility-not-established
+    task_specific_fit_hypothesis: Could help only if a recurring prediction target and usable outcome data are established.
+    learning_premise:
+      target_or_label_definition: null
+      usable_examples_or_labels_status: not-yet-established
+      representativeness_and_data_handling_status: not-yet-established
+      maintenance_and_evaluation_status: not-yet-established
+    observed_comparison_result: null
+
+  - alternative_id: single-call-model-assistance
+    class: single_call_model_assistance
+    description: Interpret a varied request or compose one bounded response without model-directed next actions.
+    simplest_plausible_baseline: false
+    status: retained_for_investigation
+    task_specific_fit_hypothesis: May help explain a permitted current source after a predefined source-selection step.
+    limitations_or_open_questions: Does not establish how source conflicts or evidence gaps should be resolved beyond predefined handling.
+    observed_comparison_result: null
+
+  - alternative_id: fixed-retrieval-and-answer-workflow
+    class: fixed_model_workflow
+    description: >-
+      Use predefined permission checking, source selection, response composition,
+      output checks, and bounded paths for missing or conflicting evidence.
+    simplest_plausible_baseline: false
+    status: illustrative-provisional-preference-not-approved
+    task_specific_fit_hypothesis: >-
+      Predefined retrieval and response transitions may meet the bounded task
+      without model-directed action selection.
+    fixed_transition_notes:
+      allowed_predeclared_paths:
+        - supported current permitted evidence leads to a bounded complete response.
+        - missing permitted evidence leads to needs_information.
+        - conflicting equally authoritative current permitted evidence leads to needs_information.
+        - denied access leads to declined without restricted content.
+      model_router_note: A model router could select among these predefined paths without changing the fixed-workflow classification.
+    limitations_or_open_questions: The preference is a fictional plan and has no comparison result, target, or approval.
+    observed_comparison_result: null
+
+  - alternative_id: adaptive-follow-up-agent
+    class: adaptive_agent
+    description: >-
+      Let model output select a permitted follow-up evidence step, clarification,
+      bounded response, or escalation after an observation.
+    simplest_plausible_baseline: false
+    status: unproven-not-selected
+    permitted_action_set:
+      - locate_additional_requester-permitted_evidence
+      - request_clarification
+      - return_bounded_response
+      - escalate_conflicting_evidence
+    proposed_model_directed_choices:
+      next_action: Whether another permitted evidence step, clarification, bounded response, or escalation fits the observation.
+      sequencing: Which permitted next step to take after the available evidence is assessed.
+      stopping: Whether supported evidence is sufficient to stop rather than take another permitted evidence step.
+    prohibited_in_this_illustration:
+      - Change records.
+      - Approve travel or reimbursement.
+      - Retrieve or disclose restricted source content.
+    task_specific_added_value_hypothesis: >-
+      Model-directed follow-up could improve the correct case-dependent outcome over
+      the fixed workflow when a first bounded evidence step is inadequate.
+    limitations_or_open_questions: >-
+      No shared-case comparison, observed benefit, maintenance estimate, evaluation
+      result, or approval exists in this illustrative record.
+    observed_comparison_result: null
+
+  - alternative_id: hybrid-constraints-and-model-interpretation
+    class: hybrid
+    description: >-
+      Keep permission, currentness, source-admission, and no-write constraints in
+      deterministic controls while using model flexibility only for interpretation
+      or any later justified adaptation.
+    simplest_plausible_baseline: false
+    status: possible-configuration-not-selected
+    task_specific_fit_hypothesis: A hybrid could separate stable constraints from language interpretation if no single simpler option is adequate.
+    limitations_or_open_questions: The record has not established that the added combination is needed.
+    observed_comparison_result: null
+
+factor_assessment:
+  task_uncertainty:
+    known: Varied wording, source availability, source conflict, and requester permission are relevant fixture conditions.
+    unknown: Which conditions occur in representative current work and which are best solved through process change.
+    implication_for_selection: Does not by itself establish a need for an agent.
+  available_and_usable_data:
+    traditional_ml_target_or_label_status: not-yet-established
+    usable_examples_or_outcome_data_status: not-yet-established
+    source_and_permission_context: Fictional fixture has controlled current, superseded, missing, conflict, and denied-source variants.
+    implication_for_selection: A learned predictor or router is not established as feasible in this illustrative record.
+  action_space:
+    selected_fixed_workflow_actions: Predefined source and permission checks, response composition, validation, and declared terminal paths.
+    adaptive_candidate_action_set_status: Finite permitted set recorded above; no new authority is granted.
+    implication_for_selection: Fixed transitions support fixed-workflow classification unless a later model-directed choice is introduced.
+  consequence_of_error:
+    plausible_effects:
+      - Misleading policy guidance could affect a requester’s next step.
+      - Restricted policy content could be disclosed to an unauthorized requester.
+      - Unsupported certainty could conceal a missing or conflicting source.
+    risk_and_authority_handoff_status: unresolved; Chapter 1.4 owns the initial harm, authority, data, and ownership screen
+  maintenance_burden:
+    source_and_rule_maintenance: not-yet-estimated
+    data_or_label_maintenance_for_learned_component: not-yet-established
+    model_workflow_or_agent_maintenance: not-yet-estimated
+    implication_for_selection: No approach is assumed lower-maintenance without task-specific evidence.
+  evaluation_burden:
+    comparison_conditions: >-
+      Compare the same relevant permission, currentness, missing-source, and
+      conflict cases for a baseline and candidate.
+    added_agent_coverage_needed: >-
+      If an adaptive candidate is pursued, evidence must cover its model-directed
+      next-action, sequence, and stopping choices within the permitted set.
+    evidence_status: no_evaluation-executed
+    evidence_owner: Part 4
+
+comparison_plan:
+  simplest_suitable_non_agent_baseline: permission-aware-lookup-or-search
+  baseline_selection_rationale: >-
+    It can address the bounded information-location task without model-directed
+    action selection, subject to later task-specific comparison.
+  comparable_cases_status: planned-not-yet-authored-or-executed
+  candidate_identity: null
+  baseline_identity: null
+  target_or_success_definition_owner: Chapter 1.2 planning record
+  evaluator_and_trial_design_owner: Part 4
+  potential_added_value_evidence_for_adaptive_candidate:
+    claim: >-
+      The adaptive candidate improves the appropriate case-dependent outcome over
+      the fixed workflow on the same relevant cases without unacceptable added
+      control, maintenance, or evaluation burden.
+    measures_or_targets: not-yet-selected
+    observed_result: null
+    decision_consequence: not-yet-selected
+  comparability_limit: >-
+    A result from easier cases, different source conditions, or more permissive
+    authority boundaries would not establish added value over the named baseline.
+
+illustrative_decision:
+  decision_status: illustrative-provisional-not-approved
+  selected_design: fixed-retrieval-and-answer-workflow
+  agent_decision: not-selected
+  task_specific_reason: >-
+    The planned permission, source, response, and uncertainty paths can be stated
+    as predefined transitions for the described fictional task.
+  retained_alternatives:
+    - process-redesign-or-manual-assistance
+    - permission-aware-lookup-or-search
+    - deterministic-rules-or-conventional-automation
+    - single-call-model-assistance
+  rejected_or_not_selected_alternatives:
+    - alternative_id: traditional-ml-predictor-or-router
+      reason: No established prediction target, usable labels, or maintained outcome data in the illustrative record.
+    - alternative_id: adaptive-follow-up-agent
+      reason: No evidence yet shows task-relevant added value beyond a fixed workflow.
+  revisit_when:
+    - Representative task evidence shows that the current process and simpler baselines do not meet the bounded user need.
+    - A fixed workflow’s predefined evidence steps are shown inadequate on comparable relevant cases.
+    - A model-directed action, sequence, or stopping choice has a stated task-relevant added-value hypothesis and a feasible evaluation plan.
+  approval_or_release_status: no-approval-or-release-asserted
+
+handoff_and_completion:
+  handoff_to_success_record:
+    - The bounded task and case-dependent outcomes that any selected design must support.
+    - The baseline and candidate claims that need separate measures and targets.
+  handoff_to_initial_scope_record:
+    - Plausible error effects, source and permission dependencies, and the no-write boundary.
+    - Any later adaptive action set or authority change requiring reassessment.
+  handoff_to_part_4:
+    - Shared task cases and constraints for a fair baseline/candidate comparison.
+    - The adaptive candidate’s proposed next-action, sequence, and stopping choices if it is evaluated.
+  completion_check:
+    alternatives_named_with_task_specific_rationale: false
+    simplest_plausible_baseline_identified: false
+    uncertainty_data_action_consequence_maintenance_and_evaluation_assessed: false
+    fixed_and_model_directed_transitions_distinguished: false
+    adaptive_added_value_claim_and_comparison_conditions_defined: false
+    evidence_handoff_ready: false
+    note: False values are placeholders in an illustrative unexecuted record, not failed evaluations or release findings.

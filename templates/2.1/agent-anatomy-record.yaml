@@ -1,0 +1,204 @@
+# Illustrative-only, unexecuted planning/build record. Fictional data; no secrets.
+template_version: 0.5.0-draft.2
+example_id: POLICY-BUILD-001
+use_case_id: internal-policy-assistance
+status: illustrative-unexecuted
+record_purpose: >-
+  Make the proposed responsibilities, bounded runtime shape, and review handoffs
+  visible for a fictional read-only policy-assistance candidate. This is not an
+  assembled configuration, runtime record, approval, deployment, or evaluation result.
+
+planning_context:
+  planning_record_id: POLICY-PLAN-001
+  proposal_state: proposed local review unit; not adopted
+  intended_task: >-
+    Answer a bounded internal policy question from approved, current,
+    requester-permitted evidence while communicating uncertainty.
+  excluded_capabilities:
+    - external_write
+    - approval
+  fictional_fixture_facts:
+    current_source: travel-policy-2026@2026-10-01
+    current_london_hotel_limit: GBP 220
+    superseded_source: travel-policy-2024-superseded@2024-01-01
+    superseded_london_hotel_limit: GBP 200
+    permitted_requester: employee-uk-104
+    denied_requester: contractor-uk-204
+  example_limit: >-
+    These fixture facts describe an illustrative controlled case, not actual
+    policy, a live permission decision, or an observed result.
+
+anatomy:
+  model_role: >-
+    Interpret the question and propose a bounded answer, clarification, terminal
+    outcome, or an allowlisted next step. Model output remains data until a
+    receiving boundary accepts it.
+  instruction_role: >-
+    Describe the task, evidence use, uncertainty behavior, and output form.
+    Instructions guide behavior and do not grant authority.
+  context_role: >-
+    Supply the request, permitted policy evidence, and necessary bounded
+    observations. Retrieval and persistent memory are not implied by this record.
+  runtime_control_role: >-
+    Assemble declared inputs, choose fixed transitions or evaluate a bounded
+    proposal, apply declared stopping behavior, and route accepted operations to
+    their protected execution boundaries.
+  output_boundary_role: >-
+    Validate the declared terminal-result shape before a caller or downstream
+    consumer accepts it. Structural validation does not prove semantic support or
+    an external effect.
+  optional_components:
+    retrieval: planned read-only evidence lookup only if separately admitted
+    persistent_memory: absent
+    external_tools: planned read-only policy evidence lookup only if separately admitted
+    skills: absent
+    durable_execution: absent
+    human_approval: absent
+
+configuration_and_state:
+  configuration_boundary:
+    status: not assembled
+    intended_contents:
+      - contract and output schema identity
+      - admitted capability declarations
+      - applicable model and instruction identities
+      - declared stopping behavior and resource policy
+    limit: >-
+      Exact effective-configuration and capability-manifest rules are owned by
+      Chapter 2.2 and are not asserted by this template.
+  run_state_boundary:
+    status: no runtime exists
+    possible_run_data:
+      - request reference
+      - trusted requester and scope context
+      - supplied source identities and status
+      - proposed next step and validation disposition
+      - bounded capability result or failure category
+      - terminal outcome
+    exclusion: >-
+      Run data does not add a capability, expand authority, change configuration,
+      or prove an external effect.
+
+action_and_authority_boundary:
+  model_may_propose:
+    - return_bounded_response
+    - request_clarification
+    - decline_when_access_is_denied
+    - locate_permitted_evidence_if_separately_admitted
+    - escalate_unresolved_conflict_if_declared
+  model_may_not_create:
+    - a new capability
+    - requester identity or permission
+    - source authority or currentness
+    - approval
+    - an external write
+  protected_operation_note: >-
+    Any protected read or other operation is evaluated at its execution boundary
+    from trusted identity and applicable policy. This record does not claim that
+    admission or authorization has occurred.
+  owner_handoff: Chapter 3.1 owns identity and authorization; Chapter 3.2 owns untrusted content/action boundaries.
+
+runtime_shape:
+  primary_shape: fixed response path with optional bounded read-only evidence lookup
+  fixed_path:
+    - receive question and trusted requester context
+    - assemble permitted current evidence or bounded absence result
+    - propose structured answer or terminal outcome
+    - validate terminal-result shape before return
+    - return declared terminal outcome
+  bounded_adaptive_alternative:
+    applicable_if: >-
+      The planning record later identifies task-relevant value in a model-directed
+      next-step choice while retaining the finite allowlist above.
+    proposal_handling: >-
+      Validate a proposed operation and use the protected boundary before any
+      admitted execution. A rejected proposal stays rejected data.
+  observations:
+    - candidate answer or structured request
+    - source identity, status, and permitted-scope result when supplied
+    - capability response or bounded failure when a capability is separately admitted
+  terminal_outcomes:
+    - complete
+    - needs_information
+    - declined
+    - failed
+  stopping_behavior: >-
+    Contract-specific stop conditions and resource limits remain declared in the
+    agent contract. No numeric default is supplied by this template.
+  observation_limit: >-
+    A tool proposal, admitted dispatch, returned response, and authoritative
+    external effect are separate possible observations. This read-only example
+    asserts none of them occurred.
+
+project_organization:
+  layout_status: illustrative only; no prescribed file tree
+  artifact_groups:
+    agent_definition:
+      decision: purpose, contract, configuration identity, and admitted bounds
+      evidence: anatomy record and contract reference
+    instructions:
+      decision: task guidance and revision identity
+      evidence: reviewable instruction artifact
+    context:
+      decision: permitted evidence/context assembly when needed
+      evidence: source and context decision record
+    capabilities:
+      decision: narrow external-interface or skill boundaries when enabled
+      evidence: reviewed capability contract and ownership record
+    runtime:
+      decision: transitions, proposal handling, stopping behavior, and validation
+      evidence: inspectable orchestration and terminal-result behavior
+    tests:
+      decision: relevant normal, boundary, and failure cases
+      evidence: planned cases only; no execution result asserted
+    docs:
+      decision: rationale, limitations, open questions, and handoffs
+      evidence: review notes and linked owner chapters
+  shared_executable_capabilities:
+    status: none declared for this illustrative candidate
+    future_record_fields:
+      capability_identity: null
+      named_maintainer: null
+      review_owner: null
+    limit: >-
+      Null fields are unresolved placeholders, not named owners or an assertion
+      that a shared executable capability was admitted.
+
+evidence_and_handoff:
+  proposed_local_review_evidence:
+    - anatomy record separates model proposal from runtime enforcement
+    - fixed path and bounded adaptive alternative preserve the read-only boundary
+    - terminal outcomes and stopping behavior are visible
+    - structural-output validation boundary is identified
+    - optional components are marked absent or conditional
+  evidence_limits:
+    - a record does not prove runtime control effectiveness
+    - fixture facts do not establish a live permission or policy decision
+    - a planned case does not establish an observed result
+  next_owner_chapters:
+    contract_and_effective_configuration: 2.2
+    instructions: 2.3
+    external_interfaces: 2.4
+    context_and_retrieval: 2.6
+    identity_and_authorization: 3.1
+    content_and_action_boundaries: 3.2
+    evaluation_evidence: Part 4
+    explicit_reasoning_or_execution_patterns: Part 6 when triggered
+    durable_or_effectful_execution: Part 7 when triggered
+
+open_questions:
+  accountable_owner: null
+  shared_capability_ownership: null
+  specific_model_policy: null
+  exact_output_schema: null
+  applicable_resource_policy: null
+  source_precedence_for_equal_authority_current_conflict: >-
+    unresolved; request clarification or escalation rather than automatically
+    selecting by date
+  untrusted_content_refusal_scope: >-
+    Chapter 3.2 policy review should clarify how BOUNDARY-04's required refusal,
+    escalation, or failure outcome applies when hostile content requests a
+    prohibited action but an otherwise permitted policy answer remains available.
+    This record preserves the permitted answer utility and does not alter that
+    cross-owner requirement.
+  adoption_decision: unresolved

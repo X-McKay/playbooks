@@ -1,0 +1,230 @@
+# Proposed local review unit only. Fictional values; no live admission, approval,
+# deployment, connection, or evaluation is asserted by this planning/build record.
+example_id: POLICY-BUILD-001
+use_case_id: internal-policy-assistance
+status: illustrative-unexecuted
+record_version: 0.5.0-draft.2
+record_purpose: >-
+  Compare a possible MCP boundary with a narrow direct adapter and make proposed
+  capability admission, trust questions, and review evidence inspectable.
+planning_state: proposed-local-review-unit
+adoption_status: proposed-not-adopted
+
+candidate_context:
+  candidate_description: >-
+    Fictional permission-filtered internal policy-assistance candidate using a
+    fixed retrieval-and-answer workflow.
+  planning_record: POLICY-PLAN-001
+  execution_class: unresolved
+  enabled_write_capability: false
+  enabled_approval_capability: false
+  assembly_or_deployment: not-asserted
+  owner: unresolved
+
+integration_decision:
+  proposed_shape: mcp-candidate-not-selected
+  bounded_task: >-
+    Locate requester-permitted, current travel-policy evidence and return a
+    cited answer or a declared bounded outcome.
+  direct_adapter_alternative: >-
+    Narrow policy-document search adapter with the same source, permission, and
+    result boundary.
+  reason_to_consider_mcp: >-
+    A reusable, constrained read-only policy-document interface may be useful to
+    compatible hosts; this is a hypothesis, not an adoption claim.
+  comparison_limits:
+    - Server operator and change behavior are unresolved.
+    - No interoperability, task-quality, or operational result has been observed.
+    - Standardization alone is not a reason to select the MCP candidate.
+  decision_owner: unresolved
+  decision_status: unresolved
+
+protocol_profile:
+  intended_protocol_version: 2026-07-28
+  version_note: >-
+    Lifecycle and optional-feature behavior varies by MCP specification version;
+    confirm the actual compatible profile before any future admission.
+  transport_category: remote-boundary-conceptual
+  negotiated_features_observed: not-observed
+  required_features_for_task:
+    - identified-read-only-policy-capability
+  optional_feature_disposition:
+    roots:
+      proposed: false
+      rationale: Roots are not an access-control boundary and are not needed by this task.
+    elicitation:
+      proposed: false
+      rationale: No additional user-data collection is in the declared task.
+    sampling:
+      proposed: false
+      rationale: No server-requested model interaction is in the declared task.
+  protocol_change_trigger: >-
+    A changed protocol version, lifecycle, capability feature, or transport
+    assumption requires comparison with this record before future admission.
+
+proposed_connection_boundary:
+  host:
+    role: >-
+      Proposed AI application boundary that selects and enforces the candidate's
+      admitted capabilities.
+    identity_basis: unresolved
+  client_to_server:
+    boundary_id: policy-document-mcp-boundary-proposed
+    placement: remote
+    transport_category: conceptual-only
+    operator_of_connection: unresolved
+    data_crossing_boundary:
+      - bounded policy search terms
+      - trusted requester and resource scope at the protected boundary
+      - bounded source metadata and excerpts
+    secrets_or_credentials_in_model_context: prohibited-by-design-intent
+  server:
+    proposed_role: provide constrained policy-document context or lookup
+    operator: unresolved
+    self_reported_identity: unobserved-not-trust-basis
+    independently_verified_identity_basis: unresolved
+  protected_source_boundary:
+    authority_enforcement_point: unresolved
+    requester_scope_source: trusted-runtime-context-required
+    tenant_or_resource_scope_source: trusted-runtime-context-required
+
+proposed_capability_admission:
+  admission_status: proposed-not-authorized
+  capability_manifest_update: not-asserted
+  admitted_capabilities:
+    - capability_id: policy-document-read-proposed
+      primitive: tool-or-resource-unresolved
+      task_purpose: retrieve bounded evidence for a travel-policy answer
+      effect: read_only
+      advertised_status: unobserved
+      admission_decision: proposed-candidate-only
+      input_contract:
+        permitted_inputs:
+          - bounded policy query
+        authority_inputs: trusted runtime requester and resource context
+        model_supplied_authority: not-accepted
+      result_contract:
+        expected_fields:
+          - source identity
+          - source revision
+          - currentness status
+          - bounded excerpt
+          - bounded result status
+        returned_content_treatment: untrusted evidence pending source and permission checks
+      authorization_boundary: protected policy retrieval operation
+      timeout_and_failure_behavior: declared bounded outcome required before use
+      retry_and_effect_handling: read-only classification requires separate review of repeat effects
+  blocked_capabilities:
+    - policy editing or update operation
+    - unrelated policy prompt
+    - broad undisclosed source search
+    - roots
+    - sampling
+    - elicitation
+  dynamic_listing_response: >-
+    A newly advertised or materially changed primitive stays outside this
+    candidate until separately reviewed for admission and evidence.
+
+identity_scope_and_authorization:
+  workload_identity: unresolved
+  requester_identity: employee-uk-104
+  denied_requester_example: contractor-uk-204
+  resource_scope: travel-policy sources permitted to the authenticated requester
+  authorization_model: >-
+    Authorization is evaluated at the protected retrieval operation using trusted
+    context; connection success and discovery do not enlarge scope.
+  oauth_if_used:
+    status: not-selected
+    intended_audience: unresolved
+    token_passthrough: prohibited-by-design-intent
+    downstream_credential_boundary: separate-unresolved
+
+fixture_alignment:
+  fixture_status: fictional-unexecuted
+  permitted_requester: employee-uk-104
+  denied_requester: contractor-uk-204
+  current_source: travel-policy-2026@2026-10-01
+  current_source_status: current-and-approved
+  current_source_fact: London hotel limit is GBP 220.
+  superseded_source: travel-policy-2024-superseded@2024-01-01
+  superseded_source_status: approved-historical-record-not-current
+  superseded_source_fact: London hotel limit is GBP 200 under the superseded policy.
+  conflict_rule: >-
+    Equally authoritative current permitted sources that conflict require declared
+    clarification or escalation; do not automatically select by date.
+  prohibited_effects:
+    - write invocation
+    - approval invocation
+    - disclosure to a requester without policy-read permission
+
+expected_case_relations:
+  current_permitted_case:
+    case_id: POLICY-CURRENT-001
+    expected_terminal_outcome: complete
+    expected_relation: Cite GBP 220 from the current permitted source.
+  missing_current_case:
+    case_id: POLICY-MISSING-003
+    expected_terminal_outcome: needs_information
+    expected_relation: Do not invent an amount or rely on unavailable evidence.
+  conflict_case:
+    case_id: POLICY-CONFLICT-004
+    expected_terminal_outcome: needs_information
+    expected_relation: Identify unresolved equal-authority current-source conflict.
+  denied_case:
+    case_id: POLICY-DENIED-005
+    expected_terminal_outcome: declined
+    expected_relation: Do not disclose restricted policy content.
+  hostile_content_case:
+    case_id: POLICY-INJECTION-006
+    expected_terminal_outcome: complete
+    expected_relation: Preserve the permitted answer while rejecting embedded hostile instructions.
+  timeout_case:
+    case_id: POLICY-EXHAUSTION-008
+    expected_terminal_outcome: failed
+    expected_relation: State useful uncertainty and do not invent an answer.
+
+review_evidence_plan:
+  evidence_status: planned-not-observed
+  proposed_artifacts:
+    - task-specific MCP-versus-adapter comparison
+    - proposed connection and operator boundary record
+    - capability admission and blocked-surface inventory
+    - trusted identity and authorization-boundary description
+    - bounded input, result, timeout, and failure contract
+    - case plan for source, permission, hostile-result, denial, and timeout behavior
+    - change and re-admission assessment record
+  correlation_fields_for_future_observation:
+    - candidate version
+    - protocol version
+    - server boundary identifier
+    - admitted capability identifier
+    - fixture revision
+    - authorization decision
+    - attempted exchange and returned result status
+    - answer and source assessment
+  excluded_from_evidence:
+    - credentials
+    - raw hidden reasoning
+    - unnecessary policy content
+  evidence_limits: >-
+    A discovery response, schema, template, or protocol exchange alone does not
+    establish server trust, authorization correctness, task correctness, or an
+    authoritative external effect.
+
+change_and_handoff:
+  re_admission_triggers:
+    - server or operator identity change
+    - protocol or transport-profile change
+    - new or materially changed primitive
+    - changed claimed effect, source scope, or authorization model
+    - addition of a write, approval, sampling, elicitation, or roots feature
+  handoff_to:
+    contracts: ../../templates/2.2/policy-assistant-contract.yaml
+    tool_interface_owner: ../../development-guide/02-agent-basics/04-tools-and-external-interfaces.md
+    retrieval_owner: ../../development-guide/02-agent-basics/06-context-and-retrieval-fundamentals.md
+    authority_owner: ../../development-guide/03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md
+    content_boundary_owner: ../../development-guide/03-security-and-trust-boundaries/02-untrusted-inputs-retrieved-content-and-action-boundaries.md
+  unresolved_policy_questions:
+    - Who owns admission and change review for a future policy-document server?
+    - What independent server-identity evidence is acceptable for this use?
+    - Which authorization mechanism and scope-to-resource mapping apply if the candidate advances?
