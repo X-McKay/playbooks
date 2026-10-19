@@ -10,15 +10,15 @@
 
 ## Start with the right prerequisite
 
-Begin with [Part 1](../01-problem-definition-and-planning/README.md) if the user need, bounded task, expected value, alternatives, scope, initial risk, or ownership is unclear. Use this Part once that plan gives a candidate a reviewable purpose. Continue to [Part 3](../03-security-and-trust-boundaries/README.md) before treating identity, authority, hostile content, retention, or audit handling as settled. Use [Part 4](../04-testing-and-evaluation/README.md) to turn a design claim into evidence; a filled record is not evidence of effectiveness.
+Begin with [Part 1](../01-problem-definition-and-planning/README.md) if the user need, bounded task, expected value, alternatives, scope, initial risk, or ownership is unclear. Continue to [Part 3](../03-security-and-trust-boundaries/README.md) before treating identity, authority, hostile content, retention, or audit handling as settled. Use [Part 4](../04-testing-and-evaluation/README.md) to turn a design claim into evidence; a filled record is not evidence of effectiveness.
 
 ## Routes through this mini-book
 
 **Learner route.** Read [2.1](01-agent-anatomy-runtime-loop-and-project-organization.md), [2.2](02-agent-contracts-and-configuration.md), and [2.3](03-prompts-and-instructions.md) in order. Then take one optional branch when relevant: [2.4](04-tools-and-external-interfaces.md), [2.5](05-skills-and-reusable-capabilities.md), [2.6](06-context-and-retrieval-fundamentals.md), or [2.7](07-mcp-and-standardized-integrations.md).
 
-**Builder route.** Start a design record with [2.2](02-agent-contracts-and-configuration.md), use [2.1](01-agent-anatomy-runtime-loop-and-project-organization.md) to make implementation responsibilities inspectable, and use [2.3](03-prompts-and-instructions.md) to identify instructions. Add records only for capabilities you propose, then hand authority and data questions to Part 3 and claims and evidence to Part 4.
+**Builder route.** Start a design record with [2.2](02-agent-contracts-and-configuration.md), use [2.1](01-agent-anatomy-runtime-loop-and-project-organization.md) to make implementation responsibilities inspectable, and use [2.3](03-prompts-and-instructions.md) to identify instructions. Add records only for capabilities you propose.
 
-**Reviewer route.** Begin at [2.2](02-agent-contracts-and-configuration.md): find the effective configuration, terminal outcomes, permitted capability set, and unresolved fields. Trace the runtime boundary in [2.1](01-agent-anatomy-runtime-loop-and-project-organization.md), then inspect each enabled optional capability in its chapter. Confirm that no instruction, schema, package, discovery response, or model output has been treated as authorization or as proof of an external effect.
+**Reviewer route.** Begin at [2.2](02-agent-contracts-and-configuration.md): find the effective configuration, terminal outcomes, permitted capability set, and unresolved fields. Trace the runtime boundary in [2.1](01-agent-anatomy-runtime-loop-and-project-organization.md), then inspect each enabled optional capability in its chapter. Confirm that no instruction, schema, package, discovery response, or model output is treated as authorization or proof of an external effect.
 
 ## Canonical topic sequence
 
@@ -32,6 +32,6 @@ Begin with [Part 1](../01-problem-definition-and-planning/README.md) if the user
 
 ## Practical workflow and artifact index
 
-Build the design record in this order: the [anatomy record](../../templates/2.1/agent-anatomy-record.yaml) and the [contract record](../../templates/2.2/policy-assistant-contract.yaml) first, then the [instruction record](../../templates/2.3/instruction-design-record.yaml), then only the applicable [tool](../../templates/2.4/tool-contract.yaml), [skill](../../templates/2.5/skill-admission-record.yaml), [context/source](../../templates/2.6/context-source-record.yaml), or [MCP integration](../../templates/2.7/mcp-integration-record.yaml) record. Send protected-operation and data questions to Part 3, testable claims and fixtures to Part 4, and durable or consequential work to Part 7 when its trigger exists.
+Build the design record in this order: the [anatomy record](../../templates/2.1/agent-anatomy-record.yaml) and the [contract record](../../templates/2.2/policy-assistant-contract.yaml) first, then the [instruction record](../../templates/2.3/instruction-design-record.yaml), then only the applicable [tool](../../templates/2.4/tool-contract.yaml), [skill](../../templates/2.5/skill-admission-record.yaml), [context/source](../../templates/2.6/context-source-record.yaml), or [MCP integration](../../templates/2.7/mcp-integration-record.yaml) record. Send protected-operation and data questions to Part 3, testable claims to Part 4, and durable or consequential work to Part 7 when triggered.
 
 The [Part 2 practical reference](reference/README.md) shows how these artifacts fit together in one fictional example and owns no requirement IDs. The [glossary](../../glossary.md#part-2-and-part-3-foundations) points to local explanations, and the [requirement index](../../requirement-index.md#part-2--agent-basics) locates each requirement.

@@ -6,7 +6,7 @@
 
 This reference owns **no requirement IDs**. If this page or a template is shorter than a requirement, the chapter's `## Requirements` section controls. The records share a fictional `POLICY-BUILD-001` / `internal-policy-assistance` example and are `illustrative-unexecuted`: they describe a design, not an assembly, admission, evaluation, deployment, or external effect.
 
-## Build one bounded design packet
+## Build one bounded design
 
 1. **Make the candidate understandable.** Use [2.1](../01-agent-anatomy-runtime-loop-and-project-organization.md) with the [agent anatomy record](../../../templates/2.1/agent-anatomy-record.yaml). Say which responsibility belongs to the model, the runtime, configuration, per-run state, and the boundary that observes a terminal result.
 2. **Declare the contract before enabling a capability.** Use [2.2](../02-agent-contracts-and-configuration.md) with the [policy-assistant contract](../../../templates/2.2/policy-assistant-contract.yaml). Carry forward the task, terminal outcomes, trusted dependencies, desired versus effective capability information, and unresolved fields.
@@ -16,6 +16,6 @@ This reference owns **no requirement IDs**. If this page or a template is shorte
 
 ## Practical review use
 
-Keep the packet consistent: a capability named in the contract needs a matching record, and an absent capability must not look available because a package exists or a server advertises it. Current or superseded source status and requester permission are facts enforced at their owners' boundaries. A fixed workflow may use these artifacts; a bounded adaptive alternative may choose among an explicitly admitted finite set. Neither removes the need for Part 3 controls or Part 4 evidence.
+Keep the records consistent: a capability named in the contract needs a matching record, and an absent capability must not look available because a package exists or a server advertises it. Current or superseded source status and requester permission are facts enforced at their owners' boundaries. A fixed workflow may use these artifacts; a bounded adaptive alternative may choose among an explicitly admitted finite set. Neither removes the need for Part 3 controls or Part 4 evidence.
 
 Use the records to expose unknowns, not to fill them with defaults. In the example, the source conflict is a clarification or escalation condition, and the assistant has no write or approval capability. See the [Part 2 overview](../README.md) for routes through the chapters and [Applicability](../../../applicability.md) before treating an optional mechanism as required.
