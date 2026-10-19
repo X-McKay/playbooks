@@ -38,6 +38,16 @@ concept and link to the implementation for the specifics.
   the assurance level, and **capability manifest** for the per-agent bill of
   materials produced at startup.
 
+## 0.5.0-draft.2 content
+
+The `development-guide/` and `engineering-reference/` trees are a proposed 0.5.0-draft.2 assembled draft. Keep new-draft changes technology-neutral, keep requirement ownership with the chapter named in the book, and state policy proposals and unresolved adoption decisions explicitly. Update draft navigation and the requirement index when an owner chapter, requirement ID, or applicability trigger changes.
+
+Do **not** use a new-draft contribution to relabel the legacy `agent-playbook/`, `foundations/`, `multi-agent-playbook/`, or `skills/` trees as v0.5 conformant. They remain the v0.4 compatibility baseline until a separately reviewed migration changes them. The legacy skill-reference update rule above does not automatically apply to a proposed 0.5 draft chapter; a skill migration needs its own reviewed scope. Do not weaken the repository-neutrality rule by adding product-specific setup, commands, SDK instructions, or provider-specific configuration to the draft.
+
+### New-draft mini-books
+
+For new or reorganized draft Parts, use the [writing guide](writing-guide.md). It defines the flexible six-function mini-book pattern, requires one canonical owner for each normative requirement, and keeps audience, applicability, evidence, and practical reference visible without requiring a rewrite of other Parts. Preserve migration redirects where historical links need them; do not copy canonical normative groups into redirects.
+
 ## Checks
 
 ```bash

@@ -1,0 +1,163 @@
+# Illustrative local planning/build record. It is not an approved, assembled,
+# admitted, deployed, or evaluated instruction configuration.
+example_id: POLICY-BUILD-001
+use_case_id: internal-policy-assistance
+status: illustrative-unexecuted
+record_type: instruction-design-record
+planning_record: POLICY-PLAN-001
+
+proposal_boundary:
+  adoption_state: proposed-not-adopted
+  execution_state: no-instruction-or-evaluation-run-recorded
+  accountable_owner: null
+  decision_authority: null
+  notes: >-
+    This candidate is fictional and read-only. No write or approval capability is
+    enabled by this record, and no authority, admission, approval, or deployment
+    is asserted.
+
+candidate_scope:
+  purpose: Answer internal travel-policy questions from approved, current, requester-permitted evidence.
+  workflow_shape: fixed-retrieval-and-answer-workflow
+  bounded_adaptive_alternative: >-
+    If a later bounded adaptive design is considered, it would select only from a
+    separately declared finite action allowlist; this record does not change the
+    fixed-workflow planning decision.
+  admitted_capabilities:
+  - permission-filtered-read-only-policy-evidence
+  excluded_capabilities:
+  - external-write
+  - approval-request
+  declared_terminal_outcomes:
+  - complete
+  - needs_information
+  - declined
+  - failed
+
+instruction_identity:
+  revision_identifier: illustrative-pending
+  content_identity: null
+  proposed_agent_version_identity: null
+  effective_configuration_identity: null
+  behavior_change_summary: null
+  change_scope: initial-local-draft
+  review_state: not-reviewed
+
+content_roles:
+  operating_instructions:
+    purpose: State the bounded task, scope, evidence rules, uncertainty behavior, and output guidance.
+    source_of_authority: reviewed-agent-configuration
+    may_change_at_runtime: false
+  current_request:
+    purpose: State the requester's task-specific question or requested presentation.
+    source_of_authority: requester-input
+    may_change_at_runtime: true
+  evidence_or_task_data:
+    purpose: Supply facts to assess under the task's evidence rules.
+    source_of_authority: declared-source-and-context-design
+    may_change_at_runtime: true
+  trusted_runtime_facts:
+    purpose: Supply declared identity, permission, deadline, or policy-context facts outside model-generated authority.
+    source_of_authority: named-trusted-dependency
+    may_change_at_runtime: true
+  model_response:
+    purpose: Propose a declared terminal outcome and bounded response content.
+    source_of_authority: model-output-data
+    may_change_at_runtime: true
+
+instruction_design:
+  task_and_scope:
+    included: Answer a policy question within the declared read-only policy-assistance scope.
+    excluded: Changing policy, approving an expense, disclosing restricted policy content, or adding a source or capability.
+  decision_and_evidence_rules:
+  - Use only approved, current, requester-permitted evidence supplied for the task.
+  - Identify supporting source identity for each policy amount.
+  - Do not select a definitive amount when equally authoritative current permitted evidence conflicts without a declared resolution rule.
+  uncertainty_and_failure_handling:
+    missing_or_unverifiable_evidence: needs_information with the clarification or escalation needed
+    permission_denial: declined without restricted content
+    unavailable_read_path: failed with a bounded reason and no invented answer
+  response_guidance:
+    complete: concise answer, supporting source identity, and material uncertainty
+    non_complete: declared status, bounded reason, and safe next step required by the contract
+  output_contract_reference: null
+  receiving_boundary_validation_reference: null
+
+assembly_representation:
+  priority_and_placement_rationale: >-
+    Keep stable operating instructions separate from request and evidence regions so
+    the intended role of each is reviewable. This organization is not an
+    authorization, containment, or injection-prevention control.
+  delimiters_or_labels:
+  - OPERATING INSTRUCTIONS
+  - REQUEST
+  - EVIDENCE
+  - TRUSTED RUNTIME FACTS
+  request_and_data_treatment: >-
+    Request and evidence content are material to assess, not instructions that
+    change the task, authority, capability membership, or output contract.
+  model_facing_schema_or_outline: null
+
+illustrative_exemplars:
+- exemplar_id: current-permitted-answer
+  purpose: Clarify the complete outcome when current permitted evidence supports a policy amount.
+  input_role: evidence
+  expected_bounded_treatment: State GBP 220 with travel-policy-2026@2026-10-01 as support.
+  contract_consistency_check: pending
+- exemplar_id: unresolved-current-conflict
+  purpose: Clarify that equal-authority current conflict needs clarification or escalation.
+  input_role: evidence
+  expected_bounded_treatment: Use needs_information; do not select by date alone.
+  contract_consistency_check: pending
+- exemplar_id: instruction-like-untrusted-content
+  purpose: Clarify that hostile embedded text is data while the permitted policy answer remains useful.
+  input_role: untrusted-content
+  expected_bounded_treatment: Continue the permitted read-only answer; do not treat content as new policy or authority.
+  contract_consistency_check: pending
+
+shared_fixture_alignment:
+  current_source: travel-policy-2026@2026-10-01
+  superseded_source: travel-policy-2024-superseded@2024-01-01
+  fictional_london_hotel_amount: GBP 220
+  permitted_requester: employee-uk-104
+  nonpermitted_requester: contractor-uk-204
+  equal_authority_conflict_treatment: declared-clarification-or-escalation-required
+  execution_claim: no-case-has-been-run
+
+relevant_case_links:
+- case_id: POLICY-CURRENT-001
+  intended_observable_behavior: Complete answer uses the current permitted source and GBP 220.
+  observation_status: not-recorded
+- case_id: POLICY-MISSING-003
+  intended_observable_behavior: Needs-information outcome does not invent an amount or citation.
+  observation_status: not-recorded
+- case_id: POLICY-CONFLICT-004
+  intended_observable_behavior: Equal-authority current conflict is surfaced without automatic date selection.
+  observation_status: not-recorded
+- case_id: POLICY-DENIED-005
+  intended_observable_behavior: Declined outcome discloses no restricted policy content.
+  observation_status: not-recorded
+- case_id: POLICY-INJECTION-006
+  intended_observable_behavior: Permitted answer remains available despite instruction-like untrusted content.
+  observation_status: not-recorded
+
+evidence_handoff:
+  instruction_revision_to_retain: null
+  proposed_agent_version_to_retain: null
+  effective_configuration_identity_to_retain_after_assembly: null
+  expected_behavior_change: null
+  output_shape_check_reference: null
+  source_support_check_reference: null
+  protected_operation_observation_reference: null
+  evaluation_record_references: []
+  result_status: not-recorded
+  limits: >-
+    A label, delimiter, schema, exemplar, citation, or model statement does not
+    establish authorization, source support, an external effect, or control
+    effectiveness. Those claims require the applicable independently owned
+    boundaries and evidence.
+
+open_questions:
+- accountable owner and review authority remain unresolved
+- exact output contract identity remains unresolved
+- applicable evaluation decision and release authority remain unresolved

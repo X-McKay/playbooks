@@ -1,0 +1,144 @@
+# Illustrative, unexecuted planning/build record. It does not grant a capability,
+# name an accountable owner, prove an effective configuration, or establish approval.
+
+example_id: POLICY-BUILD-001
+use_case_id: internal-policy-assistance
+status: illustrative-unexecuted
+
+contract_version: null # Unresolved until the proposed contract is versioned.
+agent_version: null # Unresolved; assign for a behavior-changing candidate.
+owner: null # Unresolved accountable owner; construction must fail closed while absent.
+purpose: Answer an internal policy question from permitted, current policy evidence.
+
+declared_execution_class: ephemeral # Illustrative read-only candidate; no approval path.
+governance_tier: null # Obtain from the referenced risk record; do not infer it here.
+risk_record_identity: null # Required immutable reference; unresolved in this template.
+
+caller_input:
+  question:
+    required: true
+    type: text
+  requested_response_format:
+    required: false
+    type: bounded_preference
+
+trusted_runtime_dependencies:
+  request_id:
+    type: opaque_identifier
+    source: trusted_request_boundary
+  requester_identity:
+    type: authenticated_principal_reference
+    source: trusted_identity_boundary
+  permitted_source_scope:
+    type: protected_retrieval_authorization_decision
+    source: protected_operation_boundary
+  tenant_or_resource_scope:
+    type: authenticated_scope_reference
+    source: trusted_identity_boundary
+    applicability: when_the_use_is_scoped
+  deadline:
+    type: bounded_runtime_deadline
+    source: trusted_runtime_policy
+  prohibited_sources: [request_body, model_output, retrieved_content]
+
+declared_configuration:
+  model_policy:
+    declared_identity: null
+    resolved_identity: null
+    resolved_settings_identity: null
+  instruction_identity: null
+  output_schema_identity: null
+  source_policy_identity: null
+  budget_policy:
+    request_bound: null
+    model_token_bound: null
+    tool_call_bound: null
+    time_bound: null
+    cost_bound: null
+    enforcement_location: null
+  desired_capabilities:
+    - id: permission-filtered-policy-retrieval
+      category: retrieval
+      intended_effect: read_only
+      requested_source_evidence: travel-policy-2026@2026-10-01
+      admission_status: desired-not-admitted
+      resolved_immutable_identity: null
+      capability_owner: null
+  skills: []
+  external_write_capability: false
+  approval_capability: false
+
+runtime_state:
+  may_change_during_a_run:
+    - request_id
+    - authenticated_scope_reference
+    - permitted_source_identifiers
+    - usage_counters
+    - terminal_outcome
+  must_not_contain: [raw_secrets, unsafe_live_clients]
+  must_not_modify: [declared_configuration, declared_execution_class, capability_admission]
+
+output_contract:
+  required_fields: [status, answer_or_reason, citations, uncertainty]
+  terminal_outcomes:
+    complete:
+      bounded_content: supported_answer_with_relevant_source_identifiers
+      caller_handling: consume_only_after_output_validation
+    needs_information:
+      bounded_content: missing_or_unresolved_evidence_and_safe_next_step
+      caller_handling: request_clarification_or_route_to_declared_escalation
+    declined:
+      bounded_content: unavailable_or_out_of_scope_request_without_protected_content
+      caller_handling: do_not_treat_as_a_supported_answer
+    failed:
+      bounded_content: bounded_failure_reason_without_invented_answer
+      caller_handling: follow_declared_failure_handling
+  additional_outcomes: []
+  proposed_action_treatment: data_until_a_separately_authorized_path_accepts_it
+
+construction_validation:
+  construction_status: blocked-until-required-fields-and-resolutions-are-present
+  fail_closed_when:
+    - owner_or_required_identity_is_missing_or_invalid
+    - governance_tier_does_not_match_the_risk_record
+    - a_required_model_policy_budget_or_output_schema_is_missing
+    - a_capability_is_unknown_duplicate_unresolved_or_not_explicitly_admitted
+    - declared_execution_class_is_below_the_enabled_capability_floor
+    - trusted_dependency_provenance_or_output_contract_is_invalid
+  output_validation: validate_received_value_against_declared_output_schema_before_use
+
+effective_capability_manifest:
+  creation: only_after_successful_construction
+  manifest_id: null
+  immutable_fields_or_digests:
+    - contract_version
+    - agent_version
+    - risk_record_identity
+    - declared_execution_class
+    - governance_tier
+    - resolved_model_policy_and_settings
+    - instruction_identity
+    - output_schema_identity
+    - admitted_capability_membership_and_resolved_identities
+    - source_policy_identity
+    - budget_policy
+    - construction_identity
+  record_manifest_id_with: [relevant_evaluation_evidence, observable_runtime_records]
+  limit: A manifest identity binds the recorded effective configuration; it does not prove validity, authorization, source truth, or control effectiveness.
+
+material_change_record:
+  changes_requiring_new_agent_version_and_effective_identity:
+    - model_policy_or_settings
+    - enabled_capability
+    - output_contract
+    - budget_policy
+    - instruction_revision
+  evaluation_status: not_run
+
+illustrative_fixture_context:
+  permitted_requester: employee-uk-104
+  denied_requester: contractor-uk-204
+  current_source: travel-policy-2026@2026-10-01
+  superseded_source: travel-policy-2024-superseded@2024-01-01
+  london_hotel_amount: GBP 220
+  note: Approved admission alone does not establish currentness or requester permission.

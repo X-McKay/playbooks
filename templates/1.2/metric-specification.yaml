@@ -1,0 +1,33 @@
+# Reusable metric specification; placeholders are not live measurements.
+metric_name: <stable_metric_name>
+claim_type: <user_business_success|task_quality|safety|reliability|latency|economics>
+intended_decision: <what decision this metric informs>
+
+population: <eligible tasks, users, environment, candidate version, and period>
+unit_of_analysis: <one request, task, user session, or other defined unit>
+numerator: <precise count or sum of qualifying outcomes>
+denominator: <precise count or sum of eligible opportunities>
+measurement_method: <data source, evaluator, and calculation>
+
+baseline:
+  status: <measured|not_available>
+  comparable_population: <how baseline conditions match the candidate>
+  value: <measured_value_or_pending>
+  method: <how the baseline was measured>
+
+target: <threshold and direction; set before candidate results are reviewed>
+critical_slices:
+  - <slice_name_and_separate_acceptance_rule>
+report_separately:
+  - <timeouts, refusals, escalations, invalid observations, retries, or other relevant outcomes>
+exclusion_rules: <predeclared eligibility and invalidation rules>
+insufficient_evidence_consequence: <how missing or inadequate evidence affects the decision>
+owner: <accountable role or person>
+reviewed_with: <user, domain, or risk owners who agreed the definition>
+
+# For a non-compensable safety claim, define a separate gate rather than blending it into quality.
+hard_gate:
+  applies: <true|false>
+  prohibited_event: <observable violation>
+  required_test_population: <cases and attempts to which the gate applies>
+  acceptance_rule: <predeclared pass/fail condition>

@@ -1,0 +1,179 @@
+# Example only — replace every illustrative value after an accountable review.
+# This file contains no live findings, credentials, or real sensitive data.
+schema_version: 1
+example_only: true
+
+assessment:
+  agent: internal-policy-assistant # Example identifier only.
+  agent_version: 0.5.0-draft # Example version only.
+  assessment_version: 0.1.0
+  status: draft # draft | approved | rejected | retired
+  assessed_at: "replace-with-YYYY-MM-DD"
+  review_by: "replace-with-YYYY-MM-DD"
+  prepared_by: replace-with-accountable-team
+  approved_by: []
+
+scope:
+  intended_use: >-
+    Answer internal policy questions from approved, current,
+    permission-filtered documents and return citations and uncertainty.
+  prohibited_uses:
+    - Present a source as current when authoritative support is unavailable.
+    - Access documents outside the authenticated user's permitted scope.
+    - Execute external writes or consequential actions.
+  users:
+    - internal-policy-users
+  affected_parties:
+    - employees
+    - policy-owners
+  environments:
+    - replace-with-assessed-environment
+  jurisdictions:
+    - replace-with-applicable-jurisdictions
+  execution_class: ephemeral
+
+dimension_review:
+  financial:
+    status: applicable
+    rationale: Incorrect policy guidance can lead to unsupported expense decisions.
+  operational:
+    status: applicable
+    rationale: Incorrect answers can disrupt policy and expense-support processes.
+  reputational:
+    status: applicable
+    rationale: Unsupported answers can reduce trust in internal guidance.
+  legal:
+    status: review-required
+    rationale: Applicable duties require accountable review; this example does not decide them.
+  security:
+    status: applicable
+    rationale: Permission-filtered documents and tenant or user boundaries must be enforced.
+  privacy:
+    status: applicable
+    rationale: Policy documents or questions can contain information with handling constraints.
+  regulatory:
+    status: review-required
+    rationale: Applicable regimes require accountable review; scoring is not a classification.
+  human_impact_safety:
+    status: considered
+    rationale: This example has no asserted material safety impact; reassess if use changes.
+
+regulatory_screen:
+  prohibited_use: false # Example value only; determine before scoring.
+  applicable_regimes: [] # Populate only after the accountable applicability review.
+  required_reviews:
+    - legal-or-compliance
+    - privacy
+    - security
+  governance_floors: [] # Record binding legal, policy, or capability floors.
+  notes: >-
+    Example only. Record jurisdictions, sectors, contractual duties, internal policies,
+    named reviewers, unresolved applicability, and the outcome of the screen.
+
+classification:
+  governance_tier: medium # Example result; derive from inherent tier and all floors.
+  maximum_inherent_tier: medium
+  maximum_residual_tier: low
+  decision: conditional_go # go | conditional_go | no_go
+  rationale: >-
+    Example only. Conditional release is permitted only after required pre-release
+    evidence is complete; the listed condition is a noncritical post-release review.
+
+scenarios:
+  - id: RISK-CONTEXT-001
+    title: Superseded travel-policy guidance presented as current
+    status: open
+    statement: >-
+      Because a superseded travel-policy document remains eligible for retrieval,
+      the assistant could cite it as current and state an incorrect London hotel
+      allowance, causing an employee to make an unsupported expense decision and
+      creating financial, operational, and trust harm.
+    primary_dimension: financial
+    secondary_dimensions:
+      - operational
+      - reputational
+    affected_parties:
+      - employees
+      - policy-owners
+    affected_assets:
+      - current-policy-guidance
+      - expense-decisions
+    causes:
+      - missing-current-status-filter
+      - stale-retrieval-index
+    preconditions:
+      - a superseded document remains in the approved corpus
+      - model context includes the superseded document
+    consequences:
+      - an answer cites a source that does not support its claim of current policy
+      - an employee may submit an unsupported expense request
+    inherent:
+      impact: 2
+      likelihood: 3
+      tier: medium
+      confidence: medium
+      rationale: >-
+        Example assessment: contained expense harm is plausible if current-status
+        filtering fails. This is not a measured incident rate.
+    controls:
+      - id: CTRL-CONTEXT-001
+        type: preventive # preventive | detective | recovery
+        description: >-
+          Filter retrieval to approved, current, permission-filtered documents and
+          enforce the permission boundary independently of model output.
+        owner: replace-with-context-owner
+        evidence:
+          - evals/cases/travel-policy-current.yaml
+          - tests/retrieval/current-status-filter
+        effectiveness: verified # planned | implemented | verified | ineffective
+      - id: CTRL-OBS-001
+        type: detective
+        description: >-
+          Record source identity and current-status failures; alert the named owner
+          for review and follow the linked response runbook.
+        owner: replace-with-operations-owner
+        evidence:
+          - operations/indicators/current-source-status
+          - operations/runbooks/stale-policy-guidance.md
+        effectiveness: verified # planned | implemented | verified | ineffective
+    residual:
+      impact: 2
+      likelihood: 1
+      tier: low
+      confidence: medium
+      rationale: >-
+        Example assessment: verified controls reduce likelihood, while the credible
+        impact of a failure remains unchanged.
+    treatment: mitigate # avoid | mitigate | transfer | accept
+    owner: replace-with-risk-owner
+    eval_cases:
+      - travel-policy-current
+    indicators:
+      - current_source_status_failure_count
+    alerts:
+      - any answer asserting current policy without a current source
+    runbook: operations/runbooks/stale-policy-guidance.md
+
+acceptance:
+  accountable_role: replace-with-designated-risk-authority
+  accepted_scenarios: []
+  conditions:
+    - id: CONDITION-001
+      requirement: >-
+        Review the current-source-status indicator after the policy-defined initial
+        operating period; this condition does not replace required pre-release evidence.
+      owner: replace-with-operations-owner
+      due_by: "replace-with-YYYY-MM-DD"
+      monitoring_signal: current_source_status_failure_count
+      overdue_consequence: Stop rollout expansion and reassess the scenario.
+  expires_at: "replace-with-YYYY-MM-DD"
+  rationale: >-
+    Example only. Name the accountable authority, rationale, expiry, and next review.
+
+assumptions:
+  - The document source can identify approved and current versions.
+  - Permission filters are enforced independently of model output.
+
+open_questions:
+  - Which jurisdiction-specific or contractual obligations apply to this use?
+  - Does any enabled capability introduce an additional governance floor?

@@ -1,0 +1,197 @@
+# Illustrative, unexecuted authority-boundary record for Chapter 3.1.
+# Adapt the fields to an actual proposed use. This record is not admission,
+# approval, deployment evidence, a live authorization decision, or policy adoption.
+example_id: POLICY-BUILD-001
+use_case_id: internal-policy-assistance
+status: illustrative-unexecuted
+record_version: illustrative-0.5.0-draft.2
+planning_record_ref: POLICY-PLAN-001
+record_purpose: >-
+  Make the proposed authority boundary reviewable for a fictional, permission-filtered,
+  read-only policy-assistance candidate. It does not enable or exercise a capability.
+
+boundary_statement:
+  proposed_task: >-
+    Help an eligible requester obtain a source-grounded answer about an internal policy,
+    or return a declared bounded outcome when permitted current evidence is missing,
+    inaccessible, conflicting, or unavailable.
+  proposed_execution_boundary: >-
+    Read only requester-permitted policy evidence through a protected retrieval boundary.
+    No record change, external posting, approval, reimbursement, or spending action is proposed.
+  boundary_status: candidate-design-record-not-an-observation
+  policy_adoption_status: proposed-draft-not-adopted
+
+identities_and_context:
+  workload:
+    identity_reference: not-yet-determined
+    trusted_provenance: not-yet-determined
+    autonomous_authority_question: >-
+      Determine the narrow workload authority needed to request permission-filtered,
+      read-only policy evidence; do not use a developer or unrelated workload credential.
+  requester:
+    identity_reference: employee-uk-104
+    trusted_provenance: controlled-fixture-authenticated-context-only
+    fixture_access:
+      permitted_source_ids:
+        - travel-policy-2026@2026-10-01
+        - travel-policy-2024-superseded@2024-01-01
+    delegated_authority_question: >-
+      Determine how an actual implementation carries authenticated requester scope to
+      protected retrieval without exposing reusable credentials to model context.
+  denied_requester_variant:
+    identity_reference: contractor-uk-204
+    trusted_provenance: controlled-fixture-authenticated-context-only
+    fixture_access: no-travel-policy-read-permission
+    expected_boundary_relation: >-
+      Restricted policy material is not retrieved or disclosed; the declared result is declined.
+  resource_context:
+    collection_reference: controlled-fictional-policy-fixture
+    current_source_id: travel-policy-2026@2026-10-01
+    superseded_source_id: travel-policy-2024-superseded@2024-01-01
+    source_status_in_fixture:
+      current_source: current-and-approved
+      superseded_source: superseded-approved-historical-record
+    tenant_or_equivalent_scope: not-yet-determined
+    data_classification: not-yet-determined
+    note: >-
+      Source currentness and approval do not by themselves grant workload or requester access.
+
+admitted_boundary_shape:
+  capabilities:
+    - capability: retrieve-requester-permitted-policy-evidence
+      proposed_operation: read
+      proposed_resource_scope: controlled-fictional-policy-fixture-with-requester-permission-filter
+      permitted_data_use: answer-grounding-only
+      permitted_destinations:
+        - declared-bounded-response
+      excluded_destinations:
+        - unrestricted-network-egress
+        - external-posting
+        - unbounded-export
+      proposed_effect: read-only; disclosure risk remains
+      admission_status: illustrative-not-enabled
+  intentionally_absent_capabilities:
+    - modify-policy-or-other-record
+    - approve-spending-or-reimbursement
+    - unrestricted-document-store-access
+    - arbitrary-execution-interface
+    - external-write-or-posting
+  approval:
+    approval_capability_enabled: false
+    approval_state_or_record: not-applicable-to-read-only-candidate
+    future_change_question: >-
+      A proposed consequential action requires separate authority, approval, execution,
+      and effect-boundary review.
+
+authorization_decision_design:
+  authority_mode: requester-delegated-read-scope-with-narrow-workload-capability
+  protected_operation:
+    action: retrieve-policy-evidence
+    resource_selector: normalized-policy-source-or-document-reference
+    requested_properties: task-needed-bounded-excerpt-and-source-metadata
+    destination: declared-bounded-response-path
+  trusted_decision_inputs:
+    workload_identity: unresolved-trusted-source-required
+    requester_identity_and_scope: controlled-fixture-authenticated-context-only
+    resource_and_source_attributes: controlled-fixture-source-metadata-only
+    applicable_policy_identity_or_freshness_signal: not-yet-determined
+  untrusted_or-insufficient_inputs:
+    - model-generated-identity-tenant-or-scope
+    - request-body-or-user-claimed-permission
+    - retrieved-instruction-or-tool-result
+    - source-discoverability-or-prior-success
+    - approval-record-for-another-action
+  normalization_and_revalidation:
+    resource_reference: normalize-and-validate-before-the-protected-operation
+    changed_target_or_destination: require-a-new-operation-specific-decision
+    policy_or-scope-change: re-evaluate-current-authority-before-access
+  proposed_decision_outcomes:
+    allowed: return-only-task-needed-permitted-evidence
+    denied: do-not-return-restricted-content
+    missing_invalid_stale_or_unavailable: do-not-broaden-access; use-the-declared-bounded-outcome
+  observability_boundary: >-
+    Retain only the minimum reviewable decision facts and configuration/policy identities
+    allowed by applicable handling policy; exclude credentials, unnecessary source bodies,
+    and raw hidden reasoning.
+
+fixture_behavior_relations:
+  permitted_current_case:
+    case_id: POLICY-CURRENT-001
+    requester: employee-uk-104
+    expected_source: travel-policy-2026@2026-10-01
+    expected_relation: >-
+      A complete response may state GBP 220 only from the current approved source available
+      to the requester; no write invocation is proposed.
+    evidence_status: expected-fixture-relation-not-an-executed-result
+  conflict_case:
+    case_id: POLICY-CONFLICT-004
+    expected_relation: >-
+      Equally authoritative current requester-permitted sources that conflict require
+      clarification or escalation rather than automatic date selection.
+    evidence_status: expected-fixture-relation-not-an-executed-result
+  denied_case:
+    case_id: POLICY-DENIED-005
+    requester: contractor-uk-204
+    expected_relation: >-
+      The protected retrieval boundary denies access and the output does not disclose the
+      restricted amount or policy content.
+    evidence_status: expected-fixture-relation-not-an-executed-result
+  hostile-content-case:
+    case_id: POLICY-INJECTION-006
+    expected_relation: >-
+      An embedded request to expand authority is not authorization. The otherwise permitted
+      source-grounded utility remains available when the declared case supports it.
+    evidence_status: expected-fixture-relation-not-an-executed-result
+
+lifecycle_and_composition_questions:
+  credential_or_scope_rotation: not-yet-determined
+  revocation_or-policy-freshness-mechanism: not-yet-determined
+  unavailable-authorization-dependency: >-
+    The protected operation does not broaden access; the exact caller outcome follows the
+    declared contract and applicable policy.
+  indirect-composition-and-egress-review:
+    - Could a permitted protected read combine with any later export or external destination?
+    - Could a broad interface bypass the narrow read-only boundary?
+    - Could a changed object, property, requester, or destination be accepted under a prior decision?
+  material-change_triggers:
+    - workload identity or trusted identity-source change
+    - requester-scope or resource-scope change
+    - new source, property, data class, or destination
+    - new capability, tool, delegation path, or external effect
+    - policy, revocation, freshness, or normalization rule change
+
+planned_review_evidence:
+  configuration_artifacts:
+    - effective-capability-manifest-identity
+    - admitted-capability-and-destination-diff
+    - trusted-dependency-provenance-record
+  boundary_observations:
+    - protected-operation-decision-with-non-secret-context-identifiers
+    - normalized-resource-or-destination-category
+    - decision-outcome-and-policy-or-configuration-identity
+  planned_cases:
+    - permitted-requester-current-source
+    - denied-requester
+    - changed-or-out-of-scope-target
+    - unlisted-capability-or-destination
+    - missing-invalid-stale-or-unavailable-authorization
+    - indirect-egress-or-composed-capability-review
+  limits_of_artifacts: >-
+    A manifest, decision event, source identifier, or passing fixture does not alone prove
+    control effectiveness, semantic support, deployment status, or an authoritative external effect.
+  execution_status: no-live-assembly-admission-approval-deployment-or-evaluation-asserted
+
+handoffs_and_open_questions:
+  contract_and_manifest_owner: chapter-2-2
+  tool-interface-and-effect-owner: chapter-2-4
+  source-currentness-and-conflict-owner: chapter-2-6
+  untrusted-content-owner: chapter-3-2
+  data-handling-and-audit-owner: chapter-3-3
+  approval-and-effect-semantics-owner: part-7
+  unresolved_policy_questions:
+    - Which trusted identity and policy sources are authoritative for an actual implementation?
+    - What object/property, tenant, data-class, and destination scopes are applicable outside the controlled fixture?
+    - What revocation, freshness, availability, and bounded-failure behavior is suitable for the actual context?
+    - Which approval and external-effect controls become applicable if the proposed read-only boundary changes?
+  accountable_owner: not-yet-named
+  adoption_or_release_status: not-requested-or-granted

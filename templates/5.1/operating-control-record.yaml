@@ -1,0 +1,181 @@
+# Illustrative-only, unexecuted companion record. It is a proposed record shape,
+# not production evidence, an evaluation, an authorization, an incident, recovery,
+# retirement, deployment, or a record of an actual run.
+example_id: POLICY-BUILD-001
+use_case_id: internal-policy-assistance
+packet_id: POLICY-OPS-001
+status: illustrative-unexecuted
+record_kind: operating-control-record
+
+non_execution_status:
+  production_deployment: not-performed
+  runtime_run: not-observed
+  evaluation: not-performed
+  evaluation_conclusion: not-performed
+  release_authorization: not-performed
+  incident: not-observed
+  recovery: not-performed
+  retirement: not-performed
+  authoritative_external_effect: not-observed
+
+scope:
+  agent_mode: read-only internal policy assistance
+  intended_operation: answer from requester-permitted approved policy sources
+  external_write_capability: absent-in-illustration
+  excluded_owners:
+  - release authorization and material change: 5.2
+  - incident ownership and recovery authority: 5.3
+  - data handling and audit evidence: 3.3
+  - uncertain external effects: 7.2
+  - evaluation method and conclusion: Part 4
+
+planned_identity_and_correlation:
+  request_id: illustrative-request-id
+  run_id: illustrative-stable-run-id
+  attempt_id_format: illustrative-stable-run-id-attempt-sequence
+  agent_identity: policy-assistant@candidate-current-selection
+  effective_capability_configuration_identity: current-approved-permission-filtered-read-only-selection
+  workflow_id: not-applicable-in-illustration
+  approval_id: not-applicable-in-illustration
+  correlation_note: A run may resume or move workers while retaining its stable run identity.
+
+planned_outcome_model:
+  contract_terminal_outcomes:
+  - complete
+  - needs_information
+  - declined
+  - failed
+  partial_result: not-declared-in-illustration
+  separate_facts:
+    operation_result: Result of one physical model or retrieval attempt.
+    runtime_termination_reason: Why the runtime ceased new work.
+    telemetry_capture_status: Whether the observation was captured.
+    evaluation_conclusion: Separate from a terminal outcome and not performed here.
+    release_authorization: Separate from evaluation and not performed here.
+  terminal_outcome_is_not: proof of source grounding, permission, evaluation, release authorization, or an external effect
+
+planned_signals:
+  aggregate_dimensions:
+  - operation_type
+  - contract_terminal_outcome
+  - runtime_termination_reason
+  - operation_result_category
+  - agent_identity
+  safe_detail_boundary: Keep necessary request and run correlation in protected event or trace records under the applicable data-handling policy.
+  excluded_metric_dimensions:
+  - request_id
+  - run_id
+  - requester_id
+  - raw_question
+  - raw_source_text
+  - free_form_error
+  operator_questions:
+  - Did the run reach its contract-defined outcome?
+  - Which physical attempt used time or a bounded resource?
+  - Did a source-precedence, permission, timeout, exhaustion, or stop condition occur?
+  - Was new work prevented after an exhaustion or stop decision?
+  locally_unresolved:
+    sli_specification: unresolved
+    slo_target_and_window: unresolved
+    reliability_error_budget_policy: unresolved
+    alert_threshold_owner_and_response_route: unresolved
+
+planned_per_run_budgets:
+  scope: one illustrative run only
+  model_requests:
+    ceiling: 3
+    unit: physical dispatched model requests
+    check: check remaining allowance before dispatch and attribute every dispatched attempt
+  retrieval_calls:
+    ceiling: 4
+    unit: physical dispatched retrieval calls
+    check: check remaining allowance before dispatch and attribute every dispatched attempt
+  elapsed_time:
+    ceiling_seconds: 15
+    unit: elapsed wall-clock time for the run
+    check: stop new work when the elapsed limit is reached
+  active_processing_time:
+    ceiling_seconds: 12
+    status: optional illustrative dimension
+    unit: active processing time excluding durable or human waiting
+  token_byte_and_currency_limits: not-specified-in-illustration
+  unknown_cost_behavior: Record as unknown; do not convert to zero or within-budget.
+  in_flight_behavior: A dispatched operation remains attributed and may need later reconciliation after a limit decision.
+
+shared_budget_control:
+  triggered: false
+  reason: The illustration declares only per-run budgets.
+  if_triggered_in_a_real_service: Use shared durable accounting with a defined reservation and reconciliation rule.
+
+planned_exhaustion_and_stop_control:
+  exhaustion_action: Stop new work within the exhausted limit and preserve the specific reason.
+  permitted_result_behavior: Return only the contract-declared terminal outcome; no partial result is declared here.
+  stop_scope: unresolved-under-applicable-policy
+  authorized_operator: unresolved-under-applicable-policy
+  in_flight_state_values:
+  - stop_requested
+  - cancellation_confirmed
+  - unresolved
+  - completed
+  stop_limit: A stop request does not itself prove cancellation, undo an accepted operation, authorize resumption, or reverse an external effect.
+
+fixture_binding:
+  fixture: travel-policy-current@fixture-2026-10-18.1
+  ordinary_requester:
+    id: employee-uk-104
+    permissions:
+    - approved-policy-read
+    permitted_sources:
+    - travel-policy-2026@2026-10-01
+    - travel-policy-2024-superseded@2024-01-01
+  denied_requester:
+    id: contractor-uk-204
+    permissions:
+    - no travel-policy read permission
+    permitted_sources: []
+  source_precedence:
+    current_authority:
+      source: travel-policy-2026@2026-10-01
+      status: current
+      admission: approved
+      fictional_london_hotel_amount: GBP 220
+    approved_historical_record:
+      source: travel-policy-2024-superseded@2024-01-01
+      status: superseded
+      admission: approved historical record
+      fictional_london_hotel_amount: GBP 200
+      authority_for_current_answer: false
+    ordinary_fixture_interpretation: Current plus superseded source material is stale-distraction, not a current-source conflict.
+  current_conflict_variant:
+    case: POLICY-CONFLICT-004
+    added_source: travel-policy-2026-conflicting-amendment@2026-10-12
+    added_source_status: current and approved only for the conflict variant
+    added_source_amount: GBP 260
+    requester_access: employee-uk-104 is permitted to the added source in this variant.
+    expected_terminal_outcome: needs_information
+    interpretation: Two equally authoritative current permitted sources conflict; do not select a definitive amount.
+
+fixture_expectations:
+  POLICY-CURRENT-001:
+    expected_terminal_outcome: complete
+    expected_relation: State GBP 220 from travel-policy-2026@2026-10-01.
+  POLICY-STALE-002:
+    expected_terminal_outcome: complete
+    expected_relation: State GBP 220 even while the approved historical GBP 200 record is present.
+  POLICY-DENIED-005:
+    expected_terminal_outcome: declined
+    expected_relation: Do not disclose the restricted amount or policy content.
+  POLICY-EXHAUSTION-008:
+    expected_terminal_outcome: failed
+    planned_runtime_termination_reason: retrieval_budget_exhausted
+    expected_relation: After the controlled retrieval timeout, state useful uncertainty and make no new retrieval after the declared stop decision.
+  expectations_status: Fixture expectations only; none is an executed observation, evaluation conclusion, or release authorization.
+
+actual_observations: []
+planned_evidence_to_inspect:
+- Request-to-run-to-attempt correlation and applicable identity fields.
+- Operation type, duration, result category, and bounded-resource accounting for each physical attempt.
+- Distinct contract terminal outcome, runtime termination reason, and telemetry capture status.
+- Bounded aggregate dimensions and protected treatment of detailed diagnostic evidence.
+- Limit exhaustion that prevents prohibited new work and preserves unknown values as unknown.
+- Stop request treatment that does not misstate an in-flight operation as cancelled.
