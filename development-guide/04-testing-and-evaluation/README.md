@@ -63,5 +63,3 @@ The [practical reference](reference/README.md) has a [fictional policy-assistant
 ## Requirement ownership
 
 The [requirement index](../../requirement-index.md) locates each identifier's owner. Here, 4.1 and the practical reference own none; each other chapter owns the groups in its `## Requirements` section. Read [Applicability](../../applicability.md) before treating a requirement as triggered, complete, excepted, or a release gate.
-
-Older filenames remain as brief [migration redirects](01-evaluation-strategy-cases-and-test-environments.md).
