@@ -98,6 +98,13 @@ proposed_capability_admission:
       effect: read_only
       advertised_status: unobserved
       admission_decision: proposed-candidate-only
+      admitted_contract_identity:
+        tool_name: unobserved
+        description_and_schema_hash: unobserved
+        hash_scope: name, description, input schema, and output schema as advertised at admission
+        on_change: >-
+          Compare on every listing; a changed hash is a new, unadmitted capability
+          until it is reviewed again.
       input_contract:
         permitted_inputs:
           - bounded policy query

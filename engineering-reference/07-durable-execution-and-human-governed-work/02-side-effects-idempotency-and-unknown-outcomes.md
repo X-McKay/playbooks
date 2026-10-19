@@ -43,7 +43,7 @@ Compensation is a separate operation and does not erase uncertainty. Use it only
 
 ### Multi-step effects: outbox and sagas
 
-- **Transactional outbox.** Write the outgoing message in the same local transaction as your state change and let a relay publish it, so it is sent if and only if the transaction commits. Relays can publish twice, so targets must be idempotent; the row is intent recorded, not a target commit.[3]
+- **Transactional outbox.** Write the outgoing message in the same local transaction as your state change and let a relay publish it, so the intent to publish is recorded if and only if the transaction commits. Publication itself can still fail or be delayed if the relay crashes or exhausts its retries, so monitor the outbox for unsent rows and recover them. Relays can publish twice, so targets must be idempotent; the row is intent recorded, not a target commit.[3]
 - **Sagas.** When no single transaction covers several systems, run local steps, each reversible one with a pre-designed compensating step that runs if a later step fails. Each compensation is a separate operation under EFFECT-04, not an automatic rollback.[4]
 
 ## Requirements

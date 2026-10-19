@@ -18,6 +18,10 @@ subject:
     Approved policy-source reads are limited by the protected requester boundary.
     No external write, approval, delegated-agent, or persistent-memory capability is asserted.
   configuration_identity: unresolved illustrative placeholder
+  model_version:
+    pinned_identifier: unresolved illustrative placeholder
+    provider_retirement_date: unresolved; track the provider's published date
+    change_rule: A model version change is a material change that re-runs the relevant evaluations.
   risk_assessment_version: unresolved illustrative placeholder
   authorized_exposure_scope: unresolved; no user, tenant, or production exposure is authorized
 source_context:
@@ -127,6 +131,10 @@ rollout_plan:
     - stage: canary
       purpose: Limit any future production exposure to an explicitly authorized scope.
       planned_scope: Unresolved; no percentage, user group, duration, or tenant is declared here.
+      control_group: >-
+        Unresolved; a comparable population served by the baseline over the same
+        period.
+      comparison_signals: To be predeclared; the same signals measured for canary and control.
       promotion_criteria: To be predeclared against candidate-specific evidence.
       stop_criteria: To be predeclared with the applicable signal and decision authority.
       decision_authority: unresolved illustrative placeholder
