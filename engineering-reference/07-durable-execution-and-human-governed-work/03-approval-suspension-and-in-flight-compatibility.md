@@ -8,47 +8,43 @@
 
 ## Purpose and applicability
 
-A human approval is not a general endorsement of an agent. It is a decision about one defined action, in one material context, for a limited time. Without that binding, a response meant for an earlier proposal can be applied after the target, tenant, arguments, policy or authority has changed. A durable run makes this worse: it may suspend for hours, resume on another worker, receive the same event twice, or meet a new build before the decision arrives.
+A human approval decides one defined action, in one material context, for a limited time. Without that binding, a response to an earlier proposal can be applied after the target, tenant, arguments, policy or authority changed, and durable runs suspend for hours, change workers, receive events twice or meet a new build first.
 
-The action's consequence and the applicable policy decide whether approval is needed. The read-only policy assistant does not need this chapter to return a cited answer. Its durable variant does, once it prepares and applies a human-approved policy update. NIST's AI Risk Management Framework calls for defining and differentiating the roles and responsibilities for human-AI configurations and oversight (GOVERN 3.2; MAP 3.5).[1]
+Consequence and policy decide whether approval is needed: the read-only policy assistant needs none, its durable update variant does. NIST's AI Risk Management Framework calls for defining and differentiating roles and responsibilities for human-AI configurations and oversight (GOVERN 3.2; MAP 3.5).[1]
 
-Chapter 3.1 covers identity, least privilege and who may approve. This chapter covers state once policy requires an approval: what was approved, which event changes a waiting run, when a decision stops authorizing work, and how active work survives a change. Chapter 7.2 covers the external effect itself, including reconciliation when the receipt is lost.
+Chapter 3.1 covers who may approve and 7.2 the effect itself. This chapter covers what was approved, which events change a waiting run, when a decision stops authorizing, and how active work survives a change.
 
 ## Working model
 
 ### Bind a decision to an approval subject
 
-An approval request needs a stable identity and an immutable **approval subject**: the canonical description that a reviewer sees and that the execution path later compares. It identifies:
+An approval request needs a stable identity and an immutable **approval subject**, the canonical description the reviewer sees and execution later compares:
 
 - the approval request and durable workflow-chain identities;
 - the action name and version, canonical arguments or their digest, and the target;
 - the tenant and effective actor whose authority is used;
-- the policy version, required approver scope, and any policy-defined material context, such as a data classification or impact category; and
-- the request time and expiry time.
+- the policy version, required approver scope, and policy-defined material context such as data classification or impact category; and
+- the request and expiry times.
 
-Three IDs do different jobs. The approval ID identifies a decision. The request ID identifies what awaits a decision, so a valid decision cannot be applied to another wait. A delivery or decision-event ID identifies one message, so duplicate delivery is visible and harmless.
+The approval ID names a decision; the request ID names what awaits it, so a decision cannot apply to another wait; an event ID names one message, so duplicates are harmless.
 
-Define how arguments are ordered, normalized and typed before computing a digest. Do not reduce the subject to a digest alone: the stored subject must let a reviewer understand the target and intended action. If any policy-defined material field changes, the earlier approval is void and the run creates a new request.
+Define argument ordering, normalization and typing before digesting, but keep a readable subject, not only a digest. Any material change voids the approval and needs a new request.
 
 ### Suspend and resume as state transitions
 
-A waiting run has an explicit durable state. Before it waits, it records `awaiting_approval`, its subject, an expiry deadline and the IDs of events already processed. An authenticated approval, rejection, cancellation or timeout then requests a transition. Save the transition decision before moving toward an external effect.
+Before waiting, the run records `awaiting_approval`, its subject, an expiry deadline and processed event IDs. Each authenticated approval, rejection, cancellation or timeout requests a transition, saved before any move toward an effect. Expiry comes from a durable timer or recorded deadline, never a local clock, instruction or model response. A valid approval moves the run to approved-but-not-yet-executed, so cancellation can still stop work before execution is claimed.
 
-Use a durable timer or recorded deadline to decide expiry. A restarted process must not treat an expired request as current because a local clock, an instruction or a model response says to continue. A valid approval normally moves the run to approved-but-not-yet-executed. That gap lets a cancellation stop work before the execution attempt is claimed.
+Policy, not arrival order, sets the race rule. A safe default: cancellation recorded before execution is durably claimed prevents the effect even if approval came first; after the claim it stops remaining work but cannot undo a completed or unknown effect (7.2 applies). A decision after expiry, cancellation, rejection or completion is a late event, recorded with its disposition, not new authority.
 
-Policy must define the race rule, not rely on arrival order. A safe default: a cancellation recorded before execution is durably claimed prevents the effect, even if an approval arrived first. Once execution is claimed, cancellation can stop remaining work but cannot claim that a completed or unknown effect was undone. That case follows the reconciliation or compensation path in Chapter 7.2. A decision that arrives after expiry, cancellation, rejection or completion is a late event, not new authority. Keep it in the event record with its disposition. Do not reopen the run just because the event is authentic.
-
-On recovery, resume from the persisted state, not from an agent-generated plan, and recheck that the stored subject still matches the proposed action. Nothing the agent says or retrieves can widen the approved subject.
+Recovery resumes from persisted state, not an agent plan, and rechecks the stored subject; nothing the agent says or retrieves widens it.
 
 ### Authorize at the moment of effect
 
-Approval says an appropriate human accepted this bound proposal. Authorization says this execution may invoke this action on this target for this tenant now. A consequential effect needs both.
-
-So the execution step checks current authorization immediately before it invokes the effect: target, tenant, effective actor, capability, and any policy condition that could have changed during the wait. A revoked role, removed capability, changed tenant relation or invalidated policy leads to non-execution or a fresh approval, as policy defines. It never inherits permission from the old decision. If the action itself must change to become permissible, create a new subject and request a new decision.
+Approval says a human accepted this bound proposal; authorization says this execution may act on this target for this tenant now. A consequential effect needs both, so immediately before it, check target, tenant, effective actor, capability and any policy condition that may have changed. A revoked role, removed capability, changed tenant relation or invalidated policy means non-execution or fresh approval, never inherited permission; a changed action needs a new subject.
 
 ### Keep old persisted work interpretable
 
-Persisted state is an interface between versions. Record a schema ID and version with every approval-wait payload, durable-step input and material event. For example:
+Persisted state is an interface between versions, so every approval-wait payload, durable-step input and material event carries a schema ID and version:
 
 ```yaml
 persisted_state:
@@ -60,33 +56,24 @@ persisted_state:
   expires_at: <recorded-deadline>
 ```
 
-The example holds a reference or digest, not a sensitive payload. The subject record and audit data follow the data-handling rules in Chapter 3.3.
-
-A compatible reader can supply a documented, meaning-preserving default for a newly optional field. A change to a transition, approval subject, authorization condition, action meaning, or the reading of a missing field is incompatible. Before it goes live, choose and test one path: keep a compatible handler for old work, route old and new work to the right versions, or migrate state with validation and a fallback. Never invent a value for a missing field if that could let an old approval authorize a different action.
-
-This applies to active timers, retries and approvals as well as finished histories. Durable-workflow documentation describes replaying recorded histories against changed code as a compatibility check. The portable idea is to test captured states with the intended reader before deploying.[2]
+It holds a digest, not a sensitive payload (data handling per Chapter 3.3). A reader may supply a documented, meaning-preserving default for a new optional field; changing a transition, subject, authorization condition, action meaning or the reading of a missing field is incompatible. Before going live, test one path: a compatible handler, version routing, or validated migration with fallback. Never invent a value that lets an old approval authorize a different action. This covers active timers, retries and approvals; replaying recorded histories against changed code is a documented pre-deployment check.[2]
 
 ## Decisions and best practices
 
-Make the human role concrete. Name the action category that needs approval, the approver scope, the context the approver must see, the expiry window that fits the consequence, and whether a cancelled request can be reopened. Do not turn a routine acknowledgement into an approval gate just because durable execution is on, and do not call a consequential action an ordinary retry to avoid one.
-
-Use a small, closed set of outcomes. At minimum, tell apart waiting, rejected, expired, cancelled before effect, effect resolution in progress, completed, and unresolved or partially effective. Labels are local; meanings and allowed transitions must be stable. A transition record shows the prior state, triggering event ID, decision time, policy version and resulting state. Record observable decisions and evidence, not a private reasoning trace.
-
-Treat cancellation as a request to stop, not proof of reversal. Define who can cancel, what happens before an effect is claimed, what can be interrupted during execution, and the compensation or manual path afterward. Treat duplicate and delayed events as normal. They should produce an idempotent state decision, not a second execution attempt.
-
-For a change with active work, list the state and schema versions that remain runnable, including waiting approvals. A rollout plan states which versions are supported, when an old handler can be retired, how incompatible items are migrated or escalated, and which captured histories were tested. Chapter 5.2 covers rollout authorization and rollback. For agents that are mid-task during a release, shift new work to the new version gradually, let old versions finish their runs, and resume from checkpoints instead of restarting.[5]
+- **Make the human role concrete:** action category, approver scope, context shown, expiry window and whether a cancelled request can reopen. Do not gate routine acknowledgements, or call a consequential action a retry to avoid a gate.
+- **Use a small, closed set of outcomes:** at least waiting, rejected, expired, cancelled before effect, effect resolution in progress, completed, and unresolved or partially effective. Meanings and allowed transitions are stable; each transition records prior state, event ID, decision time, policy version and result, not a reasoning trace.
+- **Cancellation is a request to stop, not proof of reversal.** Define who can cancel and what happens before the claim, during execution and after. Duplicate and delayed events get an idempotent state decision, not a second attempt.
+- **Plan rollouts around active work:** runnable versions including waiting approvals, handler retirement, migration or escalation of incompatible items, and tested histories (see 5.2). Shift new work gradually, let old versions finish, and resume from checkpoints rather than restart.[5]
 
 ### Design approval for the human who has to give it
 
-People who approve many requests start approving without reading. Research on human use of automation finds two linked effects: complacency, where people monitor automated output less, and automation bias, where they follow an automated recommendation even when it is wrong, including by missing problems the automation did not flag. Training and instructions do not reliably prevent either.[3] An approval gate that is always clicked through protects nothing. In practice:
+People who approve many requests stop reading. Research finds complacency (monitoring automated output less) and automation bias (following wrong recommendations, missing unflagged problems), which training does not reliably prevent.[3] A gate always clicked through protects nothing.
 
-- Ask for approval only where the consequence justifies it, based on the governance tier. Gates on routine actions teach people to ignore gates.
-- Rate each tool as low, medium, or high from whether it reads or writes, whether it is reversible, the permissions it needs, and its financial impact, and let the rating decide which calls need a person. Also hand off to a person when a retry or failure limit is exceeded.[4]
-- Show the exact change, not a summary: the diff against current state, the target, the tenant, the amount or count affected, and whether it can be undone.
-- Show the evidence used and what the agent is unsure of, next to the proposal, not only its recommendation.
-- Do not pre-select "approve" or put the recommendation ahead of the facts.
-- Track approval rate, time to decide, and how often approvers edit or reject. Near-100 percent approval with very short decision times suggests the gate is not working.
-- Review a sample of approved actions afterward, and seed test proposals with a known defect to check that approvers catch them.
+- Ask for approval only where the governance tier justifies it; gates on routine actions teach people to ignore gates.
+- Rate each tool low, medium or high by read or write, reversibility, permissions and financial impact, and let the rating decide which calls need a person; also hand off when a retry or failure limit is exceeded.[4]
+- Show the exact change (diff, target, tenant, amount or count, reversibility) and the evidence and uncertainty beside it; do not pre-select "approve" or lead with the recommendation.
+- Track approval rate, decision time and edit or reject rate; near-100 percent approval with very short decisions suggests the gate is not working.
+- Review a sample of approved actions, and seed test proposals with known defects to check approvers catch them.
 
 ## Requirements
 
@@ -104,31 +91,30 @@ People who approve many requests start approving without reading. Research on hu
 
 ## Worked example
 
-The internal policy assistant normally answers from approved, current, permission-filtered documents and returns citations and uncertainty. It has no write capability in that mode. A separate durable flow runs only when an authorized policy editor asks it to prepare a policy update. In this fictional fixture, `travel-policy-current` permits a London hotel amount of GBP 220, while a superseded document differs. The editor proposes changing the current amount to GBP 230. Publishing is consequential, and policy requires a human decision.
+A separate durable flow of the policy assistant runs when an authorized editor asks for an update. In this fictional fixture, `travel-policy-current` permits a London hotel amount of GBP 220 and a superseded document differs. The editor proposes GBP 230; publishing requires a human decision.
 
-The flow creates request `ar-0042` and shows the approver the proposed action, the current source and the fictional patch. The subject includes `publish_policy_revision`, the canonical patch digest, the `travel-policy-current` target, the policy workspace tenant, the editor as effective actor, the approval-policy version, the required approver scope and an expiry. The flow enters `awaiting_approval`. The answer-generation agent cannot swap in a new patch while the request waits.
+Request `ar-0042` shows the approver the action, current source and patch; the subject includes `publish_policy_revision`, the canonical patch digest, the `travel-policy-current` target, the policy workspace tenant, the editor as effective actor, the approval-policy version, required approver scope and expiry. The flow enters `awaiting_approval`, and the answer-generation agent cannot swap in a new patch.
 
-Say the approver approves `ar-0042`, but an editor withdraws the proposal before execution is claimed. The cancellation is recorded and the run becomes `cancelled_without_effect`. The approval event then arrives late. It is authentic, and it is kept as a late, non-authorizing event with its event ID, but it cannot make the run executable again. A duplicate delivery gets the same disposition. No publication call is made.
+If the approver approves `ar-0042` but the editor withdraws the proposal before execution is claimed, the cancellation is recorded and the run becomes `cancelled_without_effect`. The late approval is kept as a non-authorizing event, as is any duplicate, and nothing is published.
 
-Now take a deployment while another instance of the flow is still waiting. The new version adds an optional display-only field to the approval request. Its reader recognizes the older `durable.approval.wait` version and keeps the prior subject meaning. It does not invent a new material field and pretend the old approver approved it. If the deployment instead changed the patch interpretation or added a new material approval condition, it would keep an older compatible handler or require a validated migration that voids and reissues the affected approvals.
+A deployment adds an optional display-only field while another instance waits; the reader recognizes the older `durable.approval.wait` version and keeps its subject meaning. Had it changed patch interpretation or added a material condition, it would keep an old handler or migrate, voiding and reissuing affected approvals.
 
-For a valid, unexpired approval, the resumed flow rebuilds the canonical proposal and compares it with the stored subject. Just before publishing, it checks that the editor still has the permitted relationship to the policy workspace and that the action is still allowed. If not, it records a non-execution outcome, and the earlier approval does not bypass the check. If the publication request is sent but the receipt is lost, the run follows Chapter 7.2 and reconciles using the stable operation identity and authoritative target state. A duplicate approval event is never a reason to submit the update again.
+On a valid approval, the flow compares the rebuilt proposal with the stored subject and, just before publishing, checks that the editor still has the permitted workspace relationship and the action is allowed, else records non-execution. A lost publication receipt is reconciled per 7.2; a duplicate approval never triggers resubmission.
 
 ## Evidence and checklist
 
-Keep the approval policy and subject definition with the durable contract. Keep a transition specification that names the state, trigger, precedence rule, durable deadline and outcome for approval, rejection, expiry, cancellation, duplicate delivery and late delivery. Record the version compatibility decision with the release material.
+Keep the approval policy, subject definition and transition specification (states, triggers, precedence, deadlines, outcomes) with the durable contract, and the compatibility decision with the release material.
 
-Use a controlled clock and authoritative effect state in the tests ([4.5 Planning, Designing, and Running Tests and Evaluations](../../development-guide/04-testing-and-evaluation/05-planning-designing-and-running-tests-and-evaluations.md)). At least show that:
+Using a controlled clock and authoritative effect state ([4.5](../../development-guide/04-testing-and-evaluation/05-planning-designing-and-running-tests-and-evaluations.md)), show that:
 
-- an exact, in-scope approval resumes once, while a changed target, tenant, argument, policy version or approver scope does not;
-- rejection, expiry, cancellation before execution claim, and a late approval after each of these create no new effect;
-- both delivery orders of an approval and cancellation race follow the declared precedence rule, and duplicate events do not repeat an effect;
-- withdrawn authorization between approval and execution prevents the action, and cancellation after execution claim enters the Chapter 7.2 resolution path;
-- a captured old waiting state, timer, decision and retry can be read by the intended deployment path without changing the approval meaning;
-- an effect with a lost receipt is judged from authoritative target state and the operation record, not the workflow transcript; and
-- approvers catch known-defective test proposals, and approval rate and decision times show real review.
+- an exact approval resumes once; any material change does not;
+- rejection, expiry, pre-claim cancellation and late approvals create no effect;
+- both orders of an approval-cancellation race follow the precedence rule;
+- withdrawn authorization prevents the action, and post-claim cancellation enters the 7.2 path;
+- old waiting states, timers, decisions and retries keep their approval meaning; and
+- approvers catch seeded defects, and approval rate and decision times show real review.
 
-Attach the results to the evaluation evidence in [Chapter 4.3](../../development-guide/04-testing-and-evaluation/03-evaluation-types-and-dimensions.md). Before a rollout that changes active durable work, carry the supported-version list, the migration or routing decision, and the rollback or retirement condition into [Chapter 5.2](../../development-guide/05-release-operations-and-lifecycle/02-readiness-change-and-rollout.md).
+Attach results to [4.3](../../development-guide/04-testing-and-evaluation/03-evaluation-types-and-dimensions.md) evidence, and carry supported versions, the migration or routing decision and retirement conditions into [5.2](../../development-guide/05-release-operations-and-lifecycle/02-readiness-change-and-rollout.md).
 
 ## References
 

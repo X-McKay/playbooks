@@ -4,13 +4,13 @@
 **Purpose:** Connect the Part 5 operating, release, and lifecycle records in one practical sequence, without a parallel policy or required record format.  
 **Use with:** The [Part 5 overview](../README.md), its chapters, the [glossary pointers](../../../glossary.md#part-5-operational-and-lifecycle-foundations), and the [requirement index](../../../requirement-index.md#part-5--release-operations-and-lifecycle).
 
-This reference owns **no requirement IDs**. If this page or a template is shorter than a requirement, the chapter's `## Requirements` section controls. The records are fictional `illustrative-unexecuted` teaching material; they report no production run, evaluation, authorization, deployment, incident, recovery, retirement, or external effect.
+This reference owns **no requirement IDs**; where it or a template says less than a requirement, the chapter's `## Requirements` section controls. The records are fictional `illustrative-unexecuted` teaching material and report no real run, decision, incident, or effect.
 
 ## Use one optional packet
 
-The three records share `example_id: POLICY-BUILD-001`, `use_case_id: internal-policy-assistance`, and `packet_id: POLICY-OPS-001`. Treat them as three views of one packet: operating control, readiness and rollout, and support/lifecycle. You may combine, adapt, or omit record shapes; no file layout, format, or platform is required.
+The three records share `example_id: POLICY-BUILD-001`, `use_case_id: internal-policy-assistance`, and `packet_id: POLICY-OPS-001`. Treat them as three views of one packet (operating control, readiness and rollout, support/lifecycle); combine, adapt, or omit record shapes as you need.
 
-The packet concerns a fictional, permission-filtered, read-only internal policy assistant. Its normal fixture separates a current GBP 220 policy source from an approved but superseded GBP 200 record. Only the separate equal-authority conflict variant adds the GBP 260 amendment and expects `needs_information`. The records keep this distinction without claiming that an agent ran or a control worked.
+The packet concerns a fictional, permission-filtered, read-only internal policy assistant. Its normal fixture separates a current GBP 220 policy source from an approved but superseded GBP 200 record. Only the separate equal-authority conflict variant adds the GBP 260 amendment and expects `needs_information`.
 
 ## Build one packet
 
@@ -27,7 +27,7 @@ The packet concerns a fictional, permission-filtered, read-only internal policy 
 
 ## Practical review use
 
-Trace one candidate across the packet. A reviewer should see what the records plan to correlate and bound, what is unresolved, where an evaluation conclusion ends, where release authority would begin, and which lifecycle decision has a named owner. A filled field is a planning or fixture fact, not a completed control, authorization, or outcome.
+Trace one candidate across the packet to see what the records plan to correlate and bound, what is unresolved, where an evaluation conclusion ends, where release authority would begin, and which lifecycle decision has a named owner. A filled field is a planning or fixture fact, not a completed control, authorization, or outcome.
 
 The packet keeps the existing [BOUNDARY-04 refusal-scope ambiguity](../../../draft-notes.md#concrete-unresolved-normative-ambiguities) as an open question owned by Part 3. Use-specific decisions such as service objectives, alert conditions, stop and recovery authorities, staffing, exception eligibility, retention, or rollout thresholds are separate open decisions and do not resolve it.
 

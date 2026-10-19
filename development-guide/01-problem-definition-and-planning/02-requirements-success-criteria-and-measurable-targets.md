@@ -12,21 +12,21 @@
 
 ## Turn a problem into a decision-ready claim
 
-This chapter turns the problem brief into claims you can check later: the outcome worth pursuing, acceptable and unacceptable behavior, and the measures that would support a decision. It does not select an architecture, authorize a release, or prove a candidate works.
+This chapter turns the problem brief into claims you can check later: the outcome worth pursuing, acceptable and unacceptable behavior, and the measures that would support a decision. It does not select an architecture or authorize a release.
 
-A fluent response, a high task score and a worthwhile user outcome are different claims. A policy helper might give a well-formed answer from the wrong source, meet a rubric yet take longer to check than today's process, or improve an average while breaking a boundary that is not open to trade-off. NIST defines validation as objective evidence that requirements for a specific intended use have been fulfilled, says accuracy measurements should be paired with clearly defined, realistic test sets, and says test sets, metrics and methods should be documented. [1] That is a process aid, not proof that any given metric is valid.
+A fluent response, a high task score and a worthwhile user outcome are different claims: a policy helper might cite the wrong source fluently, meet a rubric yet take longer to check than today's process, or improve an average while breaking a non-negotiable boundary. NIST defines validation as objective evidence that requirements for a specific intended use have been fulfilled, and says accuracy measurements need clearly defined, realistic test sets, with test sets, metrics and methods documented. [1]
 
-Start from [1.1](01-defining-the-problem.md). Alternatives are in [1.3](03-agent-suitability-and-alternatives.md); harms, data, authority and ownership in [1.4](04-initial-risk-data-ownership-and-delivery-plan.md); evaluator design, trials, coverage and interpretation in Part 4.
+Start from [1.1](01-defining-the-problem.md); evaluator design, trials, coverage and interpretation are in Part 4.
 
 ## Terms and a working model
 
 An **outcome** is the real-world state a user or organization wants, such as a requester being able to take the right next step with reliable policy information, not just a response returned by a system.
 
-A **requirement** states required, prohibited or constrained behavior. An **acceptance criterion** turns one requirement into an observable condition for a stated case or population. "Use a current, requester-permitted source when the question is answerable" is a criterion; a source ID printed in an answer is only an observation that may or may not support it.
+A **requirement** states required, prohibited or constrained behavior. An **acceptance criterion** turns one requirement into an observable condition for a stated case or population: "use a current, requester-permitted source when the question is answerable" is a criterion; a source ID printed in an answer is only an observation.
 
 A **metric** is a fully specified calculation or recorded quantity for one claim. A **target** is the value, bound or state chosen in advance for that metric in this use case. A **baseline** is a comparable measure of the current process or an earlier candidate; if none exists, record that instead of implying improvement. A **proxy** is a measurable stand-in for the outcome; a citation-present rate, for example, does not show that the cited material supports the answer.
 
-A **guardrail** is a boundary condition interpreted separately, so favorable results elsewhere cannot offset its failure. A **decision consequence** says what the declared policy does when a target, guardrail, critical slice or evidence condition is met, not met or unavailable. Non-compensable gates, missing evidence, retries and `go` or `no_go` conclusions are in [4.7 Analyzing Results, Comparing Versions, and Making Decisions](../04-testing-and-evaluation/07-analyzing-results-comparing-versions-and-making-decisions.md).
+A **guardrail** is a boundary condition interpreted separately, so favorable results elsewhere cannot offset its failure. A **decision consequence** says what happens when a target, guardrail, critical slice or evidence condition is met, not met or unavailable. Non-compensable gates, missing evidence, retries and `go` or `no_go` conclusions are in [4.7 Analyzing Results, Comparing Versions, and Making Decisions](../04-testing-and-evaluation/07-analyzing-results-comparing-versions-and-making-decisions.md).
 
 A **critical slice** is a subset of the population that needs separate visibility because task, user context, source state, permission or consequence makes pooling misleading; it is not every possible filter. NIST says what to measure depends on the purpose, audience and needs of the evaluation and, where relevant, calls for disaggregated analysis of expected-population groups. [2]
 
@@ -43,37 +43,37 @@ An expected outcome such as `needs_information` is not an evaluator status such 
 
 ## Define behavior before calculating it
 
-Write the intended user outcome in plain language, then describe the system's contribution in observable terms:
+Write the user outcome in plain language, then the system's contribution in observable terms:
 
 - **Functional behavior:** what an eligible request should receive when the needed information and conditions are present.
-- **Prohibited behavior:** actions, disclosures, assertions or omissions that stay unacceptable even when the answer looks useful.
+- **Prohibited behavior:** actions, disclosures, assertions or omissions that are unacceptable even in a useful-looking answer.
 - **Failure-path behavior:** what happens when input is missing, ambiguous, conflicting, out of scope, or blocked by a dependency: clarification, `needs_information`, a decline, an escalation, a bounded partial result, or a visible failure.
 - **Nonfunctional behavior:** material service properties, such as reliable delivery, a time bound, and a total cost that fits the use case.
 
-Put case dependence in the criterion, not in an after-the-fact explanation. A clarification is right for an underspecified request and an obstacle for an answerable one; an escalation is safe when evidence conflicts and a failure when it was clear. State the intended result per case class before looking at output.
+Put case dependence in the criterion, stated per case class before looking at output. A clarification is right for an underspecified request and an obstacle for an answerable one; an escalation is safe when evidence conflicts and a failure when it was clear.
 
 ### Keep the decision dimensions separate
 
 NIST frames deployment as a contextual assessment of trustworthiness characteristics, risks, impacts, costs and benefits, and notes that characteristics can be in tension (accuracy and robustness, for example). [1] Separate dimensions make that tension reviewable instead of hiding it in a composite score.
 
-- **User or business value:** can people complete the intended work with a worthwhile net effect compared with the current process? Signals include task resolution, total effort, correction burden, avoidable handoffs, or a task-specific business consequence. A task-quality score is a proxy until user or process evidence supports the broader claim.
+- **User or business value:** can people complete the intended work with a worthwhile net effect compared with the current process? Signals include task resolution, total effort, correction burden, avoidable handoffs, or a task-specific business consequence; a task-quality score is only a proxy.
 - **Task behavior and failure paths:** does the response or terminal outcome match the contract: correct and complete where an answer is supported, honestly bounded where clarification, decline, escalation or failure is right? Correctness or rubric measures belong here.
-- **Safety and other non-compensable boundaries:** did prohibited behavior occur? Report population, observations and count separately; strong task behavior cannot cancel a disallowed disclosure or unauthorized effect.
-- **Reliability:** do eligible request episodes reach their contract-appropriate terminal outcome under the defined conditions? Answers can be correct whenever they return while many requests never get one.
+- **Safety and other non-compensable boundaries:** did prohibited behavior occur? Report population, observations and count; strong task behavior cannot cancel a disallowed disclosure or unauthorized effect.
+- **Reliability:** do eligible request episodes reach their contract-appropriate terminal outcome under the defined conditions? Answers can be correct whenever they return while many never return.
 - **Latency:** how long does a declared part of the experience take? Say whether timing runs from receipt to first response, to a delivered terminal response, or to a completed user task; these differ. The SRE book treats request latency, error rate and availability (yield) as separate indicators, aggregated as a rate, average or percentile. [3]
-- **Total cost:** what resources does the candidate use for the defined population? Include model or service use, supporting operations, retries, infrastructure, and material human review or correction. Do not count unknown human or failed-attempt cost as zero.
+- **Total cost:** model or service use, supporting operations, retries, infrastructure, and material human review or correction for the defined population. Do not count unknown human or failed-attempt cost as zero.
 
-A composite may be a diagnostic summary but cannot replace the dimensions or override a non-compensable boundary. If a dimension is not material, say why instead of covering it with a convenient proxy.
+A composite may summarize but cannot replace the dimensions or override a non-compensable boundary. If a dimension is not material, say why.
 
 ## Make each metric interpretable
 
-A metric record should let a later reader answer these without guessing:
+A metric record answers these without guessing:
 
 1. **What claim does it measure?** Name the outcome, behavior, boundary or operating property, and whether the metric is direct, a proxy, a guardrail observation or a diagnostic.
 2. **What is counted?** The unit (an eligible request episode, a delivered terminal response, an assessed case), the candidate version or period, source or fixture conditions, and the measurement window.
 3. **Which population is eligible?** Inclusion rules and every predeclared exclusion, and how refused, escalated, partial, invalid, timed-out, failed, retried and abandoned cases are classified. An exclusion must not make an inconvenient case invisible.
 4. **How is it calculated?** The numerator and denominator for a ratio, or the population count and estimator for a quantile or count; the method, aggregation rule, and treatment of retries or final selection.
-5. **What makes it comparable?** A comparable baseline and conditions. With none, record `none available` and claim only absolute evidence, not improvement.
+5. **What makes it comparable?** A comparable baseline and conditions, or `none available`.
 6. **What are the target and consequence?** Before results are read: the target or boundary, why it fits the task and consequence, the owner, the critical slices, and what missing evidence or an unmet result means for the decision.
 
 Tie the target's rationale to the user outcome, the cost of error or delay, operating constraints and baseline status; do not borrow a number from another use case. The NIST playbook suggests documenting metric-selection criteria, metrics considered but not used, acceptable limits, and the action when limits are exceeded; it gives no default values. [2]
@@ -92,32 +92,32 @@ good_event_under_deadline =
 
 The denominator includes every eligible episode, including timeouts, failures, inappropriate declines, and escalations the criterion did not call for. A clarification, decline, escalation or bounded partial result counts in the numerator only when it is the declared correct outcome for that case.
 
-A **completion-duration quantile** describes durations in a defined completed-response population. Let `D` be the ordered durations of eligible episodes that delivered the named terminal response before the cutoff, and `n = |D|`. For a proportion `p` between 0 and 1, `Qp(D)` is the `100p`th percentile under the declared sample-quantile method (`p = 0.95` is the 95th percentile). That method fixes rank selection or interpolation, so a displayed percentile is not always an exact observed fraction. [4]
+A **completion-duration quantile** describes completed-response durations. Let `D` be the ordered durations of eligible episodes that delivered the named terminal response before the cutoff, and `n = |D|`. For a proportion `p` between 0 and 1, `Qp(D)` is the `100p`th percentile under the declared sample-quantile method (`p = 0.95` is the 95th percentile). That method fixes rank selection or interpolation, so a displayed percentile is not always an exact observed fraction. [4]
 
-A quantile has **no numerator**; it is not a success ratio. Record the population of `D`, `n`, timing boundaries, `p`, the interpolation method and the aggregation rule. Interpolation methods differ and none is universally accepted, so two reports must use the same method to be compared. [4] A percentile over completed responses says nothing about episodes with no terminal response by the cutoff, and no completion time should be invented for them.
+A quantile has **no numerator**; it is not a success ratio. Record the population of `D`, `n`, timing boundaries, `p`, the interpolation method and the aggregation rule. No interpolation method is universally accepted, so compare only reports that use the same one. [4] The percentile says nothing about episodes with no terminal response by the cutoff; do not invent completion times for them.
 
-Pair it with a timeout or no-terminal-response rate, a failure rate, or both. The timeout rate's numerator is eligible episodes without the named terminal response by the cutoff; its denominator is all eligible started episodes. Keep categories so a timeout can be told apart from a declared failure.
+Pair it with a timeout or no-terminal-response rate, a failure rate, or both. The timeout rate's numerator is eligible episodes without the named terminal response by the cutoff; its denominator is all eligible started episodes. Keep timeouts and declared failures as separate categories.
 
 For cost, **total cost per verified contract-appropriate outcome** divides the accounted total cost of all eligible episodes by the count of verified contract-appropriate outcomes. Define whether review and correction work counts, and leave the result undefined when there are no verified outcomes instead of reporting a misleading zero.
 
 ## Build the success record before evidence exists
 
-1. **State the outcome and case rules.** The user outcome, functional and prohibited behavior, and the acceptable terminal outcome for each material variation. Link to the problem brief instead of copying its evidence.
+1. **State the outcome and case rules.** The user outcome, functional and prohibited behavior, and the acceptable terminal outcome for each material variation, linking to the problem brief.
 2. **Choose the material dimensions.** Only the value, task, safety, reliability, latency and cost claims that matter to the decision, each marked direct, proxy, guardrail or diagnostic.
-3. **Define the measurement contract.** Unit, population, version or period, exclusions, statuses, retries, method, baseline status, critical slices and owner.
-4. **Predeclare the target and consequence.** Target or bound, rationale, decision consequence, and treatment of insufficient or missing evidence, before candidate results are read. Until a target is chosen, the metric is not a release acceptance criterion.
+3. **Define the measurement contract** using the six questions above.
+4. **Predeclare the target and consequence** before candidate results are read. Until a target is chosen, the metric is not a release acceptance criterion.
 5. **Hand off an evidence map.** Give Part 4 the claim, cases or conditions, boundary observations, candidate identity and metric definition. [4.6](../04-testing-and-evaluation/06-standards-required-coverage-and-execution-cadence.md) owns the claim-to-evidence map; [4.7](../04-testing-and-evaluation/07-analyzing-results-comparing-versions-and-making-decisions.md) owns trial, denominator and decision interpretation.
 
 The [success-criteria template](../../templates/1.2/success-criteria.yaml) uses explicit `null` and `not-yet-selected` fields so an unmeasured record cannot be mistaken for a target or result.
 
 ## Common pitfalls
 
-- **No baseline.** Without a measure of today's process, "better" has no meaning. Measure it, or record `none available` and claim only absolute results.
+- **No baseline.** Without a measure of today's process, "better" has no meaning; claim only absolute results.
 - **One blended agent score.** A single average hides a failed boundary behind strong task results.
 - **Targets chosen after seeing results.** A target set after the numbers are in fits the numbers.
 - **Percentiles without the failures.** A latency percentile over completed responses looks good while timeouts vanish.
 - **A proxy treated as the outcome.** Rubric scores and citation rates stand in for user value; they do not prove it.
-- **Scope creep after the pilot.** A pilot result is read as covering new users, sources or actions. Targets apply to the population measured; new scope needs new criteria.
+- **Scope creep after the pilot.** Targets apply to the population measured; new users, sources or actions need new criteria.
 
 ## Requirements
 
@@ -129,9 +129,9 @@ The [success-criteria template](../../templates/1.2/success-criteria.yaml) uses 
 
 ## Worked example: fictional internal policy assistance
 
-The fictional, unexecuted planning record `POLICY-PLAN-001` covers `internal-policy-assistance`, a permission-filtered, read-only policy assistant with no write or approval capability. Its status is `illustrative-unexecuted`: no evaluation, baseline, target or release decision is reported.
+The fictional planning record `POLICY-PLAN-001` covers `internal-policy-assistance`, a permission-filtered, read-only policy assistant with no write or approval capability. Its status is `illustrative-unexecuted`: no evaluation, baseline, target or release decision exists.
 
-The intended outcome: an eligible requester gets a useful, source-grounded terminal response to a policy question, or a clear next step when no supported answer exists. In the `travel-policy-current` fixture, `travel-policy-2026@2026-10-01` is current and states a London hotel limit of GBP 220; `travel-policy-2024-superseded@2024-01-01` is superseded and differs.
+Intended outcome: a useful, source-grounded terminal response, or a clear next step when no supported answer exists. In the `travel-policy-current` fixture, `travel-policy-2026@2026-10-01` is current and states a London hotel limit of GBP 220; `travel-policy-2024-superseded@2024-01-01` is superseded and differs.
 
 The acceptance criteria separate the case paths:
 
@@ -173,11 +173,11 @@ metric_intentions:
     observed_result: null
 ```
 
-A completed-response percentile would say only how long completed responses took, not whether the question was resolved. The user-value question stays open for Part 4: compared with the current process, do eligible requesters resolve their next step without a worse checking or correction load?
+The user-value question stays open for Part 4: compared with the current process, do requesters resolve their next step without a worse checking or correction load?
 
 ### What a completed measurable target can look like
 
-Suppose a fictional outcome owner picks a 15-second service budget and a 90% contract-appropriate-response target for a controlled comparison. These are illustrative choices, not recommended defaults, and leave `POLICY-PLAN-001` and its template unchanged.
+Suppose a fictional owner picks a 15-second budget and a 90% contract-appropriate-response target for a controlled comparison. These are not recommended defaults, and `POLICY-PLAN-001` and its template are unchanged.
 
 ```yaml
 example_id: POLICY-TARGET-ILLUSTRATION-001
@@ -208,14 +208,13 @@ observed_result: null
 release_authorization: none
 ```
 
-It is measurable because it names the counted episode, population, required outcome, timing boundary, target, slices and consequence. A clarification or decline counts only where the case calls for it, so a blanket refusal cannot satisfy the answerable slice. Zero observed boundary violations describes the evidence collected, not zero field risk. A real owner picks values to suit the task, consequence and baseline.
+It is measurable because it names the counted episode, population, required outcome, timing boundary, target, slices and consequence. A blanket refusal cannot satisfy the answerable slice, and zero observed boundary violations describes the evidence collected, not zero field risk.
 
 ## Evidence and handoff
 
 The record is planning evidence, not proof a target was met. Before using it in Part 4, check that:
 
 - the user or business outcome is distinct from the system output and any task-quality proxy;
-- functional, prohibited and case-dependent terminal behaviors are explicit for material variations;
 - a ratio's numerator and denominator match the claim, and a quantile names its population, count, estimator and aggregation instead of a numerator;
 - completion-duration measures are paired with timeout, no-response or failure reporting where that matters; and
 - the record points to Part 4 for cases, evaluators, trial design, consistency, holdouts, coverage and interpretation, and shows planning values as planned, not achieved.

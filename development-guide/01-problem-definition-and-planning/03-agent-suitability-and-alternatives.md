@@ -12,21 +12,19 @@
 
 ## Decide the fit before designing the agent
 
-An agent is one possible contribution to a user task, not the default answer to a problem. It adds flexibility where language, evidence or the order of useful work is uncertain. It also adds cost, latency, more ways to fail, and more to evaluate and maintain. Process redesign, human help, search, rules, automation, a learned predictor, one bounded model response, or a fixed model workflow may be better.
+An agent is one possible contribution to a user task, not the default answer. It adds flexibility where language, evidence or the order of work is uncertain, at a cost in money, latency, failure paths, evaluation and maintenance. Process redesign, human help, search, rules, automation, a learned predictor, one model response, or a fixed model workflow may be better.
 
-Start with the simplest solution that could work, and add complexity only when you can show it is needed. Common practitioner guidance says the same: begin with a single model call or fixed workflow, and move to an agent, then to several agents, only when simpler options fall short. [2]
-
-This chapter makes the comparison inspectable. It does not authorize a design or prove a candidate works. Task and process come from [1.1](01-defining-the-problem.md), targets from [1.2](02-requirements-success-criteria-and-measurable-targets.md), harms and authority from [1.4](04-initial-risk-data-ownership-and-delivery-plan.md), and evidence from Part 4. NIST frames the decision to commission or deploy AI as contextual: weigh trustworthiness, risks, impacts, costs and benefits instead of treating a technology label as a benefit. [1]
+Start with the simplest solution that could work: a single model call or fixed workflow, moving to an agent, then to several agents, only when simpler options demonstrably fall short. [2] NIST frames the decision to commission or deploy AI as contextual: weigh trustworthiness, risks, impacts, costs and benefits instead of treating a technology label as a benefit. [1]
 
 ## Terms and an operational convention
 
-An **alternative** is a plausible way to help with the same bounded task, not a list of fashionable technologies. A **baseline** is the simplest plausible alternative chosen for a fair comparison: the current manual process, an improved process, or a simpler system. A baseline can be kept because it is good enough, not because it is old.
+A **baseline** is the simplest plausible alternative for the same bounded task, chosen for a fair comparison: the current manual process, an improved process, or a simpler system. It can be kept because it is good enough.
 
-An **action space** is the set of actions a candidate may take in this task, including a response-only candidate and any permitted information-gathering or externally visible action. Its size alone does not decide whether the candidate is an agent. Consequence, authority and conditions for actions are assessed in [1.4](04-initial-risk-data-ownership-and-delivery-plan.md) and the control chapters.
+An **action space** is the set of actions a candidate may take, from response-only to information-gathering or externally visible actions. Its size alone does not make a candidate an agent; consequence and authority are assessed in 1.4 and the control chapters.
 
-In this guide, a **fixed workflow** has transitions defined by the orchestration. It may branch on an earlier result, retry a bounded operation, use a model router, or call a model at a set step; it stays fixed while the possible transitions and their selection are predefined. An **adaptive agent** lets model output direct a meaningful next action, sequence or stopping choice in response to observations. The action set can be finite and fully listed; adaptivity is about model-directed choice within it. This is a working convention, not a universal taxonomy; a practitioner source draws a similar line between predefined workflow paths and systems where a model dynamically directs its own process and tool use. [2]
+In this guide, a **fixed workflow** has transitions defined by the orchestration. It may branch on an earlier result, retry, use a model router, or call a model at a set step, and stays fixed while the possible transitions and their selection are predefined. An **adaptive agent** lets model output direct a meaningful next action, sequence or stopping choice in response to observations. The action set can be finite and fully listed; adaptivity is about model-directed choice within it. This is a working convention; a practitioner source draws a similar line between predefined workflow paths and systems where a model directs its own process and tool use. [2]
 
-An **adaptation benefit** is the task-relevant gain expected from that model-directed choice, such as finding the next useful permitted source, asking a good follow-up question, or stopping when evidence is enough. It is a hypothesis until compared with a simpler design on relevant cases. **Evaluation burden** is the work needed to test that hypothesis and the new failure paths. **Maintenance burden** is keeping sources, rules, data, prompts, interfaces, test cases and operating knowledge current as the task changes.
+An **adaptation benefit** is the task-relevant gain expected from model-directed choice, such as finding the next useful permitted source, asking a good follow-up question, or stopping when evidence is enough. It is a hypothesis until compared with a simpler design. **Evaluation burden** is the work to test it and the new failure paths; **maintenance burden** is keeping sources, rules, data, prompts, interfaces, test cases and operating knowledge current.
 
 ```text
 bounded user task and current process
@@ -40,71 +38,67 @@ This is not a maturity ladder: more model involvement is not more capability.
 
 ## Compare the plausible alternatives
 
-Start from the actual task boundary, not a wish to use a technique. A comparison may keep several options, combine them, or conclude that no new system is warranted.
+A comparison may keep several options, combine them, or conclude that no new system is warranted.
 
 ### Process redesign or manual assistance
 
-Process redesign can remove duplicate work, clarify source ownership, publish current status, improve intake or repair a handoff. Manual assistance keeps judgment with a person when cases are rare, exceptions are costly, or context cannot yet be represented safely. They lose when the remaining work is repetitive and a bounded contribution can reliably reduce it, and stay unproven if the difficulty was never observed in representative tasks.
+Process redesign can remove duplicate work, clarify source ownership, publish current status, improve intake or repair a handoff. Manual assistance keeps judgment with a person when cases are rare, exceptions are costly, or context cannot yet be represented safely. They lose when the remaining work is repetitive and a bounded contribution can reliably reduce it.
 
 ### Deterministic rules and conventional automation
 
-**Deterministic rules** apply explicit conditions to a decision. **Conventional automation** moves information through known steps, often with rules, forms, queues or stable integrations. Both suit tasks whose inputs, eligibility conditions and transitions can be stated and maintained. A rule can be easier to inspect than a model interpretation for a stable prohibition or boundary.
-
-They lose fit when exceptions are hard to state, input needs interpretation, or a growing set of heuristics gets harder to maintain than a learned component. A branching workflow is still fixed if its branch conditions are defined in advance. A later step using an earlier result is not evidence for an agent.
+**Deterministic rules** apply explicit conditions to a decision. **Conventional automation** moves information through known steps with rules, forms, queues or stable integrations. Both suit tasks whose inputs, conditions and transitions can be stated and maintained, and a rule is easier to inspect than a model for a stable prohibition. They lose fit when exceptions are hard to state, input needs interpretation, or a growing set of heuristics gets harder to maintain than a learned component. A workflow whose branch conditions are defined in advance is still fixed, even when a later step uses an earlier result.
 
 ### Search and source navigation
 
-A **search interface** helps a person find material and interpret it. It is a credible baseline when users can judge the source and the main difficulty is finding it. Search does not decide whether evidence is current, conflicting, applicable or permitted, so it may be a component of a broader design without being sufficient alone.
+A **search interface** is a credible baseline when users can judge the source and the main difficulty is finding it. It does not decide whether evidence is current, conflicting, applicable or permitted, so it may be a component rather than the whole design.
 
 ### Traditional machine learning
 
-Traditional machine learning fits a recurring prediction, ranking or classification that can be defined. It normally needs a clear target, labelled or comparable outcome data, and a way to maintain data and assess the model as conditions change. Google's guide advises not using ML before you have data if it is not required, and recommends simple behavior and metrics as a baseline for more complex models. [3]
-
-That supports a qualified comparison, not a rule that heuristics always win. A stable, fully specified decision may fit a rule. A learned component may fit when a complex heuristic is getting hard to maintain and a target, data and ongoing evaluation are feasible. If the target, labels, representativeness or data-handling basis is unknown, the learned option is not yet shown to be feasible.
+Traditional machine learning fits a definable recurring prediction, ranking or classification with a clear target, labelled or comparable outcome data, and a way to maintain data and reassess the model. Google's guide advises not using ML before you have data if it is not required, and recommends simple behavior and metrics as a baseline for more complex models. [3] That does not mean heuristics always win: a stable, fully specified decision may fit a rule, while a learned component may fit when a complex heuristic is getting hard to maintain and a target, data and ongoing evaluation are feasible. If the target, labels, representativeness or data-handling basis is unknown, the learned option is not yet feasible.
 
 ### Single-call model assistance
 
-**Single-call model assistance** uses one bounded model response to interpret varied language, draft material or present an answer. It can be enough when no model-directed next action is needed. A flexible prompt or an uncertain response does not by itself make an agent.
+**Single-call model assistance** uses one bounded model response to interpret varied language, draft material or present an answer. It can be enough when no model-directed next action is needed.
 
 ### Fixed model workflows
 
-A **fixed model workflow** combines model calls, source access, routers, validation and predefined error paths in a known orchestration. It may route with a deterministic classifier or a model router and branch after a model or source result, and still be fixed if the allowed transitions are specified. It suits tasks that split into known subtasks.
+A **fixed model workflow** combines model calls, source access, routers, validation and predefined error paths in a known orchestration. It suits tasks that split into known subtasks.
 
 ### Adaptive agents
 
-Consider an adaptive agent only when model-directed sequencing or stopping should add task-relevant value beyond a fixed orchestration. For example, a record can list a finite permitted set: `locate_permitted_evidence`, `request_clarification`, `return_bounded_response`, `escalate`. If the model chooses among them based on observations, the candidate is adaptive even though every action is listed and constrained.
+Consider an adaptive agent only when model-directed sequencing or stopping should add task-relevant value beyond a fixed orchestration. A record might list a finite permitted set: `locate_permitted_evidence`, `request_clarification`, `return_bounded_response`, `escalate`. If the model chooses among them based on observations, the candidate is adaptive even though every action is listed and constrained.
 
-It loses when stable transitions handle the same cases, when the expected benefit cannot be stated, or when error consequence, maintenance, latency, cost or evidence burden outweighs it. It is unproven if its comparison did not use the same cases and boundaries as the baseline. The practitioner guidance cited above recommends adding complexity only when needed, and notes that agentic systems often trade latency and cost for task performance and can compound errors. [2] Its definitions and trade-off advice are what this guide relies on; the source says parts of its tooling guidance have since changed. These are design cautions, not performance results. If you do move to an agent, start with one, and split into several only when one demonstrably cannot do the task.
+It loses when stable transitions handle the same cases, when the benefit cannot be stated, or when error consequence, maintenance, latency, cost or evidence burden outweighs it. Agentic systems often trade latency and cost for task performance and can compound errors (this guide relies on that source's definitions and trade-off advice, not its tooling guidance, parts of which have changed). [2] If you do move to an agent, start with one, and split into several only when one demonstrably cannot do the task.
 
 ### Hybrid designs
 
-A **hybrid** assigns different parts of the task to different approaches. For example, deterministic controls carry stable, decidable constraints while a model handles language interpretation or adaptation where the rule is unknown. A hybrid is not automatically safer or more capable; it exists because no single simpler approach meets the task as well. Deterministic controls grant no authority, and model flexibility does not relax an access boundary.
+A **hybrid** assigns different parts of the task to different approaches, for example deterministic controls for stable, decidable constraints and a model for language interpretation or adaptation where the rule is unknown. It is justified only when no single simpler approach meets the task as well. Deterministic controls grant no authority, and model flexibility does not relax an access boundary.
 
 ## Make the comparison evidence-led
 
-The record must let another reader see why a design was chosen, what would change the conclusion, and what is still open. First name the **comparison boundary**: the user task, included cases, sources, user contexts, prohibited effects, and current process from 1.1. List the alternatives actually considered, including process change or manual help where plausible. For each, say whether it is retained, rejected, provisionally selected or unproven, with a task-specific reason, not a generic claim about AI.
+The record shows why a design was chosen, what would change the conclusion, and what is open. First name the **comparison boundary**: the user task, included cases, sources, user contexts, prohibited effects, and current process from 1.1. List the alternatives actually considered, including process change or manual help where plausible, each marked retained, rejected, provisionally selected or unproven, with a task-specific reason.
 
 Then assess the factors that change the fit:
 
-- **Task uncertainty.** Is the uncertainty in language, source selection, sequencing, a real-world exception, or a missing understanding of the problem? Uncertainty from unclear ownership or an avoidable handoff points to process redesign, not adaptation.
-- **Data and learning premise.** For a learned component, record the target, the source and status of labels or outcome data, representativeness concerns, and what makes the data usable. For a model-assisted approach not trained for the task, record the task cases and evidence needed to assess behavior, and do not imply task-specific training data.
-- **Action and adaptation.** State the permitted actions, any fixed transitions, and the model-directed next-action, sequence or stopping choices proposed. A finite action list is compatible with an agent; a list of all fixed transitions is evidence of a fixed workflow.
-- **Consequence of error.** Describe the user, downstream or operational effect of a wrong, missing, late, misleading or unauthorized result. A read-only response is not consequence-free. Hand authority, data and harm questions to 1.4.
-- **Maintenance and evaluation burden.** Compare what each option must keep current and what it adds in case design, review, diagnostics, correction and support. A simpler baseline may win because it has less to maintain, not because it is less ambitious.
+- **Task uncertainty.** Is it in language, source selection, sequencing, a real-world exception, or a missing understanding of the problem? Uncertainty from unclear ownership or an avoidable handoff points to process redesign, not adaptation.
+- **Data and learning premise.** For a learned component, record the target, the source and status of labels or outcome data, representativeness concerns, and what makes the data usable. For a model not trained for the task, record the task cases and evidence needed to assess behavior, without implying task-specific training data.
+- **Action and adaptation.** State the permitted actions, any fixed transitions, and the proposed model-directed next-action, sequence or stopping choices. A finite action list is compatible with an agent; a list of all fixed transitions is evidence of a fixed workflow.
+- **Consequence of error.** The user, downstream or operational effect of a wrong, missing, late, misleading or unauthorized result; a read-only response is not consequence-free.
+- **Maintenance and evaluation burden.** What each option must keep current, and what it adds in case design, review, diagnostics, correction and support.
 
-NIST advises documenting context, assumptions, limitations and impacts for a generative AI system, showing test results for conditions similar to the deployment setting, and not extrapolating performance from narrow or anecdotal assessments. [4] A favorable demo or benchmark therefore does not show that an option fits a different user population, source collection, permission boundary or action boundary.
+NIST advises documenting context, assumptions, limitations and impacts for a generative AI system, showing test results for conditions similar to the deployment setting, and not extrapolating performance from narrow or anecdotal assessments. [4] A favorable demo or benchmark does not transfer to a different user population, source collection, permission or action boundary.
 
-Finally, predeclare the **added-value claim** for an adaptive candidate: what evidence would show that the model-directed choice beats the baseline by enough to justify its burden. Compare on the same cases and constraints; a candidate given easier cases or looser boundaries has not been fairly compared. 1.2 defines claims and measures; Part 4 designs the cases, evaluators and trials.
+Finally, predeclare the **added-value claim** for an adaptive candidate: what evidence would show that model-directed choice beats the baseline by enough to justify its burden, compared on the same cases and constraints. 1.2 defines claims and measures; Part 4 designs the cases, evaluators and trials.
 
 The [suitability-decision template](../../templates/1.3/suitability-decision.yaml) records a decision status and unknown evidence explicitly.
 
 ## Common pitfalls
 
-- **Skipping the baseline.** The agent is compared with nothing, or with a weak straw-man, so any result looks like a win. Compare with the simplest credible alternative on the same cases.
-- **One blended score for the comparison.** Averaging quality, cost and latency across options hides where the agent is worse. Compare dimension by dimension, as in 1.2.
+- **Skipping the baseline.** Compared with nothing, or a straw man, any result looks like a win.
+- **One blended score for the comparison.** Averaging quality, cost and latency hides where the agent is worse. Compare dimension by dimension, as in 1.2.
 - **Treating a finite action list as proof of a fixed workflow, or of an agent.** Ask who chooses the next step: the orchestration or the model.
-- **Starting with several agents.** Splitting a task across agents multiplies failure paths and evaluation work before one agent has been shown to fall short.
-- **Scope creep after the pilot.** A narrow success is used to justify more users, tools or autonomy. Reopen this decision when the task boundary, action set or authority changes.
+- **Starting with several agents.** This multiplies failure paths and evaluation work before one agent has been shown to fall short.
+- **Scope creep after the pilot.** A narrow success is used to justify more users, tools or autonomy. Reopen this decision when the task boundary, action set, source conditions or authority changes.
 
 ## Requirements
 
@@ -116,32 +110,29 @@ The [suitability-decision template](../../templates/1.3/suitability-decision.yam
 
 ## Worked example: fictional internal policy assistance
 
-The planning record `POLICY-PLAN-001` is fictional and unexecuted (`illustrative-unexecuted`). The candidate `internal-policy-assistance` gives permission-filtered, read-only help with internal policy questions, with no write or approval capability.
+The fictional planning record `POLICY-PLAN-001` (`illustrative-unexecuted`) covers `internal-policy-assistance`: permission-filtered, read-only help with internal policy questions, with no write or approval capability. The bounded task is a source-grounded answer about current policy, or a clear next step when evidence is missing or conflicts. In the `travel-policy-current` fixture, `travel-policy-2026@2026-10-01` states a London hotel limit of GBP 220, while `travel-policy-2024-superseded@2024-01-01` is superseded and differs.
 
-The bounded task is to help an eligible requester get a source-grounded answer about current policy, or a clear next step when evidence is missing or conflicts. In the `travel-policy-current` fixture, `travel-policy-2026@2026-10-01` states a London hotel limit of GBP 220, while `travel-policy-2024-superseded@2024-01-01` is superseded and differs.
+| Option | Status | Reason |
+| --- | --- | --- |
+| Process change (clarify current-source status or the handoff for unresolved questions) | Kept for investigation | No observation yet of how often it resolves real tasks |
+| Permission-aware lookup or search; a deterministic rule for an exact, supported lookup | Kept for investigation | Same; not declared successful |
+| Fixed retrieval-and-answer workflow | Provisional preference | Permission checking, source selection, response composition, output checks, and missing- or conflicting-evidence paths are predefined transitions; a model router choosing among them does not change that |
+| Traditional ML | Not selected | No recurring prediction target, usable labels or maintained outcome data |
+| Single-call response | Component only | Part of the fixed workflow, not evidence of an agent |
+| Adaptive agent | Unproven, **not selected** | No baseline, result or target exists |
 
-The record first keeps two non-agent options. A process change could clarify current-source status or the handoff for unresolved questions. A permission-aware lookup or search interface could let a requester find the current permitted source. For an exact, supported lookup, a deterministic rule may return the source and value. None is declared successful; the record has no observation of how often they resolve real tasks.
-
-For varied but bounded wording, the record provisionally prefers a fixed retrieval-and-answer workflow: permission checking, source selection, response composition, output checks, and paths for missing or conflicting evidence are predefined transitions. A model router that sends a request down one of these paths does not change that classification.
-
-Traditional ML is not selected: there is no established recurring prediction target, usable labels or maintained outcome data. A single-call response may be a component of the fixed workflow, not evidence of an agent.
-
-The adaptive candidate stays unproven. Its finite actions would be to locate more requester-permitted evidence, request clarification, return a bounded response, or escalate a conflict. It becomes adaptive if the model decides, after an observation, whether to take another evidence step or stop with uncertainty. The added-value claim is narrow: against the fixed workflow on the same permission, currentness, missing-source and conflict cases, model-directed follow-up might improve the appropriate outcome without unacceptable added burden. No baseline, result or target exists, so the agent is **not selected**.
-
-Three decision states result: a process or lookup improvement is kept for investigation, the fixed workflow is the provisional preference, and the adaptive agent is unproven. The [template](../../templates/1.3/suitability-decision.yaml) carries them with `null` and `not-yet-established` evidence fields.
+The adaptive candidate would choose, after each observation, whether to locate more requester-permitted evidence, request clarification, return a bounded response, or escalate a conflict. Its added-value claim is narrow: against the fixed workflow on the same permission, currentness, missing-source and conflict cases, model-directed follow-up might improve the appropriate outcome without unacceptable added burden. The [template](../../templates/1.3/suitability-decision.yaml) carries these states with `null` and `not-yet-established` evidence fields.
 
 ## Evidence and handoff
 
-A suitability record is ready when a reviewer can see the task boundary, the alternatives considered, the simplest baseline, the selected or unproven status, and the evidence that could change the conclusion. It is not proof of suitability, safety or value. Before handing it on, check that:
+A suitability record is not proof of suitability, safety or value. Before handing it on, check that:
 
-- baseline and complex candidate are compared on the same task and case conditions;
-- it says which uncertainty matters and separates an unclear process or source from a need for model-directed adaptation;
+- it separates an unclear process or source from a need for model-directed adaptation;
 - every learned component has a target and usable-data premise, or is marked not yet established;
-- the action space, fixed transitions and any model-directed choices are distinguishable;
-- error consequences, maintenance and evaluation burden are considered without claiming a risk or release decision; and
-- an adaptive candidate has an added-value claim and an evidence status that does not invent a result.
+- it claims no risk or release decision; and
+- an adaptive candidate's evidence status does not invent a result.
 
-Use [1.2](02-requirements-success-criteria-and-measurable-targets.md) to turn the claims into criteria and measures, [1.4](04-initial-risk-data-ownership-and-delivery-plan.md) for harms, data, authority and owners, and [Part 4](../04-testing-and-evaluation/README.md) for evaluation. A change in task boundary, action set, source conditions or authority can reopen the decision.
+Hand claims to [1.2](02-requirements-success-criteria-and-measurable-targets.md), harms, data, authority and owners to [1.4](04-initial-risk-data-ownership-and-delivery-plan.md), and evaluation to [Part 4](../04-testing-and-evaluation/README.md).
 
 ## References
 

@@ -14,15 +14,13 @@
 
 ## Why start here
 
-Part 1 turns a request for an agent into four planning decisions: what problem exists, what a worthwhile and safe outcome means, whether an agent beats a simpler alternative, and which early risk, data and ownership facts need more work. Keeping them separate stops a proposed implementation from standing in for evidence that the need, value, authority or readiness is real.
-
-The chapters own their requirement IDs. This overview and the practical reference own none.
+Part 1 turns a request for an agent into four planning decisions: what problem exists, what a worthwhile and safe outcome means, whether an agent beats a simpler alternative, and which early risk, data and ownership facts need more work. Keeping them separate stops a proposed implementation from standing in for evidence of need, value, authority or readiness. The chapters own the requirement IDs.
 
 ## Choose a route
 
-**Learner.** Read [1.1 Defining the Problem](01-defining-the-problem.md) to separate the user need from a proposed solution. Then [1.2 Requirements, Success Criteria, and Measurable Targets](02-requirements-success-criteria-and-measurable-targets.md) for outcome and measurement language, [1.3 Agent Suitability and Alternatives](03-agent-suitability-and-alternatives.md) for a fair comparison against a simpler baseline, and [1.4 Initial Risk, Data, Ownership, and Delivery Plan](04-initial-risk-data-ownership-and-delivery-plan.md) for the planning facts and specialist handoffs that stay open.
+**Learner.** Read the chapters in order (see the sequence below).
 
-**Builder.** Work through the same sequence and fill in one record after each decision: the [problem brief](../../templates/1.1/problem-brief.yaml), [success-criteria record](../../templates/1.2/success-criteria.yaml), [suitability decision](../../templates/1.3/suitability-decision.yaml) and [initial scope record](../../templates/1.4/initial-scope-record.yaml). The [practical reference](reference/README.md) shows how the four connect. They are planning aids, not approvals or evidence.
+**Builder.** Work through the same sequence and fill in one record after each decision: the [problem brief](../../templates/1.1/problem-brief.yaml), [success-criteria record](../../templates/1.2/success-criteria.yaml), [suitability decision](../../templates/1.3/suitability-decision.yaml) and [initial scope record](../../templates/1.4/initial-scope-record.yaml). The [practical reference](reference/README.md) shows how they connect; they are planning aids, not approvals or evidence.
 
 **Reviewer.** Check [1.1](01-defining-the-problem.md) for separable facts, assumptions, scope, dependencies and downstream effects; [1.2](02-requirements-success-criteria-and-measurable-targets.md) for explicit outcomes, boundaries, metrics, baseline status and consequences; [1.3](03-agent-suitability-and-alternatives.md) for a same-case comparison and an added-value hypothesis; and [1.4](04-initial-risk-data-ownership-and-delivery-plan.md) for reachable owners and for data, authority, harm, applicability, pilot and escalation questions handed to the right owner.
 
@@ -37,7 +35,7 @@ For vocabulary, see the [Part 1 pointers in the glossary](../../glossary.md#part
 
 ## Common pitfalls across Part 1
 
-- **No baseline.** Without a measure of today's process, "improvement" means nothing. Record the baseline or that none exists.
+- **No baseline.** Without a measure of today's process, "improvement" means nothing.
 - **One blended agent score.** Report value, behavior, safety, reliability, latency and cost separately.
 - **Scope creep after the pilot.** A narrow success is not evidence for more users, data or actions. Reopen Part 1 when the boundary changes.
 

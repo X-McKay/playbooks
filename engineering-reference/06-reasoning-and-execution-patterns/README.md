@@ -4,9 +4,9 @@
 
 **Purpose:** Use optional reasoning patterns without treating model output as authority or letting work run unbounded.
 
-**Applicability:** Only when explicit planning, reflection or concurrent branch work is part of the design.
+**Applicability:** Designs using explicit planning, reflection or concurrent branches.
 
-**Output:** Pattern-specific limits, baseline evidence, state and branch rules, and observable terminal outcomes.
+**Output:** Pattern limits, baseline evidence, branch rules and observable terminal outcomes.
 
 [Playbook home](../../README.md) · [Section index](../README.md) · [Applicability](../../applicability.md) · [Glossary](../../glossary.md) · [Requirement index](../../requirement-index.md)
 
@@ -16,4 +16,4 @@
 - [6.2 Reflection, Critique, and Verification](02-reflection-critique-and-verification.md)
 - [6.3 Parallel Work, State, and Failure Propagation](03-parallel-work-state-and-failure-propagation.md)
 
-Read each chapter's applicability statement before treating a pattern as required. [Applicability](../../applicability.md) explains the difference between a missing trigger, a governed exception and a non-waivable gate.
+Check each chapter's applicability before treating it as required (see [Applicability](../../applicability.md)).
