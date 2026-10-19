@@ -10,7 +10,7 @@
 
 **Admission control** decides whether new work may start within safe limits; **backpressure** pushes that decision upstream. Without them, competition for finite model, retrieval, tool or compute capacity makes excess work queue, hold resources and amplify timeouts and retries. Early rejection, load shedding [1] and bounded queues [2] are established ways to contain overload; set thresholds for your workload.
 
-A private, low-volume agent with no shared bottleneck can use per-run limits and a safe failure outcome. A service facing bursts, many tenants, worker fleets or rate-limited dependencies needs an explicit shared-capacity policy, applying the most restrictive limit across request, run, actor, tenant, service and dependency. Cost controls are not capacity controls: a run within its spend budget can still hold too many concurrent requests or overwhelm a downstream service.
+A low-volume agent with no shared bottleneck needs only per-run limits and a safe failure outcome. Services facing bursts, many tenants, worker fleets or rate-limited dependencies need a shared-capacity policy applying the most restrictive limit across request, run, actor, tenant, service and dependency. Cost controls are not capacity controls: a run within its spend budget can still hold too many concurrent requests or overwhelm a downstream service.
 
 ## Working model
 
@@ -18,9 +18,9 @@ Capacity is not one number: active runs, concurrent model requests, retrieval or
 
 When work arrives faster than it finishes, a queue grows, uses memory and turns overload into stale work. Bound its size and maximum wait, tie waiting to the task deadline, and reject or cancel by policy work that cannot finish in time.[2]
 
-Limits must compose. Parallel branches across many runs reach the shared dependency together whatever each run's local allowance, and retries, resumed work and speculative branches count against the same budgets. An in-memory counter cannot enforce a service-wide limit across workers; use a suitable enforcement point or coordinated reservation, which also stops children overspending a parent budget. Reconcile unused grants only when their state is known; final billing may not be knowable exactly, so this is policy design, not an accounting guarantee.
+Limits must compose: branches across many runs hit the shared dependency together whatever each run's allowance, and retries, resumed work and speculative branches count against the same budgets. An in-memory counter cannot enforce a service-wide limit; use an enforcement point or coordinated reservation, which also stops children overspending a parent budget. Reconcile unused grants only when their state is known; this is policy design, not an exact accounting guarantee.
 
-Admission also allocates scarce capacity: per-tenant or per-actor limits stop one source monopolizing the service, shared headroom avoids stranding capacity behind rigid quotas, and the fairness identity must match your tenancy model. Start simple and document and test any priority classes.
+Admission also allocates scarce capacity: per-tenant or per-actor limits stop one source monopolizing the service, shared headroom avoids stranding capacity behind rigid quotas, and the fairness identity must match your tenancy model. Start simple; no scheduler fits every workload, so document and test any priority classes.
 
 ## Decisions and best practices
 
@@ -66,13 +66,13 @@ admission_policy:
     preserve_required_evidence: true
 ```
 
-A morning burst fills the bounded queue. Admission checks tenant and service-wide slots before a run starts, so locally permitted requests cannot together exceed the service limit. At the queue-age or task deadline, new work is rejected with a retry path. When retrieval throttles, the controller stops launching retrieval calls rather than retry in parallel.
+A morning burst fills the bounded queue. Admission checks tenant and service-wide slots before each run, so local allowances cannot sum past the service limit, and at the queue-age or task deadline new work is rejected with a retry path. When retrieval throttles, the controller stops launching retrieval calls rather than retry in parallel.
 
-The assistant cannot omit a required document and call its answer complete. With enough approved evidence for a contract-permitted partial result, it returns that and states the limit; otherwise it returns `needs_information` or `failed`. Admission and safety controls stay outside the model's discretion. Tests cover a saturated queue, competing tenants, retrieval throttling, retry exhaustion and the final outcome.
+The assistant cannot omit a required document and call its answer complete: it returns a contract-permitted partial result stating the limit, or `needs_information` or `failed`. Admission and safety controls stay outside the model's discretion. Tests cover a saturated queue, competing tenants, retrieval throttling, retry exhaustion and the final outcome.
 
 ## Evidence and checklist
 
-Record the workload model and derived limits: constrained resources, dependency limits, burst and request-size assumptions, allocation scopes, queue depth and age, retry policy, behavior at each exhaustion point, and capacity reserved for completion work.
+Record the workload model and derived limits: constrained resources, burst and size assumptions, allocation scopes, queue bounds, retry policy, exhaustion behavior and the completion reserve.
 
 Test at saturation: combined concurrency and child grants stay in bounds, waiting requests expire or are rejected, retries stay bounded, competing tenants are treated fairly, and degraded modes keep required checks and evidence. Signals and per-run budgets are in 5.1, optimization in [8.3](03-cost-latency-and-performance-optimization.md), and durable child work and reservation reconciliation in [7.1](../07-durable-execution-and-human-governed-work/01-execution-classes-persistence-and-recovery.md).
 
