@@ -62,7 +62,7 @@ A practical reference is a companion, not a parallel policy book. It can provide
 
 ## Navigation, citations, and migrations
 
-Use repository-relative links with visible chapter numbers and titles. Update affected indexes, overview routes, glossary owners, and applicability pointers when a chapter path or title changes. Preserve a renamed former page as a short redirect when historical documentation needs it: make the redirect unnumbered, link to the correct new owner, preserve meaningful old anchors, and do not copy canonical requirement groups into it.
+Use repository-relative links with visible chapter numbers and titles. Update affected indexes, overview routes, glossary owners, and applicability pointers when a chapter path or title changes. When a page moves or is renamed, update every link to it; do not leave redirect pages behind.
 
 Support factual claims with chapter-local numbered references in the repository’s citation format. State draft policy as a proposed playbook decision; do not attribute it to an external source or claim that an organization adopted it. Do not add private paths, task records, or `.work` links to portable book material.
 
@@ -76,6 +76,6 @@ Before handing a mini-book to validation, ask:
 - Are universal obligations separated from independently triggered profiles?
 - Do examples preserve the shared constants and avoid claiming execution?
 - Does practical reference support the owners rather than duplicate them?
-- Do renamed pages redirect cleanly while leaving legacy baselines untouched?
+- Do all links to moved or renamed pages point at their new location?
 
 Use this guide for new-draft editorial work only. It does not retroactively restructure other Parts or migrate the legacy compatibility directories or skills.

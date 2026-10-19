@@ -6,8 +6,7 @@ evaluation, observability, risk, and security requirements.
 
 Protocol and specification details MUST be checked against the versions pinned
 by an implementation. Documentation for specific SDKs, frameworks, and
-products belongs with the implementations that use them, such as
-[Zetra](https://github.com/X-McKay/zetra).
+products belongs with the implementations that use them.
 
 ## Interoperability
 

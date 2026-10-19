@@ -10,12 +10,12 @@ used a different SDK, framework, product, or language?**
 
 - **Yes**: it belongs here. Principles, normative requirements, decision
   criteria, failure modes, checklists, templates, and worked scenarios.
-- **No**: it belongs in an implementation, such as
-  [Zetra](https://github.com/X-McKay/zetra). Install steps, API calls, code,
-  configuration for a named product, version pins, and tool commands.
+- **No**: it belongs in an implementation, not here. Install steps, API
+  calls, code, configuration for a named product, version pins, and tool
+  commands.
 
 When a concept is easiest to explain with a concrete tool, describe the
-concept and link to the implementation for the specifics.
+concept in neutral terms instead.
 
 ## Writing rules
 
@@ -46,7 +46,7 @@ Do **not** use a new-draft contribution to relabel the legacy `agent-playbook/`,
 
 ### New-draft mini-books
 
-For new or reorganized draft Parts, use the [writing guide](writing-guide.md). It defines the flexible six-function mini-book pattern, requires one canonical owner for each normative requirement, and keeps audience, applicability, evidence, and practical reference visible without requiring a rewrite of other Parts. Preserve migration redirects where historical links need them; do not copy canonical normative groups into redirects.
+For new or reorganized draft Parts, use the [writing guide](writing-guide.md). It defines the flexible six-function mini-book pattern, requires one canonical owner for each normative requirement, and keeps audience, applicability, evidence, and practical reference visible without requiring a rewrite of other Parts.
 
 ## Checks
 
@@ -57,5 +57,4 @@ just check
 
 `just check` lints Markdown and verifies that relative links and anchors
 resolve. Skill packages follow the
-[Agent Skills specification](https://agentskills.io/specification); Zetra's
-tooling can validate them.
+[Agent Skills specification](https://agentskills.io/specification).

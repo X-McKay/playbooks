@@ -125,5 +125,3 @@ in isolation.
 
 Optional workflow skills that help you apply this playbook are described in
 [skills](../skills/README.md). The playbook itself stays technology-neutral.
-For one opinionated, zero-trust implementation of these standards, see
-[Zetra](https://github.com/X-McKay/zetra).
