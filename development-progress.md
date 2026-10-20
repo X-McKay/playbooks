@@ -4,6 +4,10 @@
 **Purpose:** State completed refinement scope, review boundaries, backlog order, and verified documentation results.  
 **Not a conformance record:** This page does not alter requirement wording, IDs, strengths, owner paths, applicability, or adoption status.
 
+## Content review, all Parts (October 2026)
+
+All 40 chapters were fact-checked against their cited sources, updated with sourced current practice, and shortened by about a quarter in a developer-guide voice. Requirement bullets, IDs, strengths and owner paths are unchanged. The four Part 4 migration redirect pages were removed. Parts 6–10 were edited for accuracy and clarity but not restructured into the mini-book pattern, so the backlog below still applies.
+
 ## Refined Parts 1–5
 
 Parts **1–5** are refined draft mini-books. Part 1 retains its completed planning increment: [1.1](development-guide/01-problem-definition-and-planning/01-defining-the-problem.md), [1.2](development-guide/01-problem-definition-and-planning/02-requirements-success-criteria-and-measurable-targets.md), [1.3](development-guide/01-problem-definition-and-planning/03-agent-suitability-and-alternatives.md), and [1.4](development-guide/01-problem-definition-and-planning/04-initial-risk-data-ownership-and-delivery-plan.md), plus four owned planning templates, its overview, practical reference, and glossary pointers. The four scoped Part 1 writer checks were recorded as passed. They remain local proposed edits on the **unmerged assembled draft's structural base**; they are not opened pull requests, independent reviews, or adoption decisions.

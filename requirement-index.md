@@ -1,12 +1,10 @@
 # Requirement index
 
-**Status:** 0.5.0-draft.2 — proposed, not an adopted standard
+**Status:** 0.5.0-draft.2 — draft
 
-This index locates the 208 canonical requirement groups in the 40 current chapters. Each owner link points to its Requirements section. Follow the owner for exact strength, applicability, evidence, and exceptions; a locator does not create or restate a requirement.
+This index lists the 208 requirement groups in the 40 chapters and links each to the Requirements section of the chapter that owns it. Read the owner chapter for exact wording, strength, applicability and evidence; this page does not restate them.
 
 [Applicability](applicability.md) explains triggered requirements and exceptions. [Part 4 coverage and cadence](development-guide/04-testing-and-evaluation/06-standards-required-coverage-and-execution-cadence.md) selects evaluation profiles. Full definitions remain with the topic owners.
-
-**Parts 1–5 refinement note:** The Part 1–3 owner links retain their earlier local navigation history, and the Part 5 owner links retain their canonical locations after the local chapter/template refinements. The index still locates all **208** canonical groups; no ID, owner path, strength, or canonical requirement prose changed. It remains a locator, never a second statement of requirement prose. Final whole-book owner and link checks remain pending the parent delivery record.
 
 ## Part 1 — Problem Definition and Planning
 

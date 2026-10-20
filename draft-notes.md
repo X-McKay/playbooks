@@ -12,7 +12,7 @@ The book has **ten Parts and 40 populated draft chapters**. Parts **1–5** are 
 
 The Parts 1–5 refinements do **not** change canonical requirement wording, IDs, operative strengths, owner paths, applicability, or what conformance means. All 208 canonical groups remain located by the [requirement index](requirement-index.md), which remains a locator rather than a second normative standard. The book is still **proposed, not adopted**.
 
-The legacy `agent-playbook/`, `foundations/`, `multi-agent-playbook/`, and `skills/` directories remain the untouched v0.4 compatibility baseline. This draft does not declare them conformant with 0.5.0-draft.2 and does not migrate skills.
+The legacy `agent-playbook/`, `foundations/`, `multi-agent-playbook/`, and `skills/` directories remain the v0.4 baseline (their Zetra links were removed in the content review). This draft does not declare them conformant with 0.5.0-draft.2 and does not migrate skills.
 
 ## Part 4 chapter sequence
 
