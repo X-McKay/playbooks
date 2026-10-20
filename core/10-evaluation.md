@@ -309,7 +309,11 @@ Best practices:
   cases rather than leaving them to add noise.
 - **Keep a held-out set.** If you tune prompts against the same cases you
   report on, scores rise without the agent getting better. Keep some cases
-  you look at only at release time.
+  out of reach during tuning and run them only for release decisions. Once
+  those cases, or their case-level results, have informed a change, they
+  are no longer held out for the next candidate: retire or replace them
+  before you report another held-out result, and record the held-out set's
+  version in the report.
 - **Refresh it.** When every case passes, the dataset has stopped telling
   you anything. Add harder cases from production and retire duplicates.
 - **Sanitize and classify.** Remove personal and confidential data from
@@ -507,10 +511,21 @@ or retry behavior.
 
 Decide what "passes" means for the case. A case that passes on any of five
 attempts shows the agent *can* do the task. A case that passes on all five
-shows it does the task *reliably*, which is what users experience. These
-differ more than intuition suggests: an agent that succeeds 90% of the time
-on a case passes all five attempts only about 59% of the time. Use the
-all-attempts measure for critical behavior.
+shows it does the task *consistently* across those five runs. The two differ
+more than intuition suggests: if attempts are independent and each succeeds
+90% of the time, all five pass only about 59% of the time. Use the
+all-attempts measure for critical behavior, and always report the run count
+and the per-attempt failure rate beside it, because the all-attempts score
+changes with the number of runs.
+
+A handful of clean runs does not prove a critical behavior is reliable. Five
+passes out of five is consistent with a per-attempt success rate as low as
+about 55%, at 95% confidence. For a critical hard gate, decide the number of
+fresh runs before you start, based on the failure rate you can tolerate, and
+require zero failures. A useful rule of thumb: zero failures in *n*
+independent runs bounds the failure rate below roughly 3/*n* at 95%
+confidence, so showing a rate under 1% takes about 300 clean runs. Report
+that bound with the result.
 
 Report distributions:
 

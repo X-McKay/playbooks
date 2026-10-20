@@ -48,7 +48,7 @@ Each case should include:
 - allowed variation;
 - redaction and retention classification.
 
-Have a second person review expected results, keep a held-out set for release decisions, refresh the dataset when it saturates, and sanitize production cases into minimal reproductions.
+Have a second person review expected results, keep a held-out set for release decisions (retire or replace cases once their results inform tuning, and version the set), refresh the dataset when it saturates, and sanitize production cases into minimal reproductions.
 
 Every material scenario in the agent risk assessment should map to one or more
 case IDs, deterministic invariants where possible, and a release or monitoring
@@ -67,7 +67,7 @@ A judge rubric checks one criterion, uses pass/fail or a short described scale, 
 
 ## Stochastic Measurement
 
-Run critical cases multiple times. Report attempt count, pass rate, distribution, variance, and confidence bounds when useful. Use all-attempts pass rates for critical behavior: a 90% per-run success rate passes five of five attempts only about 59% of the time. Keep sampling parameters fixed for comparisons. Store model, provider, prompt, tool, skill, policy, and dataset versions with results.
+Run critical cases multiple times. Report attempt count, pass rate, distribution, variance, and confidence bounds when useful. Use all-attempts pass rates for critical behavior: with independent attempts, a 90% per-attempt success rate passes five of five only about 59% of the time. Report run count and per-attempt failure rate beside the all-attempts score. Five passes of five does not establish reliability (the 95% lower bound on per-attempt success is about 55%); for critical gates, prespecify the number of fresh runs from the tolerable failure rate and require zero failures (zero in n runs bounds the failure rate below about 3/n at 95% confidence). Keep sampling parameters fixed for comparisons. Store model, provider, prompt, tool, skill, policy, and dataset versions with results.
 
 Compare baseline and candidate on identical cases and read the flipped cases. Size datasets so the allowed regression is larger than measurement noise. Treat model changes as releases: run the full suite on the new model with unchanged instructions first, retune afterwards, and roll out gradually.
 

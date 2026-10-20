@@ -59,8 +59,11 @@ execution, apply when your agent uses them.
 - [ ] Trajectory and tool-argument checks pass.
 - [ ] Durable-execution failure scenarios pass.
 - [ ] Required multi-run evaluations pass.
-- [ ] LLM judges use versioned rubrics calibrated against human labels.
-- [ ] The release is compared with the current baseline on the same cases.
+- [ ] If an LLM judge is used, its versioned rubric is calibrated against
+  human labels.
+- [ ] If a baseline exists, the release is compared with it on the same
+  cases. A first launch without one meets agreed absolute thresholds and
+  acceptance criteria, and any comparison with today's process is recorded.
 - [ ] Quality, cost, and latency meet thresholds.
 - [ ] Critical hard gates have no known failures.
 - [ ] Results include complete provenance.

@@ -134,10 +134,17 @@ but read whole traces, and for each failure record where it first went wrong:
 | Termination | The system stopped too early, looped, or ran out of budget before finishing |
 
 Counting failures by their first point tells you where to invest. If most
-failures start in handoffs, improving a member's model will not help. Turn
-each recurring failure into a case at the narrowest layer that reproduces
-it: a handoff failure becomes an interaction test with mocked members, not
-only another end-to-end case.
+failures start in handoffs, improving a member's model will not help.
+
+The first point where a trace goes wrong is a diagnosis, not proof of the
+cause. A bad member result can come from a routing choice, an incomplete
+handoff contract, or the member itself. Record the likely layers and your
+uncertainty, allow more than one cause, and confirm the cause by replaying
+the step with corrected input, removing a component, or another
+counterfactual test before you use the counts to decide where to invest.
+Then turn each confirmed failure into a case at the narrowest layer that
+reproduces it: a handoff failure becomes an interaction test with mocked
+members, not only another end-to-end case.
 
 To check a handoff, compare what the receiver needed with what it received.
 Write down, for each interaction type, the facts and constraints that must

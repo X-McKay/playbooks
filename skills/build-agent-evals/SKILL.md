@@ -23,7 +23,7 @@ Convert product claims and operational risks into reproducible evidence and rele
    - model-based judges for qualities that cannot be measured directly.
 8. Test the full execution path when it matters, including tool results and durable-execution recovery behavior, not only the final answer. Grade actions on the resulting state in controlled fixtures, not on the agent's description of them.
 9. Calibrate every model judge against human-labeled examples, with a versioned rubric that checks one criterion and asks for a reason before the score.
-10. Repeat stochastic cases and report pass rate, variance, and confidence—not one lucky run. Use all-attempts pass rates for critical behavior.
+10. Repeat stochastic cases and report pass rate, variance, and confidence—not one lucky run. Use all-attempts pass rates for critical behavior, report the run count and per-attempt failure rate beside them, and prespecify the number of fresh runs for critical gates.
 11. Compare candidates with the baseline on the same cases, and read the cases that flipped.
 12. Track quality beside latency, tokens, tool calls, retries, and estimated cost.
 13. Run evals and release checks through the project's own validation tooling or CI so provenance is normalized and gates fail closed; treat that output as release evidence.
