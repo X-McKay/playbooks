@@ -16,7 +16,7 @@ An **agent** is a bounded part of an application that uses a model to interpret 
 
 The key review question is: **what does the model decide or propose, and what does the application decide or enforce on its own?** The model can choose wording, spot a needed clarification, or pick among a finite, already admitted set of next steps. It is never the source of capability membership, identity, authorization, approval, source authority, or any external effect; those come from declared configuration and protected runtime boundaries.
 
-Use the smallest anatomy that supports the task: one validated model response, a fixed workflow whose orchestration owns the transitions, or, only when it adds value a fixed path cannot, a model that chooses the next step or when to stop. Published engineering guidance draws the same line between workflows and agents, advises starting simple, and warns that multi-step designs add latency, cost, and compounding errors. [4]
+Use the smallest anatomy that supports the task: one validated model response, a fixed workflow whose orchestration owns the transitions, or, only when it adds value a fixed path cannot, a model that chooses the next step or when to stop. Published engineering guidance draws the same line between workflows and agents, advises starting with the simplest solution, and warns that agentic designs trade latency and cost for performance and can compound errors. [4]
 
 Details: [2.2](02-agent-contracts-and-configuration.md) (contract and configuration), [2.4](04-tools-and-external-interfaces.md) (tools), [2.6](06-context-and-retrieval-fundamentals.md) (sources and freshness), [Part 3](../03-security-and-trust-boundaries/README.md) (authorization), [Part 4](../04-testing-and-evaluation/README.md) (evaluation), and Parts 6 and 7 (execution).
 
@@ -32,7 +32,7 @@ The **model** produces a candidate answer, a clarification request, or a structu
 
 A **capability** is something the application can use, such as an external interface or a reusable skill; it is unavailable unless declared configuration admits it. A **tool** is a capability that reaches outside the reasoning process ([2.4](04-tools-and-external-interfaces.md)). A skill can package guidance or resources, but packaging does not grant execution ([2.5](05-skills-and-reusable-capabilities.md)).
 
-The **runtime/control layer** decides whether a proposal is acceptable now. It assembles allowed context, tracks the run, picks or admits the next step, checks limits, calls only admitted operations through their protected boundary, and validates returned results before use. NIST's zero-trust architecture is not an agent blueprint, but its separation of policy decision from enforcement shows why an identifiable decision/enforcement boundary stays useful even when implementation units are combined. [2]
+The **runtime/control layer** decides whether a proposal is acceptable now. It assembles allowed context, tracks the run, picks or admits the next step, checks limits, calls only admitted operations through their protected boundary, and validates returned results before use. NIST's zero-trust architecture is not an agent blueprint, but it separates the component that decides on access from the one that enforces it. Keep that decide/enforce line visible even when one module does both. [2]
 
 An **output boundary** accepts the final result only when it has the declared shape and holds the declared invariants. Structural validation can reject an unexpected field, a malformed action request, or an unsupported status. It cannot show that a policy claim is right, that a citation supports it, or that an action happened; those need other evidence.
 
@@ -96,7 +96,7 @@ Before another agent relies on a shared executable capability, make its maintain
 
 **Configuration hidden in mutable run data.** A model output or request names a tool, scope, model setting, or budget and is quietly obeyed. Treat such values as requests that must match the effective configuration.
 
-**A directory that hides the deployed decision.** Instructions, capability definitions, and validation rules sit in untraceable places, so reviewers inspect a document the candidate does not use. Link each artifact to its role and keep identities that let you compare the reviewed candidate with what is later assembled; the effective capability manifest is in 2.2.
+**A directory that hides the deployed decision.** Instructions, capability definitions, and validation rules sit in untraceable places, so reviewers inspect a document the candidate does not use. Link each artifact to its role and keep identities that let you compare the reviewed candidate with what is later assembled; the effective capability manifest is in [2.2](02-agent-contracts-and-configuration.md).
 
 ### Illustrative project layout
 
@@ -113,7 +113,7 @@ agent-project/
 └── docs/                   # rationale, handoffs, open questions, and review evidence
 ```
 
-Each group should map to a decision or evidence a reviewer can inspect: `instructions` and `context` keep operating guidance apart from evidence, `capabilities` names each shared interface's maintainer and review owner, and `runtime` makes the proposal-to-enforcement handoff and terminal handling inspectable.
+Each group should map to a decision or evidence a reviewer can inspect: `agent-definition` says which candidate and responsibilities are under review, `instructions` and `context` keep operating guidance apart from evidence, `capabilities` names each shared interface's maintainer and review owner, `runtime` makes the proposal-to-enforcement handoff and terminal handling inspectable, and `tests` and `docs` link design claims to planned cases and decisions.
 
 The [agent anatomy record](../../templates/2.1/agent-anatomy-record.yaml) is a neutral planning record that uses the common fictional example and asks for visible unknowns.
 
@@ -151,12 +151,24 @@ Adding a policy-update action would create a different candidate needing new con
 
 ## Evidence and checklist
 
-The review is complete when another reader can trace a run from trusted inputs through a proposal/validation boundary to a declared terminal outcome. Keep design evidence separate from observations of a real system and keep, proportionately and under data-handling rules: an anatomy record naming response and action boundaries; a loop or state sketch; links to the contract, context and capability records, and evidence plan; and planned cases for a normal completion and a meaningful boundary or failure. Do not retain raw hidden reasoning just to make a run inspectable.
+The review is complete when another reader can trace a run from trusted inputs through a proposal/validation boundary to a declared terminal outcome. Keep design evidence separate from observations of a real system. Keep, proportionately and under data-handling rules:
 
+- an anatomy record naming response and action boundaries;
+- a loop or state sketch;
+- links to the contract, context and capability records, and evidence plan;
+- planned cases for a normal completion and a meaningful boundary or failure.
+
+Do not retain raw hidden reasoning just to make a run inspectable.
+
+Check:
+
+- [ ] Model, instructions, context, capabilities, runtime, state, and output boundary have identifiable responsibilities, even where they share a module (ANATOMY-01).
 - [ ] The record marks absent optional components rather than implying tools, retrieval, memory, approval, or durable execution.
 - [ ] Configuration is distinct from run state; run data cannot silently expand a capability or authority boundary.
-- [ ] Proposal, validation, protected authorization, dispatch, response, and external effect stay distinct.
-- [ ] Structural validity is not presented as semantic support or a successful effect.
+- [ ] Proposal, validation, protected authorization, dispatch, response, and external effect stay distinct (ANATOMY-02).
+- [ ] Each repeated path has declared stop conditions and limits, and an exhausted run is not reported as a completion (ANATOMY-03).
+- [ ] Structured output is validated before anyone consumes it, and structural validity is not presented as semantic support or a successful effect (ANATOMY-04).
+- [ ] Each shared executable capability traces to a named maintainer and review owner (ANATOMY-05).
 - [ ] The fixed-path and adaptive alternatives keep the same read-only, permission-filtered boundary.
 - [ ] The handoff names owners: 2.2 for contract and configuration, 2.4 for interfaces, Part 3 for trust boundaries, Part 4 for evidence, Parts 6 or 7 only when execution triggers arise.
 

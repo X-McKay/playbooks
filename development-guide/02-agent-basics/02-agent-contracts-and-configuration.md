@@ -14,7 +14,7 @@
 
 An **agent contract** is a reviewable declaration of an agent's bounded job, inputs, dependencies, behavior limits, outcomes, and accountable owner. It is not a prompt, an access grant, an approval, or a record that the agent ran. It tells a caller how to supply task data and handle each outcome, and a builder what to check before construction.
 
-Even a response-only assistant needs one, because its answer can be incomplete, misleading, unavailable, or out of scope; any model, retrieval source, skill, tool, or durable execution adds surface the contract makes visible.
+Even a response-only assistant needs one, because its answer can be incomplete, misleading, unavailable, or out of scope. Each model, retrieval source, skill, tool, or durable execution adds surface, and the contract makes it visible. Declaring a capability does not enable it: construction must resolve and admit it first.
 
 This chapter covers agent-level configuration and the **capability manifest** that records its effective form. Risk and ownership start in [1.4](../01-problem-definition-and-planning/04-initial-risk-data-ownership-and-delivery-plan.md); instructions, tools, and retrieval are in [2.3](03-prompts-and-instructions.md), [2.4](04-tools-and-external-interfaces.md), and [2.6](06-context-and-retrieval-fundamentals.md); identity, authorization, untrusted content, and data handling are in Part 3. The contract points to them without weakening them.
 
@@ -84,7 +84,7 @@ Construction validation checks every field that would otherwise be silently defa
 - the effective execution class is below the enabled capability's floor; or
 - an authority-bearing dependency comes from caller data or model output instead of the trusted boundary.
 
-Failing closed proves no other control works, but beats filling a blank with a convenient label.
+Failing closed does not prove other controls work, but it beats filling a blank with a convenient label and later treating the candidate as reviewed.
 
 ### Treat the manifest as a binding record, not a trust verdict
 
@@ -100,7 +100,7 @@ A change to model policy or settings, enabled capability, output contract, or bu
 
 1. Describe the interface: caller input, trusted dependencies with provenance, terminal outcomes, and caller handling.
 2. Declare the configuration and the smallest capability set, leaving unknowns unresolved rather than defaulted.
-3. Validate and resolve as above; on failure keep the bounded reason and no manifest.
+3. Validate and resolve as above. On success, emit the manifest and attach its ID to evaluation and runtime records; on failure, keep the bounded reason and emit no manifest.
 4. Hand off: tool owners get the admitted interface list, security owners the trusted-dependency and protected-operation boundary, and evaluators the manifest identity and the changed claim.
 
 ## Requirements
@@ -135,10 +135,13 @@ From the contract a reviewer should be able to answer: what task data may a call
 
 Keep the reviewed contract; validation results for missing, malformed, contradictory, and unadmitted configuration; the resolved capability-membership record; output-validation checks for every terminal outcome; and manifest-linked evaluation or runtime records. Part 4 decides what evidence a real decision needs.
 
+- Does the contract separate caller input from trusted dependencies, naming the source and type of each authority-bearing one?
+- Can a caller tell `complete`, `needs_information`, `declined`, and `failed` apart, and handle any declared extension safely?
 - Are unresolved construction fields blocking construction rather than getting defaults?
 - Is the desired capability list distinct from the admitted membership, including its execution-class floor?
 - Is each declared bound paired with a named enforcement location?
-- Does a material change get a fresh evaluation handoff rather than inheriting earlier evidence?
+- Does the manifest identify the effective model policy and settings, instructions, output schema, capability membership, source and budget policy, and construction identity, without secrets or hidden reasoning?
+- Does a material change get a new agent version, effective identity, and evaluation handoff rather than inheriting earlier evidence?
 
 ## References
 

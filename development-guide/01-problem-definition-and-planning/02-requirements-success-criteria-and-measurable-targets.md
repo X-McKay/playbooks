@@ -14,7 +14,7 @@
 
 This chapter turns the problem brief into claims you can check later: the outcome worth pursuing, acceptable and unacceptable behavior, and the measures that would support a decision. It does not select an architecture or authorize a release.
 
-A fluent response, a high task score and a worthwhile user outcome are different claims: a policy helper might cite the wrong source fluently, meet a rubric yet take longer to check than today's process, or improve an average while breaking a non-negotiable boundary. NIST defines validation as objective evidence that requirements for a specific intended use have been fulfilled, and says accuracy measurements need clearly defined, realistic test sets, with test sets, metrics and methods documented. [1]
+A fluent response, a high task score and a worthwhile user outcome are different claims: a policy helper might cite the wrong source fluently, meet a rubric yet take longer to check than today's process, or improve an average while breaking a non-negotiable boundary. The NIST AI RMF describes validation as objective evidence that the requirements for a specific intended use have been fulfilled, and says accuracy measurements should be paired with clearly defined, realistic test sets and documented test methodology. [1]
 
 Start from [1.1](01-defining-the-problem.md); evaluator design, trials, coverage and interpretation are in Part 4.
 
@@ -22,11 +22,11 @@ Start from [1.1](01-defining-the-problem.md); evaluator design, trials, coverage
 
 An **outcome** is the real-world state a user or organization wants, such as a requester being able to take the right next step with reliable policy information, not just a response returned by a system.
 
-A **requirement** states required, prohibited or constrained behavior. An **acceptance criterion** turns one requirement into an observable condition for a stated case or population: "use a current, requester-permitted source when the question is answerable" is a criterion; a source ID printed in an answer is only an observation.
+A **requirement** states required, prohibited or constrained behavior. An **acceptance criterion** turns one requirement into an observable condition for a stated case or population: "use a current, requester-permitted source when the question is answerable" is a criterion; a source ID printed in an answer is only an observation that may or may not support it.
 
 A **metric** is a fully specified calculation or recorded quantity for one claim. A **target** is the value, bound or state chosen in advance for that metric in this use case. A **baseline** is a comparable measure of the current process or an earlier candidate; if none exists, record that instead of implying improvement. A **proxy** is a measurable stand-in for the outcome; a citation-present rate, for example, does not show that the cited material supports the answer.
 
-A **guardrail** is a boundary condition interpreted separately, so favorable results elsewhere cannot offset its failure. A **decision consequence** says what happens when a target, guardrail, critical slice or evidence condition is met, not met or unavailable. Non-compensable gates, missing evidence, retries and `go` or `no_go` conclusions are in [4.7 Analyzing Results, Comparing Versions, and Making Decisions](../04-testing-and-evaluation/07-analyzing-results-comparing-versions-and-making-decisions.md).
+A **guardrail** is a boundary condition interpreted separately, so favorable results elsewhere cannot offset its failure (it is **non-compensable**). A **decision consequence** says what happens when a target, guardrail, critical slice or evidence condition is met, not met or unavailable. Non-compensable gates, missing evidence, retries and `go` or `no_go` conclusions are in [4.7 Analyzing Results, Comparing Versions, and Making Decisions](../04-testing-and-evaluation/07-analyzing-results-comparing-versions-and-making-decisions.md).
 
 A **critical slice** is a subset of the population that needs separate visibility because task, user context, source state, permission or consequence makes pooling misleading; it is not every possible filter. NIST says what to measure depends on the purpose, audience and needs of the evaluation and, where relevant, calls for disaggregated analysis of expected-population groups. [2]
 
@@ -39,7 +39,7 @@ bounded user outcome
   → Part 4 evidence and a later decision
 ```
 
-An expected outcome such as `needs_information` is not an evaluator status such as `pass`, `fail`, `invalid` or `inconclusive`, and a proposed target is not an observed result.
+Keep the labels on each step distinct so a planning record cannot pass for evidence: an expected outcome such as `needs_information` is not an evaluator status such as `pass`, `fail`, `invalid` or `inconclusive`, and a proposed target is not an observed result.
 
 ## Define behavior before calculating it
 
@@ -50,7 +50,7 @@ Write the user outcome in plain language, then the system's contribution in obse
 - **Failure-path behavior:** what happens when input is missing, ambiguous, conflicting, out of scope, or blocked by a dependency: clarification, `needs_information`, a decline, an escalation, a bounded partial result, or a visible failure.
 - **Nonfunctional behavior:** material service properties, such as reliable delivery, a time bound, and a total cost that fits the use case.
 
-Put case dependence in the criterion, stated per case class before looking at output. A clarification is right for an underspecified request and an obstacle for an answerable one; an escalation is safe when evidence conflicts and a failure when it was clear.
+Write the expected result for each case class into the criterion before looking at output, not into an explanation afterwards. A clarification is right for an underspecified request and an obstacle for an answerable one; an escalation is safe when evidence conflicts and a failure when it was clear.
 
 ### Keep the decision dimensions separate
 
@@ -59,7 +59,7 @@ NIST frames deployment as a contextual assessment of trustworthiness characteris
 - **User or business value:** can people complete the intended work with a worthwhile net effect compared with the current process? Signals include task resolution, total effort, correction burden, avoidable handoffs, or a task-specific business consequence; a task-quality score is only a proxy.
 - **Task behavior and failure paths:** does the response or terminal outcome match the contract: correct and complete where an answer is supported, honestly bounded where clarification, decline, escalation or failure is right? Correctness or rubric measures belong here.
 - **Safety and other non-compensable boundaries:** did prohibited behavior occur? Report population, observations and count; strong task behavior cannot cancel a disallowed disclosure or unauthorized effect.
-- **Reliability:** do eligible request episodes reach their contract-appropriate terminal outcome under the defined conditions? Answers can be correct whenever they return while many never return.
+- **Reliability:** do eligible request episodes reach their contract-appropriate terminal outcome under the defined conditions? This differs from correctness: answers can be right every time one returns while many requests never get one.
 - **Latency:** how long does a declared part of the experience take? Say whether timing runs from receipt to first response, to a delivered terminal response, or to a completed user task; these differ. The SRE book treats request latency, error rate and availability (yield) as separate indicators, aggregated as a rate, average or percentile. [3]
 - **Total cost:** model or service use, supporting operations, retries, infrastructure, and material human review or correction for the defined population. Do not count unknown human or failed-attempt cost as zero.
 
@@ -138,7 +138,7 @@ The acceptance criteria separate the case paths:
 - A permitted requester receives `complete` only when the response is grounded in the current permitted source.
 - When the permitted answer-bearing source is missing, or two equally authoritative current permitted sources conflict, `needs_information` is expected, not a definite amount.
 - A requester without permission receives `declined` without restricted policy content.
-- When the read-only budget is exhausted, `failed` with useful uncertainty beats an invented answer.
+- When the declared budget for read-only calls is exhausted, `failed` with useful uncertainty beats an invented answer.
 - No write call is expected on any path.
 
 The record defines future measures without inventing values:
@@ -208,13 +208,14 @@ observed_result: null
 release_authorization: none
 ```
 
-It is measurable because it names the counted episode, population, required outcome, timing boundary, target, slices and consequence. A blanket refusal cannot satisfy the answerable slice, and zero observed boundary violations describes the evidence collected, not zero field risk.
+It is measurable because it names the counted episode, population, required outcome, timing boundary, target, slices and consequence. A clarification or decline counts only in the slice that calls for it, so a blanket refusal cannot satisfy the answerable slice. Zero observed boundary violations describes the evidence collected, not zero field risk. A real owner picks values from their own task, consequence, baseline and budget.
 
 ## Evidence and handoff
 
 The record is planning evidence, not proof a target was met. Before using it in Part 4, check that:
 
 - the user or business outcome is distinct from the system output and any task-quality proxy;
+- functional, prohibited and case-dependent terminal behavior is explicit for each material variation, and each metric answers the six questions above;
 - a ratio's numerator and denominator match the claim, and a quantile names its population, count, estimator and aggregation instead of a numerator;
 - completion-duration measures are paired with timeout, no-response or failure reporting where that matters; and
 - the record points to Part 4 for cases, evaluators, trial design, consistency, holdouts, coverage and interpretation, and shows planning values as planned, not achieved.

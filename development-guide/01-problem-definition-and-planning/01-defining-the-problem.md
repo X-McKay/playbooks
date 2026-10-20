@@ -14,7 +14,7 @@
 
 A problem brief is a short, checkable account of a person's work: who is trying to do what, how they do it today, where it breaks down, and what a useful result would let them do next. Requirements, alternatives, risk and delivery build on it. It is not an agent contract or implementation plan, and does not show that a candidate is useful or safe.
 
-Human-centred design standards separate understanding the context of use and specifying requirements from producing design solutions. [1] [5] The NIST page lists an explicit understanding of users, tasks and environments among its principles and calls the process iterative. Public-service guidance says to understand the full context of the user's goal and focus on the problem, not a particular solution. [2]
+Human-centred design separates understanding the context of use and specifying user requirements from producing design solutions, and treats the work as iterative: the design rests on an explicit understanding of users, tasks and environments. [1] [5] Public-service guidance says to understand the full context of the user's goal and focus on the problem, not a particular solution. [2]
 
 A request often arrives as a solution: "build an assistant," "add a model," "automate the policy question." Treat it as a lead: it may point to a real need, or hide a simpler issue such as an unclear source of truth, an avoidable handoff, or a process that makes users repeat work.
 
@@ -26,7 +26,7 @@ A **need** is the progress a person or group must make in a situation. A **reque
 
 A **symptom** is an observed or reported difficulty, such as repeated searching, waiting for a handoff or abandoned tasks. A **cause** creates or contributes to a symptom. A **hypothesis** is an explanation not yet checked. One symptom can have several causes, which can differ between groups. Label hypotheses so an unmeasured pain point is not presented as fact, and test assumptions early: the assumed problem may not be the real one. [2]
 
-A **user task** is the person's real work, in their terms. It starts with a trigger and ends when the person can make progress, not when a system returns text. An **agent task** is a bounded contribution a system could make to it, such as finding permitted current policy evidence and presenting an answer or the uncertainty: a design candidate, not a restatement of the need.
+A **user task** is the person's real work, in their terms. It starts with a trigger and ends when the person can make progress, not when a system returns text. An **agent task** is a bounded contribution a system could make to it, such as finding current policy the user may read and presenting an answer or saying what is uncertain. It is a design candidate, not a restatement of the need. Keeping the two apart stops a returned answer being mistaken for a finished human task.
 
 **Scope** is the task classes, users, inputs, results and dependencies the brief covers, plus explicit exclusions. A **stakeholder** is anyone who does the task, supplies an input, owns a dependency, receives a result, is affected by a failure, or makes a relevant decision, including people who never use the system, such as a downstream claimant, a policy owner, or someone whose data could be exposed.
 
@@ -54,7 +54,7 @@ The U.S. Digital Services Playbook recommends learning from current and prospect
 
 ### Follow the task across boundaries
 
-Upstream dependencies include information, people, services, access decisions, and the process that says whether a source is current. For each material one, describe what happens if it is absent, stale, in conflict, or has changed permissions or ownership; data and risk treatment belongs in 1.4. Downstream, identify who relies on the result and what decision or next step it informs: that is where an incomplete or misleading result causes rework, delay or a poor decision.
+Upstream dependencies include information, people, services, access decisions, and the process that says whether a source is current. For each material one, describe what happens if it is absent, stale, in conflict, or has changed permissions or ownership; data and risk treatment belongs in 1.4. Downstream, identify who relies on the result and what decision or next step it informs: that is where an incomplete or misleading result causes rework, delay or a poor decision. Naming a consumer does not make the result authoritative for them.
 
 ### Test causes before automating symptoms
 
@@ -70,7 +70,7 @@ Keep these elements separate so a reader can challenge one without rejecting the
 4. **Relationships.** List upstream dependencies with their failure or change effects, and any downstream consumer with the decision the result informs. Leave owners, data handling and authority to 1.4.
 5. **Scope and uncertainty.** State exclusions, unverified assumptions and open questions that could change the brief. Write any candidate implementation as a proposal, not part of the problem; a later decision may conclude that no agent is needed.
 
-The [problem brief template](../../templates/1.1/problem-brief.yaml) shows these fields using the shared fictional record.
+The [problem brief template](../../templates/1.1/problem-brief.yaml) shows these fields filled in for the fictional record in the worked example below.
 
 ## Common pitfalls
 
@@ -107,6 +107,7 @@ A reviewed brief, representative task record, light process map and dependency n
 
 - users, stakeholders, user task and desired outcome are distinct from the proposed system contribution;
 - observations, reports and hypotheses about the current difficulty are labelled honestly;
+- each in-scope task class has a representative input, needed result and plausible variation, and each dependency and consumer shows its failure, change or decision effect;
 - exclusions and unverified assumptions are findable without reading an implementation plan; and
 - the brief links to the success record, the alternatives decision and the initial risk/data/ownership record instead of duplicating them.
 
