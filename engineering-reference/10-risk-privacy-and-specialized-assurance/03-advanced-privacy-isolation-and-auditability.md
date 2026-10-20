@@ -14,7 +14,7 @@ Use this chapter when the screen or [10.1](01-detailed-risk-assessment-and-gover
 
 ## Working model
 
-Follow sensitive information through its whole lifecycle: an input may be normalized, retrieved, summarized, embedded, cached, queued, sent to a provider, answered from, and copied into telemetry or backups, and derived material can reveal facts no single input shows. Map source, purpose, classification, transformations, recipients, storage, and copies. The NIST Privacy Framework (Version 1.0; a 1.1 draft is out for comment) frames privacy risk around how data is processed, not which processing is lawful.[1]
+Follow sensitive information through its whole lifecycle: an input may be normalized, retrieved, summarized, embedded, cached, queued, sent to a provider, answered from, and copied into telemetry or backups, and derived material can reveal facts no single input shows. Map source, purpose, classification, transformations, recipients, storage, and copies. The NIST Privacy Framework (Version 1.0; a 1.1 Initial Public Draft was published in April 2025 and its comment period has closed) frames privacy risk around how data is processed, not which processing is lawful.[1]
 
 Isolation is an end-to-end authorization property. An instruction or initial query filter fails if a later cache, reranker, memory store, artifact, or log crosses tenant boundaries, so bind every data access to trusted actor, tenant, and purpose context at its enforcement point. Shared infrastructure is fine when evidence shows the required separation.
 

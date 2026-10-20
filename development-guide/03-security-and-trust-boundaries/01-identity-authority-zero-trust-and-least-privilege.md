@@ -48,7 +48,7 @@ An agent can act under **autonomous service authority** (only what the workload 
 
 Name the trusted source of each identity- or scope-bearing value. A user-provided account label, a model-generated tenant, a document URL, or a tool result is a request parameter, not provenance for authority. Keep reusable personal credentials out of model-visible context; the execution layer passes verified context instead.
 
-When calling a downstream service for a user, pass the user's authority explicitly; do not forward their token or use a broad service credential. OAuth token exchange (RFC 8693) defines delegation, where the new token names both the user and the acting party, as distinct from impersonation, where the actor is hidden; delegation keeps the audit trail honest. [5] Request tokens limited to the target service and needed scope (audience and resource indicators); each service checks that a token was meant for it. The MCP authorization specification requires servers to accept only tokens issued for them and forbids passing other tokens through. [6]
+When calling a downstream service for a user, pass the user's authority explicitly; do not forward their token or use a broad service credential. OAuth token exchange (RFC 8693) can express delegation, but whether it issues a composite token identifying both subject and actor is at the authorization server's discretion. When the downstream service must distinguish the requester from the acting workload, require both identities in the exchanged token or in an authoritative associated record; do not assume token exchange provides that audit trail automatically. Delegation differs from impersonation, where the recipient treats the actor as the subject. [5] Request tokens limited to the target service and needed scope (audience and resource indicators); each service checks that a token was meant for it. The MCP authorization specification requires servers to accept only tokens issued for them and forbids passing other tokens through. [6]
 
 ### Permission, approval, and evidence are different
 
@@ -74,7 +74,7 @@ Run code-executing or tool-using agents in an isolated environment holding only 
 
 For each operation, record its mode and how the workload identity, requester context, resource attributes, and policy identity reach the enforcement point. Reject unresolved provenance instead of filling in a default. Otherwise you get a confused-identity failure: a broad service credential authenticates correctly and is then treated as proof that any user the model names may see any object.
 
-OAuth's security BCP has the same goal: minimum privileges, tokens bound to an intended audience and resources or actions and verified on each request, and sender-constrained tokens so a stolen one cannot be replayed. [3] OAuth is not required, and a valid token still needs resource-side checks.
+OAuth's security BCP has the same goal: minimum privileges, tokens bound to an intended audience and resources or actions and verified on each request, and sender-constrained tokens so a stolen token cannot be used by an attacker who lacks the bound key. [3] OAuth is not required, and a valid token still needs resource-side checks.
 
 ### Normalize, then authorize the operation that will execute
 

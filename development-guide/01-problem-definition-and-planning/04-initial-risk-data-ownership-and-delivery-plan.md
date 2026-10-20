@@ -61,7 +61,7 @@ An initial data record lists, for every proposed source or connection, its purpo
 
 Start from purpose. For personal data under the UK GDPR, the Information Commissioner's Office explains data minimisation as data that is adequate, relevant and limited to what is necessary for the stated purpose, and warns against collecting data just because it may be useful later. [3] That guidance is jurisdiction-specific and under review at the time of writing, but a specific purpose helps anywhere to challenge an unneeded source, field, permission, diagnostic event or retention assumption.
 
-Check early whether the use needs a **regulatory applicability screen**. Where personal data is likely to be processed in a way that is high-risk to individuals, UK GDPR Article 35 requires a data protection impact assessment before processing starts; the ICO guide explains when. [5] If the system serves people in the EU, check whether the EU AI Act applies and which obligations apply when; its application dates have been amended since adoption, so confirm the current dates from the official text. [6] This is a pointer, not legal advice; applicability stays unresolved until an authorized reviewer decides it (SCOPE-01).
+Check early whether the use needs a **regulatory applicability screen**. Where personal data is likely to be processed in a way that is high-risk to individuals, UK GDPR Article 35 requires a data protection impact assessment before processing starts; the ICO guide explains when. [5] If an EU AI Act Article 2 scope condition may be present (placing a system or model on the Union market, putting it into service, deployment by an EU-established deployer, or output used in the Union), screen the Act's applicability, operator role, exclusions, application dates and obligations against the current official text. [6] This is a pointer, not legal advice; applicability stays unresolved until an authorized reviewer decides it (SCOPE-01).
 
 For each source or connection, consider:
 
@@ -88,7 +88,7 @@ A responsibility map answers **who decides** and **who responds**. One person or
 
 Where those decisions apply, also name the source or access owner, escalation contact, policy or specialist reviewer, release or risk-acceptance authority, containment authority and restart authority. Name a reachable person or staffed group, not a title, with the decision it controls and the response it can make. NIST's AI RMF lists documented roles, responsibilities and lines of communication as an accountability outcome. [2]
 
-Keep containment and restart separate: an operating owner may switch off access quickly, while another authorized person decides whether restart conditions are met. Nobody approves their own proposal for broader access. Where policy requires independent review or a separate release or risk-acceptance authority, record it as required instead of assuming it exists or is satisfied.
+Keep containment and restart separate: an operating owner may switch off access quickly, while another authorized person decides whether restart conditions are met. A person who proposes broader access does not gain approval authority merely by making the proposal. Where policy requires independent review or a separate release or risk-acceptance authority, record it as required instead of assuming it exists or is satisfied.
 
 ## Plan a bounded first delivery and its handoff
 

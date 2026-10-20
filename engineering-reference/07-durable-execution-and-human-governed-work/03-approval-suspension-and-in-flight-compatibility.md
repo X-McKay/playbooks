@@ -69,8 +69,8 @@ It holds a digest, not a sensitive payload (data handling per Chapter 3.3). A re
 
 People who approve many requests stop reading. Research finds complacency (monitoring automated output less) and automation bias (following wrong recommendations, missing unflagged problems), which training does not reliably prevent.[3] A gate always clicked through protects nothing.
 
-- Ask for approval only where the governance tier justifies it; gates on routine actions teach people to ignore gates.
-- Rate each tool low, medium or high by read or write, reversibility, permissions and financial impact, and let the rating decide which calls need a person; also hand off when a retry or failure limit is exceeded.[4]
+- Ask for approval where the applicable policy, informed by the governance tier, requires it; gates on routine actions that policy does not require teach people to ignore gates.
+- Rate each tool low, medium or high by read or write, reversibility, permissions and financial impact, and use the rating to inform the approval path. Whether a specific call needs a person is decided by the applicable policy and the bound action and context. Also hand off when a retry or failure limit is exceeded.[4]
 - Show the exact change (diff, target, tenant, amount or count, reversibility) and the evidence and uncertainty beside it; do not pre-select "approve" or lead with the recommendation.
 - Track approval rate, decision time and edit or reject rate; near-100 percent approval with very short decisions suggests the gate is not working.
 - Review a sample of approved actions, and seed test proposals with known defects to check approvers catch them.

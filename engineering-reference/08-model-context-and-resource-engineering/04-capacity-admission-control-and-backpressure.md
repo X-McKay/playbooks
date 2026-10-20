@@ -68,7 +68,7 @@ admission_policy:
 
 A morning burst fills the bounded queue. Admission checks tenant and service-wide slots before each run, so local allowances cannot sum past the service limit, and at the queue-age or task deadline new work is rejected with a retry path. When retrieval throttles, the controller stops launching retrieval calls rather than retry in parallel.
 
-The assistant cannot omit a required document and call its answer complete: it returns a contract-permitted partial result stating the limit, or `needs_information` or `failed`. Admission and safety controls stay outside the model's discretion. Tests cover a saturated queue, competing tenants, retrieval throttling, retry exhaustion and the final outcome.
+The assistant cannot omit a required document and call its answer complete. It may return a contract-permitted partial result only when the available approved evidence supports the stated portion and the result makes its limitation clear; otherwise it returns `needs_information` or `failed`. Admission and safety controls stay outside the model's discretion. Tests cover a saturated queue, competing tenants, retrieval throttling, retry exhaustion and the final outcome.
 
 ## Evidence and checklist
 
