@@ -16,7 +16,7 @@ A requester's question, a retrieved document, a tool response, another component
 
 A **direct prompt injection** arrives in a user-controlled request. An **indirect prompt injection** arrives through a resource an attacker can influence, such as a document, website, message, or attachment; NIST defines it as prompt injection carried out through resource control rather than user input. [1] OWASP and NIST's adversarial machine learning taxonomy cover both; OWASP notes that retrieval augmentation and fine-tuning do not fully remove the vulnerability. [2] [3]
 
-A read-only answer can still disclose restricted information or launder a stale claim into a current-looking answer. Yet a hostile sentence in a useful document should not automatically make the legitimate task impossible.
+A read-only answer can still disclose restricted information or present a stale claim as current. Yet a hostile sentence in a useful document should not automatically make the legitimate task impossible.
 
 Authorization is in [3.1](01-identity-authority-zero-trust-and-least-privilege.md), interface contracts and effects in [2.4](../02-agent-basics/04-tools-and-external-interfaces.md), source admission and currentness in [2.6](../02-agent-basics/06-context-and-retrieval-fundamentals.md), and destinations, retention, and audit in [3.3](03-data-privacy-handling-and-minimum-audit-evidence.md).
 
@@ -91,12 +91,12 @@ A content screen, classifier, or guard model can flag suspicious material, route
 
 ### Defence in depth against prompt injection
 
-No filter reliably stops prompt injection, so design so that injected text can do little harm. Researchers who tested twelve published defenses against attackers that adapted to them bypassed most with success rates above 90 percent, though many had reported near-zero rates on static attacks. [7] In a NIST CAISI red-teaming competition with over 250,000 attempts, every one of 13 frontier models was hijacked at least once, and robustness did not consistently track capability. [8] Plan on prevention by design and on containment, not detection alone.
+No filter reliably stops prompt injection, so design so that injected text can do little harm. Researchers who tested twelve published defenses against attackers that adapted to them bypassed most with success rates above 90 percent, though many had reported near-zero rates on static attacks. [7] In a large public agent red-teaming competition analysed by NIST's CAISI and partners, more than 250,000 attack attempts found at least one successful attack against each of the 13 frontier models tested, and robustness did not track capability uniformly. [8] Plan on prevention by design and on containment, not detection alone.
 
 - **Avoid the lethal trifecta.** Per Meta's Rule of Two, allow at most two of untrusted input, sensitive access, and state change or external communication per session; split the work or add supervision such as human approval when all three are needed. [9] See [3.1](01-identity-authority-zero-trust-and-least-privilege.md).
 - **Plan, then execute.** Have the model fix the sequence of permitted actions before it reads untrusted content; tool results can fill in arguments but cannot add steps. [10]
-- **Quarantine untrusted content.** In a dual-model pattern, a privileged model that calls tools never reads untrusted text; a quarantined model with no tools processes it and returns constrained, validated values, not free-form instructions. [10]
-- **Separate control from data.** Capability-based designs track which values came from untrusted sources and let policy block a tool call whose arguments carry that taint. [11]
+- **Quarantine untrusted content.** In a dual-model pattern, a privileged model that plans and calls tools never reads untrusted text; a quarantined model with no tool access processes it, and its output is handed on as values the privileged model can pass to tools but does not read as instructions. [10]
+- **Separate control from data.** Capability-based designs fix the control flow from the trusted request, tag each value with where it came from and where it may flow, and check policy at every tool call, so untrusted data cannot change the plan or leave through an unauthorized channel. [11]
 - **Narrow the model's choices.** Let the model select only from a fixed action list where possible, and minimize the context it sees at each step. [10]
 
 These patterns trade flexibility for safety and none is complete. Keep the action boundary in front of them, and test with adaptive attackers, not only fixed attack lists. OWASP's agentic guidance extends the concern to tool misuse, memory poisoning, and inter-agent messages. [12]

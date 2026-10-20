@@ -11,7 +11,7 @@
 
 Start with a question that matters, not a convenient score: what must the agent do, what must it never do, and which capability, dependency, or risk could change the answer? Keep each claim narrow enough for a case to exercise. [4.6](06-standards-required-coverage-and-execution-cadence.md) owns the coverage map and profile triggers; this chapter turns selected claims into executions.
 
-Evidence is ongoing input, not a one-time certificate: NIST's AI RMF says AI systems should be tested before deployment and regularly during operation,[1] though it sets no test count or pass threshold. Start small: around 20 realistic tasks from real usage, real failures, and your existing manual checks give useful signal because early changes have large effects; grow the suite as failures appear.[4]
+Evidence is ongoing input, not a one-time certificate: NIST's AI RMF says AI systems should be tested before deployment and regularly during operation,[1] though it sets no test count or pass threshold. Start small: early changes tend to have large effects, so about 20 tasks from real usage already show whether a change helped;[4] 20 to 50 tasks drawn from real failures make a good first suite, which you grow as new failures appear.[6]
 
 The working chain:
 
@@ -101,7 +101,7 @@ trial_record:
   case: "POLICY-CURRENT-001"
   fixture_revision: "fixture-2026-10-18.1"
   reset_verified: "record per trial"
-  attempt: "record each physical attempt; do not hide retries"
+  attempt: "record every physical attempt, including retries"
   status: "pass | fail | invalid | inconclusive"
   observation: "response, cited source/revision, permission decision, and event log"
 holdout:
@@ -129,9 +129,14 @@ A curated suite shows results only for the cases and conditions it holds; NIST's
 
 Keep the versioned claim/case map, case and fixture inventory, evaluator/trial policy, and execution records. Before analysis, check:
 
+- [ ] Each case has a stable ID, versioned input, rationale, tags, observable expectation, allowed variation, and suite purpose (CASE-02).
 - [ ] Cases include ones where a behavior should occur and ones where it should not.
+- [ ] A release holdout has protected use and independently authored tasks and fixtures, and was not used to tune what it reports on.
+- [ ] Fixture revision, initialization, isolation, live boundary, reset, reset verification, and authoritative observation are explicit (CASE-03).
 - [ ] Every trial starts from a verified clean state.
-- [ ] Failures were read in transcripts to separate agent defects from fixture, harness, or grader defects.
+- [ ] Data is synthetic or minimized where practicable; production-derived material is authorized, sanitized, and classified.
+- [ ] Each trial records candidate, case, fixture, evaluator, conditions, observations, and a visible status; invalid or inconclusive runs keep their reason (CASE-05).
+- [ ] Failures were read in transcripts to separate agent defects from fixture, harness, or grader defects; no rerun or repair hides a candidate failure.
 - [ ] Repeats are not called independent when conditions were shared or reset was unverified.
 
 ## References
@@ -141,3 +146,4 @@ Keep the versioned claim/case map, case and fixture inventory, evaluator/trial p
 [3]: https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html "OWASP LLM Prompt Injection Prevention Cheat Sheet"
 [4]: https://www.anthropic.com/engineering/multi-agent-research-system "Anthropic: How we built our multi-agent research system"
 [5]: https://aclanthology.org/2023.emnlp-main.308 "Stop Uploading Test Data in Plain Text: Practical Strategies for Mitigating Data Contamination by Evaluation Benchmarks"
+[6]: https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents "Anthropic: Demystifying Evals for AI Agents"

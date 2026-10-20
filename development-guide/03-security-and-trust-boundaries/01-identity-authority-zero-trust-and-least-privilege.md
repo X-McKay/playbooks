@@ -18,7 +18,7 @@ An authority boundary answers one question where access could occur: **may this 
 
 **Zero trust** is a security strategy, not a certification or a promise that compromise is impossible. NIST describes it as moving attention from network perimeters to users, assets, and resources: network location or asset ownership creates no implicit trust, and authentication and authorization are separate functions done before a resource session starts. [1] For an agent, the protected resource decides explicitly; the model, its host, and a previous decision are not standing permission.
 
-The capability manifest is in [2.2](../02-agent-basics/02-agent-contracts-and-configuration.md), tool contracts in [2.4](../02-agent-basics/04-tools-and-external-interfaces.md), hostile content in [3.2](02-untrusted-inputs-retrieved-content-and-action-boundaries.md), retention and audit in [3.3](03-data-privacy-handling-and-minimum-audit-evidence.md), and approval and uncertain effects in [Part 7](../../engineering-reference/07-durable-execution-and-human-governed-work/README.md).
+The capability manifest is in [2.2](../02-agent-basics/02-agent-contracts-and-configuration.md), tool contracts in [2.4](../02-agent-basics/04-tools-and-external-interfaces.md), hostile content in [3.2](02-untrusted-inputs-retrieved-content-and-action-boundaries.md), retention and audit in [3.3](03-data-privacy-handling-and-minimum-audit-evidence.md), and approval and uncertain effects in [Part 7](../../engineering-reference/07-durable-execution-and-human-governed-work/README.md). For agent-specific threats, the OWASP Top 10 for Agentic Applications is a peer-reviewed list of the main risks [8], and NIST's NCCoE has started a project on identity and authorization for agents (a concept paper so far, with a practice guide planned). [7]
 
 ## Working model
 
@@ -40,7 +40,7 @@ admitted capability
   → minimal decision observation
 ```
 
-The model may propose an operation but does not authorize it. An admitted capability means an operation is available, not that every requester, object, or destination is allowed.
+The model may propose an operation but does not authorize it. An admitted capability means an operation is available, not that every requester, object, or destination is allowed. A trusted source can state a policy fact without becoming runtime policy, and a retrieved instruction cannot enlarge authority.
 
 ### Autonomous and delegated authority
 
@@ -48,7 +48,7 @@ An agent can act under **autonomous service authority** (only what the workload 
 
 Name the trusted source of each identity- or scope-bearing value. A user-provided account label, a model-generated tenant, a document URL, or a tool result is a request parameter, not provenance for authority. Keep reusable personal credentials out of model-visible context; the execution layer passes verified context instead.
 
-When calling a downstream service for a user, pass the user's authority explicitly; do not forward their token or use a broad service credential. OAuth token exchange (RFC 8693) defines delegation, where the new token names both the user and the acting party, as distinct from impersonation, where the actor is hidden; delegation keeps the audit trail honest. [5] Request tokens limited to the target service and needed scope (audience and resource indicators); each service checks that a token was meant for it. The MCP authorization specification requires audience validation and forbids passing a received token through to another service. [6] NIST's NCCoE is developing guidance on identity and authorization for agents. [7] OWASP's Top 10 for Agentic Applications is a companion to its LLM list for agent-specific risks. [8]
+When calling a downstream service for a user, pass the user's authority explicitly; do not forward their token or use a broad service credential. OAuth token exchange (RFC 8693) defines delegation, where the new token names both the user and the acting party, as distinct from impersonation, where the actor is hidden; delegation keeps the audit trail honest. [5] Request tokens limited to the target service and needed scope (audience and resource indicators); each service checks that a token was meant for it. The MCP authorization specification requires servers to accept only tokens issued for them and forbids passing other tokens through. [6]
 
 ### Permission, approval, and evidence are different
 
@@ -72,7 +72,7 @@ Run code-executing or tool-using agents in an isolated environment holding only 
 
 ### Choose an authority mode and verify its provenance
 
-For each operation, record its mode and how the workload identity, requester context, resource attributes, and policy identity reach the enforcement point. Reject unresolved provenance rather than defaulting it, or a correctly authenticated broad service credential becomes proof that any user the model names may see any object.
+For each operation, record its mode and how the workload identity, requester context, resource attributes, and policy identity reach the enforcement point. Reject unresolved provenance instead of filling in a default. Otherwise you get a confused-identity failure: a broad service credential authenticates correctly and is then treated as proof that any user the model names may see any object.
 
 OAuth's security BCP has the same goal: minimum privileges, tokens bound to an intended audience and resources or actions and verified on each request, and sender-constrained tokens so a stolen one cannot be replayed. [3] OAuth is not required, and a valid token still needs resource-side checks.
 
@@ -134,8 +134,9 @@ Cross-requester, changed-target, unlisted-destination, and unavailable-authoriza
 - [ ] Workload identity, requester identity, resource or tenant context, and the provenance of each authority-bearing value are recorded separately.
 - [ ] Each admitted capability has a declared action, resource, requester or tenant relationship, data class, and destination limit; absences are visible.
 - [ ] The enforcement point receives a normalized operation and trusted context, and a changed target, destination or scope gets a new decision.
-- [ ] The freshness and revocation mechanism and its limits are reviewable.
-- [ ] Indirect paths and egress combinations are considered.
+- [ ] Stale, revoked, missing or unavailable authorization fails closed to a declared bounded outcome, and the freshness and revocation mechanism and its limits are reviewable.
+- [ ] Indirect paths and egress combinations are considered, including protected reads followed by export or an effectful capability.
+- [ ] Where a consequential action is actually proposed, approval stays an extra condition on independently permitted authority and is routed to Part 7.
 - [ ] Delegated calls pass an audience-limited token for the requester, not a forwarded one.
 - [ ] Code-executing or tool-using runs are isolated, with deny-by-default egress and per-run credentials.
 - [ ] Planned evidence separates configuration identity, a resource-side decision, a dispatched attempt, and an authoritative effect, and avoids secrets, unneeded bodies, and raw hidden reasoning.

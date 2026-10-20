@@ -34,7 +34,7 @@ A primitive label is not a trust level; [2.4](04-tools-and-external-interfaces.m
 
 ### Version, lifecycle, and transport
 
-MCP 2026-07-28 is the current specification revision; 2025-11-25 is the previous, final one. [3] Differences that matter:
+MCP 2026-07-28 is the current specification revision; 2025-11-25 is the previous one. [3] Differences that matter:
 
 - **Lifecycle.** 2025-11-25 runs an initialization exchange that negotiates version and optional capabilities. [2] 2026-07-28 removes it: every request carries its protocol version and client capabilities. It also removes protocol-level sessions, so list endpoints no longer vary per connection; servers needing state use explicit server-issued handles passed as tool arguments. [3]
 - **Discovery.** Servers MUST implement `server/discover`, which reports supported versions, capabilities, and identity. Clients MAY call it first to pick a version, or use it as a probe for older servers on stdio. [3] [4]
@@ -50,7 +50,7 @@ A transport carries messages, not meaning, authority, or truth. A local server c
 
 Discovery is an inventory, not a grant. `server/discover` reports versions, capabilities, and `serverInfo`; a tool listing can change and may vary with the authorization presented on a request (but not per connection). [4] [7]
 
-`serverInfo` is self-reported and unverified, meant for display, logging, and debugging, and clients SHOULD NOT rely on it for security decisions. [4] Clients MUST treat tool annotations as untrusted unless they come from a trusted server. [7] Treat descriptions the same way, although the specification does not say so, since your model reads them; no name, description, annotation, or effect label proves identity, harmlessness, or permission.
+`serverInfo` is self-reported and unverified, meant for display, logging, and debugging, and clients SHOULD NOT rely on it for security decisions. [4] Clients MUST treat tool annotations as untrusted unless they come from a trusted server. [7] Treat tool descriptions and the server's optional `instructions` text (guidance for the model returned by `server/discover`) the same way, although the specification does not say so, since your model reads them; no name, description, annotation, or effect label proves identity, harmlessness, or permission.
 
 **Admission** is the host's explicit decision to make one identified capability available to one agent version for one declared purpose. An admission record states:
 
@@ -66,7 +66,7 @@ The manifest does not widen when the server later lists an edit tool or new prom
 
 Authorization belongs at the protected-operation boundary, using trusted context rather than a model-selected tenant, scope, or resource ID or a server's instruction. Even a read can disclose protected content ([3.1](../03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md)).
 
-Where MCP uses OAuth, a server must validate that an access token was issued for it and must not pass it through to downstream services (stated in 2025-11-25; 2026-07-28 keeps both rules). [5] [11] Such a credential is not delegation downstream: record its audience and scope, and keep an upstream credential, the server's own downstream credential, and model-visible values distinct. OAuth is optional and not needed for every integration. In 2026-07-28, clients MUST validate a present `iss` value against the recorded authorization server and key stored client credentials by issuer, and Client ID Metadata Documents replace the deprecated Dynamic Client Registration. [3]
+Where MCP uses OAuth, a server must validate that an access token was issued for it and must not pass it through to downstream services (stated in 2025-11-25; 2026-07-28 keeps both rules). [5] [11] Such a credential is not delegation downstream: record its audience and scope, and keep an upstream credential, the server's own downstream credential, and model-visible values distinct. OAuth is optional and not needed for every integration. In 2026-07-28, clients MUST validate a present `iss` value against the recorded authorization server and key stored client credentials by issuer, and Dynamic Client Registration is deprecated in favor of Client ID Metadata Documents, though it remains for older authorization servers. [3]
 
 MCP's security best practices cover the confused deputy (a server acting with its own broad authority for a caller who lacks it), token passthrough, request forgery through OAuth discovery URLs, hijacked session or state handles, unsafe local servers started by one-click configuration, and over-broad scopes. [9] Request the smallest scope, show the user exactly what a local server will run before starting it, and sandbox local servers with minimal privileges.
 
@@ -135,8 +135,8 @@ The protected retrieval boundary receives trusted requester and resource scope, 
 
 - `employee-uk-104`, current permitted source present: `complete`, citing GBP 220.
 - Current permitted source absent: `needs_information`, not an answer from the superseded source.
-- Two equally authoritative current sources conflict: identify the conflict and seek clarification or escalation, not the later date.
-- `contractor-uk-204`: the retrieval boundary declines without disclosing the amount.
+- Two equally authoritative current sources conflict: `needs_information`, naming the conflict and the clarification or escalation path, not the later date.
+- `contractor-uk-204`: the retrieval boundary denies access, and the agent returns `declined` without disclosing the amount.
 - Server timeout or malformed result: `failed` or `needs_information`, never a claimed verified answer.
 
 Each case ties to candidate, protocol, server, capability, fixture, authorization decision, attempted exchange, result status, and answer assessment. An update action, or a material change in server identity, scope, primitive contract, or protocol version, is a new admission question.

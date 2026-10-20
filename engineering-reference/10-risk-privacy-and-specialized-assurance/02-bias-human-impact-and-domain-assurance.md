@@ -1,10 +1,10 @@
 # 10.2 Bias, Human Impact, and Domain Assurance
 
-**Status:** 0.5.0-draft.2 — draft
-**Audience:** Agent builders, domain and accessibility specialists, evaluators, accountable owners, and reviewers
+**Status:** 0.5.0-draft.2 — draft  
+**Audience:** Agent builders, domain and accessibility specialists, evaluators, accountable owners, and reviewers  
 **Applicability:** Any production agent that can plausibly affect people or groups. Go further where outputs inform consequential decisions, the domain is sensitive, access is unequal, or users may over-rely on it.
 
-[Part 10](../README.md) · [Applicability and conformance](../../applicability.md) · [10.1 Detailed Risk Assessment and Governance](01-detailed-risk-assessment-and-governance.md) · [10.3 Advanced Privacy, Isolation, and Auditability](03-advanced-privacy-isolation-and-auditability.md) · [4.3 Evaluation Types and Dimensions](../../development-guide/04-testing-and-evaluation/03-evaluation-types-and-dimensions.md)
+[Part 10](README.md) · [Applicability and conformance](../../applicability.md) · [10.1 Detailed Risk Assessment and Governance](01-detailed-risk-assessment-and-governance.md) · [10.3 Advanced Privacy, Isolation, and Auditability](03-advanced-privacy-isolation-and-auditability.md) · [4.3 Evaluation Types and Dimensions](../../development-guide/04-testing-and-evaluation/03-evaluation-types-and-dimensions.md)
 
 ## Purpose and applicability
 
@@ -32,7 +32,7 @@ Domain assurance asks whether evidence, language, boundaries, and failure behavi
 
 **Choose reviewers for the claim.** Domain specialists find missing constraints and misleading readings; affected users reveal barriers and burdens internal reviewers miss; accessibility specialists assess assistive access and interaction. Use independent review when consequence or uncertainty is high, and give participants a safe, respectful, accessible way to take part. W3C recommends evaluating accessibility throughout development and notes that tools alone cannot determine it; knowledgeable human evaluation is needed.[3]
 
-**Design oversight as part of the system.** Beyond the IMPACT-04 elements, decide how uncertainty and source conflicts are shown to the reviewer. A confident tone never stands in for evidence or a competent decision-maker; with no meaningful review path, constrain the use or decline the capability.
+**Design oversight as part of the system.** Specify what triggers review, what the reviewer sees, their authority to correct, stop, or escalate, and the fallback when no reviewer is available (IMPACT-04); also decide how uncertainty and source conflicts are shown to them. A confident tone never stands in for evidence or a competent decision-maker; with no meaningful review path, constrain the use or decline the capability.
 
 **Evaluate and reassess.** Use the risk-linked approach in [4.3](../../development-guide/04-testing-and-evaluation/03-evaluation-types-and-dimensions.md) and Part 4's claim-specific methods. Reassess when complaints, incidents, feedback, data shifts, workflow changes, or new contexts challenge the assumptions; neither noisy signals nor a lack of complaints proves harmlessness.
 

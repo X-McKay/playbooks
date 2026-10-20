@@ -25,9 +25,9 @@ A favorable average or unrelated metric cannot offset a failed critical control 
 
 ### The universal evidence core
 
-COVERAGE-01 lists the core. Two points are easy to miss. First, contract-defined time, call, resource, output, and stop bounds belong to the core even for a local read-only assistant; checking them or safe exhaustion needs no distributed load environment, and the capacity profile is only for shared-resource claims. Second, enough identity and run status must be kept to tell a candidate failure from invalid or inconclusive evidence.
+COVERAGE-01 lists the core. Two points are easy to miss. First, contract-defined time, call, resource, output, and stop bounds belong to the core even for a local read-only assistant. Testing those bounds, and safe behavior when one is reached, needs no distributed load environment; the shared-capacity profile is only for shared-resource claims. Second, enough identity and run status must be kept to tell a candidate failure from invalid or inconclusive evidence.
 
-For variable behavior, invariance and sensitivity evidence follow [4.3](03-evaluation-types-and-dimensions.md). Repeated attempts, safe alternative trajectories, and a final selected answer answer different questions; none shows a zero field failure rate.
+For variable behavior, invariance and sensitivity evidence follow [4.3](03-evaluation-types-and-dimensions.md). Repeated attempts, safe alternative trajectories, and the final selected answer each answer a different question, and none shows that the field failure rate is zero.
 
 ## Additive profiles
 
@@ -310,10 +310,14 @@ If a later variant adds a human-approved policy update, the record changes befor
 
 ## Evidence and checklist
 
+- [ ] The candidate and stage are identified, and every acceptance criterion, prohibited outcome, and material risk maps to claims, cases, observations, owners, and stages (CASE-01).
+- [ ] The universal core covers contract outcomes, relied-on rules and boundaries, adverse outcomes, critical controls, evidence identity and status, and declared local bounds (COVERAGE-01).
+- [ ] Each selected profile states its trigger, observation, rerun trigger, and owner; no profile is inferred from another (COVERAGE-02).
 - [ ] Every `N/A` gives an absent trigger, not cost, rarity, a pilot label, a missing mechanism, or vendor ownership.
-- [ ] Declared local bounds are tested even without a shared-capacity system.
-- [ ] Diagnostics stay distinct from gates and thresholds.
+- [ ] The trial, retry, selection, and fallback policy matches the released behavior; diagnostics stay distinct from gates and thresholds.
+- [ ] Development cases stay apart from the release holdout, and a material change reruns affected profiles and influenced critical controls (COVERAGE-03).
 - [ ] No attributable failure is relabelled a harness defect or offset by an aggregate.
+- [ ] Any guarded-live evaluation has a scope record with exposure, boundaries, monitoring, stop conditions, and authority (COVERAGE-04).
 
 ## References
 

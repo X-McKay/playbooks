@@ -72,7 +72,7 @@ A source may need a precedence rule: status, effective date, revision, owner dec
 
 ### Design retrieval as evidence selection, not a document dump
 
-Choose a source unit that keeps its link to the original. **Chunks** make selection practical, but a boundary can separate a rule from its exception, definition, or condition. Keep a stable source identity, revision or effective state, passage locator, and enough surrounding context to show why the excerpt applies, and say whether it is a direct excerpt or derived form. A well-established fix for lost chunk context is to prepend a short chunk-specific explanation of where the chunk sits in its document before indexing, combine embedding search with keyword search (such as BM25), and rerank; the published results show fewer failed retrievals than embeddings alone. [7] Test it on your own data.
+Choose a source unit that keeps its link to the original. **Chunks** make selection practical, but a boundary can separate a rule from its exception, definition, or condition. Keep a stable source identity, revision or effective state, passage locator, and enough surrounding context to show why the excerpt applies, and say whether it is a direct excerpt or derived form. One published fix for lost chunk context is to prepend a short, chunk-specific note on where the chunk sits in its document before indexing, combine embedding search with keyword search (such as BM25), and rerank. On the authors' datasets this cut failed top-20 retrievals by up to 67% compared with embeddings alone. [7] Test it on your own data.
 
 Search, ranking, and reranking narrow candidates; none tests truth. A miss can come from terminology, indexing, permissions, an unavailable dependency, or a query that missed the user's condition, and a top match can be stale, off-scope, or weak.
 
@@ -82,7 +82,7 @@ A **summary** is a new derived artifact, not a shortcut to source authority; it 
 
 A citation is a review pointer, not evidence: it can name the right document while the answer overstates it, cite a superseded revision, or omit a decisive condition.
 
-The RAGAS paper (peer-reviewed at EACL 2024) separates context relevance, answer relevance, and faithfulness to the supplied context. [3] Use the distinction as a diagnostic (was relevant, permitted evidence found, was it used faithfully, does the response address the request?) without needing its automated methods; no score settles authority, currentness, permission, or truth. [Part 4](../04-testing-and-evaluation/README.md) owns case design, evaluators, and interpretation.
+The RAGAS paper (EACL 2024 system demonstrations) separates context relevance, answer relevance, and faithfulness to the supplied context. [3] Use the distinction as a diagnostic (was relevant, permitted evidence found, was it used faithfully, does the response address the request?) without needing its automated methods; no score settles authority, currentness, permission, or truth. [Part 4](../04-testing-and-evaluation/README.md) owns case design, evaluators, and interpretation.
 
 A proportionate provenance record has source identity, revision or status, locator, source role, access decision context, retrieval or transformation identity, and time or release context, as safe identifiers and a short rationale rather than copied document bodies.
 
@@ -144,7 +144,7 @@ For a retrieval-capable candidate, keep, within the data policy:
 - the cache and memory decision; and
 - Part 4 records treating retrieval, semantic support, and answer behavior as distinct claims.
 
-These do not show the boundary is active or an answer safe everywhere. Before a cache or transformed artifact is reused, the source map needs a source-status and permission-change signal; the illustrative record's `null` owner, invalidation mechanism, and cache retention must be resolved with the source, authorization, and data-handling owners before a persistent retrieval optimization joins a production candidate.
+These do not show the boundary is active or an answer safe everywhere. Before a cache or transformed artifact is reused, the source map needs a source-status and permission-change signal. The illustrative record leaves owner, invalidation mechanism, and cache retention `null`; resolve them with the source, authorization, and data-handling owners before a persistent retrieval optimization joins a production candidate.
 
 ## References
 

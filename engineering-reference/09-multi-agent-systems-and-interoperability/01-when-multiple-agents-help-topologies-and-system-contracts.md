@@ -12,11 +12,11 @@ A multi-agent system is a versioned composition of members, roles, edges, shared
 
 Compose only when the extra boundaries serve a real goal: isolating a sensitive capability, separating context that should not be widely shared, an independently tested check, truly independent parallel work, or separately governed responsibilities. A role label or simulated org chart is not a reason, and a deterministic service or tool is a component, not an agent. This is a design and risk decision, in line with the NIST AI RMF's voluntary, lifecycle-wide framing.[1]
 
-It is also expensive: one vendor report measured agents at about 4 times a chat's tokens and multi-agent systems at about 15 times, suiting broad, parallelizable, high-value research but not tightly coupled shared context, as in most coding. Its quality gain came from an internal evaluation; test your own task.[2]
+It is also expensive. One vendor report found agents used about 4 times the tokens of a chat and multi-agent systems about 15 times. It concluded the cost suits valuable, heavily parallel research, not work where agents must share one context or depend on each other closely, as in most coding. Its reported 90.2% gain over a single agent came from its own internal research evaluation, so test your own task.[2]
 
 ## Working model
 
-A **member** is one independently contracted model-driven component; a **role** is its narrower responsibility here. A member may fill several roles only if the System Spec says so and the lost separation is evaluated. Renaming does not make a reviewer independent; shared instructions, evidence, models or ownership correlate failures.
+The **System Spec** is the versioned design document that declares the composition. A **member** is one independently contracted model-driven component; a **role** is its narrower responsibility here. A member may fill several roles only if the System Spec says so and the lost separation is evaluated. Renaming does not make a reviewer independent; shared instructions, evidence, models or ownership correlate failures.
 
 The deterministic orchestrator owns coordination state and accepts or rejects proposed changes. A model-driven coordinator may recommend an allowlisted route or combine bounded results, but never sets policy, approval, final truth or termination. Inter-agent messages, retrieval output and shared memory are untrusted data (see [9.2](02-delegation-handoffs-and-agent-to-agent-interfaces.md) and [9.3](03-coordination-system-evaluation-and-operations.md)).
 
@@ -46,7 +46,7 @@ Each category of shared state has one deterministic owner: at least workflow and
 
 Root limits (runs, depth, parallelism, rounds, requests, volume, time, spend) cover the whole run, not extra allowances per member. Termination makes every outcome, including required-member failure and late or conflicting results, unambiguous; with no allowed next step the system stops in a declared outcome rather than invent a member or route.
 
-Agents over-invest in simple queries without rules, so put effort scaling in the coordinator's instructions and enforce it with limits: one agent and a few calls for a lookup, several workers with a larger cap only for broad, complex tasks.[2]
+Without rules, agents over-invest in simple queries (early versions in the same report spawned 50 workers for simple questions). Put effort scaling in the coordinator's instructions and enforce it with limits. The report's starting points: one agent with 3 to 10 tool calls for a simple lookup, 2 to 4 workers for a comparison, and more than 10 workers only for complex research.[2]
 
 ## Requirements
 

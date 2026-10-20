@@ -18,7 +18,7 @@ A broad service or shell-style pass-through hides what the agent can really do: 
 
 "Typed and serializable" requires no particular schema technology; JSON Schema is one neutral option, with Core separate from Validation. [1] Any notation should make field shape, allowed values, cross-field rules, and output bounds reviewable, remembering that shape is not permission, source truth, target identity, or proof the operation happened.
 
-Tools are optional. Admission: [2.2](02-agent-contracts-and-configuration.md); identity and authority in [3.1](../03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md); returned content as data in [3.2](../03-security-and-trust-boundaries/02-untrusted-inputs-retrieved-content-and-action-boundaries.md); currentness and grounding in [2.6](06-context-and-retrieval-fundamentals.md); standard-protocol tools also in [2.7](07-mcp-and-standardized-integrations.md).
+Tools are optional. Related decisions live elsewhere: capability admission in [2.2](02-agent-contracts-and-configuration.md); identity and authority in [3.1](../03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md); returned content as data in [3.2](../03-security-and-trust-boundaries/02-untrusted-inputs-retrieved-content-and-action-boundaries.md); currentness and grounding in [2.6](06-context-and-retrieval-fundamentals.md); standard-protocol tools also in [2.7](07-mcp-and-standardized-integrations.md).
 
 ## Working model
 
@@ -81,9 +81,9 @@ The model sees only a tool's name, description, parameters, and results. Enginee
 - **Meaningful, token-efficient results.** Return high-signal, readable fields (names and status, not raw internal IDs). Paginate, filter, and truncate with sensible defaults; where useful, offer concise and detailed modes and tell the model how to narrow a broad result.
 - **Actionable errors.** Say what went wrong and what valid input looks like, not only a code or stack trace, without protected content and mapped to the structured outcomes below.
 
-Measure tool design on representative tasks, reading transcripts for wrong-tool choices and malformed arguments and confirming gains on held-out tasks. [5] For a large catalogue, loading every definition up front bloats context and causes mis-selection; expose tools progressively (for example by search) and keep bulky intermediate data out of the model's context. [7] None of this replaces validation and authorization.
+Measure tool design on representative tasks, reading transcripts for wrong-tool choices and malformed arguments and confirming gains on held-out tasks. [5] Too many or overlapping tools confuse tool choice. [5] For a large catalogue, loading every definition up front slows the agent and adds cost; load definitions on demand (for example through a search tool) and keep bulky intermediate data out of the model's context. [7] None of this replaces validation and authorization.
 
-If the agent can write and run code or use a shell or browser, run that code in a sandbox with resource limits, scoped network egress, and monitoring. [7]
+If the agent can write and run code or use a shell or browser, run that code in a sandbox with resource limits and monitoring [7], and restrict its network access to what the task needs.
 
 ### Bind authority at the protected operation
 
@@ -101,7 +101,7 @@ Set a deadline through the trusted execution path. A deadline or cancellation de
 
 Return only what the task needs, marked as data and limited before the model sees it; pass no secrets, live clients, credentials, diagnostic payloads, or unbounded raw responses. Classification, destinations, capture, retention, and deletion are decided under [3.3](../03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md).
 
-Attribution (TOOL-07) need not invent a workflow ID for an ephemeral path or an approval ID for a read-only path, and does not prove the target's effect; where an effect is in scope, record target-side evidence.
+Attribution (TOOL-07) links each invocation to the agent, run, tool operation, attempt, outcome, and latency or cost where relevant. It need not invent a workflow ID for an ephemeral path or an approval ID for a read-only path, and it does not prove the target's effect; where an effect is in scope, record target-side evidence.
 
 ### Build the contract before admitting the capability
 

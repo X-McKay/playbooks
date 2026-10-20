@@ -1,8 +1,8 @@
 # 10.3 Advanced Privacy, Isolation, and Auditability
 
-**Status:** 0.5.0-draft.2 — draft
-**Audience:** Builders, operators, security and privacy reviewers, accountable owners
-**Applicability:** Agents that process sensitive information, serve multiple tenants, retain derived data, run untrusted or high-impact capabilities, or need stronger evidence for consequential actions. If none of these apply, use the minimum rules in [3.3 Data Privacy, Handling, and Minimum Audit Evidence](../../development-guide/03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md) and record why this extension does not.
+**Status:** 0.5.0-draft.2 — draft  
+**Audience:** Builders, operators, security and privacy reviewers, accountable owners  
+**Applicability:** Agents that process sensitive information, serve multiple tenants, retain derived data, run untrusted or high-impact capabilities, or need stronger evidence for consequential actions. If none applies, use the minimum rules in [3.3 Data Privacy, Handling, and Minimum Audit Evidence](../../development-guide/03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md) and record why this extension does not apply.
 
 [Part 10](README.md) · [Applicability](../../applicability.md) · [10.1 Detailed Risk Assessment and Governance](01-detailed-risk-assessment-and-governance.md) · [10.2 Bias, Human Impact, and Domain Assurance](02-bias-human-impact-and-domain-assurance.md)
 
@@ -10,7 +10,7 @@
 
 Privacy and containment failures often happen outside the answer: a cache serves another tenant's document, a summary outlives its removed source, or an audit trail captures more sensitive content than operators need. Higher assurance also needs evidence of who did what, under which authority, and what the external system accepted. A complete log is not a privacy policy, and encryption or sandboxing does not make a use appropriate.
 
-Use this chapter when the screen or [10.1](01-detailed-risk-assessment-and-governance.md) flags sensitive data, multiple tenants, retention or inference risk, untrusted code, or consequential actions; reviewers decide which obligations apply. The NIST Privacy Framework is voluntary, not a legal review or certification.[1] The data map and lifecycle inventory below feed a GDPR impact assessment where one is required ([10.1](01-detailed-risk-assessment-and-governance.md#frameworks-you-may-need-to-map-to)). It builds on [3.1](../../development-guide/03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md), [3.3](../../development-guide/03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md), and [5.1](../../development-guide/05-release-operations-and-lifecycle/01-observability-budgets-and-operational-control.md); approval semantics stay with [7.3](../07-durable-execution-and-human-governed-work/03-approval-suspension-and-in-flight-compatibility.md) and tests with [Part 4](../../development-guide/04-testing-and-evaluation/README.md).
+Use this chapter when the screen or [10.1](01-detailed-risk-assessment-and-governance.md) flags sensitive data, multiple tenants, retention or inference risk, untrusted code, or consequential actions; reviewers decide which obligations apply. The NIST Privacy Framework is voluntary, not a legal review or certification.[1] The data map and lifecycle inventory below can feed a GDPR data protection impact assessment where one is required ([10.1](01-detailed-risk-assessment-and-governance.md#frameworks-you-may-need-to-map-to)). This chapter builds on [3.1](../../development-guide/03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md), [3.3](../../development-guide/03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md), and [5.1](../../development-guide/05-release-operations-and-lifecycle/01-observability-budgets-and-operational-control.md); approval semantics stay with [7.3](../07-durable-execution-and-human-governed-work/03-approval-suspension-and-in-flight-compatibility.md) and tests with [Part 4](../../development-guide/04-testing-and-evaluation/README.md).
 
 ## Working model
 
@@ -28,7 +28,7 @@ Integrity mechanisms have limits. Certificate Transparency uses Merkle trees for
 
 **Trace tenant identity end to end,** from admission through retrieval, reranking, context assembly, caching, generation, and export. Asking the model to ignore another tenant's data tests instructions, not isolation. Write adversarial cases for wrong-tenant identifiers, stale authorization, cache-key collisions, concurrency, and derived artifacts, checked at the enforcing boundary against the authoritative record.
 
-**Define the lifecycle before relying on deletion.** Where feasible, keep an inventory linking sources to derivatives and copies, with retention, deletion triggers, owners, and verification per class, including embeddings, summaries, and incident evidence. Where a copy cannot be erased at once or must be kept, document why and how long, restrict access, and claim deletion only after verification passes. Reviewers identify the legal duties.
+**Define the lifecycle before relying on deletion.** Where feasible, keep an inventory linking sources to derivatives and copies, with retention, deletion triggers, owners, and verification per class, including embeddings, summaries, caches, queued work, replicas, backups, evaluation artifacts, provider-held copies, and incident evidence. Where a copy cannot be erased at once or must be kept, document why and how long, restrict access, and claim deletion only after verification passes. Reviewers identify the legal duties.
 
 **Match isolation to exposure.** Where an agent can run untrusted code or reach sensitive resources:
 

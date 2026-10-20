@@ -1,7 +1,7 @@
 # 10.1 Detailed Risk Assessment and Governance
 
-**Status:** 0.5.0-draft.2 — draft
-**Audience:** Accountable owners, builders, evaluators, security and privacy reviewers, and release decision authorities
+**Status:** 0.5.0-draft.2 — draft  
+**Audience:** Accountable owners, builders, evaluators, security and privacy reviewers, and release decision authorities  
 **Applicability:** Use this method when the [initial risk, data, ownership, and delivery record](../../development-guide/01-problem-definition-and-planning/04-initial-risk-data-ownership-and-delivery-plan.md) shows elevated assurance needs: consequential authority, sensitive or regulated context, broad reach, material uncertainty, or a material harm scenario. It does not replace legal, security, privacy, safety, or domain review.
 
 [Part 10](README.md) · [Applicability](../../applicability.md) · [Release decisions](../../development-guide/04-testing-and-evaluation/07-analyzing-results-comparing-versions-and-making-decisions.md)
@@ -14,12 +14,12 @@ This method extends the Chapter 1.4 screen: it names concrete harms, records eac
 
 ### Keep the decisions separate
 
-Five separate questions:
+Keep five decisions separate:
 
 - **Execution class:** how work executes (`ephemeral`, `durable`, `human_governed`).
 - **Governance tier:** required assurance and oversight (`low`, `medium`, `high`, `critical`).
 - **Inherent risk:** risk before risk-reducing controls.
-- **Residual risk:** risk after only controls with evidence of working.
+- **Residual risk:** risk after crediting only controls with evidence that they work.
 - **Launch decision:** `go`, `conditional_go`, or `no_go` for one release.
 
 A read-only agent can be high risk and a durable one medium. The tier is anchored to inherent risk and mandatory floors; a lower residual rating can make a release acceptable but does not lower the assurance the use needs.
@@ -39,7 +39,7 @@ Amplifiers are evidence about likelihood or impact, not extra dimensions: autono
 
 ### Screen for prohibited and controlled uses first
 
-Health, employment, education, credit, insurance, housing, legal services, biometrics, critical infrastructure, children, and similar consequential decisions need a documented applicability review and never default to low risk. Unknown applicability is an unresolved risk. Legal classification goes to the named legal, compliance, or domain reviewer, not the matrix.
+Record the applicable jurisdictions, sectors, contractual and internal-policy duties, and the named reviewers. A prohibited use is `no_go` whatever its score, and a binding classification sets a floor regardless of the matrix. Health, employment, education, credit, insurance, housing, legal services, biometrics, critical infrastructure, children, and similar consequential decisions need a documented applicability review and never default to low risk. Unknown applicability is an unresolved risk. Legal classification goes to the named legal, compliance, or domain reviewer, not the matrix.
 
 ### Frameworks you may need to map to
 
@@ -48,7 +48,7 @@ Pointers, not legal advice:
 - **NIST AI RMF and Generative AI Profile.** Voluntary; NIST AI 600-1 (July 2024) adds generative-AI actions for govern, map, measure, and manage.[1], [2]
 - **ISO/IEC 42001 and 23894.** 42001:2023 specifies an assessable AI management system; 23894:2023 guides AI risk management.[3], [4]
 - **GDPR Article 35.** A data protection impact assessment is required before processing likely to pose a high risk to people's rights and freedoms; it describes processing and purposes, assesses necessity, proportionality, and risks, and lists safeguards. Triggers include automated evaluation with significant effects and large-scale use of sensitive data; see [10.3](03-advanced-privacy-isolation-and-auditability.md).[5]
-- **EU AI Act.** Some practices are prohibited; listed high-risk uses carry strict obligations (such as risk management, logging, documentation, and human oversight); some systems have transparency duties; most have none; general-purpose AI models have their own. The phased schedule has been amended, so check current dates.[6]
+- **EU AI Act.** Some practices are prohibited; listed high-risk uses carry strict obligations (such as risk management, logging, documentation, and human oversight); some systems have transparency duties; most have none; general-purpose AI models have their own. The AI Omnibus (in force 27 July 2026) moved the high-risk obligations for Annex III uses to 2 December 2027 and for Annex I products to 2 August 2028 (as of October 2026; check current dates).[6]
 
 These frameworks can consume this method's records but do not replace it.
 
@@ -58,7 +58,7 @@ Use this form for each material scenario:
 
 > Because **[cause or initiating condition]**, the agent could **[unsafe action, output, or omission]**, causing **[harm]** to **[affected party or asset]**.
 
-Cover normal use, misuse, adversarial content, dependency failure, model error, authorization failure, retry or concurrency, operator error, and control failure. Beyond the RISK-03 fields, record owner, status, assets, preconditions, consequences, primary and secondary dimensions, and linked evaluation cases, indicators, alerts, and runbooks.
+Cover normal use, misuse, adversarial content, dependency failure, model error, authorization failure, retry or concurrency, operator error, and control failure. Beyond the fields RISK-03 requires (stable ID, scenario form, scores, confidence, rationale), record owner, status, assets, preconditions, consequences, primary and secondary dimensions, and linked evaluation cases, indicators, alerts, and runbooks.
 
 The eight dimensions are financial, operational, reputational, legal, security, privacy, regulatory, and human impact and safety. Calibrate amounts, outage duration, populations, and data categories to your risk appetite.
 
@@ -78,7 +78,7 @@ A control lowers impact only if it limits blast radius, duration, population, or
 | 3 | `medium` | `medium` | `high` | `critical` |
 | 4 | `high` | `high` | `critical` | `critical` |
 
-The highest material scenario sets the maximum tiers. Rate confidence (`low`, `medium`, `high`) as evidence strength; low confidence with plausibly severe consequences needs investigation, a constraint, or a conservative classification. Record assumptions, missing evidence, disputed scores, and what would change the assessment.
+The highest-scoring material scenario sets the maximum inherent and residual tiers; never average scenarios or dimensions down. Rate confidence (`low`, `medium`, `high`) as evidence strength; low confidence with plausibly severe consequences needs investigation, a constraint, or a conservative classification. Record assumptions, missing evidence, disputed scores, and what would change the assessment.
 
 ### Credit controls only when evidence supports them
 
@@ -86,11 +86,11 @@ The highest material scenario sets the maximum tiers. Rate confidence (`low`, `m
 - A **detective** control shortens time to discovery: reconciliation, anomaly detection, policy telemetry, audit review.
 - A **recovery** control limits duration or consequence: compensation, rollback, safe cancellation, notification, a tested stop mechanism.
 
-A credited control has an owner and evidence of design and operation, such as review, deterministic tests, evaluations, replay and failure scenarios, red-teaming, audit samples, metrics, exercises, or independent review ([example template](../../templates/10.1/risk-assessment-example.yaml)).
+A planned or untested control earns no credit. A credited control has an owner and evidence of design and operation, such as review, deterministic tests, evaluations, replay and failure scenarios, red-teaming, audit samples, metrics, exercises, or independent review ([example template](../../templates/10.1/risk-assessment-example.yaml)).
 
 ### Set the governance floor before judging residual risk
 
-The tier is set by RISK-04. Mandatory floors:
+The governance tier is the highest of the maximum inherent scenario tier, any legal, regulatory, contractual, or policy floor, and any organizational capability floor (RISK-04). Mandatory floors:
 
 - A prohibited use is `no_go`.
 - Material, potentially irreversible human or safety impact is at least `high` and may be `critical`.
@@ -103,7 +103,7 @@ Verified controls never erase these floors.
 
 ### Make the residual-risk decision accountable
 
-Treat every scenario: `avoid`, `mitigate`, `transfer`, or `accept`. An acceptance names the accountable role, rationale, conditions, expiry, and next review date. Residual `critical` is `no_go`; `high` needs the RISK-05 safeguards; `medium` needs a named owner, monitoring, and a time-bounded review; track `low` when it can compound with other risks or confidence is low.
+Treat every scenario: `avoid`, `mitigate`, `transfer`, or `accept`. An acceptance names the accountable role, rationale, conditions, expiry, and next review date. Residual `critical` is `no_go`; `high` needs independent review, explicit acceptance by the risk authority, continuous monitoring, and a tested stop or containment mechanism; `medium` needs a named owner, monitoring, and a time-bounded review; track `low` when it can compound with other risks or confidence is low.
 
 A `conditional_go` names each condition's owner, deadline, monitoring signal, and consequence if missed ([5.2](../../development-guide/05-release-operations-and-lifecycle/02-readiness-change-and-rollout.md)); a condition supplying required pre-release evidence still blocks launch.
 
@@ -148,8 +148,10 @@ Machine validation checks score-to-tier agreement, maximum tiers, floors, `no_go
 
 Before accepting, confirm:
 
+- [ ] Scope, the prohibited-use and regulatory screen, named reviewers, and the accountable owner are recorded.
 - [ ] All eight dimensions were considered per scenario.
-- [ ] No planned work reduced residual risk.
+- [ ] Each credited control has an owner and verified evidence; no planned work reduced residual risk.
+- [ ] The governance tier reflects the highest inherent scenario and every floor, and matches the agent contract.
 - [ ] Gates, conditions, monitoring, expiry, and reassessment date are explicit.
 
 Next: [10.2](02-bias-human-impact-and-domain-assurance.md) and [10.3](03-advanced-privacy-isolation-and-auditability.md).

@@ -44,7 +44,7 @@ Start with [4.5](05-planning-designing-and-running-tests-and-evaluations.md) to 
 
 ### Reviewer route
 
-Start with the coverage map and [4.6](06-standards-required-coverage-and-execution-cadence.md): are the universal core, profile triggers, owners, stages, and `N/A` rationales explicit? Then read [4.3](03-evaluation-types-and-dimensions.md) for the claim and relation/repeat evidence, [4.4](04-evaluators-metrics-rubrics-and-calibration.md) for evaluator fitness, and [4.7](07-analyzing-results-comparing-versions-and-making-decisions.md) for statuses, retries, aggregation, gates, and the conclusion. The [troubleshooting guide](reference/troubleshooting.md) isolates common evidence failures without rewriting the decision rule after results are seen.
+Start with the coverage map and [4.6](06-standards-required-coverage-and-execution-cadence.md): are the universal core, profile triggers, owners, stages, and `N/A` rationales explicit? Then read [4.3](03-evaluation-types-and-dimensions.md) for the claim, its invariance and sensitivity relations, and repeated-run evidence, [4.4](04-evaluators-metrics-rubrics-and-calibration.md) for evaluator fitness, and [4.7](07-analyzing-results-comparing-versions-and-making-decisions.md) for statuses, retries, aggregation, gates, and the conclusion. The [troubleshooting guide](reference/troubleshooting.md) isolates common evidence failures without rewriting the decision rule after results are seen.
 
 ## Chapters
 

@@ -19,7 +19,7 @@ The split is about **scope**, not system type: a stochastic agent can be tested,
 
 ## The working vocabulary
 
-- **Evaluator:** The rule, procedure, instrument, or qualified human role that turns stated evidence into a judgment. A permission predicate and a semantic review are different evaluators, even on one case.
+- **Evaluator:** The rule, procedure, instrument, or qualified human role that turns stated evidence into a judgment. Keep the method distinct from whoever operates it when that matters. A permission predicate and a semantic review are different evaluators, even on one case.
 - **Case:** A versioned, bounded task or probe with conditions, inputs, expected observable outcomes or invariants, permitted variation, and an origin or rationale (compare ISTQB's preconditions, inputs, and expected results).[4]
 - **Trial:** One recorded execution of a case under an identified candidate configuration and starting conditions. Trials that share a case, fixture, time window, or dependency are not automatically independent.
 - **Suite:** A versioned set of cases chosen for a coverage goal. "Regression" says why a suite runs, not which boundary it exercises.
@@ -32,7 +32,7 @@ Keep the expected criterion, the observation, and the judgment apart. "Cite the 
 
 ## Five independent descriptors
 
-Describe a case or evaluation with five separate descriptors. It can have several assessed properties but one value on each other axis.
+Describe a case or evaluation with five separate descriptors. It can have several assessed properties but one value on each other axis, so a case can inform more than one claim without belonging to a single exclusive "evaluation type."
 
 1. **Test level — where the property is exercised.** The observed boundary, such as unit, component, integration, or system. Teams draw these lines differently, so state what is included.
 2. **Assessed property — what is claimed.** Task outcome, current-source selection, answer grounding, trajectory control, reliability, and so on.

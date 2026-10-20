@@ -36,7 +36,7 @@ Branches produce candidate results, not overwrites. Collect proposed changes to 
 
 Cancellation is a request, not proof that in-flight work stopped. Define what is cancelled when the caller cancels, the deadline passes, required evidence is unavailable or enough evidence has arrived. Accept a late result only if the run is still open and it validates; otherwise mark it late and exclude it. Completed reads need no undoing; branches with effects follow [7.2](../07-durable-execution-and-human-governed-work/02-side-effects-idempotency-and-unknown-outcomes.md), and cancelling does not erase a completed action.
 
-Distinguish complete, declared partial or degraded, needs-information and failed results. A partial result names what is missing and what not to infer. Do not report an interrupted required branch as success because others finished.
+Distinguish `complete`, declared partial or degraded, `needs_information` and `failed` results. A partial result names what is missing and what not to infer. Do not report an interrupted required branch as success because others finished.
 
 ### Bound fan-out and capacity
 
@@ -60,7 +60,7 @@ The first two branches are required: the answer needs an authorized passage conf
 
 In the test, the current document permits GBP 220 and the superseded copy differs. The coordinator stores the results separately, accepts only verified current evidence, and answers that GBP 220 is permitted, citing the current document; it may note the older copy differs. It does not blend amounts, pick the first return, or hide the conflict.
 
-If the required branches succeed while the archive search runs, the coordinator may cancel it; a later return is marked late and excluded (a new task can follow it up). If a required branch was cancelled or failed, the result is information-needed or failure. With no write capability, no approval or compensation is needed.
+If the required branches succeed while the archive search runs, the coordinator may cancel it; a later return is marked late and excluded (a new task can follow it up). If a required branch was cancelled or failed, the result is `needs_information` or `failed`. With no write capability, no approval or compensation is needed.
 
 ## Evidence and checklist
 

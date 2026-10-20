@@ -14,11 +14,11 @@
 
 This chapter records who could be affected, what could go wrong, which information and authority are proposed, who decides and responds, and what a bounded first delivery needs. The screen is not a risk score, control test, approval, or permission to pilot; it makes open questions hard to overlook. A blank field means unresolved, not low risk or allowed.
 
-NIST describes AI risk as both the likelihood and the negative consequence of an event, notes that harm can fall on people, groups, communities, organizations, society and systems beyond the direct user, and cautions that difficulty measuring a risk is not evidence that it is high or low. [1] Detailed assessment is in [Part 10](../../engineering-reference/10-risk-privacy-and-specialized-assurance/README.md). NIST has said the AI RMF 1.0 is being updated, so check the current version. [4]
+NIST describes AI risk as both the likelihood and the negative consequence of an event, notes that harm can fall on people, groups, communities, organizations, society and systems beyond the direct user, and cautions that difficulty measuring a risk is not evidence that it is high or low. [1] Detailed assessment is in [Part 10](../../engineering-reference/10-risk-privacy-and-specialized-assurance/README.md). NIST's Playbook page says the AI RMF 1.0 is being updated, so check for a newer version. [4]
 
 ## Terms and a working model
 
-A **harm scenario** is a short account of how a condition could lead to an unsafe output, action or omission, and who or what is affected. An **affected non-user** feels a consequence without submitting requests (see below).
+A **harm scenario** is a short account of how a condition could lead to an unsafe output, action or omission, and who or what is affected; it is a plausible concern, not a prediction. An **affected non-user** is a person, group or system that feels a consequence without submitting requests, such as a policy owner, a downstream decision-maker or someone whose data is disclosed.
 
 **Uncertainty** (missing, disputed, poorly supported or unassessed information) is not a favorable finding. Write `unresolved`, `not-yet-assessed` or `evidence not yet available` instead of a low-risk label, especially when a legal, contractual, privacy, security or domain rule still needs an authorized applicability determination.
 
@@ -57,11 +57,11 @@ A policy owner may have to correct stale information, a support team inherits po
 
 ## Record information and authority separately
 
-An initial data record makes every proposed source or connection inspectable (the fields SCOPE-02 lists) and names dependencies such as source-status publication, requester permission decisions, escalation contacts, and any delivery service.
+An initial data record lists, for every proposed source or connection, its purpose, source owner, access boundary, sensitivity or personal-data concerns, freshness needs and intended handling (SCOPE-02). It also names dependencies such as source-status publication, requester permission decisions, escalation contacts and any delivery service.
 
 Start from purpose. For personal data under the UK GDPR, the Information Commissioner's Office explains data minimisation as data that is adequate, relevant and limited to what is necessary for the stated purpose, and warns against collecting data just because it may be useful later. [3] That guidance is jurisdiction-specific and under review at the time of writing, but a specific purpose helps anywhere to challenge an unneeded source, field, permission, diagnostic event or retention assumption.
 
-Check early whether the use needs a **regulatory applicability screen**. Where personal data is likely to be processed in a way that is high-risk to individuals, UK GDPR Article 35 requires a data protection impact assessment before processing starts; the ICO guide explains when. [5] If the system serves people in the EU, check whether the EU AI Act applies and which obligations apply when; its application dates have been under revision, so confirm current status from the official text and an authoritative source. [6] This is a pointer, not legal advice; applicability stays unresolved until an authorized reviewer decides it (SCOPE-01).
+Check early whether the use needs a **regulatory applicability screen**. Where personal data is likely to be processed in a way that is high-risk to individuals, UK GDPR Article 35 requires a data protection impact assessment before processing starts; the ICO guide explains when. [5] If the system serves people in the EU, check whether the EU AI Act applies and which obligations apply when; its application dates have been amended since adoption, so confirm the current dates from the official text. [6] This is a pointer, not legal advice; applicability stays unresolved until an authorized reviewer decides it (SCOPE-01).
 
 For each source or connection, consider:
 
@@ -96,7 +96,7 @@ A pilot is limited user exposure, not an exemption from applicable boundaries. E
 
 Stop conditions include a disclosure, unauthorized effect, prohibited use, invalid source permission or currentness, serious harm report, lost response coverage, failed hard gate, or missing required evidence. Say how each is detected, who contains the system, how affected users or operators are told, and who may authorize restart.
 
-Like the NIST Playbook's actions, which are voluntary suggestions rather than a checklist, [4] treat this as an adaptable workflow, not a new gate:
+The NIST Playbook says its suggestions are voluntary and not a checklist. [4] Treat these steps the same way, as an adaptable workflow rather than a new gate:
 
 1. **Re-open the boundary** from 1.1 to 1.3, marking what changed or is unknown.
 2. **Write material scenarios.** Error, omission, misuse, dependency, authority and reversibility paths, affected non-users, and uncertainty, without a local score.
@@ -104,14 +104,14 @@ Like the NIST Playbook's actions, which are voluntary suggestions rather than a 
 4. **Make the decision map reachable**, with combined roles and open reviewer questions.
 5. **Bound the next exposure and hand off evidence** still needed to the owners of controls, evaluation, readiness, execution and detailed risk.
 
-Common pitfalls at this stage:
+The [initial scope record template](../../templates/1.4/initial-scope-record.yaml) shows these fields; a filled record does not prove a control works.
+
+## Common pitfalls
 
 - **No baseline for harm.** Nobody records what goes wrong in today's process, so the agent's new failures cannot be compared with existing ones.
 - **One blended risk score.** A single "low" rating hides separate data, authority, reversibility and non-user questions.
 - **"Read-only" treated as safe.** A read can leak data or mislead a decision. Check what the output enables.
 - **Scope creep after the pilot.** Adding users, sources or write actions without a new screen; any widening reopens this record.
-
-The [initial scope record template](../../templates/1.4/initial-scope-record.yaml) shows these fields; a filled record does not prove a control works.
 
 ## Requirements
 
@@ -133,15 +133,16 @@ The fictional planning record `POLICY-PLAN-001` (`illustrative-unexecuted`) cove
 
 **Roles.** Placeholder business, technical and operating owners are named; the operating owner can respond to reports and contain the candidate. The source/access owner, any specialist reviewer and the restart authority are not yet named, so users must not yet be exposed.
 
-**Possible pilot.** Limit exposure to the eligible fictional requester context, approved current requester-permitted sources, and read-only policy questions; exclude record changes, spending decisions, restricted sources and unresolved policy conflicts. Permission denials, missing or conflicting current evidence, source-status changes, a disclosure report, lost response coverage or missing required evidence would trigger containment or escalation, with restart decided by the authority after investigation. None of this has been tested.
+**Possible pilot.** Limit exposure to the eligible fictional requester context, approved current requester-permitted sources, and read-only policy questions; exclude record changes, spending decisions, restricted sources and unresolved policy conflicts. Permission denials, missing or conflicting current evidence, source-status changes, a disclosure report, lost response coverage or missing required evidence would trigger containment or escalation, with restart decided by the (not yet named) restart authority after investigation. None of this has been tested.
 
 ## Evidence and handoff
 
 An initial scope record is not evidence that the candidate is safe, useful, permitted or ready. Before handing it on, check that:
 
-- open applicability questions are visible, including whether a data protection impact assessment or other regulatory screen is needed;
-- no read-only or durable label is treated as a risk, approval or authority conclusion;
-- unnamed authorities are marked open; and
+- uses, affected users and non-users, material scenarios and open applicability questions are visible, including whether a data protection impact assessment or other regulatory screen is needed;
+- every source or connection has its SCOPE-02 fields, and every capability its authority, effect, reversibility and execution-class question, with no read-only or durable label treated as a risk, approval or authority conclusion;
+- business, technical and operating owners, combined roles, containment and restart authorities are named, and unnamed authorities are marked open;
+- the possible pilot states its users, limits, entry and expansion evidence, support path and stop conditions; and
 - handoffs are clear: Part 3 for trust and data boundaries, Part 4 for evidence, Part 5 for readiness and rollout, Part 7 for triggered execution concerns, Part 10 for expanded assessment.
 
 A change in users, affected population, source status, permissions, capability, authority, dependency, execution condition or delivery boundary reopens the record.

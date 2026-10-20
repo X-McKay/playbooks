@@ -16,13 +16,13 @@ Delegation creates a trust boundary: requests can disclose data or cause work, r
 
 Each edge is a versioned, typed API. A **delegation** returns control, a **handoff** transfers responsibility (not authority), a **review** requests an assessment, a **fan-out** starts bounded branches.
 
-- **Request:** a bounded objective plus the DELEGATE-01 fields; task-specific inputs or authorized references, not full histories (a reference grants no access).
-- **Result:** a typed outcome (completed, needs-information, rejected or blocked, cancelled, timed-out, failed), evidence, open questions, and performed effects apart from proposed ones, validated before use.
-- **Delegation brief:** objective, output format, tools and sources, and boundaries (out of scope, where to stop); vague briefs make workers duplicate, leave gaps and waste spend.[3]
+- **Request:** a bounded objective with validated input, both parties' identities, actor and tenant, deadline and resource limits (full list in DELEGATE-01). Send task-specific inputs or authorized references, not full histories; a reference grants no access by itself.
+- **Result:** a typed outcome (`completed`, `needs_information`, `rejected` or `blocked`, `cancelled`, `timed_out`, `failed`), evidence, open questions, and effects performed kept apart from effects proposed. The caller validates it before use.
+- **Delegation brief:** objective, output format, tools and sources, and boundaries (what is out of scope, where to stop). Vague briefs make workers duplicate work, leave gaps or miss information.[3]
 
-Effective authority is the DELEGATE-02 intersection, computed in code; an empty intersection denies, and a child cannot restore removed scope ([Part 3](../../development-guide/03-security-and-trust-boundaries/README.md)). Requests, results, evidence and capability descriptions are untrusted data, governed at both ends by the DELEGATE-03 data rules.
+Before dispatch, code computes the child's **effective authority**: only what the edge, the caller, the callee's role, the actor and tenant policy, the workflow state and any approval all allow (DELEGATE-02). An empty result denies the call, and a child cannot restore scope its parent lost ([Part 3](../../development-guide/03-security-and-trust-boundaries/README.md)). Requests, results, evidence and capability descriptions are untrusted data; apply the DELEGATE-03 data rules at both ends.
 
-Nested grants come from the parent's remainder; retries keep a stable identity and idempotency context; budget failures are not transient. Until a handoff is accepted, the current owner stays responsible and escalates.
+A child's budget comes out of what its parent has left, and unknown cost stays unknown, not zero. Retries of the same work keep a stable identity and idempotency context; materially changed work gets a new identity. Do not retry policy, schema, authorization or budget failures as if they were transient. Until a handoff is accepted, the current owner stays responsible and escalates if acceptance fails or is unclear.
 
 ### Optional A2A protocol mapping
 

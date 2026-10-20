@@ -11,7 +11,7 @@ An evaluation is only as useful as the link between claim, evidence, and evaluat
 
 ## Start with a claim, not a score
 
-A **metric** says what is measured and how results are summarized, such as the share of cases reaching a required outcome. An **evaluator** is the versioned rule, procedure, instrument, or qualified role that turns evidence into the judgment the metric uses; its output never widens the claim it can establish.
+A **metric** says what is measured and how results are summarized, such as the share of cases reaching a required outcome. An **evaluator** is the versioned rule, procedure, instrument, or qualified role that turns evidence into the judgment the metric uses. A metric can never support a broader claim than its evaluator can establish.
 
 An **evidence source** supplies what is inspected (policy text, a permission decision, a state read, a reference label, a response); the evaluator supplies the judgment. Reserve *oracle* for a named, claim-specific provider with stated authority, scope, time, and limits.
 
@@ -26,7 +26,7 @@ Combine methods for multi-part claims; a later method never makes earlier eviden
 - **Authoritative state observation** for an actual effect or its absence; a transcript is not one.
 - **Reference answer** for a genuinely single-answer case; otherwise accepted facts, alternatives, constraints, or invariants, not one preferred string. Grade outcome and end state, not an anticipated route.
 - **Qualified human review** where interpretation, usefulness, conflicting evidence, or domain expertise cannot safely become a mechanical check.
-- **Rubric-based model judge** for a named semantic criterion left after mechanical, source, and state checks. They are a normal way to grade open-ended output at scale if humans spot-check and calibrate them (below); a judge is an instrument, not an authority over the candidate or its controls.
+- **Rubric-based model judge** for a named semantic criterion left after mechanical, source, and state checks. Model judges are a normal way to grade open-ended output at scale if humans spot-check and calibrate them (below); a judge is an instrument, not an authority over the candidate or its controls.
 
 Relevance, coverage, permission/currentness, grounding, and factual truth are different claims ([4.3](03-evaluation-types-and-dimensions.md)), as retrieval research also treats them.[1] An external truth claim needs its own authoritative reference and as-of context; without one, qualify the claim instead of treating a model judgment as ground truth. Datasets of retrieval-based answers document unsupported or contradictory claims despite retrieval.[2]
 
@@ -93,9 +93,16 @@ Before `grounding-judge@v1` gets any gate role, independent qualified reviewers 
 
 ## Evidence and checklist
 
-- [ ] Each claim has a written counterexample.
+Before relying on an evaluator result, check:
+
+- [ ] The claim, its counterexample, scope, allowed evidence, evaluator version, statuses, decision purpose, and limits are recorded (EVALUATOR-01).
+- [ ] No metric is used for a broader claim than its evaluator and evidence can establish.
+- [ ] Source permission/currentness, semantic support, authoritative state, and factual truth are identified separately where each is claimed (EVALUATOR-02).
+- [ ] References and rubrics state permitted variation and provenance, with independent review and disagreement disposition where material (EVALUATOR-03).
 - [ ] Failures were read in transcripts to separate agent from grader failures.
-- [ ] A model judge has ongoing human spot-checks.
+- [ ] A model judge has a held-out, independently reviewed calibration record, a diagnostic-only or gate-specific fitness decision, and ongoing human spot-checks (EVALUATOR-04).
+- [ ] Deterministic or authoritative checks, not a model judge alone, decide enforceable safety properties.
+- [ ] Self-tests cover the evaluator's decision boundary, and a material evaluator change has a revalidation record before prior fitness is reused (EVALUATOR-05).
 
 Evaluator fitness makes a result interpretable, not a release conclusion; see [4.7](07-analyzing-results-comparing-versions-and-making-decisions.md).
 

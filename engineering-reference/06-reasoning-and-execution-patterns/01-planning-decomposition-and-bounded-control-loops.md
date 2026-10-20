@@ -16,7 +16,7 @@ This chapter covers proposing and revising a plan and the loop that acts on it. 
 
 The model interprets the request, proposes a sequence and recommends the next action. A deterministic control layer checks each proposal against the contract, capability policy, authorization and remaining budget, then admits the action or returns a bounded outcome. The model advises inside these limits; it does not set them.
 
-A good plan is short: goal, subtasks, dependencies and the evidence that shows done. Record which actions were proposed, admitted, completed, rejected or left unresolved; raw hidden reasoning is not needed as an audit record.
+A good plan is short enough for the runtime to check each proposed action: goal, subtasks, dependencies and the evidence that shows done. Keep it revisable as new information arrives, within the limits on replanning below. Record which actions were proposed, admitted, completed, rejected or left unresolved; raw hidden reasoning is not needed as an audit record.
 
 A short question with a fixed retrieval path is clearer and cheaper as a direct workflow. Decomposition fits when subtasks are distinct, information is incomplete, or the next safe step depends on earlier results. More steps do not mean better answers.
 

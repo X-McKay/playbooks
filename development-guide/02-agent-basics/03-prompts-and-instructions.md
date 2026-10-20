@@ -27,7 +27,7 @@ Treat model-visible material as separate roles, even when serialized into one re
 - **Operating instructions** state enduring task policy: job, scope, evidence rules, uncertainty behavior, and response shape.
 - **The current request** says what the requester asks in this run. It shapes the answer within the task but does not rewrite it.
 - **Evidence and other data** (retrieved passages, tool results, approved context, user-supplied details) can support or qualify an answer but never become policy by being relevant.
-- **Trusted runtime facts** come from a declared trusted dependency, such as authenticated requester context or a deadline. They are neither evidence nor instructions, and not prompt-derived authority.
+- **Trusted runtime facts** come from a declared trusted dependency, such as authenticated requester context or a deadline. Keep them apart from both evidence and instructions; their authority comes from the trusted source, not from appearing in the prompt.
 - **The proposed response** is a proposal until the receiving boundary validates it against the output contract.
 
 This gives an **instruction hierarchy**: stable operating instructions take priority over request and evidence text when the model interprets its task. Priority and placement are communication choices, not access controls. NIST identifies direct and indirect prompt injection, including through content likely to be retrieved, as causes of unintended behavior. [1] OWASP recommends separating instructions from data while warning that labels and wording are not an enforcement boundary. [2]
@@ -53,13 +53,13 @@ State scope before style: purpose, included and excluded work, evidence or decis
 
 ### Follow practical instruction-design habits
 
-Published engineering guidance on building agents points to a few habits. [4]
+Published prompting guidance points to a few habits. [5]
 
 - **Give a clear role and task.** Say who the model acts as, what it produces, and for whom. Be direct; assume it has no context beyond the page.
 - **Give the reason behind a rule.** "Cite the current source, because superseded amounts must not be quoted as current" generalizes better than the bare rule to cases you did not list.
 - **Use diverse, contrastive examples.** A few examples covering different cases, including near-misses, teach more than many similar ones. Wrap them in clear markers so they are not read as instructions or data.
 - **Prefer positive, specific direction.** Say what to do and when, not only what to avoid, and keep rules few enough not to conflict.
-- **Iterate against cases.** Run instructions on representative cases (including observed failures), read the outputs, and revise one thing at a time. Start simple and add instructions only for failures you see.
+- **Iterate against cases.** Run instructions on representative cases (including observed failures), read the outputs, and revise one thing at a time. Start simple and add instructions only for failures you see. [4]
 
 ### Make priority and placement intentional
 
@@ -75,7 +75,7 @@ Do not call delimiters sanitization, isolation, authorization, or injection prev
 
 ### Align uncertainty and format with the contract
 
-Map every requested answer format to a declared outcome and its caller handling; a response-only assistant may need a status, a bounded answer or reason, citations, and a material uncertainty statement. Never ask for a result the contract does not permit. Use a readable schema or field outline when it clarifies the shape, and validate what you receive before downstream use. Validation rejects an absent status, unknown field, or invalid enum; it cannot verify grounding or authorize an operation. Some model providers offer schema-constrained output, but these typically support only a subset of a schema language, so keep a full validator at the runtime boundary.
+Map every requested answer format to a declared outcome and its caller handling; a response-only assistant may need a status, a bounded answer or reason, citations, and a material uncertainty statement. Never ask for a result the contract does not permit. Use a readable schema or field outline when it clarifies the shape, and validate what you receive before downstream use. Validation rejects an absent status, unknown field, or invalid enum; it cannot verify grounding or authorize an operation. Some model providers offer schema-constrained output, but it often supports only part of a schema language, so keep a full validator at the runtime boundary.
 
 ### Use exemplars as narrow behavioral demonstrations
 
@@ -95,14 +95,15 @@ Relevant evaluation is a claim-fit comparison ([Part 4](../04-testing-and-evalua
 - **Data masquerading as policy.** A document says "ignore these rules" and the instructions give it no role. Label it evidence and rely on the action boundary for enforcement.
 - **Uncertainty hidden by polished prose.** The instruction rewards a definitive answer when source status or conflict is unresolved; state and test the non-complete handling.
 - **A silent prompt edit.** Text changes after evidence was collected, so no one knows what was assessed.
-- **A schema shown only to the model**, or **an exemplar that implies a write, a broader source, or an invented status.**
+- **A schema shown only to the model.** The response looks structured, but no receiving boundary checks it; keep runtime validation as a separate step.
+- **An exemplar that expands the contract.** An example implies a write, a broader source, or an invented status; replace it with a case the contract permits.
 
 ### Build the instruction design record
 
 Use the [instruction-design record](../../templates/2.3/instruction-design-record.yaml) as a neutral planning aid.
 
 1. **Anchor in the contract:** purpose, request, outcomes, output contract, admitted capabilities, and excluded actions; name the owning record for any source or trusted fact rather than copying authority into prose.
-2. **Draft the behavioral core and role sections** as above, recording the reason for each field or exemplar.
+2. **Draft the behavioral core and role sections:** task and scope, evidence rules, uncertainty and failure handling, and output constraints, with named sections for instructions, request, evidence, and trusted facts. Record the reason for each field or exemplar.
 3. **Exercise the contrasts:** link the revision to a normal permitted case and the uncertainty, conflict, or hostile-content variant the wording targets, mapping output-shape checks separately from source-support and protected-operation evidence.
 4. **Prepare the handoff:** revision identity, prospective agent version, expected change, case references, and the effective-configuration identity once assembled. Leave unexecuted observations blank rather than filling them with expected results.
 
@@ -174,10 +175,11 @@ Keep: the instruction text or immutable content identity, its link to the propos
 
 Keep evidence types separate: the instruction shows intended guidance, output validation shows shape, source-support evidence shows whether citations support claims, and authorization and invocation evidence shows what a protected boundary allowed, denied, or attempted. A format check, citation, model self-report, or well-written prompt does not establish the others.
 
-- [ ] Operating instructions, request text, evidence, and trusted runtime facts have distinct stated roles.
-- [ ] Labels and delimiters are not presented as containment or authorization.
-- [ ] Runtime output validation is a separate receiving-boundary step.
-- [ ] The revision states its expected behavior change and relevant cases, including an adverse or boundary case where applicable.
+- [ ] Task, scope, evidence rules, and handling for missing, conflicting, or unreliable evidence are visible (PROMPT-01).
+- [ ] Operating instructions, request text, evidence, and trusted runtime facts have distinct stated roles, and labels and delimiters are not presented as containment or authorization (PROMPT-02).
+- [ ] Each exemplar is marked illustrative and adds no capability, policy, authority, or status absent from the contract (PROMPT-03).
+- [ ] Output guidance maps to declared outcomes, and runtime output validation is a separate receiving-boundary step (PROMPT-04).
+- [ ] The revision states its expected behavior change and relevant cases, including an adverse or boundary case where applicable, and the evaluated revision and agent version are identifiable in the evidence (PROMPT-05).
 
 ## References
 
@@ -185,3 +187,4 @@ Keep evidence types separate: the instruction shows intended guidance, output va
 [2]: https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html "OWASP LLM Prompt Injection Prevention Cheat Sheet"
 [3]: https://json-schema.org/draft/2020-12/json-schema-validation "JSON Schema Validation: A Vocabulary for Structural Validation of JSON"
 [4]: https://www.anthropic.com/engineering/building-effective-agents "Building effective agents"
+[5]: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices "Prompting best practices"

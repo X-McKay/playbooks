@@ -21,7 +21,7 @@ It does not choose a telemetry backend, require tracing, set objectives or thres
 
 A **request** is an initiating interaction; a **run** is the bounded unit of agent work done for it. One request can create several runs, and a durable run can pause, resume, or move between workers while keeping a stable identity and its link to the request. An **attempt** is one physical try at an operation, such as one retrieval or model request. A retry is another attempt, not a free continuation.
 
-**Telemetry** is what an operator uses to inspect this. An **event** records a meaningful point in time, such as a pre-dispatch reservation or a stop request. OpenTelemetry defines a **metric** as a runtime measurement aggregated for analysis and a **trace** as the path of a request through an application; a **span** is one unit of work within a trace. Metrics and traces answer different questions, and neither replaces the other. [1] [2]
+**Telemetry** is what an operator uses to inspect this. An **event** records a meaningful point in time, such as a pre-dispatch reservation or a stop request. OpenTelemetry defines a **metric** as a runtime measurement aggregated for analysis and a **trace** as the path of a request through an application; a **span** is one unit of work within a trace. A small service can use an ordered event sequence instead of a trace. Metrics and traces answer different questions, and neither replaces the other. [1] [2]
 
 Correlation is a logical link; work need not stay in one process. A compact run record can carry request, run, and attempt identities, the agent and version, the effective capability or configuration identity, and operation records. Add workflow, approval, tenant, or similar references only when the concept exists and its use is permitted. OpenTelemetry semantic conventions are an optional shared vocabulary; they do not decide which fields to collect or make collection permissible. [3]
 
@@ -58,15 +58,15 @@ Separate active processing from human or durable waiting; an approval wait is no
 
 Match the outcome vocabulary to the agent contract. `complete` means contract-defined success; `needs_information`, `declined`, `failed`, `timed_out`, and `cancelled` are different conditions, not a generic error. `partial` is meaningful only when the contract defines what makes it safe and useful. An exhaustion observation can accompany a non-success outcome; not every contract has a terminal `budget_exhausted` state. Tie task success to the criteria in [1.2](../01-problem-definition-and-planning/02-requirements-success-criteria-and-measurable-targets.md), not to fluent text or a citation.
 
-Bound metric labels. Cardinality is the number of distinct attribute combinations, and values such as user identities or raw URL paths can create unbounded aggregation memory. [1] Keep run, request, user, tenant, workflow, prompt, raw URL, and free-form error text out of aggregate dimensions; use controlled categories such as operation type, declared outcome, or safe error class. Put necessary correlation detail in protected event or trace records under [3.3](../03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md), and do not treat ordinary telemetry as the audit record for a consequential action.
+Bound metric labels. Cardinality is the number of distinct attribute combinations, and values such as user identities or raw URL paths can create unbounded aggregation memory. [1] Keep run, request, user, tenant, workflow, prompt, raw URL, and free-form error text out of aggregate dimensions; use controlled categories such as operation type, declared outcome, or safe error class. Put necessary correlation detail in protected event or trace records under [3.3](../03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md). Do not move sensitive or unbounded fields into another signal by default, and do not treat ordinary telemetry as the audit record for a consequential action.
 
 Diagnostics show what the system recorded, not that a source supports an answer, was authoritative or entitled, or that a release was authorized; those claims need boundary evidence from the linked chapters.
 
 ### Instrument agent steps with open conventions
 
-If you use OpenTelemetry, its GenAI semantic conventions define an `invoke_agent` span for an agent invocation and an `execute_tool` operation for a tool call; sub-agent work can nest under the parent. The conventions are at **Development** stability and live in their own repository, so pin the instrumentation version and keep attribute names in one place to ease renames. [6]
+If you use OpenTelemetry, its GenAI semantic conventions define an `invoke_agent` span for an agent invocation and an `execute_tool` operation for a tool call; an `invoke_workflow` span covers an orchestration that coordinates several agents. The conventions are at **Development** stability and live in their own repository, so pin the instrumentation version and keep attribute names in one place to ease renames. [6]
 
-Message content attributes such as input messages and system instructions are opt-in. Decide where to capture content, for example fuller capture in test and metadata or redacted content in production, under [3.3](../03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md). [6] Spans show what happened, not that it was correct.
+Message content attributes such as input messages and system instructions are opt-in. Decide where to capture content, for example fuller capture in test and metadata or redacted content in production, under [3.3](../03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md). [6] A span shows what happened, not that the result was correct.
 
 ### Make budgets executable
 
@@ -89,7 +89,7 @@ Document the stop scope (one run, new admissions to an agent, or a capability), 
 ### Recognize failure modes early
 
 - **Tidy telemetry, wrong answer.** Model and retrieval operations can report normal results while the answer is unsupported; do not label the run `complete` from operation status alone.
-- **Any two values called a conflict.** Current material plus a marked superseded record is a source-precedence case; record source status and apply the declared selection rule instead of inventing uncertainty or choosing a stale value.
+- **Calling any two different values a conflict.** A current source plus a marked superseded record is a source-precedence case, not a conflict; record source status and apply the declared selection rule instead of inventing uncertainty or choosing the stale value.
 - **Unbounded metric labels.** They make the aggregate used for alerting unreliable or expensive.
 - **Retry handlers that reset the attempt counter.** They bypass the ceiling.
 - **Per-worker counters.** They overspend a supposedly shared pool.
@@ -127,7 +127,7 @@ The assistant is read-only and answers from requester-permitted, approved policy
 
 The `POLICY-CONFLICT-004` variant is the conflict: it adds `travel-policy-2026-conflicting-amendment@2026-10-12` (GBP 260) as an equally authoritative current source the same employee may read, so the expected outcome is `needs_information`. For `contractor-uk-204`, the retrieval boundary denies travel-policy access; the expected outcome is `declined`, with no restricted amount in the output.
 
-The per-run envelope allows three model requests, four retrieval calls, 15 seconds elapsed time, and an optional 12 seconds of active processing. The record ties a request to the run, candidate, and capability/configuration identities and each attempt; aggregates use operation type, terminal outcome, and termination reason, not the requester or question.
+The per-run envelope allows three model requests, four retrieval calls, 15 seconds elapsed time, and an optional 12 seconds of active processing. The run record ties the request to the run, the release-candidate and capability/configuration identities, and each attempt; aggregates use operation type, terminal outcome, and termination reason, not the requester or question.
 
 In `POLICY-EXHAUSTION-008`, the retrieval budget is exhausted and a controlled retrieval timeout follows. The implementation stops new retrieval, keeps the last attempt and its timeout result, and records a reason such as `retrieval_budget_exhausted`. The terminal outcome is `failed`, distinct from the reason. It does not invent an amount, cite unavailable evidence, or retry to look complete.
 

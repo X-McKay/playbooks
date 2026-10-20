@@ -28,9 +28,9 @@ Techniques combine at any level; choose by the claim, the credible failure mode,
 
 A **positive case** exercises an allowed, expected path. Misuse: treating a happy path as proof that denied or ambiguous conditions are safe. Example: ask for the London hotel limit with a current permitted policy; expect a complete answer citing it.
 
-A **negative case** presents a disallowed, unavailable, or contradictory condition and checks the contract-defined safe response: permissions, missing evidence, prohibited inputs. Misuse: accepting any refusal as a pass. Pair them with comparable allowed cases so blanket refusal cannot pass: test that a behavior happens when it should and not when it should not, or you optimize one side. Example: remove the user's permission for a source and verify, at the denied-source boundary, that it is not retrieved or disclosed.
+A **negative case** presents a disallowed, unavailable, or contradictory condition and checks the contract-defined safe response: permissions, missing evidence, prohibited inputs. Misuse: accepting any refusal as a pass. Pair each negative case with a comparable allowed case so an agent that refuses everything cannot pass; test both that a behavior happens when it should and that it does not when it should not, or you end up optimizing only one side.[2] Example: remove the user's permission for a source and verify, at the denied-source boundary, that it is not retrieved or disclosed.
 
-A **boundary case** probes a meaningful limit or transition: either side of a permission scope, a revision becoming superseded, evidence becoming insufficient. Misuse: arbitrary edges with no stated reason. Example: compare users identical except for approved-policy access; inspect the trusted authorization decision and the visible result.
+A **boundary case** probes a meaningful limit or transition: either side of a permission scope, a revision becoming superseded, evidence becoming insufficient. Misuse: arbitrary edges with no stated reason. Example: run the same request for two users who differ only in access to the approved policy, and inspect the trusted authorization decision and the visible answer for each.
 
 ### Property-based checks
 
@@ -38,7 +38,7 @@ A **property-based check** exercises a stated invariant over deliberately varied
 
 ### Metamorphic relations
 
-A **metamorphic relation** states how an outcome should relate across a controlled input change, useful when an exact answer is hard to specify but a relationship can be reviewed. Use invariance for irrelevant changes and sensitivity for material ones; a paraphrase must truly preserve meaning, and a permission or current-policy change is never irrelevant. Misuse: assuming similar wording means identical meaning, or treating consistency as correctness. A reviewed paraphrase of the hotel question should keep the supported GBP 220 answer and source/control relation; a fixture with only a superseded policy should give the contract-defined uncertainty or `needs_information` outcome. Relations do not replace an external truth source or semantic review.[1]
+A **metamorphic relation** states how an outcome should change, or not change, when you make a controlled change to the input. It helps when an exact answer is hard to specify but the relationship can be reviewed. Use an invariance relation for irrelevant changes and a sensitivity relation for material ones. A paraphrase must truly preserve meaning, and a permission or current-policy change is never irrelevant. Misuse: assuming similar wording means identical meaning, or treating consistency as correctness. Example: a reviewed paraphrase of the hotel question should still give the supported GBP 220 answer from the same kind of source under the same controls; a fixture holding only a superseded policy should give the contract-defined uncertainty or `needs_information` outcome. Relations do not replace an external truth source or semantic review.[1]
 
 ### Controlled fault injection
 
@@ -123,7 +123,8 @@ Keep `POLICY-HOLDOUT-009` out of iteration and evaluator tuning; smoke and regre
 ## Evidence and checklist
 
 - [ ] Level, technique, claim, suite purpose, and lifecycle environment are separate fields.
-- [ ] No narrow check is presented as proof of a wider boundary.
+- [ ] No narrow check is presented as proof of a wider boundary; interface-crossing claims have integration evidence and user-visible claims have controlled offline behavioral evidence (CASE-04).
+- [ ] Any omitted but otherwise relevant level, or an unused acceptance or operational-learning suite, has a recorded reason.
 - [ ] Each technique states its relation to the claim and its limit; negative cases have allowed counterparts.
 - [ ] Development results are not presented as holdout evidence; post-launch learning has not replaced pre-release evidence.
 - [ ] Capability and regression suites are separate; saturated capability cases are graduated or replaced.

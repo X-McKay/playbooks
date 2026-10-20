@@ -54,7 +54,7 @@ Write the expected result for each case class into the criterion before looking 
 
 ### Keep the decision dimensions separate
 
-NIST frames deployment as a contextual assessment of trustworthiness characteristics, risks, impacts, costs and benefits, and notes that characteristics can be in tension (accuracy and robustness, for example). [1] Separate dimensions make that tension reviewable instead of hiding it in a composite score.
+NIST frames deployment as a contextual assessment of trustworthiness characteristics, risks, impacts, costs and benefits, and notes that characteristics can be in tension (predictive accuracy and interpretability, for example). [1] Separate dimensions make that tension reviewable instead of hiding it in a composite score.
 
 - **User or business value:** can people complete the intended work with a worthwhile net effect compared with the current process? Signals include task resolution, total effort, correction burden, avoidable handoffs, or a task-specific business consequence; a task-quality score is only a proxy.
 - **Task behavior and failure paths:** does the response or terminal outcome match the contract: correct and complete where an answer is supported, honestly bounded where clarification, decline, escalation or failure is right? Correctness or rubric measures belong here.

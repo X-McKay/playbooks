@@ -79,7 +79,7 @@ This holds for read-only guidance too: a skill that says to search for a policy 
 - **Shallow format check.** It misses a changed reference or unresolved dependency; review the whole behavior-relevant package.
 - **Silent expansion by discovery.** A new package appears in a shared location outside the reviewed allowlist; never pick whichever source appears first.
 - **Overgeneralization.** A broad "handle policies" skill blurs answering, maintenance, access administration, and incident handling, hiding which exclusion or dependency applied. Split responsibilities and return a bounded outcome for out-of-scope requests.
-- **Evidence mistaken for proof.** An admission record shows a proposal, a format check what it ran, and a manifest identity traceability; none proves source authority, authorization, or safe behavior.
+- **Evidence mistaken for proof.** An admission record shows what was proposed, a format check shows only the checks it ran, and a manifest identity gives traceability; none proves source authority, authorization, or safe behavior.
 
 ### Build an admission record
 
@@ -113,10 +113,13 @@ The record leaves owner, source revision, package identity, and dependency verif
 
 A reviewer should be able to reconstruct the decision from the admission record (scope, exclusions, source, identity boundary, dependencies, contract relation, open questions); the [2.2](02-agent-contracts-and-configuration.md) manifest separately records what was admitted. Keep a format-validation result, package inventory, source and identity record, dependency-resolution observation, context-cost measurement, and case plan, with tool-boundary evidence separate if execution is proposed. Do not log secrets, unnecessary source content, or raw hidden reasoning.
 
+- [ ] Responsibility, activation condition, exclusions, procedure, safety constraints, and observable completion are clear without treating metadata as enforcement.
 - [ ] Source, semantic version, owner, resolved-package identity, and identity scope are recorded or visibly unresolved.
+- [ ] Behavior-relevant references, assets, and executable material are in the package inventory.
+- [ ] Required dependencies and expected identities are listed, and an unavailable one leads to a bounded stop or a separately evaluated fallback.
 - [ ] Discovery, admission, selection and loading, dispatch, and authoritative effect are not reported as one event.
 - [ ] Any selected tool or resource stays within the agent contract with its own authorization and validation.
-- [ ] Selection cases cover the description as well as the procedure.
+- [ ] Positive, negative, and ambiguous selection cases cover the description as well as the procedure, and a changed version is compared with the previous one.
 
 For evaluation design, continue to [Part 4 — Testing and Evaluation](../04-testing-and-evaluation/README.md).
 

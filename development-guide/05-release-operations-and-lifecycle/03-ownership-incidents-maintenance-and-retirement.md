@@ -37,7 +37,7 @@ Learn from others' incidents too: public AI incident databases catalog real-worl
 
 ### Maintain assumptions, not merely uptime
 
-**Maintenance** asks whether the conditions under which the capability was approved still hold, not just whether the service is reachable. NIST's AI RMF notes that deployed performance and trustworthiness can shift and that monitoring helps detect drift, unexpected behavior, and negative impacts. [2] That supports a periodic review set by the organization plus reassessment when evidence invalidates earlier assumptions; it gives no universal interval. Providers also retire model versions on published schedules, so track the pinned version's retirement date and plan the migration under [5.2](02-readiness-change-and-rollout.md) before requests fail. [6]
+**Maintenance** asks whether the conditions under which the capability was approved still hold, not just whether the service is reachable: contacts, behavior and permissions, source freshness, dependencies, accumulated failures and feedback, and working containment and revocation paths. NIST's AI RMF notes that deployed performance and trustworthiness can shift and that monitoring helps detect drift, unexpected behavior, and negative impacts. [2] That supports a periodic review set by the organization plus reassessment when evidence invalidates earlier assumptions; it gives no universal interval. Providers also retire model versions on published schedules, so track the pinned version's retirement date and plan the migration under [5.2](02-readiness-change-and-rollout.md) before requests fail. [6]
 
 ### Retire a capability as a controlled handover
 
@@ -49,7 +49,7 @@ Data disposition is **copy-specific**: active stores, retained evidence, exports
 
 ### Build the support record before it is needed
 
-Keep one concise record a first responder can use cold: the LIFECYCLE-01 roles, the authority to stop or prevent further work, combined roles, required independent review, and each authority's scope. It is an operating aid, not evidence of any release or recovery authorization.
+Keep one concise record a first responder can use cold: the business or service owner, technical contact, reachable support route, escalation path, restart and change authority, the authority to stop or prevent further work, combined roles, required independent review, and each authority's scope. It is an operating aid, not evidence of any release or recovery authorization.
 
 Two common failures: naming a team without how to reach it or who decides next, which delays containment; and treating the deployer, stop operator, and recovery authority as interchangeable, which turns incident pressure into an unreviewed release path. CISA describes an incident-response plan as clarifying roles and responsibilities, guiding key activities, and listing key people needed in a crisis. [4]
 
@@ -61,7 +61,7 @@ Record statements at their real strength. "The index may have been stale" is a h
 
 Choose the smallest safe containment that matches what is known: stopping new work, disabling a source, narrowing a tenant path, or blocking a capability. A narrowly identified stale source may justify blocking only that source; an unknown boundary may need broader stopping while it is assessed. Containment is not recovery, rollback, restoration, reconciliation, or a forward fix. Preserve only the permitted minimum to reconstruct events: agent and release identity, run or correlation reference, capability and source identity, observations, and times. A model narrative, citation, or invocation record does not establish an external effect; when one is uncertain, keep it unresolved and reconcile under [7.2](../../engineering-reference/07-durable-execution-and-human-governed-work/02-side-effects-idempotency-and-unknown-outcomes.md) rather than retrying.
 
-Before resuming, the recovery authority records what LIFECYCLE-03 lists. A repair that is a material change goes through [5.2](02-readiness-change-and-rollout.md), and a recovery record may cite an evaluation conclusion but must not relabel it as release authorization.
+Before resuming, the recovery authority records the cause or remaining uncertainty, the corrective action, the evidence that safeguards and release gates are met, and the authorization to resume (LIFECYCLE-03). A repair that is a material change goes through [5.2](02-readiness-change-and-rollout.md), and a recovery record may cite an evaluation conclusion but must not relabel it as release authorization.
 
 ### Turn feedback into governed follow-up
 
@@ -96,13 +96,13 @@ A fictional planning record for `POLICY-BUILD-001`, a read-only internal policy 
 
 `employee-uk-104` may read `travel-policy-2026@2026-10-01` (London hotel limit GBP 220) and the approved historical `travel-policy-2024-superseded@2024-01-01` (GBP 200, not authority for the current answer). In `POLICY-STALE-002`, the expected outcome is `complete` with GBP 220; current evidence plus a superseded record is **not** a conflict.
 
-A real conflict appears only in `POLICY-CONFLICT-004`, which adds the equally authoritative `travel-policy-2026-conflicting-amendment@2026-10-12` (GBP 260); the expected outcome is `needs_information`. `contractor-uk-204` has no travel-policy permission, and `POLICY-DENIED-005` expects `declined` without restricted facts. A missing permitted source expects `needs_information`. Controlled retrieval exhaustion expects terminal outcome `failed` with a useful uncertainty response, distinct from the termination reason: a controlled retrieval timeout after the read-only budget is exhausted.
+A real conflict appears only in `POLICY-CONFLICT-004`, which adds the equally authoritative `travel-policy-2026-conflicting-amendment@2026-10-12` (GBP 260); the expected outcome is `needs_information`. `contractor-uk-204` has no travel-policy permission, and `POLICY-DENIED-005` expects `declined` without restricted facts. A missing permitted source expects `needs_information`. Controlled retrieval exhaustion expects terminal outcome `failed` with a useful uncertainty response; the termination reason (retrieval budget exhausted, then a controlled timeout) is recorded separately, as in [5.1](01-observability-budgets-and-operational-control.md#worked-example).
 
 Suppose the support record receives an **illustrative hypothesis** that the stale case comes from incomplete source selection; no run, incident, or root cause is asserted. The fixture facts justify checking active source identities, the permission boundary, currentness classification, and authorized evidence; they do not justify saying the current source was unavailable, an index was stale, or a user received GBP 200.
 
 If an investigation later showed unsafe source selection, the response would first contain: block that source-selection path for new requests, or stop more broadly if the safe scope were unclear. The repair would be a changed candidate needing evaluation evidence and a [5.2](02-readiness-change-and-rollout.md) release decision before the recovery authority could authorize resumption, with evaluation conclusion, release authorization, and operational outcome or reason in separate fields.
 
-The hostile `untrusted-travel-note@2026-10-18` remains data. `POLICY-INJECTION-006` expects the legitimate GBP 220 response, no write invocation, and the attempted prohibited capability request recorded separately from the boundary denial. Whether the rejected instruction needs a visible refusal, escalation, or failure is the unresolved BOUNDARY-04 refusal-scope ambiguity, not settled here.
+The hostile `untrusted-travel-note@2026-10-18` remains data. `POLICY-INJECTION-006` expects the legitimate GBP 220 response, no write invocation, and the attempted prohibited capability request recorded separately from the boundary denial. Whether the rejected instruction needs a visible refusal, escalation, or failure is the open [BOUNDARY-04](../03-security-and-trust-boundaries/02-untrusted-inputs-retrieved-content-and-action-boundaries.md#requirements) refusal-scope question, not settled here.
 
 Maintenance could record the source-refresh dependency, contactability, a suitable signal, and whether shared evaluation evidence fits the changed candidate. If the capability became unsupportable, a retirement proposal would cover the LIFECYCLE-06 elements before calling it retired.
 

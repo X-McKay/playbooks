@@ -95,7 +95,7 @@ A separate durable flow of the policy assistant runs when an authorized editor a
 
 Request `ar-0042` shows the approver the action, current source and patch; the subject includes `publish_policy_revision`, the canonical patch digest, the `travel-policy-current` target, the policy workspace tenant, the editor as effective actor, the approval-policy version, required approver scope and expiry. The flow enters `awaiting_approval`, and the answer-generation agent cannot swap in a new patch.
 
-If the approver approves `ar-0042` but the editor withdraws the proposal before execution is claimed, the cancellation is recorded and the run becomes `cancelled_without_effect`. The late approval is kept as a non-authorizing event, as is any duplicate, and nothing is published.
+Suppose the approver approves `ar-0042`, but the editor's withdrawal is recorded first, before execution is claimed: the run becomes `cancelled_without_effect`. The approval event arrives after that. It is authentic, but it is kept as a late, non-authorizing event and cannot reopen the run; a duplicate delivery gets the same disposition, and nothing is published.
 
 A deployment adds an optional display-only field while another instance waits; the reader recognizes the older `durable.approval.wait` version and keeps its subject meaning. Had it changed patch interpretation or added a material condition, it would keep an old handler or migrate, voiding and reissuing affected approvals.
 

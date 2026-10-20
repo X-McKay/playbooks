@@ -12,7 +12,7 @@
 
 ## Foundations and boundaries
 
-Part 5 starts once earlier Parts have made the intended use, contract, authority boundaries, information handling, and evaluation claims inspectable. Its key terms: request, run, physical attempt, bounded signal, resource budget, and safe stop (5.1); candidate, readiness state, exception boundary, release scope, and change disposition (5.2); accountable support, suspected incident, recovery authority, maintenance, and retirement (5.3).
+Part 5 starts once earlier Parts have made the intended use, contract, authority boundaries, information handling, and evaluation claims inspectable. Key terms by chapter: request, run, physical attempt, bounded signal, resource budget, and safe stop (5.1); candidate, readiness state, exception boundary, release scope, and change disposition (5.2); accountable support, suspected incident, recovery authority, maintenance, and retirement (5.3).
 
 Metrics do not prove semantic grounding, a release record does not prove authorization, and a stop does not prove cancellation or reversal. An evaluation `go`, `conditional_go`, or `no_go` is distinct from release authorization, and required but unresolved evidence stays blocking. For data handling and audit evidence use [3.3](../03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md); for uncertain external effects use [7.2](../../engineering-reference/07-durable-execution-and-human-governed-work/02-side-effects-idempotency-and-unknown-outcomes.md); for capacity and optimization use [8.3](../../engineering-reference/08-model-context-and-resource-engineering/03-cost-latency-and-performance-optimization.md) and [8.4](../../engineering-reference/08-model-context-and-resource-engineering/04-capacity-admission-control-and-backpressure.md).
 
@@ -26,9 +26,9 @@ Metrics do not prove semantic grounding, a release record does not prove authori
 
 ## Where each topic lives
 
-1. [5.1](01-observability-budgets-and-operational-control.md) covers operational identity, outcomes, budgets, and stop.
-2. [5.2](02-readiness-change-and-rollout.md) covers release readiness, exceptions, rollout, and material change.
-3. [5.3](03-ownership-incidents-maintenance-and-retirement.md) covers support, incidents, maintenance, and retirement.
+1. [5.1 Observability, Budgets, and Operational Control](01-observability-budgets-and-operational-control.md) covers operational identity, outcomes, budgets, and stop.
+2. [5.2 Readiness, Change, and Rollout](02-readiness-change-and-rollout.md) covers release readiness, exceptions, rollout, and material change.
+3. [5.3 Ownership, Incidents, Maintenance, and Retirement](03-ownership-incidents-maintenance-and-retirement.md) covers support, incidents, maintenance, and retirement.
 
 ## Practical workflow
 

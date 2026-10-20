@@ -11,7 +11,7 @@ A release comparison is an argument about **one identified candidate**, not a da
 
 ## Start with a decision subject, not an aggregate
 
-Freeze the subject before comparing, as RELEASE-EVIDENCE-01 lists; the resolved configuration includes instructions, admitted capabilities, source and permission policy, route or fallback policy, settings, and evaluation environment. A mutable label such as "current policy assistant", or a model label alone when routing or configuration changes behavior, cannot reproduce a decision. Each physical attempt and the user-facing result must trace to the configuration that produced it.
+The **decision subject** is the exact candidate (and baseline, if any) that the conclusion is about. Freeze it before comparing, recording the items RELEASE-EVIDENCE-01 lists; its resolved configuration includes instructions, admitted capabilities, source and permission policy, route or fallback policy, settings, and evaluation environment. A mutable label such as "current policy assistant", or a model label alone when routing or configuration changes behavior, cannot reproduce a decision. A **physical attempt** is one actual call or execution, including retries and fallbacks the user never sees; the **final-policy result** is what the user receives after any retry, selection, or fallback. Each physical attempt and the final-policy result must trace to the configuration that produced it.
 
 Read results at four levels:
 
@@ -94,9 +94,18 @@ Suppose a `grounding-judge@v1` run is marked invalid because its evidence packet
 
 ## Evidence and checklist
 
-- [ ] Each metric matches the actual retry, selection, or fallback policy.
+Before accepting a decision record, check:
+
+- [ ] The candidate is distinguishable from the baseline, or documented as a first release, including resolved route, fallback, and configuration (RELEASE-EVIDENCE-01).
+- [ ] Cases, holdout status, fixture and reset, evaluators, trial policy, physical attempts, final-policy results, and all statuses trace to that subject.
+- [ ] Each metric states its pass predicate and denominator and matches the actual retry, selection, or fallback policy (RELEASE-EVIDENCE-02).
+- [ ] Candidate and baseline outcomes are paired where compared, and meaningful case or critical-slice flips are visible.
+- [ ] Any inference beyond the named cases states its population, sampling, dependence treatment, and uncertainty method.
 - [ ] Costs, boundary observations, and effects are not hidden by a selected retry.
 - [ ] Surprising results were checked against transcripts for grader or fixture error.
+- [ ] Invalid, inconclusive, missing, repaired, and candidate-failure records stay distinct, and gates were applied under the policy declared before results (RELEASE-EVIDENCE-03, RELEASE-EVIDENCE-04).
+- [ ] A `conditional_go` leaves no pre-release item incomplete, and each post-release obligation has an owner, due date, signal, and overdue consequence (RELEASE-EVIDENCE-05).
+- [ ] The record names authority, rationale, limits, next action, and the Part 5 handoff, and is not presented as deployment approval.
 
 ## Requirements
 

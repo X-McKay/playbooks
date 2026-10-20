@@ -14,7 +14,7 @@
 
 An agent is one possible contribution to a user task, not the default answer. It adds flexibility where language, evidence or the order of work is uncertain, at a cost in money, latency, failure paths, evaluation and maintenance. Process redesign, human help, search, rules, automation, a learned predictor, one model response, or a fixed model workflow may be better.
 
-Start with the simplest solution that could work: a single model call or fixed workflow, moving to an agent, then to several agents, only when simpler options demonstrably fall short. [2] NIST frames the decision to commission or deploy AI as contextual: weigh trustworthiness, risks, impacts, costs and benefits instead of treating a technology label as a benefit. [1]
+Start with the simplest solution that could work, such as a single model call or a fixed workflow, and add multi-step agentic behavior only when simpler solutions fall short. [2] NIST frames the decision to commission or deploy AI as contextual: weigh trustworthiness, risks, impacts, costs and benefits instead of treating a technology label as a benefit. [1]
 
 ## Terms and an operational convention
 
@@ -22,7 +22,7 @@ A **baseline** is the simplest plausible alternative for the same bounded task, 
 
 An **action space** is the set of actions a candidate may take, from response-only to information-gathering or externally visible actions. Its size alone does not make a candidate an agent; consequence and authority are assessed in 1.4 and the control chapters.
 
-In this guide, a **fixed workflow** has transitions defined by the orchestration. It may branch on an earlier result, retry, use a model router, or call a model at a set step, and stays fixed while the possible transitions and their selection are predefined. An **adaptive agent** lets model output direct a meaningful next action, sequence or stopping choice in response to observations. The action set can be finite and fully listed; adaptivity is about model-directed choice within it. This is a working convention; a practitioner source draws a similar line between predefined workflow paths and systems where a model directs its own process and tool use. [2]
+In this guide, a **fixed workflow** has transitions defined by the orchestration. It may branch on an earlier result, retry, or call a model at a set step, including a model router that picks one of several predefined branches. It stays fixed as long as the orchestration defines which step can follow which. An **adaptive agent** lets model output direct a meaningful next action, sequence or stopping choice in response to observations. The action set can be finite and fully listed; adaptivity is about model-directed choice within it. This is a working convention; a practitioner source draws a similar line between predefined workflow paths and systems where a model directs its own process and tool use. [2]
 
 An **adaptation benefit** is the task-relevant gain expected from model-directed choice, such as finding the next useful permitted source, asking a good follow-up question, or stopping when evidence is enough. It is a hypothesis until compared with a simpler design. **Evaluation burden** is the work to test it and the new failure paths; **maintenance burden** is keeping sources, rules, data, prompts, interfaces, test cases and operating knowledge current.
 
@@ -42,7 +42,7 @@ A comparison may keep several options, combine them, or conclude that no new sys
 
 ### Process redesign or manual assistance
 
-Process redesign can remove duplicate work, clarify source ownership, publish current status, improve intake or repair a handoff. Manual assistance keeps judgment with a person when cases are rare, exceptions are costly, or context cannot yet be represented safely. They lose when the remaining work is repetitive and a bounded contribution can reliably reduce it.
+Process redesign can remove duplicate work, clarify source ownership, publish current status, improve intake or repair a handoff. Manual assistance keeps judgment with a person when cases are rare, exceptions are costly, or context cannot yet be represented safely. They lose when the remaining work is repetitive and a bounded contribution can reliably reduce it, and they stay unproven until the difficulty is observed in representative tasks.
 
 ### Deterministic rules and conventional automation
 
@@ -58,7 +58,7 @@ Traditional machine learning fits a definable recurring prediction, ranking or c
 
 ### Single-call model assistance
 
-**Single-call model assistance** uses one bounded model response to interpret varied language, draft material or present an answer. It can be enough when no model-directed next action is needed.
+**Single-call model assistance** uses one bounded model response to interpret varied language, draft material or present an answer. It can be enough when no model-directed next action is needed. A flexible prompt or an uncertain response does not make it an agent.
 
 ### Fixed model workflows
 
@@ -68,7 +68,7 @@ A **fixed model workflow** combines model calls, source access, routers, validat
 
 Consider an adaptive agent only when model-directed sequencing or stopping should add task-relevant value beyond a fixed orchestration. A record might list a finite permitted set: `locate_permitted_evidence`, `request_clarification`, `return_bounded_response`, `escalate`. If the model chooses among them based on observations, the candidate is adaptive even though every action is listed and constrained.
 
-It loses when stable transitions handle the same cases, when the benefit cannot be stated, or when error consequence, maintenance, latency, cost or evidence burden outweighs it. Agentic systems often trade latency and cost for task performance and can compound errors (this guide relies on that source's definitions and trade-off advice, not its tooling guidance, parts of which have changed). [2] If you do move to an agent, start with one, and split into several only when one demonstrably cannot do the task.
+It loses when stable transitions handle the same cases, when the benefit cannot be stated, or when error consequence, maintenance, latency, cost or evidence burden outweighs it. Agentic systems often trade latency and cost for better task performance, and their autonomy can compound errors. [2] If you do move to an agent, start with one and maximize what it can do before splitting the work across several agents, which adds complexity and overhead. [5]
 
 ### Hybrid designs
 
@@ -84,11 +84,11 @@ Then assess the factors that change the fit:
 - **Data and learning premise.** For a learned component, record the target, the source and status of labels or outcome data, representativeness concerns, and what makes the data usable. For a model not trained for the task, record the task cases and evidence needed to assess behavior, without implying task-specific training data.
 - **Action and adaptation.** State the permitted actions, any fixed transitions, and the proposed model-directed next-action, sequence or stopping choices. A finite action list is compatible with an agent; a list of all fixed transitions is evidence of a fixed workflow.
 - **Consequence of error.** The user, downstream or operational effect of a wrong, missing, late, misleading or unauthorized result; a read-only response is not consequence-free.
-- **Maintenance and evaluation burden.** What each option must keep current, and what it adds in case design, review, diagnostics, correction and support.
+- **Maintenance and evaluation burden.** What each option must keep current, and what it adds in case design, review, diagnostics, correction and support. A simpler baseline can win simply because there is less to maintain.
 
 NIST advises documenting context, assumptions, limitations and impacts for a generative AI system, showing test results for conditions similar to the deployment setting, and not extrapolating performance from narrow or anecdotal assessments. [4] A favorable demo or benchmark does not transfer to a different user population, source collection, permission or action boundary.
 
-Finally, predeclare the **added-value claim** for an adaptive candidate: what evidence would show that model-directed choice beats the baseline by enough to justify its burden, compared on the same cases and constraints. 1.2 defines claims and measures; Part 4 designs the cases, evaluators and trials.
+Finally, predeclare the **added-value claim** for an adaptive candidate: what evidence would show that model-directed choice beats the baseline by enough to justify its burden, compared on the same cases and constraints. A candidate given easier cases or looser boundaries has not been compared. 1.2 defines claims and measures; Part 4 designs the cases, evaluators and trials.
 
 The [suitability-decision template](../../templates/1.3/suitability-decision.yaml) records a decision status and unknown evidence explicitly.
 
@@ -127,10 +127,12 @@ The adaptive candidate would choose, after each observation, whether to locate m
 
 A suitability record is not proof of suitability, safety or value. Before handing it on, check that:
 
+- the baseline and the more complex candidate are compared on the same task and case conditions;
 - it separates an unclear process or source from a need for model-directed adaptation;
 - every learned component has a target and usable-data premise, or is marked not yet established;
-- it claims no risk or release decision; and
-- an adaptive candidate's evidence status does not invent a result.
+- the action set, fixed transitions and any model-directed choices can be told apart;
+- it weighs error consequence, maintenance and evaluation burden but claims no risk or release decision; and
+- an adaptive candidate has an added-value claim and an evidence status that does not invent a result.
 
 Hand claims to [1.2](02-requirements-success-criteria-and-measurable-targets.md), harms, data, authority and owners to [1.4](04-initial-risk-data-ownership-and-delivery-plan.md), and evaluation to [Part 4](../04-testing-and-evaluation/README.md).
 
@@ -140,3 +142,4 @@ Hand claims to [1.2](02-requirements-success-criteria-and-measurable-targets.md)
 [2]: https://www.anthropic.com/engineering/building-effective-agents "Building effective agents"
 [3]: https://developers.google.com/machine-learning/guides/rules-of-ml "Rules of Machine Learning"
 [4]: https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf "Artificial Intelligence Risk Management Framework Generative Artificial Intelligence Profile"
+[5]: https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf "A practical guide to building agents"

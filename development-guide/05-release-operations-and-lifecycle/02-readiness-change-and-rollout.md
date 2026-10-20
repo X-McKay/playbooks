@@ -28,7 +28,7 @@ Terminal outcomes, termination reasons, telemetry signals, evaluation conclusion
 
 Track each readiness item as **met**, **not applicable with rationale**, **unmet and blocking**, or **eligible for an explicitly governed exception**, so an unchecked line never becomes an implied pass. "Not applicable" records an absent trigger, not missing evidence or an unbuilt control. NIST's configuration-management guidance likewise keeps a formally reviewed baseline, changed only through change control, with rigor set by risk. [2]
 
-Keep the two decision layers apart, even though both use `go`, `conditional_go`, and `no_go`. An evaluation `go` means the evidence supports readiness review, not deployment. A release `go` authorizes only the identified candidate and scope; `no_go` denies it. A release `conditional_go`, where policy permits it, leaves no required pre-release evidence or control incomplete and lists only permitted post-release obligations.
+Keep the two decision layers apart, even though both use `go`, `conditional_go`, and `no_go`. An evaluation `go` means the evidence supports readiness review, not deployment. A release `go` authorizes only the identified candidate and scope; `no_go` denies it. A release `conditional_go`, where policy permits it, authorizes launch with only permitted post-release obligations outstanding; every required pre-release evidence item and control is already complete.
 
 ## Decisions and best practices
 
@@ -69,9 +69,9 @@ Name response actions precisely:
 - **Reconciliation** establishes what happened against an authoritative state when an operation or external effect is uncertain.
 - A **forward fix** is a newly reviewed candidate, not proof that earlier exposure was undone.
 
-Rollback cannot reverse active work, saved state, approvals, or external effects; where these exist, the plan names safe stop and reconciliation (Part 7 owns effect recovery, 5.3 owns incident response).
+Rollback cannot reverse active work, saved state, approvals, or external effects; where these exist, the plan names the safe-stop and reconciliation path ([7.2](../../engineering-reference/07-durable-execution-and-human-governed-work/02-side-effects-idempotency-and-unknown-outcomes.md) for effect recovery, [5.3](03-ownership-incidents-maintenance-and-retirement.md) for incident response).
 
-A long run can span a deploy, and swapping the version under it can break it midway. Let in-flight runs finish on their starting version while new work goes to the new one, shifting traffic gradually (sometimes called a rainbow deployment), or make runs resumable from a checkpoint. [5] Check that old saved work stays readable by the new version ([7.3](../../engineering-reference/07-durable-execution-and-human-governed-work/03-approval-suspension-and-in-flight-compatibility.md)).
+A long run can span a deploy, and swapping the version under it can break it midway. Keep the old and new versions running side by side and shift traffic gradually (a rainbow deployment), so in-flight runs can finish on their starting version; checkpoints let an interrupted run resume instead of restarting. [5] Check that old saved work stays readable by the new version ([7.3](../../engineering-reference/07-durable-execution-and-human-governed-work/03-approval-suspension-and-in-flight-compatibility.md)).
 
 ### Reassess changes that can alter behavior
 
@@ -79,7 +79,7 @@ A change is material when it can alter output, action authority, information acc
 
 Record whether each scenario, control, evidence item, evaluation result, rollout constraint, or authorization scope is unaffected, needs targeted confirmation, or is invalidated. A formatting fix may need less than a permission-filtering change, but neither "no application code changed" nor a small diff settles it.
 
-**Pin the model and plan for its retirement.** Pin a specific model version, not a floating alias, so a provider cannot change behavior under you. Providers publish lifecycle stages and retirement dates; one defines active, legacy, deprecated, and retired states and gives at least 60 days' notice before retiring a publicly released model, after which requests fail. [6] Track the retirement date as an assumption under LIFECYCLE-05. Before switching, run your regression evaluations on the replacement and compare; a migration is a material change under ROLLOUT-07.
+**Pin the model and plan for its retirement.** Pin a specific model version, not a floating alias, so a provider cannot change behavior under you. Providers publish lifecycle stages (for example active, deprecated and retired), notice periods and retirement dates; after retirement, requests to that version fail.[6] Track the retirement date as an assumption in the periodic review (LIFECYCLE-05 in [5.3](03-ownership-incidents-maintenance-and-retirement.md)). Before switching, run your regression evaluations on the replacement and compare; a migration is a material change under ROLLOUT-07.
 
 ### Recognize common failure modes
 
