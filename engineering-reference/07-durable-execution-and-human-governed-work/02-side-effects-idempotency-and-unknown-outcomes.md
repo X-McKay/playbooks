@@ -56,7 +56,7 @@ Compensation is a separate operation and does not erase uncertainty. Use it only
 
 - **EFFECT-04 — Compensation boundary.** When a completed external effect is reversible, the action design **SHOULD** define whether compensation is permitted, its preconditions, and its authoritative success evidence. A compensation step **MUST NOT** be used as an automatic response to an unknown outcome, and any compensation that is itself externally visible **MUST** satisfy EFFECT-01 through EFFECT-03.
 
-- **EFFECT-05 — Failure evidence.** Before an applicable action is released or materially changed, its evaluation evidence **MUST** include injected failure at the target-commit/receipt-record boundary, duplicate delivery, and an unresolved-oracle path. Tests **MUST** check the authoritative target state or accepted-operation record and the declared terminal disposition, not only the agent transcript or local step status. For fixtures, evaluators and release decisions, see [Part 4](../../development-guide/04-testing-and-evaluation/README.md).
+- **EFFECT-05 — Failure evidence.** Before an applicable action is released or materially changed, its evaluation evidence **MUST** include injected failure at the target-commit/receipt-record boundary, duplicate delivery, and an unresolved-oracle path. Tests **MUST** check the authoritative target state or accepted-operation record and the declared terminal disposition, not only the agent transcript or local step status. Detailed fixture, evaluator, and release-decision practice remains owned by [Part 4](../../development-guide/04-testing-and-evaluation/README.md).
 
 ## Worked example: a policy update with a lost receipt
 

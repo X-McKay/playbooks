@@ -20,7 +20,7 @@ conformance, or permission to invoke a remote agent.
 
 ## Observability
 
-- [OpenTelemetry generative-AI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/) — agent, model, tool, token, and workflow telemetry conventions.
+- [OpenTelemetry generative-AI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai) — agent, model, tool, token, and workflow telemetry conventions.
 - [OpenTelemetry messaging semantic conventions](https://opentelemetry.io/docs/specs/semconv/messaging/) — producer, consumer, message, context propagation, span links, and asynchronous trace structure.
 - [OpenTelemetry trace semantic conventions](https://opentelemetry.io/docs/specs/semconv/general/trace/) — trace and span conventions.
 

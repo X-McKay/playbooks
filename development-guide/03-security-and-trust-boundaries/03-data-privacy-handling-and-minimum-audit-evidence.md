@@ -14,7 +14,7 @@
 
 An agent can expose sensitive information without a write tool. A model request, a retrieved passage, a generated answer, a diagnostic trace, an evaluation fixture, a support export, or a backup can each become a new copy with a different audience and lifecycle. NIST describes data actions broadly: collection, retention, logging, generation, transformation, use, disclosure, sharing, transmission, and disposal. [1]
 
-This chapter is **not** a legal-compliance checklist or a retention schedule. NIST describes its Privacy Framework as a voluntary tool for identifying and managing privacy risk across the data lifecycle, the system lifecycle, and the organizations that process data. [2] Legal, contractual, sector, or geographic duties need their own interpretation.
+This chapter is **not** a legal-compliance checklist or a retention schedule. NIST describes its Privacy Framework as a voluntary tool for identifying and managing privacy risk [1], and its how-to guidance for the 1.1 draft notes that privacy risk assessments typically follow the data lifecycle. [2] Legal, contractual, sector, or geographic duties need their own interpretation.
 
 Privacy is not only secrecy. A confidentiality failure can cause privacy harm, and so can an authorized design that collects, infers, retains, or shares more than people expect, or uses data in ways that affect them. NIST distinguishes privacy problems arising from authorized processing from the security model's focus on unauthorized activity and loss of confidentiality, integrity, or availability. [3] Screen for both; an access-control decision alone does not settle the privacy question.
 
@@ -75,7 +75,7 @@ Make the model destination explicit. A final-output filter does not undo a discl
 
 At each boundary ask: **what is the smallest representation sufficient for this purpose?** A model may need one policy passage, not a whole employee record; a diagnostic, an outcome category and size, not free text; an audit record, a version identity and a non-content binding, not the full action payload.
 
-Minimization has limits: removing context can make an answer misleading, block investigation of a safety incident, or make a required audit impossible. Do not keep everything by default; state the missing purpose and the evidence that justifies the extra copy. Content capture is a narrow exception that needs every DATA-02 field.
+Minimization has limits: removing context can make an answer misleading, block investigation of a safety incident, or make a required audit impossible. Do not keep everything by default; state the missing purpose and the evidence that justifies the extra copy. Content capture is a narrow exception that needs everything DATA-02 lists: a documented purpose, classification, approval, redaction before export, access restriction, sampling scope, retention and deletion plan.
 
 Derived forms need their own review. A retrieval index, summary, cache key, vector representation, fixture export, or support bundle can retain source content or reveal an inference about a person or tenant. Record each derived store and its source so deletion or access changes do not leave an unexamined copy.
 
@@ -85,7 +85,7 @@ Use diagnostics for bounded operational questions: which version handled a run, 
 
 For a read-only assistant, a proportionate record can often attribute a run without body content: a run reference, configuration identity, trusted requester or tenant reference, allowed source identifiers or boundary outcome, terminal outcome, and time. It does not show the answer was correct (Part 4).
 
-For a consequential operation, the audit record supports the DATA-05 event, separate from debug traces. An append-only or tamper-evident store helps detect record changes but does not prove all events were emitted, the action was authorized, or the target accepted the request. Keep proposal, authorization, dispatch, and authoritative effect as separate facts when they differ.
+For a consequential operation (the events DATA-05 lists, such as an approval, data export or production promotion), keep an audit record separate from debug traces. An append-only or tamper-evident store helps detect record changes but does not prove all events were emitted, the action was authorized, or the target accepted the request. Keep proposal, authorization, dispatch, and authoritative effect as separate facts when they differ.
 
 ### Design redaction and export as a single boundary
 
@@ -134,7 +134,7 @@ For `employee-uk-104`, the controlled `travel-policy-2026@2026-10-01` fixture sa
 
 The model gets only the permitted passage and source metadata, not a whole document collection. The read-only diagnostic lane holds a run reference, configuration identity, source identifiers and currentness state, the retrieval allow or deny outcome, terminal outcome, and safe error category, not the full question or source body. It does not show the GBP 220 answer was semantically supported; Part 4 assesses that.
 
-Suppose the candidate is reported to cite the superseded source. Before reaching for global prompt and retrieval-body capture, check whether the allowed source set, source status, retrieval boundary, configuration identity, and citation identifier distinguish a stale-admission defect from an answer-use defect; these may be enough. If not, scope an exceptional-capture decision with every DATA-02 field, and reproduce first with a synthetic fixture.
+Suppose the candidate is reported to cite the superseded source. Before reaching for global prompt and retrieval-body capture, check whether the allowed source set, source status, retrieval boundary, configuration identity, and citation identifier distinguish a stale-admission defect from an answer-use defect; these may be enough. If not, reproduce first with a synthetic fixture, and only then scope an exceptional-capture decision that covers everything DATA-02 lists.
 
 The baseline has no consequential action, so no DATA-05 record. A future data export or other consequential capability would reopen the handling record and need the DATA-05 fields; encryption, a hash, or a diagnostic field would not authorize it or settle its privacy impact.
 
@@ -143,9 +143,13 @@ The baseline has no consequential action, so no DATA-05 record. A future data ex
 A review package can include the handling record, copy inventory, destination and access descriptions, capture and export configuration, a retention and deletion map covering derived stores, an audit record format, and Part 4 cases for permission scope, redaction, source handling, harmful inference, and lifecycle changes. Mark each item planned, inspected, or observed; a trace, redaction rule, or passing synthetic fixture does not prove a control works elsewhere.
 
 - [ ] Copies are identified across prompts, tools, retrieval, memory, indexes, caches, outputs, diagnostics, evaluation material, support exports, and backups.
+- [ ] Each category has an explicit purpose and permitted destination, and unresolved destinations are kept out of the path.
 - [ ] Permission filtering happens before sensitive source material reaches model context.
+- [ ] Prompt, completion and tool-payload capture is off by default, and any exception covers everything DATA-02 lists.
 - [ ] The export boundary covers structured fields and error details, with negative cases.
-- [ ] Retention covers derived and backup copies.
+- [ ] Diagnostic and audit lanes have separate purposes, access, retention and deletion, including derived and backup copies.
+- [ ] Where a DATA-05 event can occur, the audit record has the DATA-05 fields without raw hidden reasoning or unneeded body content.
+- [ ] The privacy-harm screen names affected groups, uncertainties and any Part 4 or Part 10 handoff.
 - [ ] Legal applicability, retention duration, owner identity, and preservation conflicts are visibly unresolved when no authorized decision exists.
 
 Continue with [4.3 Evaluation Types and Dimensions](../04-testing-and-evaluation/03-evaluation-types-and-dimensions.md) for test design and [10.3 Advanced Privacy, Isolation, and Auditability](../../engineering-reference/10-risk-privacy-and-specialized-assurance/03-advanced-privacy-isolation-and-auditability.md) for specialized controls.

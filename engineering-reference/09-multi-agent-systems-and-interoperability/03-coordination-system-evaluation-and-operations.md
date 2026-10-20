@@ -96,6 +96,6 @@ See [7.1](../07-durable-execution-and-human-governed-work/01-execution-classes-p
 ## References
 
 [1]: https://arxiv.org/abs/2503.13657 "Why Do Multi-Agent LLM Systems Fail?"
-[2]: https://opentelemetry.io/docs/specs/semconv/gen-ai/ "OpenTelemetry semantic conventions for generative AI"
+[2]: https://github.com/open-telemetry/semantic-conventions-genai "OpenTelemetry semantic conventions for generative AI"
 [3]: https://sre.google/sre-book/addressing-cascading-failures/ "Addressing Cascading Failures"
 [4]: https://www.anthropic.com/engineering/multi-agent-research-system "How we built our multi-agent research system"
