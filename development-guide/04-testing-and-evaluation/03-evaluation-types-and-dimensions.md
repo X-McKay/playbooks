@@ -1,127 +1,113 @@
 # 4.3 Evaluation Types and Dimensions
 
-**Status:** 0.5.0-draft.2 assembled draft — proposed, not adopted
+**Status:** 0.5.0-draft.2 — draft  
 **Audience:** Builders, evaluators, security and privacy reviewers, and accountable owners  
-**Applicability:** Use this chapter whenever evidence supports a material design, exposure, release, or behavior-affecting change decision. The claim families and profiles apply only when their stated contract, capability, input, user, or harm trigger is present.  
+**Applicability:** Whenever evidence supports a design, exposure, release, or behavior-affecting change decision. Claim families and profiles apply only when their contract, capability, input, user, or harm trigger is present.  
 **Reader question:** What should we measure or judge about the agent?
 
-This chapter explains the **claims** an evaluation can establish. It does not prescribe one tool tree, grader, trial count, threshold, or release conclusion. Start with the [Part 4 overview](README.md), use [applicability](../../applicability.md) to determine whether a trigger is present, and use [4.6 Standards, Required Coverage, and Execution Cadence](06-standards-required-coverage-and-execution-cadence.md) to map applicable profiles to cases. [4.2 Test Levels, Techniques, and Suite Purposes](02-test-levels-techniques-and-suite-purposes.md) explains how to exercise a claim; [4.4 Evaluators, Metrics, Rubrics, and Calibration](04-evaluators-metrics-rubrics-and-calibration.md) explains how an observation becomes a trustworthy judgment; [4.5 Planning, Designing, and Running Tests and Evaluations](05-planning-designing-and-running-tests-and-evaluations.md) records the process; and [4.7 Analyzing Results, Comparing Versions, and Making Decisions](07-analyzing-results-comparing-versions-and-making-decisions.md) handles trial aggregation and decision interpretation. See the [practical reference](reference/README.md) for integrated records and templates.
+This chapter explains the **claims** an evaluation can establish; it prescribes no grader, trial count, threshold, or release conclusion. Use [applicability](../../applicability.md) to check triggers and [4.6](06-standards-required-coverage-and-execution-cadence.md) to map profiles to cases.
 
-## Start with a bounded claim, not an “eval type”
+## Start with a bounded claim, not an "eval type"
 
-Tests and evaluations overlap. A deterministic check can contribute to an evaluation, and a variable agent can be tested. Rather than sorting work into two separate universes, describe each case by its technical boundary, claim family, evaluator method, suite purpose, and lifecycle or environment. This chapter concerns the **claim family**: the property that a result is intended to establish.
+Of the five descriptors in [4.1](01-foundations-terms-and-definitions.md), this chapter covers the **claim family**: the property a result is meant to establish. A useful claim states its scope, acceptable terminal outcomes, establishing evidence, and limits. One policy answer may need several:
 
-A useful claim says what is in scope, which terminal outcomes are acceptable, the evidence that can establish it, and its limits. The policy assistant used here illustrates why one answer may need several claims:
+- Task outcome: did the assistant answer the policy question usefully?
+- Source admission: was the source permitted and current?
+- Grounding: is each material assertion supported by that source?
+- Trajectory: did the assistant respect scope and stop boundaries?
 
-- A task-outcome claim asks whether the assistant answered the policy question usefully.
-- A source-admission claim asks whether the source was permitted and current.
-- A grounding claim asks whether the answer’s material assertion is supported by that source.
-- A trajectory claim asks whether the assistant observed the applicable scope and stop boundaries while answering.
-
-None of these establishes the others automatically. In particular, fluent prose is not task success; a source identifier is not semantic support; a source can be grounded yet stale for a separate truth claim; and a successful terminal answer is not proof that the path was allowed.
+None establishes the others: fluent prose is not task success, a source identifier is not semantic support, a grounded source can be stale, and a good answer does not show the path was allowed.
 
 ## Dimensions to assess
 
+The [worked example](#worked-example-a-bounded-policy-answer-and-its-dimensions) applies each dimension.
+
 ### Task success and user usefulness
 
-**What this establishes.** A task-outcome claim establishes whether the contract-defined result solves the bounded user task. The appropriate result can be `complete`, `needs_information`, `declined`, `failed`, or a contract-defined partial or escalation outcome. Usefulness can include completeness, clarity, and actionability when those matter to the stated user task.
+**What this establishes.** Whether the contract-defined result solves the bounded task. Outcomes are `complete`, `needs_information`, `declined`, `failed`, or a contract-defined partial or escalation outcome. Usefulness can include completeness, clarity, and actionability.
 
-**What it does not establish.** It does not establish source permission, factual truth, safety, or a compliant action path. A convincing answer can still use an out-of-scope document or omit a material qualification.
+**What it does not establish.** Source permission, factual truth, safety, or a compliant path. A convincing answer can use an out-of-scope document or omit a material qualification; a polished reply that asks for information already present is over-refusal.
 
-**When it matters and what to observe.** It matters for every material user-facing contract. Record the case input and user context, expected terminal outcome, any relevant final state, and an evaluator that can judge the bounded task. For a controlled policy fixture, a reference value and qualified review of any permitted wording variation can complement each other.
-
-**Small example.** A permitted employee asks for the London hotel limit. `complete` is useful only if the answer gives the applicable amount, communicates it clearly, and cites the required policy evidence. A polished response that asks for information already present is an over-refusal rather than a useful completion.
+**What to observe.** Case input and user context, expected terminal outcome, relevant final state, and an evaluator able to judge the task. Grade the output and end state before the path. For a controlled fixture, pair a reference value with qualified review of wording variation.
 
 ### Trajectory, tool use, and control compliance
 
-**What this establishes.** A **trajectory** is the observable ordered or partially ordered event record relevant to a claim: selected capability and material arguments, validation or authorization decision, tool result, retry, stop, user-facing artifact, handoff, and authoritative state or effect where relevant. A trajectory claim establishes whether the necessary constraints held while the task progressed.
+**What this establishes.** A **trajectory** is the observable, ordered or partly ordered record of events relevant to a claim: selected capability and material arguments, validation or authorization decision, tool result, retry, stop, user-facing artifact, handoff, and authoritative state or effect. A trajectory claim establishes that necessary constraints held during the task.
 
-A useful default is a **path invariant** rather than a literal transcript. State the terminal outcome separately from the conditions that must hold across any safe path. For example: authorize access before returning protected content; retrieve only an in-scope current source; use only permitted capabilities and arguments; perform no write; and stop after the declared limit. Independent reads may happen in either order, while authorization before protected disclosure is a real dependency. One agent-tool benchmark likewise represents required milestones and forbidden actions through partial ordering instead of one exact trace; that is a useful design example, not a required trace format.[1]
+**Grade outcomes first; reserve path assertions for constraints.** Agents find valid routes you did not anticipate, so a rigid tool sequence fails correct runs. State the terminal outcome separately, then assert only **path invariants** that hold on any safe path: authorize before returning protected content, retrieve only in-scope current sources, use only permitted capabilities and arguments, perform no write, stop at the declared limit. Independent reads may run in either order; authorization before disclosure is a real dependency. One agent-tool benchmark likewise models milestones and forbidden actions as a partial order, not one exact trace.[1] Match exact sequences only where a protocol or control makes order material, such as binding an approved immutable payload before an effect.
 
-**What it does not establish.** A tool name does not show that its arguments were safe, and safe arguments do not show that a protected boundary authorized or executed the request. A transcript saying that an effect occurred is not an authoritative observation of that effect. Trajectory evaluation also does not require private reasoning or infer it from calls; it uses only the observable events needed for the claim.
+**What it does not establish.** A tool name does not show safe arguments, and safe arguments do not show a protected boundary authorized the request. A transcript claiming an effect is not an authoritative observation of it. No private reasoning is needed.
 
-**When it matters and what to observe.** This dimension matters when a claim depends on retrieval, an interface, an admitted tool, a stop or budget boundary, source provenance, a handoff, or a prohibited action. Assess permitted tool selection, security-relevant arguments, and dependency order as separate properties. Capture provenance sufficient for the claim: source or state identity, applicable scope, revision or freshness, and the boundary or state observation that supports it. Add retry and stopping observations when failure, duplicate work, cost, or a consequential effect can matter.
-
-**Small example.** Two paths can safely answer a policy question: a permitted current source can be located after a scope decision, or an already admitted current record can be read after that same decision. Neither path needs to match a reference tool count. Both fail if they retrieve a restricted document before authorization, use a superseded source as equal authority, or continue after a declared stop. Exact-sequence matching is useful only where a protocol or control makes the exact order material, such as binding an approved immutable payload before an effect.
+**What to observe.** When a claim depends on retrieval, an interface, a tool, a stop or budget boundary, provenance, a handoff, or a prohibited action, assess tool selection, security-relevant arguments, and dependency order separately. Capture claim-sufficient provenance (source or state identity, scope, revision or freshness, supporting observation), plus retries and stops where failure, duplicate work, cost, or a consequential effect matters.
 
 #### Keep proposal, boundary, execution, and disclosure distinct
 
-A single label such as “unauthorized attempt” hides four different observations:
+A label like "unauthorized attempt" hides four observations:
 
 1. **Proposal or compliance:** the model proposes an out-of-scope operation.
-2. **Boundary decision:** the trusted boundary authorizes or denies the request.
-3. **Execution:** authoritative state shows that an external action occurred or did not occur.
+2. **Boundary decision:** the trusted boundary authorizes or denies it.
+3. **Execution:** authoritative state shows an external action did or did not occur.
 4. **Disclosure:** restricted material reached an unpermitted recipient or output.
 
-A prohibited proposal that the boundary denies can fail a separately declared model-compliance claim while showing successful enforcement. It is not an unauthorized execution. Conversely, a blocked write does not establish that no disclosure occurred. Record the applicable fields separately so that a reviewer can identify a proposal, enforcement decision, state change, and recipient observation without guessing from a narrative. Pair a denied case with a comparable permitted case when otherwise a system that declines all work could appear safe.
+A denied prohibited proposal can fail model compliance while showing enforcement worked; it is not an unauthorized execution. A blocked write does not show that nothing was disclosed. Record the four separately, and pair each denied case with a comparable permitted one so a system that declines everything cannot look safe.
 
 ### Consistency, relations, and repeated-run reliability
 
-**What this establishes.** **Fixed-world repeated-run reliability** asks whether newly initialized episodes of the same identified case, fixture, permission context, and run policy repeatedly produce the correct terminal outcome and satisfy every required observable invariant. It permits semantically equivalent wording when the claim allows it. It is not byte-for-byte sameness and it is not consistent wrongness: repeatedly returning GBP 200, refusing an allowed request, or following an unsafe path does not become reliable behavior.
+**What this establishes.** **Fixed-world repeated-run reliability** asks: if you rerun the same case from a fresh start, with the same fixture, permission context, and run policy, does every run reach the correct terminal outcome and satisfy every required invariant? Equivalent wording is fine where the claim allows. Reliability is not byte-for-byte sameness, nor consistent wrongness: repeatedly returning GBP 200, refusing an allowed request, or following an unsafe path.
 
-Two relation-based checks answer different questions:
+Two relations answer different questions:
 
-- An **invariance relation** changes something that is justified as irrelevant to the claim and preserves the required answer and controls. A reviewed paraphrase or an ordering change of truly independent facts can be candidates.
-- A **sensitivity relation** changes something that is material and produces the contractually required change in answer, boundary decision, or uncertainty. Losing permission, replacing a current policy with conflicting current evidence, or changing a material user constraint are examples.
+- An **invariance relation** changes something justified as irrelevant and keeps the required answer and controls, such as a reviewed paraphrase or reordering of truly independent facts.
+- A **sensitivity relation** (BEHAVIOR-02's "relevant-change sensitivity relation") changes something material and produces the contractually required change in answer, boundary decision, or uncertainty, such as lost permission, conflicting current evidence, or a changed material user constraint.
 
-A metamorphic relation makes the input relation and expected output relation explicit; it can reveal a violation where a complete answer oracle is difficult, but it does not prove factual truth.[2]
+A metamorphic relation makes input and expected output relations explicit; it can reveal violations where a full answer oracle is hard to write, but does not prove truth.[2]
 
-**What this does not establish.** Fresh repeats of one curated case do not establish field reliability across a population. Invariance without sensitivity can reward an agent for ignoring context. Relation variants are not valid merely because they look like paraphrases: the team needs a stated reason that a transformation preserves or changes meaning. Repeated-run evidence does not replace task correctness, trajectory evidence, or the release analysis in [4.7](07-analyzing-results-comparing-versions-and-making-decisions.md).
+**What this does not establish.** Fresh repeats of one curated case do not show field reliability. Invariance without sensitivity can reward ignoring context. A variant counts only with a stated reason it preserves (or changes) meaning. Repeats do not replace correctness or trajectory evidence.
 
-**When it matters and what to observe.** Material stochastic user-visible claims need fresh repeated-episode evidence, or a documented, claim-specific alternative that actually removes variability from the claim. The record identifies the candidate and resolved route, fixed and varying sources, fresh initialization and reset observation, each terminal outcome, applicable path evidence, and each evidence status. It does not silently select only a favorable run. Numerical metrics, denominators, retry/selection-policy aggregation, dependence assumptions, and candidate comparison belong in [4.7](07-analyzing-results-comparing-versions-and-making-decisions.md), not here.
+**What to observe.** When run-to-run variation could change a material user-visible claim, run fresh repeated episodes, or document a claim-specific alternative that actually removes the variability. Record candidate and resolved route, fixed and varying sources, fresh initialization and reset observation, each terminal outcome, path evidence, and status; never silently pick a favorable run. Start every trial from clean state so leftover files, caches, or records cannot couple trials. Metrics, retries, and comparison are in [4.7](07-analyzing-results-comparing-versions-and-making-decisions.md).
 
-For semantic natural-language or conversational input, changeable evidence, or decisions based on policy, permission, currentness, or user constraints, identify at least one applicable invariance relation and one applicable sensitivity relation before exposure. A fully structured interface that makes no semantic-equivalence or relevant-variation claim can record why those relations do not apply. Additional relation pairs are useful where they illuminate a material robustness claim.
-
-**Small example.** A reviewed paraphrase of an authorized London-policy question preserves the required GBP 220 answer, permitted current-source class, and no-prohibited-invocation invariant. The related permission-loss case instead produces the contract-defined bounded outcome and a denied boundary observation. The two checks prevent both wording fragility and context-insensitive disclosure.
+Where BEHAVIOR-02's semantic-input or changeable-evidence triggers apply, define at least one invariance and one sensitivity relation before exposure; a fully structured interface with no equivalence or variation claim can record why they do not apply.
 
 ### Grounding, retrieval quality, and factual correctness
 
-**What this establishes.** Retrieval **relevance** asks whether an item bears on the query. Evidence **coverage** asks whether the material evidence needed for an answer is present. **Admissibility and currentness** ask whether the source is permitted for this requester and use and current at the relevant time. **Semantic grounding** asks whether each material assertion is supported by identified source text in context. **Factual correctness** asks whether the assertion is true against the appropriate independent truth reference at the relevant time.
+**What this establishes.** Five separate claims. Retrieval **relevance**: does an item bear on the query? Evidence **coverage**: is the material evidence for the answer present? **Admissibility and currentness**: is the source permitted for this requester and use, and current at the relevant time? **Semantic grounding**: is each material assertion supported by identified source text in context? **Factual correctness**: is the assertion true against an independent truth reference at the relevant time?
 
-**What this does not establish.** These are separate claims. A relevant document may omit a necessary rule. A current permitted document may not support an invented exception. An answer may accurately report a stale source yet fail a separate factual-correctness claim. A citation’s presence, resolvability, topical relevance, or authority alone is not semantic support. Retrieval research similarly treats relevance, faithfulness, correctness, and answer quality as distinct targets.[3]
+**What this does not establish.** A relevant document may omit a needed rule; a current permitted document may not support an invented exception; an answer can faithfully report a stale source and still be wrong. A citation's presence, resolvability, relevance, or authority is not semantic support. Retrieval research likewise treats relevance, faithfulness, and correctness as separate, partly overlapping targets.[3]
 
-**When it matters and what to observe.** This family matters whenever retrieved or changeable evidence affects an outcome, or when the product promises sourced factual assertions. Keep the approved source record, permission decision, revision or status, claim-to-source support evidence, and any independent truth reference distinct. If an authoritative truth reference is unavailable, qualify that limit rather than calling a heuristic ground truth.
-
-**Small example.** The current travel policy can support “the London hotel value is GBP 220” for an authorized requester. It does not support a made-up exception. A superseded document with a conflicting amount is evidence that requires currentness handling, not equal authority merely because it is relevant.
+**What to observe.** When retrieved or changeable evidence affects an outcome or the product promises sourced assertions, keep the approved source record, permission decision, revision or status, claim-to-source support, and any independent truth reference distinct. With no authoritative truth reference, say so rather than calling a heuristic ground truth.
 
 ### Robustness, uncertainty, and failure recovery
 
-**What this establishes.** Robustness establishes contract-correct behavior under plausible adverse conditions: missing, stale, conflicting, malformed, denied, injected, timeout, partial, or exhausted conditions. It includes appropriate clarification, uncertainty, decline, failure, or bounded partial results, as well as safe recovery and stopping behavior where those are part of the contract.
+**What this establishes.** Contract-correct behavior under plausible adverse conditions (missing, stale, conflicting, malformed, denied, injected, timeout, partial, or exhausted), including appropriate clarification, uncertainty, decline, failure, or bounded partial results, and safe recovery and stopping where required.
 
-**What this does not establish.** A generic adversarial-prompt collection is not a security claim, and a fluent fallback is not a successful fallback when its support is absent. Appropriate uncertainty is also not proof of usefulness if comparable answerable cases are unnecessarily refused.
+**What this does not establish.** A generic adversarial-prompt list is not a security claim; a fluent fallback without support is not a success; appropriate uncertainty is not usefulness if comparable answerable cases are refused.
 
-**When it matters and what to observe.** Choose adverse conditions from the agent’s enabled capabilities and risk record. Place untrusted instructions in the real channel being assessed: an instruction embedded in a retrieved document tests a different boundary from a user instruction. Observe the claimed exposure, attempted invocation, boundary decision, state, or stop event rather than relying on a refusal-like sentence. OWASP describes indirect prompt injection as untrusted external content that changes model behavior and presents adversarial testing as one layer alongside privilege controls and validation.[4]
-
-**Small example.** With two current approved policies that conflict, the assistant returns `needs_information` rather than inventing an amount. With missing permitted evidence or an exhausted retrieval budget, it returns the contract-defined uncertainty or failure outcome, cites no fabricated source, and stops new work after the recorded stop decision. A comparable allowed case confirms that this is not blanket refusal.
+**What to observe.** Choose adverse conditions from the enabled capabilities and risk record. Put untrusted instructions in the real channel under test (a retrieved document tests a different boundary than the user turn) and observe exposure, attempted invocation, boundary decision, state, or stop event, not a refusal-like sentence. OWASP describes indirect prompt injection as untrusted external content changing model behavior, with adversarial testing one layer beside privilege controls and validation.[4] Fixed injection cases show only that known attacks fail; injection-resistance evidence needs adaptive or red-team attacks that iterate against the system. In a public red-teaming competition of more than 250,000 attempts against 13 frontier models, every model had at least one successful hijack.[6]
 
 ### Safety, privacy, and human-impact outcomes
 
-**What this establishes.** Safety and privacy claims establish that the agent avoided a specified prohibited exposure, action, scope violation, or control bypass. A concise **harm screen** establishes whether the intended use creates a material reason to examine outcomes by population, domain, language, role, entitlement, geography, accessibility, or another context. When the screen identifies a concern, slice evidence establishes the affected task and control outcomes for the justified groups.
+**What this establishes.** That the agent avoided a specified prohibited exposure, action, scope violation, or control bypass. A short **harm screen** asks whether the intended use gives a material reason to examine outcomes by population, domain, language, role, entitlement, geography, accessibility, or other context; if so, slice evidence shows task and control outcomes per justified group.
 
-**What this does not establish.** A favorable aggregate cannot show that a critical slice is acceptable. Equal numeric outputs are not automatically fair: legitimate entitlements and policy rules can require different treatment. A small curated slice can expose a defect but does not itself establish a population-wide rate. The screen does not require collecting sensitive attributes or using one universal fairness metric. NIST presents its AI Risk Management Framework as voluntary guidance for incorporating trustworthiness considerations into AI design, development, use, and evaluation; it does not supply a universal fairness threshold.[5]
+**What this does not establish.** A favorable aggregate cannot show a critical slice is acceptable. Equal outputs are not automatically fair, because legitimate entitlements and policy rules can require different treatment. A small curated slice can expose a defect but not give a population rate. The screen requires neither collecting sensitive attributes nor one fairness metric; NIST presents its AI Risk Management Framework as voluntary guidance with no fairness threshold.[5]
 
-**When it matters and what to observe.** Record the harm-screen question and conclusion before release and revisit it after a material change to users, data, capability, domain, or intended use. If a differentiated harm is plausible, define relevant slices with appropriate expertise, hold task and entitlement constant where equal treatment is the claim, preserve meaningful policy differences, and report task outcomes and control failures separately. Detailed human-impact and domain assurance remain with [10.2 Bias, Human Impact, and Domain Assurance](../../engineering-reference/10-risk-privacy-and-specialized-assurance/02-bias-human-impact-and-domain-assurance.md).
-
-**Small example.** Country rules may legitimately change a travel-policy result, while equivalent authorized wording in supported languages should not create an unexplained refusal or scope failure. The record therefore separates country-policy outcomes from matched wording cases and keeps any disclosure or denial evidence visible for each slice.
+**What to observe.** Record the screen before release and after material changes (BEHAVIOR-04). If differentiated harm is plausible, define slices with appropriate expertise, hold task and entitlement constant where equal treatment is the claim, keep legitimate policy differences, and report task outcomes and control failures separately. See [10.2 Bias, Human Impact, and Domain Assurance](../../engineering-reference/10-risk-privacy-and-specialized-assurance/02-bias-human-impact-and-domain-assurance.md).
 
 ### Cost, latency, and resource performance
 
-**What this establishes.** Resource claims establish whether the candidate operates inside the declared latency, call, cost, capacity, admission, backoff, or degradation behavior for the stated environment and workload.
+**What this establishes.** Whether the candidate stays inside the declared latency, call, cost, capacity, admission, backoff, or degradation behavior for the stated environment and workload.
 
-**What this does not establish.** A good answer score does not compensate for exceeding a safe stop or admission boundary. A single quiet run does not establish behavior under shared capacity, and missing telemetry does not establish zero cost or no effect.
+**What this does not establish.** A good answer does not excuse crossing a stop or admission boundary; one quiet run says nothing about shared capacity; missing telemetry does not mean zero cost or no effect.
 
-**When it matters and what to observe.** Assess this family when the contract or risk record includes a resource, availability, capacity, or truthful-degradation claim. Observe the applicable resource use, limit decision, user-facing degradation, and final result. Shared queues, caches, concurrency limits, or downstream capacity add their own applicable profile; their presence does not turn an ordinary task-quality evaluator into a resource evaluator.
-
-**Small example.** On `POLICY-EXHAUSTION-008`, the assistant reaches its declared retrieval boundary, produces the contract-defined failure or bounded response, and records that no new spend-producing work was admitted after the stop. The case assesses honest degradation and stopping, not a claim that all later billing is known.
+**What to observe.** When the contract or risk record has a resource, availability, capacity, or truthful-degradation claim: resource use, limit decision, user-facing degradation, and final result. Shared queues, caches, concurrency limits, or downstream capacity add their own profile.
 
 ## Apply dimensions to the actual execution context
 
-Conversation, memory, durable work, and composition are contexts that add claim-specific evidence; they are not peer dimensions that every agent needs.
+These add claim-specific evidence only where they exist.
 
-- **Conversation or transformed context:** assess the whole bounded episode, including relevant milestones, forbidden events, terminal result, and material-constraint provenance. Test ordering sensitivity only where order is meant to be irrelevant; a later correction, priority rule, or consent statement may be material.
-- **Stored memory or cache:** when such state exists and affects behavior, assess applicable identity or tenant scope, expiry or deletion claims, poisoning resistance, provenance through transformations, and absent, corrupt, or over-limit behavior. A conversation alone does not establish persistent memory.
-- **Long-running, resumable, approval-waiting, or consequential work:** assess the applicable stop, recovery, approval, reconciliation, and authoritative-state claims through the detailed controls in Part 7. Durable read-only work does not thereby imply a write or approval test.
-- **Multi-agent composition or remote interaction:** assess critical handoff, delegated scope, identity and source propagation, denial propagation, malicious-peer handling, loop limits, and end-to-end outcome when those capabilities exist. Routing does not imply a model judge, and composition does not create authority.
+- **Conversation or transformed context:** assess the whole bounded episode: milestones, forbidden events, terminal result, and where material constraints came from. Test ordering sensitivity only where order should be irrelevant; a later correction, priority rule, or consent statement may be material.
+- **Stored memory or cache:** assess identity or tenant scope, expiry or deletion claims, poisoning resistance, provenance through transformations, and absent, corrupt, or over-limit behavior. Conversation alone is not persistent memory.
+- **Long-running, resumable, approval-waiting, or consequential work:** assess stop, recovery, approval, reconciliation, and authoritative-state claims through the controls in Part 7. Durable read-only work implies no write or approval test.
+- **Multi-agent composition or remote interaction:** assess critical handoff, delegated scope, identity, source, and denial propagation, malicious-peer handling, loop limits, and end-to-end outcome. Routing does not imply a model judge, and composition does not create authority.
 
 ## Requirements
 
@@ -137,41 +123,40 @@ Conversation, memory, durable work, and composition are contexts that add claim-
 
 ## Worked example: a bounded policy answer and its dimensions
 
-The fictional candidate is `policy-assistant@candidate-current-selection`. It is ephemeral and read-only: it answers from approved current permission-filtered sources with citations, has no persisted memory, no approval step, no delegated agents, and no write capability. The controlled world is fixture `travel-policy-current`, revision `fixture-2026-10-18.1`. Its current policy document is `travel-policy-2026`, revision string `"2026-10-01"`; the fictional London hotel value is **GBP 220**. `travel-policy-2024-superseded`, revision string `"2024-01-01"`, is a superseded document, not equal authority.
+The fictional, unexecuted candidate `policy-assistant@candidate-current-selection` is ephemeral and read-only, citing approved current permission-filtered sources, with no memory, approvals, delegation, or writes. Fixture `travel-policy-current`, revision `fixture-2026-10-18.1`, holds current document `travel-policy-2026`, revision `"2026-10-01"`, with the London hotel value **GBP 220**; `travel-policy-2024-superseded`, revision `"2024-01-01"`, is superseded, not equal authority.
 
-For `POLICY-CURRENT-001`, an authorized requester asks for the London hotel value. The task-outcome claim accepts `complete` with GBP 220, a citation to the current permitted document, and wording that is understandable to the requester. The source-admission claim checks the requester scope and current-document status. The grounding claim checks that the material amount assertion is supported by the cited policy text. A separate truth claim is unnecessary in this fictional controlled world unless the contract adds an external-world truth promise.
+For `POLICY-CURRENT-001`, an authorized requester asks for the London hotel limit. Task outcome accepts `complete` only with GBP 220, a citation to the current permitted document, and clear wording. Source admission checks requester scope and current status; grounding checks the cited text supports the amount. No separate truth claim is needed in this controlled world unless the contract makes an external-world promise.
 
-The trajectory claim permits safe alternatives. One episode may check requester scope and then read `travel-policy-2026`; another may resolve an already admitted current record after the same scope check. Both paths satisfy the claim if protected content is not returned before the scope decision, every used source is permitted and current, no write capability is invoked, and the episode terminates within its declared boundary. The evaluator records selection, relevant source and requester arguments, scope decision, source revision, final citation, terminal outcome, and any stop event. It does not ask for a private reasoning trace or require the same incidental read sequence.
+The trajectory claim allows safe alternatives with no reference tool count: check scope then read `travel-policy-2026`, or resolve an already admitted current record after the same check. Both pass only if no protected content returns before the scope decision, every source is permitted and current (a superseded one is never equal authority), no write is invoked, and the episode stops within its boundary. The evaluator records selection, arguments, scope decision, source revision, citation, terminal outcome, and any stop event.
 
-`POLICY-PARAPHRASE-007` is a reviewed meaning-preserving rewrite of the same authorized question. Its invariance relation preserves the GBP 220 result, permitted current-source class, and trajectory constraints even when the prose differs. Its paired sensitivity checks are meaningful changes, not random variants: `POLICY-DENIED-005` removes the requester’s permission to the answer-bearing source, and `POLICY-CONFLICT-004` presents two current approved policies with conflicting values. The first expects the contract-defined bounded result and a denied access decision; the second expects `needs_information` rather than an invented definitive amount. `POLICY-STALE-002` checks that a superseded conflict is recognized as superseded rather than treated as equal authority.
+`POLICY-PARAPHRASE-007` is a reviewed meaning-preserving rewrite; its invariance relation keeps GBP 220, the permitted current-source class, and the trajectory constraints. Its sensitivity pairs are `POLICY-DENIED-005` (permission to the answer-bearing source removed; expects the contract-defined bounded result and a denied access decision) and `POLICY-CONFLICT-004` (two conflicting current approved policies; expects `needs_information`). `POLICY-STALE-002` checks that the superseded document is not treated as current. Together these catch wording fragility and context-insensitive disclosure.
 
-These cases also illustrate the four-way boundary distinction. Suppose the model proposes a retrieval that is outside the requester’s scope in `POLICY-DENIED-005`. The proposal can be recorded as a compliance failure if the product contract treats it that way. The trusted source boundary’s denial is enforcement success. No authorized retrieval record establishes that the restricted document was not returned through that boundary. A separately inspected terminal output and recipient scope establishes whether disclosure occurred. The evaluator therefore never calls the blocked proposal a completed external action or infers non-disclosure solely from the denial.
+In `POLICY-DENIED-005`, record the four observations separately. If the model proposes retrieving the out-of-scope document, that is a compliance failure where the contract forbids it. The boundary's denial is an enforcement success. The retrieval record, with no authorized retrieval of that document, shows it was not returned through that boundary. A separate output and recipient-scope check shows whether restricted content was disclosed. Infer neither a completed action nor non-disclosure from the denial alone.
 
-`POLICY-MISSING-003` withholds permitted supporting evidence, while `POLICY-EXHAUSTION-008` makes the retrieval dependency unavailable after the declared stop condition. Each expects a defined uncertainty, failure, or bounded partial outcome rather than a fabricated amount, citation, or zero-cost claim. `POLICY-INJECTION-006` places a harmless embedded instruction in an untrusted retrieved channel. The evidence checks that the content is not treated as policy, that no out-of-scope content reaches the requester, and that the read-only configuration shows no prohibited invocation. These are expected fictional outcomes, not results of a live benchmark.
+`POLICY-MISSING-003` withholds the permitted supporting evidence and expects `needs_information`. `POLICY-EXHAUSTION-008` times out retrieval once the read-only budget is spent and expects `failed`. Neither may produce a fabricated amount, citation, or zero-cost claim, and a comparable allowed case rules out blanket refusal. On exhaustion the record shows no new spend-producing work started after the stop; this checks honest degradation, not that all later billing is known. `POLICY-INJECTION-006` puts a harmless instruction in an untrusted retrieved channel; evidence checks it is not treated as policy, no out-of-scope content reaches the requester, and no prohibited invocation occurs.
 
-Fresh episodes of `POLICY-CURRENT-001` test fixed-world reliability only when each starts from the named fixture and permission context and meets both the GBP 220 task predicate and applicable trajectory invariants. The record preserves each outcome and status instead of displaying a chosen success. It contains no universal repeat count or claimed field rate. Any eventual numerical summary, retry policy, or comparison with `policy-assistant@baseline-current-selection` is handled under [4.7](07-analyzing-results-comparing-versions-and-making-decisions.md).
+Fresh `POLICY-CURRENT-001` episodes test fixed-world reliability only if each starts from the named fixture and permission context and meets both the GBP 220 predicate and the trajectory invariants. Comparison with `policy-assistant@baseline-current-selection` is in [4.7](07-analyzing-results-comparing-versions-and-making-decisions.md).
 
-Finally, the owner records a harm screen. If country-specific policy rules or supported-language access could create differentiated harm, the suite adds justified country-rule and matched same-entitlement wording cases. It reports useful completion, `needs_information`, decline, failure, and any scope-control failure separately. The screen does not imply a universal fairness metric, nor does this small fixture establish a population statistic.
+The owner also records a harm screen. If country rules (which may legitimately change results) or supported-language access could create differentiated harm, the suite adds country-rule cases and matched same-entitlement wording cases, with disclosure or denial evidence per slice, reporting completion, `needs_information`, decline, failure, and scope-control failure separately.
 
 ## Evidence and checklist
 
-Use [4.6](06-standards-required-coverage-and-execution-cadence.md) to select applicable profiles and [4.5](05-planning-designing-and-running-tests-and-evaluations.md) to preserve case, fixture, and execution records. The following review questions keep the dimensions distinct:
-
-- [ ] Does each material claim name the user-visible outcome, evidence scope, and limit instead of using a generic quality label?
-- [ ] Are task success, source admission/currentness, grounding, factual correctness, and uncertainty recorded as distinct claims where each matters?
-- [ ] Do trajectory cases use material invariants, partial ordering, allowed alternatives, permitted capability and argument constraints, provenance, and stopping conditions rather than a brittle reference trace?
-- [ ] Does critical-control evidence distinguish proposal, boundary decision, execution, and disclosure, with an allowed counterpart where blanket refusal could mask failure?
-- [ ] Do adverse cases cover the conditions plausibly introduced by enabled capabilities and risk, including safe uncertainty and recovery behavior?
-- [ ] Where semantic or changeable-evidence triggers apply, is there a justified invariance relation and a relevant-change sensitivity relation with paired outcome and control evidence?
-- [ ] Where material stochastic behavior remains, do fresh episodes retain each run’s outcome, control observations, reset context, and status without claiming a universal count or field-rate inference?
-- [ ] Is the harm screen recorded, and do any triggered slices separate task outcomes from control failures while preserving legitimate policy differences?
-- [ ] Do resource claims observe the relevant limit, degradation, and final result rather than treating a good answer as compensation for unsafe exhaustion?
-- [ ] Does every evidence item link to the candidate, case, fixture, evaluator, material event or provenance, and an honest pass, fail, invalid, or inconclusive status?
+- [ ] Each material claim names the user-visible outcome, evidence scope, and limit, not a generic quality label.
+- [ ] Task success, source admission/currentness, grounding, factual correctness, and uncertainty are separate claims where each matters.
+- [ ] Outcome and end state are graded first; trajectory cases use invariants and allowed alternatives, not a brittle reference trace.
+- [ ] Critical-control evidence separates proposal, boundary decision, execution, and disclosure.
+- [ ] Adverse cases cover plausible conditions; injection-resistance claims rest on adaptive or red-team attacks, not only fixed cases.
+- [ ] Triggered relation pairs have paired outcome and control evidence.
+- [ ] Repeated episodes start from clean state and keep each run's outcome, controls, reset context, and status.
+- [ ] The harm screen is recorded; triggered slices separate task outcomes from control failures.
+- [ ] Resource claims observe the limit, degradation, and final result.
+- [ ] Every result links to candidate, case, fixture, evaluator, material provenance, and a `pass`, `fail`, `invalid`, or `inconclusive` status (BEHAVIOR-05).
 
 ## References
 
 [1]: https://arxiv.org/html/2408.04682v1 "ToolSandbox: A Stateful, Conversational, Interactive Evaluation Benchmark for LLM Tool Use Capabilities"
-[2]: https://valerio-terragni.github.io/assets/pdf/cho-icsme-2025.pdf "Metamorphic Testing of Large Language Models for NLP Tasks"
+[2]: https://valerio-terragni.github.io/assets/pdf/cho-icsme-2025.pdf "Metamorphic Testing of Large Language Models for Natural Language Processing"
 [3]: https://arxiv.org/html/2405.07437v2 "Evaluation of Retrieval-Augmented Generation: A Survey"
 [4]: https://genai.owasp.org/llmrisk/llm01-prompt-injection/ "OWASP LLM01:2025 Prompt Injection"
 [5]: https://www.nist.gov/itl/ai-risk-management-framework "NIST AI Risk Management Framework"
+[6]: https://www.nist.gov/blogs/caisi-research-blog/insights-ai-agent-security-large-scale-red-teaming-competition "NIST CAISI: Insights into AI Agent Security from a Large-Scale Red-Teaming Competition"

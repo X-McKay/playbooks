@@ -272,6 +272,3 @@ describes staged adoption in general. For a system, work in this order:
 - [ ] Every delegation passes one deterministic authorization function.
 - [ ] Workflow code reads only the recorded manifest and replays cleanly.
 - [ ] You can run the validation order locally, without deploying.
-
-For one opinionated, zero-trust implementation of these patterns, see
-[Zetra](https://github.com/X-McKay/zetra).

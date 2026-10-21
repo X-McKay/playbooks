@@ -1,67 +1,68 @@
 # 4.4 Evaluators, Metrics, Rubrics, and Calibration
 
-**Status:** 0.5.0-draft.2 assembled draft — proposed, not adopted
+**Status:** 0.5.0-draft.2 — draft  
 **Audience:** Builders, evaluators, qualified domain reviewers, and accountable owners  
-**Applicability:** Use this chapter whenever evaluation evidence supports a material design, change, pilot, or release decision. A model judge is conditional: it is relevant only when a model-based semantic judgment is proposed. This chapter does not select coverage, cases, or fixtures; those are addressed in [4.5](05-planning-designing-and-running-tests-and-evaluations.md) and [4.6](06-standards-required-coverage-and-execution-cadence.md).
-
+**Applicability:** Whenever evaluation evidence supports a design, change, pilot, or release decision. Model-judge guidance applies only when a model judges. Coverage, cases, and fixtures are in [4.5](05-planning-designing-and-running-tests-and-evaluations.md) and [4.6](06-standards-required-coverage-and-execution-cadence.md).  
 **Reader question:** How do I turn observations into a trustworthy judgment?
 
 [Part 4](README.md) · [Applicability and conformance](../../applicability.md) · [Evaluation dimensions](03-evaluation-types-and-dimensions.md) · [Planning and running](05-planning-designing-and-running-tests-and-evaluations.md) · [Practical reference](reference/README.md)
 
-An evaluation is only as useful as the connection between its claim, its evidence, and its evaluator. Start with a narrow statement that could be wrong, then choose the least burdensome method that can establish that statement. A fluent answer, a resolved citation, or a favorable aggregate score is not evidence for every nearby claim.
+An evaluation is only as useful as the link between claim, evidence, and evaluator. Start with a narrow statement that could be wrong, then pick the least burdensome method that can establish it.
 
 ## Start with a claim, not a score
 
-A **metric** says what is measured and how results are summarized: for example, the proportion of cases in which a required terminal outcome was reached, or the count of unsupported material assertions. An **evaluator** is the versioned rule, procedure, instrument, or qualified role that turns stated evidence into an observation or judgment used by that metric. The metric is not the instrument, and an instrument's output does not enlarge the claim it can establish.
+A **metric** says what is measured and how results are summarized, such as the share of cases reaching a required outcome. An **evaluator** is the versioned rule, procedure, instrument, or qualified role that turns evidence into the judgment the metric uses. A metric can never support a broader claim than its evaluator can establish.
 
-An **evidence source** supplies the thing inspected. It may be approved policy text, a permission decision, a controlled fixture, an authoritative state read, a reference label, or a response. The evaluator supplies the comparison or judgment procedure. Keeping these separate prevents a source document, a transcript, and a rubric from all being called an “oracle.” Reserve *oracle* for a named, claim-specific answer or state provider whose authority, scope, time, and limits are stated.
+An **evidence source** supplies what is inspected (policy text, a permission decision, a state read, a reference label, a response); the evaluator supplies the judgment. Reserve *oracle* for a named, claim-specific provider with stated authority, scope, time, and limits.
 
-For every material claim, write its counterexample before choosing a method. “A citation is present” has an easy counterexample: a response cites a relevant-looking passage that does not support its invented exception. This discipline exposes a score that is measuring a proxy rather than the claim.
+Write each material claim's counterexample before choosing a method; "a citation is present" fails against a relevant-looking passage that does not support an invented exception. Counterexamples expose proxy scores.
 
 ### Select the simplest capable method
 
-Use methods in combination when the claim has several parts; this is not a hierarchy in which a later method makes earlier evidence unnecessary.
+Combine methods for multi-part claims; a later method never makes earlier evidence unnecessary.
 
-- Use a **deterministic assertion** for a decidable property, such as an output field, a permitted source identifier and revision, an absent forbidden invocation, or an exact value in a controlled fixture. It establishes only the encoded property.
-- Use an **approved-source comparison** when the claim concerns the content, status, permission, or currency of a source. Record the source identity, revision or as-of time, and the applicable permission decision.
-- Use an **authoritative state observation** to establish an actual effect or lack of effect. An agent transcript that reports a completed action is not a state observation.
-- Use a **reference answer** for a genuinely single-answer case. For acceptable paraphrases or several correct solutions, make the reference a set of accepted facts, alternatives, constraints, or invariants rather than one preferred string.
-- Use **qualified human review** where source interpretation, usefulness, conflicting evidence, or domain expertise cannot safely be reduced to a mechanical property.
-- Use a **calibrated model judge** only for a named semantic criterion that remains after the applicable mechanical, source, and state checks. It is a measuring instrument, not an authority over the candidate or its controls.
+- **Deterministic assertion** for a decidable property (output field, permitted source and revision, absent forbidden invocation, exact fixture value); it establishes only that property.
+- **Approved-source comparison** for a source's content, status, permission, or currency, recording identity, revision or as-of time, and the permission decision.
+- **Authoritative state observation** for an actual effect or its absence; a transcript is not one.
+- **Reference answer** for a genuinely single-answer case; otherwise accepted facts, alternatives, constraints, or invariants, not one preferred string. Grade outcome and end state, not an anticipated route.
+- **Qualified human review** where interpretation, usefulness, conflicting evidence, or domain expertise cannot safely become a mechanical check.
+- **Rubric-based model judge** for a named semantic criterion left after mechanical, source, and state checks. Model judges are a normal way to grade open-ended output at scale if humans spot-check and calibrate them (below); a judge is an instrument, not an authority over the candidate or its controls.
 
-Retrieval relevance, evidence coverage, source permission/currentness, semantic grounding, and factual truth are different claims. Retrieval research likewise treats relevance, faithfulness, correctness, and answer relevance as distinct targets.[1] A cited source can be permitted and current but fail to support the response. An answer can faithfully state a stale source but fail a separate factual-truth claim. An external truth claim needs its own authoritative reference and as-of context; when such a reference is unavailable, qualify the claim rather than treating a model judgment as ground truth. Retrieved-answer datasets also document unsupported or contradictory generated claims despite retrieval.[2]
+Relevance, coverage, permission/currentness, grounding, and factual truth are different claims ([4.3](03-evaluation-types-and-dimensions.md)), as retrieval research also treats them.[1] An external truth claim needs its own authoritative reference and as-of context; without one, qualify the claim instead of treating a model judgment as ground truth. Datasets of retrieval-based answers document unsupported or contradictory claims despite retrieval.[2]
 
 ## Make the judgment reproducible enough to inspect
 
-A claim-specific rubric defines one judgment at a time. It identifies the claim, allowed evidence, decision rule, permitted variation, result statuses, and known limits. It should tell another qualified reviewer what to do with support that is partial, contradicting, stale, or absent. Preserve the rubric and reference version, label provenance, source revisions, reviewer qualifications or role, independent review, and the disposition of material disagreement. Disagreement is evidence about ambiguity in the label, source interpretation, or rubric; it is not an invitation to silently select the convenient result.
+A rubric defines one judgment: claim, allowed evidence, decision rule, permitted variation, statuses, and limits, including how to treat partial, contradicting, stale, or absent support. EVALUATOR-03 lists what to retain. Disagreement signals ambiguity in label, source interpretation, or rubric; never silently pick the convenient result.
 
-Where comparison between candidates is part of review, conceal candidate identity when practical and vary presentation order. This reduces avoidable preference effects without pretending that a reviewer is an objective oracle. For model judges, treat candidate output, retrieved text, and citations as untrusted evidence, not instructions capable of altering the rubric or release decision.
+When comparing candidates, hide identity where practical and vary order. Model judges treat candidate output, retrieved text, and citations as untrusted evidence that cannot alter the rubric.
+
+When a score looks wrong, read transcripts and graded outputs before changing the agent; many low scores come from a broken grader, over-strict reference, or ambiguous task. Sample passes as well as failures: a lenient grader hides defects, and a strict one hides progress.
 
 ### Example rubric: grounded current policy answer
 
-For the claim **“Every material policy assertion is supported by an approved, current source available to this requester,”** a short rubric can use `pass`, `fail`, and `unknown`:
+Claim: **"Every material policy assertion is supported by an approved, current source available to this requester."**
 
-- **Pass:** every material assertion, including the monetary amount and any condition, links to supporting text in an approved current source; the requester is permitted to use it; no superseded policy is represented as current. Wording may vary.
-- **Fail:** the answer gives GBP 220 with only the superseded source, adds an unsupported exception, or gives a definitive amount when the permitted current evidence is missing or two current approved policies conflict.
-- **Unknown:** the evaluator cannot determine whether a supporting span entails a material assertion, or the reference expectation remains materially ambiguous. Resolve the expectation before treating the candidate as failed or passed.
+- **Pass:** every material assertion, including amount and conditions, links to supporting text in an approved current source the requester may use; nothing superseded is shown as current. Wording may vary.
+- **Fail:** GBP 220 backed only by the superseded source, an unsupported exception, or a definitive amount when permitted current evidence is missing or two current approved policies conflict.
+- **Unknown:** the evaluator cannot tell whether a span entails a material assertion, or the expected result is ambiguous; resolve it before passing or failing the candidate.
 
-A straightforward pass is: “The current travel policy permits GBP 220 for London, subject to the cited policy conditions.” A clear fail is: “The policy permits GBP 220 and also covers an unlisted upgrade,” when no cited text supports the upgrade. A borderline answer says simply “GBP 220” where the source says “up to GBP 220 if the stated conditions apply.” The rubric should identify whether omitting that condition changes the material claim; if reviewers cannot apply the rule consistently, the label needs adjudication rather than a forced score.
+Pass: "The current travel policy permits GBP 220 for London, subject to the cited policy conditions." Fail: "The policy permits GBP 220 and also covers an unlisted upgrade," with no support for the upgrade. Borderline: "GBP 220" where the source says "up to GBP 220 if the stated conditions apply." The rubric should say whether dropping the condition changes the claim; if reviewers disagree, adjudicate the label rather than force a score.
 
 ## Calibrate a judge for its intended purpose
 
-A model judge can help triage likely semantic defects, but good performance on a convenient set does not establish fitness for a different task, population, or gate. Research on model judging reports task-dependent human alignment and potential preference effects; it does not establish transfer to a new domain rubric.[3] Position effects can also vary by judge and task, so order reversal is a measurement check rather than a one-time prompt fix.[4]
+A judge that triages semantic defects well on a convenient set is not thereby fit for another task, population, or gate. Studies report task-dependent agreement with humans[3] and position, verbosity, and self-enhancement biases.[6] Position effects vary by judge and task, so order reversal is a standing check, not a one-time prompt fix.[4]
 
-Before a judge informs a release-facing result, evaluate the exact judge configuration against **held-out**, independently human-reviewed examples from the intended claim and relevant risk strata. The calibration set should include routine examples and difficult boundaries: direct support, partial support, plausible unsupported additions, stale or conflicting sources, valid alternative wording, missing evidence, appropriate uncertainty, and answerable cases that should not be refused. Synthetic challenges can extend coverage but cannot alone establish gate fitness.
+Before release-facing use, test the exact configuration on **held-out**, independently human-reviewed examples from the intended claim and risk strata, routine and hard: direct and partial support, plausible unsupported additions, stale or conflicting sources, valid alternative wording, missing evidence, appropriate uncertainty, and answerable cases that should not be refused. Synthetic challenges extend coverage but cannot alone show gate fitness.
 
-Record the sampling frame and held-out status; rubric, judge, context-packing, and output-schema versions; independent labels and adjudication; disagreement; false passes; false failures; unknown or unscorable results; limitations; and the predeclared fitness decision. Report these by meaningful claim or risk class, not only as an aggregate agreement value. Human disagreement can reveal label ambiguity, but it does not excuse a critical false pass. Fit-for-purpose measurement also requires documenting what a metric cannot measure.[5]
+Record, by claim or risk class rather than one agreement value, the sampling frame and held-out status, rubric, judge, context-packing, and output-schema versions, labels and adjudication, false passes and failures, unknowns, limitations, and the predeclared fitness decision. Human disagreement can reveal label ambiguity but never excuses a critical false pass. Document what a metric cannot measure.[5] After calibration, a human keeps reading sampled verdicts, and the judge gets an explicit `unknown` option so it does not guess.
 
-A judge may be **diagnostic-only**, meaning it can prioritize review or surface likely failures but cannot satisfy a gate. It may be **gate-specific** only after a documented fitness decision for that named claim and gate. Neither status allows a model judge to be the sole decision maker for a deterministic authorization, isolation, approval, schema, or other enforceable safety property; use the deterministic or authoritative boundary check for that property.
+A **diagnostic-only** judge prioritizes review but cannot satisfy a gate; a **gate-specific** one needs a documented fitness decision for that named claim and gate. Neither is the sole decision maker for enforceable safety properties such as authorization, isolation, approval, or schema; use the deterministic or authoritative boundary check.
 
 ### Self-test the instrument and revalidate after material change
 
-Every relied-on evaluator needs known-pass and known-failure anchors at its decision boundary. For a grounding evaluator, anchors should include a supported paraphrase, a plausible unsupported addition, a relevant-looking but non-supporting citation, stale-source support, a required-citation omission, and an insufficient-evidence response that correctly expresses uncertainty. Where relevant, also test answer order, verbosity, harmless paraphrase, irrelevant context, malformed evaluator output, and instruction-like text embedded in candidate or source material.
+Every relied-on evaluator needs known-pass and known-failure anchors at its decision boundary; for grounding, a supported paraphrase, a plausible unsupported addition, a relevant-looking non-supporting citation, stale-source support, a missing required citation, and an insufficient-evidence response that correctly expresses uncertainty. Where relevant, vary order, verbosity, harmless paraphrase, irrelevant context, malformed evaluator output, and instruction-like text in candidate or source material.
 
-These tests only show detection of known failures; they do not prove that an evaluator has no blind spots. Revalidate the evaluator when a change could alter the measurement: judge model or prompt, rubric, source/currentness policy, evidence packing or truncation, parser, threshold, label policy, or target-output distribution. Investigate an unexpected score movement before attributing it to the candidate. Keep the old record visible and make the new fitness decision explicit.
+Self-tests catch only known failures. Revalidate when a change could alter measurement: judge model or prompt, rubric, source/currentness policy, evidence packing or truncation, parser, threshold, label policy, or target-output distribution. Investigate unexpected score movement before blaming the candidate; keep the old record visible and the new fitness decision explicit.
 
 ## Requirements
 
@@ -77,33 +78,33 @@ These tests only show detection of known failures; they do not prove that an eva
 
 ## Worked example: a policy answer and its evaluators
 
-This illustrative example uses the shared ephemeral, read-only policy assistant. It answers only from approved current permission-filtered sources, has no persisted memory, approval, delegated agents, or external writes, and uses the candidate `policy-assistant@candidate-current-selection`. The controlled fixture is `travel-policy-current`, revision `fixture-2026-10-18.1`. Its current document is `travel-policy-2026`, revision `2026-10-01`, with the fictional London hotel value GBP 220; `travel-policy-2024-superseded`, revision `2024-01-01`, is not current.
+The fictional, unexecuted `policy-assistant@candidate-current-selection` is ephemeral and read-only. Fixture `travel-policy-current`, revision `fixture-2026-10-18.1`, holds current `travel-policy-2026`, revision `2026-10-01`, with the London hotel value GBP 220; `travel-policy-2024-superseded`, revision `2024-01-01`, is not current.
 
-For `POLICY-CURRENT-001`, the evaluation separates four claims instead of reporting one “answer quality” score:
+For `POLICY-CURRENT-001`, four evaluators replace one "answer quality" score:
 
-1. `source-permission-check@v1` deterministically checks that the cited document is `travel-policy-2026`, is current for the fixture time, and is permitted for the requester. This establishes source selection, permission, and currentness—not semantic support.
-2. `grounded-policy-human-rubric@v1` applies the preceding grounded-current-policy rubric to each material assertion and cited span. A qualified policy reviewer labels the answer, and an independent qualified reviewer records any material disagreement and its disposition. This supplies the semantic grounding judgment; it does not establish that the policy is universally true outside its declared source context.
-3. `trajectory-boundary-check@v1` observes permitted retrieval requests and the absence of a write invocation. It is evidence for its observable path and boundary claims, not a substitute for the grounding rubric.
-4. `grounding-judge@v1` returns a structured `pass`, `fail`, or `unknown` with concise rubric-linked evidence pointers. It is initially diagnostic-only: its output can prioritize the reviewer’s attention but cannot replace the source-permission check or the qualified semantic review.
+1. `source-permission-check@v1` deterministically checks that the cited document is `travel-policy-2026`, current at fixture time, and permitted for the requester: source selection, permission, and currentness, not semantic support.
+2. `grounded-policy-human-rubric@v1` applies the rubric above to each material assertion and cited span. A qualified policy reviewer labels; an independent qualified reviewer records material disagreement and its disposition. It judges grounding, not truth beyond the source context.
+3. `trajectory-boundary-check@v1` observes permitted retrieval requests and the absence of writes: path and boundary claims, not grounding.
+4. `grounding-judge@v1` returns structured `pass`, `fail`, or `unknown` with rubric-linked evidence pointers. It starts diagnostic-only, replacing neither the permission check nor qualified review.
 
-The evaluator self-test pack uses `POLICY-STALE-002` to ensure a superseded source does not pass as current, `POLICY-MISSING-003` to ensure a definitive amount without permitted support fails, and `POLICY-CONFLICT-004` to ensure two current approved conflicting policies do not produce an invented definitive amount. It uses `POLICY-DENIED-005` and `POLICY-INJECTION-006` to exercise boundary-related checks, `POLICY-PARAPHRASE-007` to confirm a supported paraphrase retains its grounding judgment, and `POLICY-EXHAUSTION-008` to confirm that an evidence-exhausted response does not become a false pass. These are expected self-test outcomes in an illustrative plan, not measurements of a live agent.
+Self-tests: `POLICY-STALE-002` (a superseded source must not pass as current), `POLICY-MISSING-003` (an unsupported definitive amount must fail), `POLICY-CONFLICT-004` (conflicting current policies must not yield an invented amount), `POLICY-DENIED-005` and `POLICY-INJECTION-006` (boundary checks), `POLICY-PARAPHRASE-007` (a supported paraphrase keeps its grounding judgment), and `POLICY-EXHAUSTION-008` (an evidence-exhausted response is not a false pass).
 
-The independent release holdout `policy-release-holdout@v1` contains separately authored `POLICY-HOLDOUT-009` and a separate fixture; it is not one of the eight development or regression cases renamed as untouched. An illustrative calibration plan has independent qualified reviewers label that holdout and other purpose-specific examples before any proposed gate role for `grounding-judge@v1`. It records difficult false-pass candidates—such as a plausible invented exception and a stale but plausible amount—alongside false failures, unknown results, reviewer disagreement, and the reason the judge remains diagnostic-only or becomes fit for a narrowly named gate. A change to the judge prompt, supplied source context, rubric, or policy corpus triggers renewed calibration before that role is reused.
+Before `grounding-judge@v1` gets any gate role, independent qualified reviewers label `POLICY-HOLDOUT-009` (separately authored, in `policy-release-holdout@v1` with its own fixture) and other purpose-specific examples. Calibration targets hard false passes such as a plausible invented exception or a stale but plausible amount. A change to judge prompt, source context, rubric, or policy corpus triggers recalibration.
 
 ## Evidence and checklist
 
-Before relying on an evaluator result, confirm:
+Before relying on an evaluator result, check:
 
-- [ ] The claim, counterexample, scope, allowed evidence, evaluator version, status vocabulary, decision purpose, and limits are recorded.
-- [ ] The metric is not being used to claim more than its evaluator and evidence can establish.
-- [ ] Source permission/currentness, semantic support, authoritative state, and factual truth are separately identified when each is claimed.
-- [ ] References and rubrics state permitted variation and provenance, with independent review and disagreement disposition where material.
-- [ ] Known-pass and known-failure self-tests exercise the evaluator’s actual decision boundary; a passing self-test is not presented as proof against unknown failure modes.
-- [ ] A model judge has a held-out, independently reviewed, purpose-specific calibration record and a documented diagnostic-only or gate-specific fitness decision.
-- [ ] Deterministic or authoritative checks remain responsible for enforceable safety properties; no model judge is their sole decision maker.
-- [ ] A material evaluator or measurement-context change has a visible revalidation record before prior fitness is reused.
+- [ ] The claim, its counterexample, scope, allowed evidence, evaluator version, statuses, decision purpose, and limits are recorded (EVALUATOR-01).
+- [ ] No metric is used for a broader claim than its evaluator and evidence can establish.
+- [ ] Source permission/currentness, semantic support, authoritative state, and factual truth are identified separately where each is claimed (EVALUATOR-02).
+- [ ] References and rubrics state permitted variation and provenance, with independent review and disagreement disposition where material (EVALUATOR-03).
+- [ ] Failures were read in transcripts to separate agent from grader failures.
+- [ ] A model judge has a held-out, independently reviewed calibration record, a diagnostic-only or gate-specific fitness decision, and ongoing human spot-checks (EVALUATOR-04).
+- [ ] Deterministic or authoritative checks, not a model judge alone, decide enforceable safety properties.
+- [ ] Self-tests cover the evaluator's decision boundary, and a material evaluator change has a revalidation record before prior fitness is reused (EVALUATOR-05).
 
-[4.7](07-analyzing-results-comparing-versions-and-making-decisions.md) interprets identified results, trial policy, gates, and evidence sufficiency for a decision. Evaluator fitness helps make a result interpretable; it does not itself produce a release conclusion.
+Evaluator fitness makes a result interpretable, not a release conclusion; see [4.7](07-analyzing-results-comparing-versions-and-making-decisions.md).
 
 ## References
 
@@ -112,3 +113,4 @@ Before relying on an evaluator result, confirm:
 [3]: https://aclanthology.org/2023.emnlp-main.153/ "G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment"
 [4]: https://aclanthology.org/2025.ijcnlp-long.18.pdf "Judging the Judges: A Systematic Study of Position Bias in LLM-as-a-Judge"
 [5]: https://airc.nist.gov/airmf-resources/playbook/measure/ "NIST AI RMF Playbook: Measure"
+[6]: https://arxiv.org/abs/2306.05685 "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena"

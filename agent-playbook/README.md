@@ -66,9 +66,6 @@ decisions.
 - The companion [skills library](../skills/README.md) translates this
   standard into focused workflows for clients that support the Agent Skills
   specification.
-- [Zetra](https://github.com/X-McKay/zetra) is one opinionated, zero-trust
-  implementation of this playbook. It is an example of conformance, not a
-  requirement of it.
 
 ## Normative language
 

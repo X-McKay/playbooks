@@ -1,36 +1,33 @@
 # 6.1 Planning, Decomposition, and Bounded Control Loops
 
-**Status:** 0.5.0 first draft
+**Status:** 0.5.0-draft.2 — draft
 **Audience:** Developers and reviewers designing agents that select and sequence actions
-**Applicability:** Conditional. Use this chapter when an agent explicitly constructs or revises a plan, chooses among multiple action paths, or repeats model-directed steps. Simple request-response agents and fixed workflows do not need to add a planning layer without a demonstrated need.
+**Applicability:** Conditional. Use when an agent builds or revises a plan, chooses among action paths, or repeats model-directed steps. Simple request-response agents and fixed workflows do not need a planning layer without a demonstrated need.
 
 [Part 6 — Reasoning and Execution Patterns](README.md) · [Playbook home](../../README.md) · [Applicability and conformance](../../applicability.md)
 
 ## Purpose and applicability
 
-A plan can make a complex task easier to inspect and can help an agent select relevant next steps. It can also add calls, latency, cost, and new opportunities to drift from the task. A convincing plan is not proof that its steps are useful, safe, or authorized. Treat planning as a conditional design choice, not a mark of agent sophistication.
+A plan makes a complex task easier to inspect and helps an agent pick next steps. It also adds calls, latency, cost and room to drift, and a convincing plan does not prove its steps are useful, safe or authorized. Planning needs a reason.
 
-This chapter concerns the policy around proposing and revising a plan and the control loop that acts on it. It does not redefine the agent contract or tool permissions. See [agent contracts](../../development-guide/02-agent-basics/02-agent-contracts-and-configuration.md) for declared outcomes and bounds, [tools and external interfaces](../../development-guide/02-agent-basics/04-tools-and-external-interfaces.md) for tool contracts, and [identity and least privilege](../../development-guide/03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md) for authorization. When a plan depends on self-critique, see [6.2 Reflection, Critique, and Verification](02-reflection-critique-and-verification.md). Long-running or side-effecting work has additional requirements in [7.1 Execution Classes, Persistence, and Recovery](../../engineering-reference/07-durable-execution-and-human-governed-work/01-execution-classes-persistence-and-recovery.md).
+This chapter covers proposing and revising a plan and the loop that acts on it. Related: [agent contracts](../../development-guide/02-agent-basics/02-agent-contracts-and-configuration.md), [tools](../../development-guide/02-agent-basics/04-tools-and-external-interfaces.md), [identity and least privilege](../../development-guide/03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md), [6.2 self-critique](02-reflection-critique-and-verification.md) and, for long-running or side-effecting work, [7.1](../07-durable-execution-and-human-governed-work/01-execution-classes-persistence-and-recovery.md).
 
 ## Working model
 
-A planning loop has two different kinds of decision. The model may interpret a request, propose a sequence, and recommend the next permitted action. A deterministic control layer decides whether that proposal fits the current contract, capability policy, authorization, and remaining budget; it either admits a permitted action or returns a bounded outcome. The model is an adviser inside those limits, not the source of the limits.
+The model interprets the request, proposes a sequence and recommends the next action. A deterministic control layer checks each proposal against the contract, capability policy, authorization and remaining budget, then admits the action or returns a bounded outcome. The model advises inside these limits; it does not set them.
 
-A useful plan is a compact working representation, not a guarantee of correctness. It names the goal, relevant subtasks, dependencies, and what observable evidence would justify completion. Plans should remain revisable when new information changes what is known, but revision must not silently change the user's goal, expand authority, or remove a mandatory check. The system should retain enough observable information to explain which actions were proposed, admitted, completed, rejected, or left unresolved. Raw hidden reasoning is not required as an audit record.
+A good plan is short enough for the runtime to check each proposed action: goal, subtasks, dependencies and the evidence that shows done. Keep it revisable as new information arrives, within the limits on replanning below. Record which actions were proposed, admitted, completed, rejected or left unresolved; raw hidden reasoning is not needed as an audit record.
 
-Not every task benefits from explicit decomposition. A short question with a fixed retrieval path may be clearer and cheaper as a direct bounded workflow. Decomposition is more plausible when subtasks are meaningfully distinct, information is incomplete, or the next safe step depends on newly observed results. The appropriate comparison is against a simpler fixed or direct baseline on the cases that matter—not against an idealized claim that more steps produce better answers.
+A short question with a fixed retrieval path is clearer and cheaper as a direct workflow. Decomposition fits when subtasks are distinct, information is incomplete, or the next safe step depends on earlier results. More steps do not mean better answers.
 
 ## Decisions and best practices
 
-Start by deciding what planning is meant to improve. Identify the cases where a plan changes action selection or sequencing, the failure it is meant to prevent, and the simpler design it will be compared with. If the plan is only a narration of a fixed sequence, a model-generated plan may add complexity without adding control. Keep plans short enough that the runtime can check their proposed actions against the contract.
-
-Decompose around useful boundaries: a subtask should have a defined purpose, required inputs, dependencies, and an observable completion condition. Avoid inventing subtasks whose completion cannot be checked or whose result does not affect the answer. Represent uncertainty explicitly. If a needed input is absent, the next step may be a clarification or an `needs_information` outcome rather than a speculative branch.
-
-Replanning is appropriate when an admitted action returns information that changes the choice of a safe next step, or when a declared condition makes the current plan infeasible. It should not be an automatic response to every weak answer. Define which observations permit revision, how many revisions are allowed, and what happens if the goal or scope appears to have changed. A materially different task should be returned for clarification or handled as a new authorized request, not smuggled into an existing plan.
-
-Bound the whole run, not only the number of written plan steps. A plan can trigger repeated model calls or tool calls, so limits should cover applicable iterations, time, and spend-producing operations. Enforce them outside model discretion. On exhaustion, stop admitting new work and return the contract's declared partial, failed, or escalation outcome. A bounded plan may still fail; boundedness limits exposure and makes stopping predictable, but it does not establish task quality.
-
-Before completion, require an observable stopping condition. Examples include an answer supported by the required evidence, a declared information gap, a policy refusal, a blocked action, or a budget limit. Do not let the model call a task complete solely because it has exhausted its preferred steps. Link the stop decision to the output contract and applicable evidence.
+- **Name what planning should improve.** List the cases where a plan changes action choice or order, the failure it prevents, and the simpler design to compare with. A plan that narrates a fixed sequence adds complexity without control.
+- **Split along useful boundaries.** Each subtask needs a purpose, inputs, dependencies and an observable completion condition; skip ones you cannot check or that do not affect the answer. If an input is missing, the next step can be a clarification or `needs_information` rather than a guess.
+- **Replan on evidence, not on every weak answer.** Replan when an admitted action returns information that changes the safe next step, or a declared condition makes the plan infeasible. A revision must not quietly change the goal, expand authority or drop a check; a materially different task goes back for clarification or becomes a new authorized request.
+- **Bound the whole run.** One plan can trigger many model and tool calls, so limit iterations, time and spending operations, and enforce the limits outside the model. On a limit, stop admitting work and return the contract's partial, failed or escalation outcome. Bounds make stopping predictable; they do not make the result good.
+- **Stop on observable evidence.** A task is complete only on a declared condition: an answer with the required evidence, an information gap, a policy refusal, a blocked action or a budget limit. Running out of preferred steps is not completion.
+- **Hand off across context windows.** A new session has no memory of the last, so leave a progress log, a clean saved state and an acceptance list of checks that define done, each failing until verified. The agent may flip an item only after verifying it end to end, never edit or delete items (or it can "finish" by weakening the list), should work one item at a time, and must check the whole list before declaring completion, since agents tend to call a project done after partial progress.[1] See also [7.1](../07-durable-execution-and-human-governed-work/01-execution-classes-persistence-and-recovery.md).
 
 ## Requirements
 
@@ -43,25 +40,24 @@ Before completion, require an observable stopping condition. Examples include an
 
 ## Worked example: policy assistant with a conflicting document
 
-Consider the fictional read-only policy assistant described in the shared example. It answers from approved, current, permission-filtered documents and returns citations plus uncertainty. It cannot write to external systems. A fixture named `travel-policy-current` says a London hotel amount of GBP 220 is permitted; a superseded document differs. This is fictional test data, not actual policy.
+The fictional read-only policy assistant answers from approved, current, permission-filtered documents with citations and cannot write externally. Fixture `travel-policy-current` permits a London hotel amount of GBP 220; a superseded document differs.
 
-For a simple question—“What is the London hotel amount?”—the team first asks whether explicit planning changes the necessary work. If the fixed retrieval path already selects current, approved documents and checks source status, the direct workflow may be sufficient. The system need not ask a model to create a multi-step plan just to restate that fixed sequence.
+For "What is the London hotel amount?", a fixed retrieval path that selects current, approved documents is enough; a plan would only restate it.
 
-Now consider a question that asks whether GBP 220 is permitted for an upcoming London stay and includes an attached document that may be old. An explicit plan could propose: identify the relevant policy topic and trip context; retrieve the current policy from the approved permission-filtered source; check whether the attached document is superseded; then answer with citations or state what remains uncertain. These are proposals. Before each retrieval, the runtime checks that the source is allowed for this user and that the request remains within the read-only contract. A document's instructions cannot add capabilities or change those checks.
+For "Is GBP 220 permitted for my upcoming London stay?" with an attachment that may be old, a plan could be: identify the topic and trip context; retrieve the current policy from the approved source; check whether the attachment is superseded; answer with citations or state what is uncertain. Before each retrieval the runtime checks that the source is allowed for this user and the request stays read-only; document text cannot change these checks.
 
-The control layer can impose an illustrative maximum of three admitted retrieval actions and a run deadline. Those are example policy values, not universal limits or measured performance. If current approved text confirms the fictional GBP 220 allowance and the older attachment is identified as superseded, the assistant can answer with a citation to the current source and explain the document conflict. It stops when the answer has the required support. If the current source is unavailable, access is denied, or approved sources conflict, it does not keep searching without limit or treat the old amount as current; it returns `needs_information` or the declared failure/escalation outcome. Replanning may choose a permitted source check after a result reveals the attachment is stale, but it cannot change the trip, user, policy source boundary, or authority.
+The control layer allows at most three admitted retrievals and a run deadline (example values). If current approved text confirms GBP 220 and the attachment is superseded, the assistant cites the current source, explains the conflict and stops. If the current source is unavailable, access is denied or approved sources conflict, it returns `needs_information` or the declared failure or escalation outcome rather than searching on or treating the old amount as current. Replanning may add a permitted source check once the attachment proves stale, but cannot change the trip, user, source boundary or authority.
 
-To determine whether planning belongs in this design, evaluate the planned and simpler versions on cases covering straightforward questions, stale or conflicting policy text, missing current evidence, permission denial, and exhausted limits. Check answer support and citations as distinct claims: a citation being present does not by itself prove that it supports the answer. Also record whether planning introduced extra calls, delay, or cost. The example does not assert that planning improves results; that conclusion requires evidence from the agent's own defined evaluation.
+To decide whether planning belongs here, test planned and simpler versions on straightforward questions, stale or conflicting text, missing evidence, permission denial and exhausted limits. Check citation support, not just presence, and record extra calls, delay and cost.
 
 ## Evidence and checklist
 
-The release record should identify the candidate configuration and the planning policy it uses. Evidence should make it possible to see whether planning changed the trajectory and whether the admitted actions remained within the contract. A useful evaluation connects each planning requirement to cases and a reviewer or evaluator suited to the claim; detailed case, evaluator, and release-decision practice belongs in [Part 4 — Testing and Evaluation](../../development-guide/04-testing-and-evaluation/README.md), especially [4.5 Planning, Designing, and Running Tests and Evaluations](../../development-guide/04-testing-and-evaluation/05-planning-designing-and-running-tests-and-evaluations.md).
+The release record names the configuration and planning policy, shows whether planning changed the trajectory and admitted actions stayed in contract, and links each requirement to tests and an evaluator (see [Part 4](../../development-guide/04-testing-and-evaluation/README.md), especially [4.5](../../development-guide/04-testing-and-evaluation/05-planning-designing-and-running-tests-and-evaluations.md)).
 
-Before release, check that:
+- The record says why a direct or fixed baseline is not enough.
+- Limits have a safe outcome on exhaustion, and a changed scope cannot proceed silently.
+- Evaluation covers adverse cases and compares outcomes and added work with the baseline.
 
-- The record explains when planning is used and why a direct or fixed baseline is not enough for those cases.
-- Proposed actions are checked by the control layer; no plan or model output can authorize a capability.
-- Iteration, time, and applicable resource limits are enforced, with a defined safe outcome on exhaustion.
-- Replanning triggers and bounds are explicit, and changed scope cannot silently proceed.
-- Completion depends on observable evidence; missing or conflicting information has a declared outcome.
-- Evaluation includes relevant adverse cases and compares task outcomes as well as added work against the simpler baseline.
+## References
+
+[1]: https://anthropic.com/engineering/effective-harnesses-for-long-running-agents "Effective harnesses for long-running agents"

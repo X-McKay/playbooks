@@ -1,12 +1,12 @@
 # Part 8 — Model, Context, and Resource Engineering
 
-**Status:** 0.5.0 first draft
+**Status:** 0.5.0-draft.2 — draft
 
-**Purpose:** Choose and optimize models, context, performance, and shared capacity without weakening controls.
+**Purpose:** Choose and tune models, context, performance and shared capacity without weakening controls.
 
-**Applicability:** When a model policy, retrieval transformation, optimization, cache, queue, or shared-capacity boundary is used.
+**Applicability:** A model policy, retrieval transformation, optimization, cache, queue or shared capacity.
 
-**Output:** Resolved model evidence and, where applicable, context lineage, performance evidence, and admission controls.
+**Output:** Resolved model evidence and, where used, context lineage, performance evidence and admission controls.
 
 [Playbook home](../../README.md) · [Section index](../README.md) · [Applicability](../../applicability.md) · [Glossary](../../glossary.md) · [Requirement index](../../requirement-index.md)
 
@@ -17,4 +17,4 @@
 - [8.3 Cost, Latency, and Performance Optimization](03-cost-latency-and-performance-optimization.md)
 - [8.4 Capacity, Admission Control, and Backpressure](04-capacity-admission-control-and-backpressure.md)
 
-Read the chapter applicability statements before treating a reference pattern as required. [Applicability](../../applicability.md) defines the distinction between a missing trigger, a governed exception, and a non-waivable gate.
+Check each chapter's applicability before treating it as required (see [Applicability](../../applicability.md)).

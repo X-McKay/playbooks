@@ -1,163 +1,142 @@
 # Troubleshooting Evaluation Evidence
 
-**Status:** 0.5.0-draft.2 assembled draft — illustrative, unexecuted practical guidance, not a failure taxonomy
+**Status:** 0.5.0-draft.2 — draft  
 **Audience:** Builders, evaluators, reviewers, and accountable decision owners  
-**Applicability:** Use when an observed result and the evidence record do not support the same conclusion.  
+**Applicability:** When an observed result and the evidence record do not support the same conclusion.  
 **Reader question:** What should we inspect before we trust, discard, or rerun an evaluation result?
 
 [Practical reference](README.md) · [Worked example](policy-assistant-worked-example.md) · [Planning and running](../05-planning-designing-and-running-tests-and-evaluations.md) · [Evaluators](../04-evaluators-metrics-rubrics-and-calibration.md) · [Analysis and decisions](../07-analyzing-results-comparing-versions-and-making-decisions.md)
 
-Start with the smallest claim that is in doubt. Preserve the candidate, case, fixture, evaluator, trial policy, and observed status before changing anything. A new score is useful only when it can be connected to the same claim or a clearly declared replacement claim.
+Start with the smallest claim in doubt, and keep the candidate, case, fixture, evaluator, trial policy, and status before changing anything; a new score helps only if it ties to the same claim or a declared replacement. In every case below, read the transcripts and graded outputs first to see whether the agent, fixture, or grader is at fault.
 
 ## The score improved, but users report more failures
 
-### Likely causes — score and user mismatch
+**Likely causes.**
 
-- The aggregate score masks a new failure in a critical capability, permission context, language, role, or other relevant slice.
-- The development set was tuned while the independent holdout or production signal was not inspected.
-- The candidate, route, fallback, source corpus, or evaluator changed, so the two scores do not describe the same subject.
-- A user report is real but not yet attributable; it may expose a fixture, evaluator, or environment gap rather than prove the candidate caused the outcome.
+- The aggregate hides a new failure in a critical capability, permission context, language, role, or other slice.
+- The development set was tuned while the holdout or production signal went unchecked.
+- The candidate, route, fallback, corpus, or evaluator changed, so the scores describe different subjects.
+- The report is real but not yet attributable, perhaps pointing to a fixture, evaluator, or environment gap.
 
-### Evidence to gather — score and user mismatch
+**Gather.**
 
-- The exact candidate and baseline/configuration identities, including route or fallback where used.
-- Case-level flips rather than only aggregate values, especially the affected task and control slice.
-- The source, fixture, permission, evaluator, and trial identities for the reported scenario.
-- A privacy-appropriate, attributable description of the user report and the result of reproducing it against controlled conditions.
-- Whether the reported behavior was represented by a held-out case, a development case, or neither.
+- Exact candidate and baseline/configuration identities, including route or fallback.
+- Case-level flips, not only aggregates, especially for the affected task and control slice.
+- Source, fixture, permission, evaluator, and trial identities for the reported scenario.
+- A privacy-appropriate description of the report and its controlled reproduction.
+- Whether a held-out case, a development case, or neither covered the behavior.
 
-### Remedy — score and user mismatch
-
-Do not treat the higher aggregate as a resolution. Triage the report, preserve necessary evidence, and decide whether it is attributable. If confirmed, sanitize it, define the expected behavior with the accountable owner, and add a reviewed versioned regression case for future comparisons. Re-run affected claim-fit cases and critical controls against the identified candidate. A curated suite can reveal an important defect but does not, by itself, justify a broad claim about all users. [1]
-
-For the policy assistant, an answer that appears improved overall but returns a superseded policy to one requester calls for a currentness and permission review. It should not be offset by successful common questions.
+**Remedy.** A higher aggregate resolves nothing. Triage for attribution; if confirmed, sanitize, define expected behavior with the owner, add a reviewed, versioned regression case, and rerun affected cases and critical controls on the identified candidate. A curated suite can reveal a real defect but does not justify claims about all users.[1] A policy assistant that improves overall but returns a superseded policy to one requester needs currentness and permission review; common-question successes do not offset it.
 
 ## A judge passes an unsupported answer
 
-### Likely causes — unsupported judge passes
+**Likely causes.**
 
-- The judge saw a citation identifier or relevant-looking source but not the material claim and supporting source span.
-- The rubric combines source permission, source currentness, factual truth, and semantic support into one vague criterion.
-- The judge is sensitive to answer style, position, verbosity, candidate metadata, or instructions embedded in supplied content.
-- The judge has not been shown independently reviewed conflict, stale-source, or plausible-but-unsupported examples that resemble the release claim.
+- The judge saw a citation or relevant-looking source but not the material claim and its supporting span.
+- The rubric mixes source permission, currentness, factual truth, and semantic support into one vague criterion.
+- The judge is sensitive to style, position, verbosity, candidate metadata, or instructions inside supplied content.
+- The judge was never calibrated on independently reviewed conflict, stale-source, or plausible-but-unsupported examples.
 
-### Evidence to gather — unsupported judge passes
+**Gather.**
 
-- The exact rubric, judge identity/configuration, allowed evidence, context packing, and structured result.
-- A claim-to-source map for each material statement, including the supporting span or the absence/contradiction of support.
-- Known-pass and known-failure self-test results: supported paraphrase, plausible unsupported addition, stale-source answer, conflict case, and missing-evidence response.
-- Independent qualified human labels, reviewer provenance, disagreement disposition, and the judge’s false-pass examples for the relevant claim class.
+- Rubric, judge identity and configuration, allowed evidence, context packing, and structured result.
+- A claim-to-source map for each material statement, with the supporting span or the absence or contradiction of support.
+- Self-test results: supported paraphrase, plausible unsupported addition, stale-source answer, conflict case, missing-evidence response.
+- Independent qualified human labels, reviewer provenance, disagreement disposition, and the judge's false passes for that claim class.
 
-### Remedy — unsupported judge passes
-
-Keep the judge diagnostic-only until its documented fitness matches the exact intended gate. Narrow the rubric to the semantic-support claim and use deterministic source/permission checks separately. For a release-facing policy-support claim, retain qualified human review unless there is documented gate fitness for the applicable task and risk slice. Do not promote a diagnostic pass into semantic evidence merely because it is convenient. Citation presence and topical relevance are not proof that a material claim is supported. [2]
+**Remedy.** Keep the judge diagnostic-only until documented fitness matches the intended gate, and keep qualified human review for release-facing support claims until then. Narrow the rubric to semantic support and run source and permission checks separately. Citation presence and topical relevance do not prove support; RAGTruth shows unsupported claims persist under retrieval.[2]
 
 ## Retries hide the initial failure
 
-### Likely causes — hidden retries
+**Likely causes.**
 
-- The record stores only the selected final response and discards failed physical attempts.
+- The record stores only the selected final response and drops failed physical attempts.
 - Retry eligibility, bound, selection rule, and reset behavior were never declared.
-- The reported `pass@k` value is being read as first-attempt reliability, all-attempt consistency, or safe external-effect behavior.
-- A retry reused mutable state, hid a timeout, or changed the source world without recording it.
+- A `pass@k` value is read as first-attempt reliability, all-attempt consistency, or safe external-effect behavior.
+- A retry reused mutable state, hid a timeout, or changed the source world unrecorded.
 
-### Evidence to gather — hidden retries
+**Gather.**
 
-- Every physical attempt, its outcome, reason for retry, fixture/reset result, calls, latency, cost, and final delivered result.
-- The released retry, routing, fallback, or selection rule—not an imagined evaluation-only rule.
-- The distinction between a valid candidate failure, an invalid harness episode, and an inconclusive judgment.
-- For any effecting variant, the relevant authorization and authoritative state observation before considering another attempt.
+- Every physical attempt: outcome, retry reason, fixture/reset result, calls, latency, cost, and the final delivered result.
+- The released retry, routing, fallback, or selection rule, not an evaluation-only one.
+- Which failures are valid candidate failures, invalid harness episodes, or inconclusive judgments.
+- For an effecting variant, the authorization and authoritative state observation before another attempt.
 
-### Remedy — hidden retries
-
-Report per-attempt outcomes and the end-to-end final policy result separately. Bind the evaluation to the actual released retry/selection policy. Do not describe at-least-one success as a reliable single attempt, and do not let a hidden retry repair an external-effect claim. A failed first attempt remains evidence even if a later attempt provides the user with a good answer.
-
-The illustrated policy assistant has no retry policy. If a later read-only version adds a retry after a transient retrieval timeout, its record needs both the failed first attempt and the eventual response. A future write-capable version requires separate effect, authorization, approval, and reconciliation evidence; the current example cannot establish it.
+**Remedy.** Report per-attempt outcomes and the end-to-end result separately, bound to the released retry/selection policy. At-least-one success is not a reliable single attempt, and a hidden retry cannot repair an external-effect claim. A failed first attempt stays evidence even if a later one succeeds; a future read-only retry would record both. A write-capable version needs separate effect, authorization, approval, and reconciliation evidence.
 
 ## The citation resolves, but the response is still wrong
 
-### Likely causes — citation and correctness
+**Likely causes.**
 
-- The answer uses a current permitted source but adds an unsupported exception or combines passages incorrectly.
-- The answer is grounded in a source that is not the chosen authoritative truth source for the time or jurisdiction.
-- A superseded or conflicting source was made to look current by missing metadata or an ambiguous source-precedence rule.
+- The answer uses a current permitted source but adds an unsupported exception or combines passages wrongly.
+- The answer is grounded in a source that is not authoritative for the time or jurisdiction.
+- A superseded or conflicting source looks current because of missing metadata or an ambiguous precedence rule.
 
-### Evidence to gather — citation and correctness
+**Gather.**
 
 - Source identity, status, revision, approval scope, permission decision, and relevant time.
-- The exact text supporting each material answer statement.
-- The separately defined external truth reference if the product makes a factual-correctness claim beyond the approved policy fixture.
-- The qualified reviewer’s rubric result and any material ambiguity or disagreement.
+- The exact text supporting each material statement.
+- An external truth reference if the product claims correctness beyond the fixture.
+- The qualified reviewer's rubric result and any ambiguity or disagreement.
 
-### Remedy — citation and correctness
-
-Separate the repair target. Fix source admission/currentness when the wrong source was eligible; fix synthesis or grounding when the source does not support the answer; add or revise the external truth reference only when factual correctness is actually a declared claim. Do not weaken semantic review into a citation-format check. The worked example’s GBP 220 fact establishes only the fictional fixture claim, not a real-world travel-policy truth.
+**Remedy.** Fix the right target: source admission or currentness when the wrong source was eligible; synthesis or grounding when the source does not support the answer; an external truth reference only when correctness is a declared claim. Never weaken semantic review into a citation-format check. GBP 220 establishes only the fictional fixture claim.
 
 ## A denial case passes, but permitted users cannot get an answer
 
-### Likely causes — over-refusal
+**Likely causes.**
 
-- The suite contains adverse or denied cases without a comparable permitted counterpart.
-- The policy assistant treats missing, denied, conflicting, and answerable evidence as the same refusal condition.
-- Permission context is not propagated into the fixture or recorded at the retrieval boundary.
+- The suite has denied cases without comparable permitted counterparts.
+- The assistant treats missing, denied, conflicting, and answerable evidence as one refusal condition.
+- Permission context is not passed into the fixture or recorded at the retrieval boundary.
 
-### Evidence to gather — over-refusal
+**Gather.**
 
-- Matched permitted and denied requests with the same task except for the authority-relevant change.
-- Permission decisions, retrieved source identities, and the terminal output for both cases.
-- The expected contract outcome for missing evidence, denied access, and sufficient evidence.
+- Matched permitted and denied requests that differ only in the authority-relevant change.
+- Permission decisions, retrieved source identities, and terminal output for both.
+- The expected outcome for missing evidence, denied access, and sufficient evidence.
 
-### Remedy — over-refusal
-
-Keep the denied case, then add or repair the permitted counterpart. Score appropriate restraint and over-refusal separately. For the policy assistant, `POLICY-CURRENT-001` demonstrates a permitted complete answer, while `POLICY-DENIED-005` demonstrates scope enforcement. Neither result replaces the other.
+**Remedy.** Keep the denied case, add or repair the permitted counterpart, and score restraint and over-refusal separately. `POLICY-CURRENT-001` (permitted answer) and `POLICY-DENIED-005` (scope enforcement) never replace each other.
 
 ## A run cannot be reproduced after a fixture or evaluator problem
 
-### Likely causes — reproduction and repair
+**Likely causes.**
 
-- The fixture revision, source status, requester permissions, reset verification, evaluator version, or candidate identity was not retained.
+- The fixture revision, source status, requester permissions, reset verification, evaluator version, or candidate identity was not kept.
 - A shared mutable world or unverified reset contaminated later trials.
 - A harness repair changed the semantic case, input population, evaluator, or comparison rule after results were seen.
 
-### Evidence to gather — reproduction and repair
+**Gather.**
 
-- The case, fixture, candidate, evaluator, and trial-policy identities; reset record; status; and diagnostic material.
+- Case, fixture, candidate, evaluator, and trial-policy identities; reset record; status; diagnostic material.
 - The predeclared invalid/inconclusive and replacement-run rule.
-- A comparison of the repair with the original case: input scope, expected invariants, thresholds, and candidate must remain unchanged for a like-for-like replacement.
+- A comparison of repair and original: input scope, invariants, thresholds, and candidate must be unchanged for a like-for-like replacement.
 
-### Remedy — reproduction and repair
-
-Preserve the invalid or inconclusive record. Repair only under the predeclared replacement rule, document why the repair cannot bias attribution, and re-run all affected paired evidence under the same repaired conditions. If valid required evidence is still absent at decision time, the appropriate conclusion is an evidence gap, not a pass. An independently observable candidate failure remains a candidate failure even if a later evaluator problem is also discovered.
+**Remedy.** Keep the invalid or inconclusive record, repair only under the predeclared rule with a non-bias rationale, and rerun all affected paired evidence. Required valid evidence still absent at decision time is an evidence gap, not a pass. An independently observable candidate failure stays one even if an evaluator problem is found.
 
 ## An injection test reports a clean answer but cannot show containment
 
-### Likely causes — injection containment
+**Likely causes.**
 
-- The injection was placed in the user message rather than the untrusted document or tool-output channel under test.
+- The injection was put in the user message instead of the untrusted document or tool-output channel under test.
 - The fixture has no instrumented boundary observation for attempted retrieval, disclosure, or invocation.
-- A clean response is being treated as proof that no restricted data reached an unpermitted recipient.
+- A clean response is treated as proof that no restricted data reached an unpermitted recipient.
+- The attacks are a fixed list, which shows only that known attacks fail; resistance needs adaptive or red-team attacks.
 
-### Evidence to gather — injection containment
+**Gather.**
 
-- The channel containing the untrusted material, source status, requester scope, and harmless test marker.
+- The channel holding the untrusted material, source status, requester scope, and harmless test marker.
 - Boundary logs for attempted retrieval and invocation, plus an output/recipient observation for disclosure.
-- A permitted benign counterpart so blanket refusal does not appear safe by itself.
+- A permitted benign counterpart so blanket refusal does not look safe.
 
-### Remedy — injection containment
-
-Move the attack into the actual untrusted channel and use harmless fixture data. Grade terminal outcome, source scope, attempted capability use, boundary decision, and disclosure separately. A correctly blocked proposal is not an unauthorized external execution; it may still be a policy-compliance concern under a separately declared claim.
+**Remedy.** Move the attack into the real untrusted channel with harmless data. Grade outcome, source scope, attempted capability use, boundary decision, and disclosure separately. A blocked proposal is not an unauthorized execution, though it may fail a separately declared compliance claim.
 
 ## Quick evidence check
 
-Before changing the candidate or the score, confirm:
-
-- [ ] The disputed claim is named narrowly enough to choose a fit-for-purpose check or review.
-- [ ] Candidate, fixture, case, evaluator, and trial policy identities are present.
-- [ ] The record distinguishes pass, fail, invalid, and inconclusive rather than silently dropping inconvenient runs.
-- [ ] Source permission/currentness, semantic support, trajectory/boundary evidence, and external truth are not represented by one proxy score.
-- [ ] The holdout, if used for a release claim, was not used to tune the behavior reported on it.
-- [ ] A model judge’s documented role is respected; diagnostic output has not become a hidden gate.
-- [ ] The next action repairs the relevant evidence gap rather than merely producing another favorable transcript.
+- [ ] The disputed claim is narrow enough to choose a fit check.
+- [ ] Identities and pass/fail/invalid/inconclusive statuses are kept, with no silently dropped runs.
+- [ ] Permission/currentness, support, boundary evidence, and truth are not one proxy score.
+- [ ] No release holdout was used for tuning, and no diagnostic judge became a hidden gate.
+- [ ] The next action repairs the evidence gap instead of producing another favorable transcript.
 
 ## References
 

@@ -1,105 +1,111 @@
 # 2.4 Tools and External Interfaces
 
-**Status:** 0.5.0-draft.2 — refined draft; proposed, not adopted
+**Status:** 0.5.0-draft.2 — draft
 
-**Audience:** Agent builders, tool owners, security reviewers, and evaluators who need to make a proposed external operation inspectable
+**Audience:** Agent builders, tool owners, security reviewers, and evaluators who need to make an external operation inspectable
 
-**Applicability:** Apply this chapter when a proposed agent invokes a tool or other external interface. It does not apply when no such capability is enabled. A read-only interface still needs this chapter when it reaches protected data or can affect availability, cost, privacy, or another relevant boundary.
+**Applicability:** Apply this chapter when an agent invokes a tool or other external interface. A read-only interface still needs it when it reaches protected data or can affect availability, cost, privacy, or another boundary.
 
-**Reader question:** How can a builder turn a broad external service into a narrow, reviewable operation whose inputs, authority, effects, failures, retries, and evidence remain clear?
+**Reader question:** How do you turn a broad external service into a narrow, reviewable operation whose inputs, authority, effects, failures, retries, and evidence are clear?
 
 [Part 2 — Agent Basics](README.md) · [2.2 Agent Contracts and Configuration](02-agent-contracts-and-configuration.md) · [Playbook home](../../README.md) · [Applicability](../../applicability.md) · [tool-contract template](../../templates/2.4/tool-contract.yaml)
 
 ## Purpose and applicability
 
-A **tool** is a bounded interface through which an agent can obtain information or request an operation outside its reasoning process. An **external interface** is the wider boundary the tool reaches: a record store, a business service, a device, an internal workflow, or another protected system. A tool contract makes the agent-facing operation smaller and more legible than that underlying system. It says what may be requested, which trusted context is required, what result is allowed back, and how an unusual outcome is represented.
+A **tool** is a bounded interface through which an agent gets information or requests an operation outside its reasoning process. An **external interface** is the wider system it reaches, such as a record store, business service, device, or internal workflow. A tool contract makes the agent-facing operation smaller and clearer than that system.
 
-This distinction matters because a broad service or shell-style pass-through makes it difficult to see what the agent can really do. A harmless-sounding operation can disclose a restricted record, mark a record as viewed, trigger an external lookup, or accept an unbounded response. A timeout can leave the caller unable to tell whether an external request was never sent, reached the target, or completed after the response was lost. The contract is therefore a design boundary, not a description written after the fact.
+A broad service or shell-style pass-through hides what the agent can really do: a harmless-sounding operation can disclose a restricted record, mark it viewed, or accept an unbounded response. Write the contract before building.
 
-Typed and serializable does not require a particular schema technology. JSON Schema is one neutral vocabulary: its published specification separates Core from Validation and defines validation keywords for JSON data. [1] Whatever notation is used, it should make field shape, allowed values, cross-field rules, and bounded output fields reviewable. A type or schema establishes shape; it does not establish permission, source truth, target identity, or whether the external system actually performed the described operation.
+"Typed and serializable" requires no particular schema technology; JSON Schema is one neutral option, with Core separate from Validation. [1] Any notation should make field shape, allowed values, cross-field rules, and output bounds reviewable, remembering that shape is not permission, source truth, target identity, or proof the operation happened.
 
-Tools are conditional components. This chapter does not authorize one, choose a service, or declare an interface safe. Agent-level capability admission and the effective configuration remain with [2.2 Agent Contracts and Configuration](02-agent-contracts-and-configuration.md). Identity, authority, and protected-operation checks are owned by [3.1 Identity, Authority, Zero Trust, and Least Privilege](../03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md). Returned content remains data under [3.2 Untrusted Inputs, Retrieved Content, and Action Boundaries](../03-security-and-trust-boundaries/02-untrusted-inputs-retrieved-content-and-action-boundaries.md). Source currentness and answer grounding belong to [2.6 Context and Retrieval Fundamentals](06-context-and-retrieval-fundamentals.md). For a tool exposed through a standardized integration protocol, apply [2.7 MCP and Standardized Integrations](07-mcp-and-standardized-integrations.md) as well.
+Tools are optional. Related decisions live elsewhere: capability admission in [2.2](02-agent-contracts-and-configuration.md); identity and authority in [3.1](../03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md); returned content as data in [3.2](../03-security-and-trust-boundaries/02-untrusted-inputs-retrieved-content-and-action-boundaries.md); currentness and grounding in [2.6](06-context-and-retrieval-fundamentals.md); standard-protocol tools also in [2.7](07-mcp-and-standardized-integrations.md).
 
 ## Working model
 
 ### A narrow operation, not a broad pass-through
 
-Start with a named domain operation, such as `search-approved-policy`, rather than a generic request facility. A narrow operation accepts only the task inputs it needs, receives identity and scope from a trusted runtime boundary, performs declared validation before external I/O, and returns a small domain result. It should not expose an arbitrary destination, free-form method, unfiltered response body, reusable credential, or model-selected authority as a convenience field.
+Start with a named domain operation, such as `search-approved-policy`, that takes only needed inputs, gets identity and scope from a trusted runtime boundary, validates before I/O, and returns a small result. Never expose an arbitrary destination, free-form method, unfiltered response body, reusable credential, or model-chosen authority as a convenience field.
 
-The adapter has two interfaces. The **agent-facing interface** contains caller-controlled task data and bounded outcomes. The **protected-operation interface** binds that task data to the authenticated workload, requester where relevant, effective resource scope, current policy, and normalized target. A model may propose a query or target reference. It cannot turn a proposed identity, tenant, scope, permission, or approval into trusted context.
+The adapter has an **agent-facing interface** for caller task data and bounded outcomes, and a **protected-operation interface** that binds that data to the authenticated workload, the requester where relevant, effective scope, current policy, and a normalized target. A model may propose a query or target reference but cannot turn a proposed identity, tenant, scope, permission, or approval into trusted context.
 
-Validation works in both directions. Before I/O, check basic shape and task rules: required fields, allowed value sets, ranges where relevant, and cross-field constraints. A cross-field rule asks whether fields make sense together. For example, an optional locator can be accepted only when it is in the requester's permitted resource scope, and a selector that conflicts with authenticated scope is rejected rather than repaired into a broader request. Normalize a target before authorization so equivalent spellings, encodings, aliases, or paths cannot cause the check and the external call to refer to different objects.
+Before I/O, check fields, allowed values, ranges, and cross-field consistency: accept an optional locator only inside the requester's permitted scope, and reject a selector that conflicts with authenticated scope rather than widening it. Normalize the target before authorization so equivalent spellings, encodings, aliases, or paths cannot make the check and the call refer to different objects.
 
-After I/O, validate the response before the agent sees it. Confirm its status, required identifiers, field types, and bounds. Drop or reject malformed fields, unexpected fields, secrets, unrestricted raw payloads, and content beyond the operation's purpose. Map the result to a declared outcome such as `matches`, `no_match`, `denied`, `unavailable`, `timeout`, or `invalid_result`. The model receives evidence or an outcome, not an opaque provider narrative that it must interpret as authority.
+After I/O, validate status, required identifiers, types, and bounds before the agent sees the response. Drop or reject malformed or unexpected fields, secrets, raw payloads, and content beyond the operation's purpose, and map the result to a declared outcome such as `matches`, `no_match`, `denied`, `unavailable`, `timeout`, or `invalid_result`. The model never gets an opaque provider narrative.
 
 ### Describe actual effects and observations
 
-An effect class is a claim about what the target operation actually does, not what the method name, transport, or documentation label suggests. The established draft classes are `read`, `write_reversible`, and `write_consequential`. A `read` observes without changing external business state. A `write_reversible` makes a change that can be meaningfully corrected under its own rules. A `write_consequential` has a material effect or is difficult to reverse. A lookup that updates a view marker, sends a notification, consumes a scarce reservation, or reveals protected content needs a more careful effect analysis than its name suggests.
+An effect class describes what the target operation actually does, not what its name suggests: `read` (observes without changing external business state), `write_reversible` (a change that can be meaningfully corrected under its own rules), or `write_consequential` (material or hard to reverse). A lookup that updates a view marker, sends a notification, uses a scarce reservation, or reveals protected content is not a simple read.
 
-The draft's established execution-class floor maps a read-only capability to `ephemeral`, a reversible write to `durable`, and a consequential write to `human_governed`. This mapping does not make an operation permitted or low risk, and an agent's effective execution class cannot be lower than an enabled tool's required floor. Long-running or resumable work can still need durable handling even when it is read-only. When a proposed interface has an externally visible effect, may outlive its request, or needs safe resumption, use [Part 7 — Durable Execution and Human-Governed Work](../../engineering-reference/07-durable-execution-and-human-governed-work/README.md) rather than treating the tool contract as a complete recovery design.
+The execution-class floor maps `read` to `ephemeral`, a reversible write to `durable`, and a consequential write to `human_governed`. The floor does not make an operation permitted or low risk, and long-running or resumable reads can still need durable handling. For externally visible effects, work that may outlive its request, or safe resumption, use [Part 7 — Durable Execution and Human-Governed Work](../../engineering-reference/07-durable-execution-and-human-governed-work/README.md).
 
-Keep the following observations distinct:
+Keep these observations distinct:
 
-- A **proposal** is a model or workflow request for an operation. It has not passed enforcement.
-- An **authorized admission** is the protected boundary's decision that this authenticated request may use the operation on this normalized target. It is not proof of a dispatch or effect.
-- A **dispatch attempt** records that the runtime tried to send a request. It is useful for diagnosis but is not target acceptance.
-- A **response** is what the external interface returned. It can be malformed, stale, or lost.
+- A **proposal** is a model or workflow request that has not passed enforcement.
+- An **authorized admission** is the protected boundary's decision that this authenticated request may use the operation on this normalized target. It does not prove dispatch or effect.
+- A **dispatch attempt** records that the runtime tried to send a request, not that the target accepted it.
+- A **response** is what the interface returned; it can be malformed, stale, or lost.
 - An **authoritative external effect** is target-side evidence that the target accepted or performed a material operation. A local log, model statement, or response-shaped object is not that evidence.
 
-This model prevents two opposite errors: calling every blocked proposal an external failure, and calling a local success message proof of an external outcome. It also makes a negative test meaningful. A blocked request to another tenant can show that an authorization boundary rejected the proposal without implying that cross-tenant data was read.
+A blocked cross-tenant request is a rejected proposal, not an external failure or a cross-tenant read, and a local success message is not proof of an outcome.
 
 ### Retry safety is not effect class
 
-Effect class and retry safety answer different questions. A read can be unsafe to repeat if it has a relevant repeated effect, while a write can be repeatable only when the receiver actually guarantees the same intended result for the same intent. RFC 9110 defines idempotency in terms of intended server effect, not identical responses or the absence of repeated logging. It permits a retry after a communication failure before the client can read the response, but cautions against automatic retry of a non-idempotent request unless the client knows the operation is idempotent for that resource or can establish that the original was not applied. [2]
+A read can be unsafe to repeat if repeating has an effect; a write is repeatable only if the receiver guarantees the same result for the same intent. RFC 9110 defines idempotency by intended server effect, not identical responses, and cautions against automatically retrying a non-idempotent request unless the client knows it is idempotent or can tell the original was not applied. [2]
 
-For each operation, choose the chapter's declared retry label and explain the basis:
+Give each operation a retry label and its basis:
 
-- `safe` means repeating the same intent cannot create an additional relevant effect in the declared context.
-- `idempotency_key_required` means a stable key is reused only for the same intent and the target is known to honor that rule.
-- `unsafe` means repetition may duplicate an effect, so the runtime does not retry it automatically.
+- `safe`: repeating the same intent cannot create an additional relevant effect in the declared context.
+- `idempotency_key_required`: a stable key is reused only for the same intent, and the target is known to honor it.
+- `unsafe`: repetition may duplicate an effect, so the runtime never retries automatically.
 
-These labels are not promises of availability or correctness. A deadline or cancellation request is an observation about the caller's wait, not proof that an external call did not start or complete. For a side-effecting operation with a missing or ambiguous receipt, stop automatic repetition and follow the declared reconciliation or unresolved path in [7.2 Side Effects, Idempotency, and Unknown Outcomes](../../engineering-reference/07-durable-execution-and-human-governed-work/02-side-effects-idempotency-and-unknown-outcomes.md). A consequential action also retains independent authority and any applicable approval; approval does not widen authorization. [7.3 Approval, Suspension, and In-Flight Compatibility](../../engineering-reference/07-durable-execution-and-human-governed-work/03-approval-suspension-and-in-flight-compatibility.md) owns those state semantics.
+Labels promise neither availability nor correctness. For a side-effecting operation with a missing or ambiguous receipt, stop automatic repetition and follow [7.2 Side Effects, Idempotency, and Unknown Outcomes](../../engineering-reference/07-durable-execution-and-human-governed-work/02-side-effects-idempotency-and-unknown-outcomes.md). A consequential action keeps independent authority and any required approval, and approval does not widen authorization ([7.3 Approval, Suspension, and In-Flight Compatibility](../../engineering-reference/07-durable-execution-and-human-governed-work/03-approval-suspension-and-in-flight-compatibility.md)).
 
 ## Decisions and best practices
 
 ### Shape the operation around a task decision
 
-Define the smallest operation that supplies the next legitimate task decision. A policy assistant usually needs a permission-filtered policy search with source identity and bounded excerpt. It does not need general database access, a bulk export, or an arbitrary URL fetch. This reduces accidental capability and makes both negative cases and effect classification easier to inspect.
+Define the smallest operation that supplies the next legitimate task decision: a policy assistant needs a permission-filtered search returning source identity and a bounded excerpt, not database access, bulk export, or arbitrary URL fetch.
 
-Choose fields because a builder can name the decision they support. A query may be caller-controlled task data. Requester identity, tenant or resource scope, deadline, and policy context are trusted dependencies whose sources belong in the agent contract. A record identifier offered by a user or model can be useful input, but it remains a request parameter until the protected boundary authorizes access to the normalized object. Do not include a field merely because an underlying service accepts it.
+Choose each field for a decision you can name. A query may be caller task data; requester identity, scope, deadline, and policy context are trusted dependencies declared in the agent contract. A record identifier from a user or model is only a request parameter until the protected boundary authorizes the normalized object.
 
-For output, prefer a small status plus the fields necessary to support the next agent decision. Return source identity, revision, status, and a bounded excerpt when the task needs policy evidence. Return a denial without protected content when access is not allowed. A tool result is not a trusted instruction and it is not proof that a downstream answer is supported. Keep source precedence, currentness, and semantic grounding with [2.6](06-context-and-retrieval-fundamentals.md).
+Output is a small status plus what the next decision needs; a denial returns no protected content. A tool result is not a trusted instruction and does not prove an answer is supported ([2.6](06-context-and-retrieval-fundamentals.md)).
+
+### Design the tool for the model that will use it
+
+The model sees only a tool's name, description, parameters, and results. Engineering guidance on writing tools for agents suggests: [5]
+
+- **Few, well-scoped tools.** A few tools that each do one distinct job beat overlapping tools or a wrapper per endpoint. Merge steps that always occur together (one schedule tool rather than separate list and create tools).
+- **Clear names and namespacing.** Name tools for the task and group related ones under a shared prefix (for example `policy_search`, `policy_get_source`).
+- **Descriptions written for a newcomer.** Say what the tool does, when to use it and when not, and what each parameter means, with format and an example. Use unambiguous parameter names (`user_id`, not `user`).
+- **Poka-yoke arguments.** Shape arguments so mistakes are hard to make, for example by requiring one canonical form of a path or identifier. [6]
+- **Meaningful, token-efficient results.** Return high-signal, readable fields (names and status, not raw internal IDs). Paginate, filter, and truncate with sensible defaults; where useful, offer concise and detailed modes and tell the model how to narrow a broad result.
+- **Actionable errors.** Say what went wrong and what valid input looks like, not only a code or stack trace, without protected content and mapped to the structured outcomes below.
+
+Measure tool design on representative tasks, reading transcripts for wrong-tool choices and malformed arguments and confirming gains on held-out tasks. [5] Too many or overlapping tools confuse tool choice. [5] For a large catalogue, loading every definition up front slows the agent and adds cost; load definitions on demand (for example through a search tool) and keep bulky intermediate data out of the model's context. [7] None of this replaces validation and authorization.
+
+If the agent can write and run code or use a shell or browser, run that code in a sandbox with resource limits and monitoring [7], and restrict its network access to what the task needs.
 
 ### Bind authority at the protected operation
 
-Authentication identifies a workload or requester. Authorization decides whether the relevant protected operation may access this object, function, tenant, data category, or destination now. OWASP describes object-level authorization as checking whether a logged-in user has permission for the requested action on the requested object, and recommends testing that mechanism. [3] Its Authorization Cheat Sheet further recommends deny-by-default decisions and checking the specific object or function on every request. [4]
+Authorization decides whether the protected operation may access this object, function, tenant, data category, or destination now. OWASP describes object-level authorization as checking that a user may take the requested action on the requested object, and recommends testing it. [3] Its Authorization Cheat Sheet recommends deny-by-default and checking the object or function on every request. [4]
 
-Apply those principles at the adapter or resource boundary where the operation actually occurs. The decision should use trusted identity, normalized target, requested action, and effective scope. Revalidate before a write when the target or authority can have changed. A prompt, model message, client-side check, retrieved document, capability description, or previous approval is not the decisive authorization decision. This chapter points to that boundary; the canonical requirements and scope choices remain in [3.1](../03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md).
+Apply these at the adapter or resource boundary using trusted identity, normalized target, requested action, and effective scope, and revalidate before a write when target or authority may have changed. A prompt, model message, client-side check, retrieved document, tool description, or earlier approval never decides authorization ([3.1](../03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md)). Keep the tool set minimal; each extra tool widens what a manipulated model could do. [8]
 
 ### Make failure and cancellation useful to a caller
 
-Give the runtime structured outcomes that distinguish invalid input, authorization denial, a domain-level result such as no match, transient unavailability, timeout, and malformed result. They are not interchangeable. A generic error encourages the model to invent a policy answer or retry an unsafe call. A bounded outcome instead lets the agent contract select `needs_information`, `declined`, `failed`, or another declared terminal outcome.
+Separate invalid input, authorization denial, a domain result such as no match, transient unavailability, timeout, and malformed result. A generic error pushes the model to invent an answer or retry an unsafe call; a bounded outcome lets the contract choose `needs_information`, `declined`, `failed`, or another declared outcome.
 
-Set a context-appropriate deadline through the trusted execution path and document what cancellation means for the adapter. Cancellation can prevent a proposal from being dispatched, race with a dispatch, or arrive after a target has done work. If the system cannot distinguish those cases, record the uncertainty rather than claiming that external work stopped. A long-running read-only interface can therefore trigger durable execution concerns without becoming a consequential action or gaining an approval flow.
+Set a deadline through the trusted execution path. A deadline or cancellation describes the caller's wait: it can stop a proposal before dispatch, race with dispatch, or arrive after the target did the work. If you cannot tell which, record the uncertainty rather than claiming the work stopped.
 
-### Minimize data and retain privacy-safe attribution
+### Minimize data and keep privacy-safe attribution
 
-Return only what the task needs and make returned external content visibly data. Limit excerpts and identifiers before model exposure. Do not pass secrets, live clients, credentials, diagnostic payloads, or an unbounded raw response through the agent-facing contract. Data classification, permitted destinations, content capture, retention, and deletion are independently decided under [3.3 Data Privacy, Handling, and Minimum Audit Evidence](../03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md).
+Return only what the task needs, marked as data and limited before the model sees it; pass no secrets, live clients, credentials, diagnostic payloads, or unbounded raw responses. Classification, destinations, capture, retention, and deletion are decided under [3.3](../03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md).
 
-The minimum useful attribution links an observed invocation to the agent, run, tool operation, attempt, structured outcome, and latency or cost when relevant and available. It need not fabricate a workflow identifier for an ephemeral path or an approval identifier for a read-only path. Conversely, a concise attribution record does not prove the external target's effect. Record the target-side evidence required for that claim where an effect is in scope.
+Attribution (TOOL-07) links each invocation to the agent, run, tool operation, attempt, outcome, and latency or cost where relevant. It need not invent a workflow ID for an ephemeral path or an approval ID for a read-only path, and it does not prove the target's effect; where an effect is in scope, record target-side evidence.
 
 ### Build the contract before admitting the capability
 
-Use this practical sequence for a proposed interface:
-
-1. State the task decision and the one domain operation required for it. Write down what the operation must not expose or do.
-2. Specify caller-controlled inputs separately from trusted runtime context. Define pre-I/O shape, cross-field, normalization, and scope checks.
-3. Specify bounded output fields and structured outcomes. Decide how the agent maps each one to its declared terminal outcomes without guessing.
-4. Classify the actual effect and required execution floor. Ask explicitly whether the target records a read, sends a notification, changes availability, or may need durable handling.
-5. Declare retry safety, deadline, cancellation observation, and the response-loss path. Route uncertain external effects to Part 7 before enabling them.
-6. Plan observable allowed, denied, malformed, timeout, repeated-call, and negative-invocation cases. Record what target-side observation, if any, would establish an external effect.
-
-The [tool-contract template](../../templates/2.4/tool-contract.yaml) turns that sequence into one proposed planning/build record. It deliberately keeps owner, target semantics, data classification, and cancellation details unresolved where the shared example has not established them. It is not an admitted capability manifest, a test result, or an implementation instruction.
+The [tool-contract template](../../templates/2.4/tool-contract.yaml) records, in order: the task decision and the one operation it needs, including what it must not expose or do; caller inputs versus trusted context and pre-I/O checks; bounded outputs mapped to terminal outcomes; actual effect and execution floor; retry safety, deadline, cancellation, and the response-loss path; and the test cases below plus the target-side observation that would establish an effect.
 
 ## Requirements
 
@@ -113,13 +119,11 @@ The [tool-contract template](../../templates/2.4/tool-contract.yaml) turns that 
 
 ## Worked example
 
-The shared fictional candidate is `POLICY-BUILD-001`, an internal policy-assistance proposal with `use_case_id: internal-policy-assistance`. Its planning record provisionally prefers a fixed retrieval-and-answer workflow. The fixed workflow may branch on a result or use a model router, but its permitted transitions are defined by orchestration. A bounded adaptive alternative could choose among a finite allowlist of the same operations without creating a broad service pass-through. Neither form changes the current decision: this is an illustrative, unexecuted read-only candidate with no write or approval capability enabled.
+The shared fictional candidate is `POLICY-BUILD-001` (`use_case_id: internal-policy-assistance`). It prefers a fixed retrieval-and-answer workflow; a bounded adaptive alternative could choose among a finite allowlist of the same operations. Either way it is read-only, with no write or approval capability.
 
 ### Proposed read-only policy search
 
-The candidate proposes `search-approved-policy` as a narrow operation. The runtime receives `employee-uk-104` and the relevant permitted scope from its trusted request boundary. The model supplies only the employee's question as `query`; it cannot select another tenant, assert a permission, or make a source identifier authoritative. Before a search, the adapter validates that the query is non-empty, normalizes an optional permitted selector, and authorizes the requested source access against trusted context.
-
-The proposed contract is deliberately compact. It is a planning artifact, not a record of a live call:
+The candidate proposes `search-approved-policy`. The runtime gets `employee-uk-104` and scope from its trusted request boundary; the model supplies only `query`. The adapter checks the query is non-empty, normalizes an optional permitted selector, and authorizes source access before searching.
 
 ```yaml
 example_id: POLICY-BUILD-001
@@ -140,31 +144,34 @@ retry:
   if_uncertain: stop_automatic_repeat
 ```
 
-For the permitted fixture case, the expected bounded result identifies `travel-policy-2026@2026-10-01` as current and returns only an excerpt needed to support the answer that the fictional London hotel amount is GBP 220. The superseded `travel-policy-2024-superseded@2024-01-01` may be identified as superseded rather than used as current authority. The answer workflow then decides whether the available, permitted, current evidence supports `complete`; currentness and semantic support are not settled merely by the tool status.
+Expected treatments:
 
-For the denied fixture case, `contractor-uk-204` is not permitted to access the policy material. The protected operation should return `denied` without source text. The agent's declared terminal outcome is then `declined`, not an improvised policy answer. For a missing permitted source or equally authoritative current-source conflict, the bounded path is `needs_information`; the tool does not select a convenient value or claim that an absent result proves no policy exists.
+- **Permitted:** the result identifies `travel-policy-2026@2026-10-01` as current and returns only the excerpt supporting the London hotel amount of GBP 220. `travel-policy-2024-superseded@2024-01-01` may appear marked superseded, never as current authority. The answer workflow, not tool status, decides whether the evidence supports `complete`.
+- **Denied:** `contractor-uk-204` gets `denied` with no source text, and the agent returns `declined`.
+- **Missing or conflicting:** `needs_information`; the tool neither picks a convenient value nor treats an absent result as proof no policy exists.
+- **Timeout:** the adapter cannot tell whether the target saw the request. `safe_pending_target_semantics_review` means the builder must show that repeating the lookup has no additional relevant effect before repeating automatically; otherwise stop and return the declared failure.
 
-Consider a proposed timeout. The adapter can report `timeout`, but that response alone does not prove whether it dispatched a request or whether the target observed one. The template's `safe_pending_target_semantics_review` label means a builder must establish that repeating the lookup has no additional relevant effect before automatic repetition. If that cannot be established, it stops automatic repeats and returns the declared bounded failure path. This is an expected behavior to evaluate, not an observed result.
-
-If a later, separate candidate proposed an action that changed policy content, it would not be a new field on this read-only contract. It would need its own actual-effect assessment, execution class, authorization decision, retry and unknown-outcome disposition, and any applicable human-governed approval handling before admission. This chapter does not assert that such a candidate has been proposed, approved, or implemented.
+Changing policy content would be a new candidate with its own effect, execution class, authorization, retry, unknown-outcome, and approval decisions, not a new field here.
 
 ## Evidence and checklist
 
-For a proposed tool, evidence should connect the contract to observable behavior without treating a schema, a tool description, a passing fixture, or a model statement as proof that every control is effective. A reviewer should be able to inspect the declared operation, effective capability admission when one exists, trusted-context sources, validation behavior, bounded output, failure mapping, and the observation needed to support any external-effect claim.
+Connect the contract to observable behavior; a schema, description, fixture, or model statement proves no control works. For the read-only example:
 
-The following evidence plan is proportionate to the shared read-only example and remains unexecuted:
+- **Contract review:** every field above, plus the owner (or an unresolved owner field).
+- **Boundary cases:** validation failure before I/O; an allowed path; a denied path without leakage; an unadmitted capability that is not invoked.
+- **Result cases:** a bounded result; an oversized or malformed result mapped to `invalid_result`; a missing permitted source; an equal-authority conflict not resolved by date or model preference.
+- **Failure and retry cases:** timeout, cancellation ambiguity, transient failure, and repeats. If an external effect is in scope, inspect target state, not just a transcript or local status.
+- **Attribution** without secrets or extra payload.
 
-- A contract review shows the operation's task purpose, caller fields, trusted dependencies, effect claim, execution floor, response bounds, retry classification, and declared owner or unresolved owner field.
-- Boundary cases show validation failure before external I/O; an allowed requester/object/scope path; a denied requester, object, or scope path without protected-content leakage; and a negative case in which an unavailable or unadmitted capability is not invoked.
-- Result cases show a bounded well-formed result, an oversized or malformed result mapped to `invalid_result`, a missing permitted source, and an equally authoritative current-source conflict that is not silently resolved by a date or model preference.
-- Failure and retry cases show the declared timeout, cancellation ambiguity, transient failure, and repeat behavior. If an external effect is later in scope, inspect authoritative target state or its accepted-operation record rather than only a transcript or local status.
-- Privacy-safe attribution shows the agent, run, operation, attempt, outcome, and applicable latency or cost without retaining secrets or unnecessary payload content. Apply [3.3](../03-security-and-trust-boundaries/03-data-privacy-handling-and-minimum-audit-evidence.md) for the data-handling decision.
-
-Hand the resulting proposed record and any future observations to the relevant owners: [2.6](06-context-and-retrieval-fundamentals.md) for source/currentness and grounding, [3.1](../03-security-and-trust-boundaries/01-identity-authority-zero-trust-and-least-privilege.md) for authorization, [3.2](../03-security-and-trust-boundaries/02-untrusted-inputs-retrieved-content-and-action-boundaries.md) for returned content, [Part 4](../04-testing-and-evaluation/README.md) for case and evidence design, and [Part 7](../../engineering-reference/07-durable-execution-and-human-governed-work/README.md) for durable or externally effectful work. The artifact is a proposed local review unit, not an approved or deployed system.
+Case design is in [Part 4](../04-testing-and-evaluation/README.md).
 
 ## References
 
 [1]: https://json-schema.org/specification "JSON Schema Specification"
 [2]: https://httpwg.org/specs/rfc9110.html "RFC 9110 HTTP Semantics"
-[3]: https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/ "OWASP API1 2023 Broken Object Level Authorization"
+[3]: https://api-security.owasp.org/editions/2023/en/0xa1-broken-object-level-authorization/ "OWASP API1:2023 Broken Object Level Authorization"
 [4]: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html "OWASP Authorization Cheat Sheet"
+[5]: https://www.anthropic.com/engineering/writing-tools-for-agents "Writing effective tools for agents — with agents"
+[6]: https://www.anthropic.com/engineering/building-effective-agents "Building effective agents"
+[7]: https://www.anthropic.com/engineering/code-execution-with-mcp "Code execution with MCP: building more efficient agents"
+[8]: https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html "OWASP LLM Prompt Injection Prevention Cheat Sheet"

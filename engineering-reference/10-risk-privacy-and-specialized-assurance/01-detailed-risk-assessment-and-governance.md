@@ -1,96 +1,111 @@
 # 10.1 Detailed Risk Assessment and Governance
 
-**Status:** 0.5.0 first draft
-**Audience:** Accountable owners, builders, evaluators, security and privacy reviewers, and release decision authorities
-**Applicability:** Use this expanded method when the [initial risk, data, ownership, and delivery record](../../development-guide/01-problem-definition-and-planning/04-initial-risk-data-ownership-and-delivery-plan.md) identifies elevated assurance needs, including consequential authority, sensitive or regulated context, broad reach, material uncertainty, or a material harm scenario. It is also available whenever a team needs a more defensible assessment. It does not replace legal, regulatory, security, privacy, safety, or domain-specific review.
+**Status:** 0.5.0-draft.2 — draft  
+**Audience:** Accountable owners, builders, evaluators, security and privacy reviewers, and release decision authorities  
+**Applicability:** Use this method when the [initial risk, data, ownership, and delivery record](../../development-guide/01-problem-definition-and-planning/04-initial-risk-data-ownership-and-delivery-plan.md) shows elevated assurance needs: consequential authority, sensitive or regulated context, broad reach, material uncertainty, or a material harm scenario. It does not replace legal, security, privacy, safety, or domain review.
 
 [Part 10](README.md) · [Applicability](../../applicability.md) · [Release decisions](../../development-guide/04-testing-and-evaluation/07-analyzing-results-comparing-versions-and-making-decisions.md)
 
 ## Purpose and applicability
 
-An assessment makes the reasoning behind an agent's governance review inspectable. It is not a label applied to an agent in the abstract. The accountable owner describes the context, identifies concrete ways the agent could cause harm, records what evidence actually supports controls, and gives the authorized decision authority a basis for a release decision.
-
-This chapter extends the early screen in Chapter 1.4. Start the assessment before design choices become expensive, update it before release, and keep it current in operation. A team may use a compact record for a bounded low-exposure use, but it needs this detailed method when a scenario, capability, legal screen, or policy floor triggers it. The assessment is a proposed playbook artifact, not a determination of legal compliance.
+This method extends the Chapter 1.4 screen: it names concrete harms, records each control's evidence, and gives the decision authority a basis for release. Start before design is expensive, update before release, and keep it current; a bounded, low-exposure use keeps a compact record until a trigger applies.
 
 ## Working model
 
 ### Keep the decisions separate
 
-Five terms answer different questions:
+Keep five decisions separate:
 
-- **Execution class** describes how work executes: `ephemeral`, `durable`, or `human_governed`.
-- **Governance tier** describes the required assurance and oversight: `low`, `medium`, `high`, or `critical`.
-- **Inherent risk** is the risk before risk-reducing controls.
-- **Residual risk** is the risk after only those controls whose effectiveness has evidence.
-- **Launch decision** is `go`, `conditional_go`, or `no_go` for an identified release.
+- **Execution class:** how work executes (`ephemeral`, `durable`, `human_governed`).
+- **Governance tier:** required assurance and oversight (`low`, `medium`, `high`, `critical`).
+- **Inherent risk:** risk before risk-reducing controls.
+- **Residual risk:** risk after crediting only controls with evidence that they work.
+- **Launch decision:** `go`, `conditional_go`, or `no_go` for one release.
 
-Do not collapse these terms. A read-only agent can be high risk because a wrong answer has serious consequences. A durable agent can be medium risk. The governance tier is anchored to inherent risk and mandatory floors; a lower residual rating may make a release acceptable, but does not silently lower the assurance appropriate to the underlying use.
+A read-only agent can be high risk and a durable one medium. The tier is anchored to inherent risk and mandatory floors; a lower residual rating can make a release acceptable but does not lower the assurance the use needs.
 
 ### Run the assessment in order
 
-Describe the intended and prohibited uses, users, affected parties, jurisdictions, environment, and accountable roles. Inventory the effective model policy, instructions, skills, tools, integrations, data sources, memory, workflows, providers, approval paths, and downstream consumers. Record the identity or version of those dependencies so later evidence can be tied to what was assessed.
+1. Describe intended and prohibited uses, users, affected parties, jurisdictions, environment, and accountable roles.
+2. Inventory, with versions, the effective model policy, instructions, skills, tools, integrations, data sources, memory, workflows, providers, approval paths, and consumers.
+3. Run the prohibited-use and regulatory screen before scoring.
+4. Write and score scenarios, credit evidenced controls, derive the tier, choose treatments, and record the decision and review date.
 
-Run the prohibited-use and regulatory screen before assigning matrix scores. Next, write material harm scenarios, score each scenario inherently, identify controls and their evidence, score the residual risk, derive the governance tier, select a treatment, and record the decision and review obligation. The builder may draft this record, but an agent or model must not accept its own risk or authorize launch.
+The builder may draft it; no agent or model accepts its own risk or authorizes launch.
 
-Assess amplifiers as evidence about a scenario's likelihood or impact, rather than as extra score dimensions. They include autonomy and ability to initiate actions; tool effect, transaction authority, identity, and privilege; data sensitivity, provenance, retention, and data subjects; affected population, vulnerable groups, and public reach; frequency, transaction value, and blast radius; reversibility, compensation, detection, and time to intervention; exposure to untrusted or adversarial content; human review quality and ability to stop execution; and model uncertainty, dependency concentration, and supply-chain exposure.
+Amplifiers are evidence about likelihood or impact, not extra dimensions: autonomy; tool effect, authority, identity, and privilege; data sensitivity, provenance, retention, and subjects; population, vulnerable groups, and reach; frequency, value, and blast radius; reversibility, compensation, detection, and time to intervene; adversarial content; review quality and ability to stop; model uncertainty and supply-chain concentration.
 
 ## Decisions and best practices
 
 ### Screen for prohibited and controlled uses first
 
-Record applicable jurisdictions, sectors, contractual duties, internal policies, and the legal, compliance, or domain reviewers asked to decide applicability. A prohibited use is `no_go` whatever its matrix score. A binding classification sets a floor and required controls independently of the matrix. Health, employment, education, credit, insurance, housing, legal services, biometrics, critical infrastructure, children, and similarly consequential decisions require a documented applicability review and must not default to low risk. Unknown applicability is an unresolved risk, not evidence that no obligation applies.
+Record the applicable jurisdictions, sectors, contractual and internal-policy duties, and the named reviewers. A prohibited use is `no_go` whatever its score, and a binding classification sets a floor regardless of the matrix. Health, employment, education, credit, insurance, housing, legal services, biometrics, critical infrastructure, children, and similar consequential decisions need a documented applicability review and never default to low risk. Unknown applicability is an unresolved risk. Legal classification goes to the named legal, compliance, or domain reviewer, not the matrix.
 
-The matrix helps compare scenario reasoning. It neither establishes a legal classification nor proves legal compliance. Escalate that question to the named reviewer instead of trying to infer it from a score.
+### Frameworks you may need to map to
 
-### Write scenarios that a reviewer can test
+Pointers, not legal advice:
 
-Use this sentence form for each material scenario:
+- **NIST AI RMF and Generative AI Profile.** Voluntary; NIST AI 600-1 (July 2024) adds generative-AI actions for govern, map, measure, and manage.[1], [2]
+- **ISO/IEC 42001 and 23894.** 42001:2023 specifies an assessable AI management system; 23894:2023 guides AI risk management.[3], [4]
+- **GDPR Article 35.** A data protection impact assessment is required before processing likely to pose a high risk to people's rights and freedoms; it describes processing and purposes, assesses necessity, proportionality, and risks, and lists safeguards. Article 35(3) examples include systematic and extensive evaluation of personal aspects based on automated processing, including profiling, on which decisions with legal or similarly significant effects are based, and large-scale processing of special-category or criminal-offence data; see [10.3](03-advanced-privacy-isolation-and-auditability.md).[5]
+- **EU AI Act.** Some practices are prohibited; listed high-risk uses carry strict obligations (such as risk management, logging, documentation, and human oversight); some systems have transparency duties; most have none; general-purpose AI models have their own. The AI Omnibus (in force 27 July 2026) moved the high-risk obligations for Annex III uses to 2 December 2027 and for Annex I products to 2 August 2028 (as of October 2026; check current dates).[6]
+
+These frameworks can consume this method's records but do not replace it.
+
+### Write scenarios a reviewer can test
+
+Use this form for each material scenario:
 
 > Because **[cause or initiating condition]**, the agent could **[unsafe action, output, or omission]**, causing **[harm]** to **[affected party or asset]**.
 
-Consider normal use, foreseeable misuse, adversarial content, dependency failure, model error, authorization failure, retry or concurrency behavior, operator error, and control failure. Each scenario needs a stable ID, owner, status, affected parties and assets, causes and preconditions, consequences, a primary dimension, any secondary dimensions, scoring rationale and confidence, controls with evidence, treatment, and links to evaluation cases, indicators, alerts, and runbooks.
+Cover normal use, misuse, adversarial content, dependency failure, model error, authorization failure, retry or concurrency, operator error, and control failure. Beyond the fields RISK-03 requires (stable ID, scenario form, scores, confidence, rationale), record owner, status, assets, preconditions, consequences, primary and secondary dimensions, and linked evaluation cases, indicators, alerts, and runbooks.
 
-Consider every dimension even when it is not the scenario's primary one: financial, operational, reputational, legal, security, privacy, regulatory, and human impact and safety. Calibrate financial amounts, outage duration, affected populations, data categories, and comparable anchors to the adopting organization's risk appetite. This playbook supplies a shared method, not universal materiality thresholds.
+The eight dimensions are financial, operational, reputational, legal, security, privacy, regulatory, and human impact and safety. Calibrate amounts, outage duration, populations, and data categories to your risk appetite.
 
 ### Score inherent and residual risk without false precision
 
-Score credible worst-case impact within the documented scope, not an average outcome. Use impact 1 for localized, short-lived, readily reversible, negligible external harm; 2 for meaningful but contained harm recoverable through normal procedures; 3 for material financial, operational, legal, security, privacy, reputational, regulatory, or human harm; and 4 for severe, widespread, systemic, life-safety, organization-threatening, or substantially irreversible harm. A control lowers impact only if it genuinely limits blast radius, duration, affected population, or reversibility.
+Score the credible worst case in scope, not the average.
 
-For likelihood, use 1 when multiple unusual conditions are required and evidence supports rarity; 2 when the event is credible but not expected in normal operation; 3 when it is plausible in normal or adversarial operation or has been observed; and 4 when it is expected, repeated, or already occurring without intervention. Inherent likelihood assumes risk-reducing controls are absent. Residual likelihood includes only implemented controls with evidence. Draw on evaluations, tests, incidents, comparable systems, threat intelligence, domain review, and production measurements when they are available.
+- **Impact:** 1 localized, short-lived, easily reversible, negligible external harm; 2 meaningful but contained, recoverable through normal procedures; 3 material harm in any dimension; 4 severe, widespread, systemic, life-safety, organization-threatening, or largely irreversible.
+- **Likelihood:** 1 needs several unusual conditions, with evidence of rarity; 2 credible but not expected in normal operation; 3 plausible in normal or adversarial operation, or already observed; 4 expected, repeated, or already occurring without intervention.
 
-Apply the same matrix for both scores:
+A control lowers impact only if it limits blast radius, duration, population, or reversibility. Base likelihood on evaluations, tests, incidents, comparable systems, threat intelligence, domain review, and production data. One matrix serves both scores:
 
-- With impact **1**, likelihood 1 or 2 is `low`; likelihood 3 or 4 is `medium`.
-- With impact **2**, likelihood 1 is `low`; likelihood 2 or 3 is `medium`; likelihood 4 is `high`.
-- With impact **3**, likelihood 1 or 2 is `medium`; likelihood 3 is `high`; likelihood 4 is `critical`.
-- With impact **4**, likelihood 1 or 2 is `high`; likelihood 3 or 4 is `critical`.
+| Impact \ Likelihood | 1 | 2 | 3 | 4 |
+| --- | --- | --- | --- | --- |
+| 1 | `low` | `low` | `medium` | `medium` |
+| 2 | `low` | `medium` | `medium` | `high` |
+| 3 | `medium` | `medium` | `high` | `critical` |
+| 4 | `high` | `high` | `critical` | `critical` |
 
-For example, impact 3 and likelihood 2 is `medium`. The highest material scenario determines the maximum inherent and residual tiers. Do not average scenarios or dimensions into a lower result. Rate the confidence of each inherent and residual estimate as `low`, `medium`, or `high`; confidence describes evidence strength, not risk level. A low-confidence estimate with plausibly severe consequences needs investigation, a constraint, or a conservative classification. Record assumptions, missing evidence, disputed scores, and what would change the assessment.
+The highest-scoring material scenario sets the maximum inherent and residual tiers; never average scenarios or dimensions down. Rate confidence (`low`, `medium`, `high`) as evidence strength; low confidence with plausibly severe consequences needs investigation, a constraint, or a conservative classification. Record assumptions, missing evidence, disputed scores, and what would change the assessment.
 
 ### Credit controls only when evidence supports them
 
-A preventive control reduces the chance of a scenario, such as deterministic authorization, an allowlist, isolation, or bounded approval. A detective control shortens time to discovery, such as reconciliation, anomaly detection, policy telemetry, or audit review. A recovery control limits duration or consequence, such as compensation, rollback, safe cancellation, notification, or a tested stop mechanism.
+- A **preventive** control lowers the chance of a scenario: deterministic authorization, an allowlist, isolation, bounded approval.
+- A **detective** control shortens time to discovery: reconciliation, anomaly detection, policy telemetry, audit review.
+- A **recovery** control limits duration or consequence: compensation, rollback, safe cancellation, notification, a tested stop mechanism.
 
-Every credited control has an owner and evidence of its design and operation. Useful evidence can include configuration or code review, deterministic tests, evaluation results, replay and failure scenarios, red-team results, audit samples, operational metrics, exercises, and independent review. A planned control or an untested policy receives no residual-risk reduction. An [example assessment template](../../templates/10.1/risk-assessment-example.yaml) illustrates a versioned record; its values are examples, not live findings.
+A planned or untested control earns no credit. A credited control has an owner and evidence of design and operation, such as review, deterministic tests, evaluations, replay and failure scenarios, red-teaming, audit samples, metrics, exercises, or independent review ([example template](../../templates/10.1/risk-assessment-example.yaml)).
 
 ### Set the governance floor before judging residual risk
 
-The governance tier is the highest of the maximum inherent scenario tier, any legal, regulatory, contractual, or internal-policy floor, and any organizational capability floor. At a minimum:
+The governance tier is the highest of the maximum inherent scenario tier, any legal, regulatory, contractual, or policy floor, and any organizational capability floor (RISK-04). Mandatory floors:
 
 - A prohibited use is `no_go`.
 - Material, potentially irreversible human or safety impact is at least `high` and may be `critical`.
 - A formally classified high-risk regulated use is at least `high`.
-- An agent that can execute consequential external actions requires `human_governed` execution and is at least `high`, unless a documented organizational standard is stricter.
+- An agent that can take consequential external actions requires `human_governed` execution and is at least `high`, unless a stricter organizational standard applies.
 - Privileged code execution, broad cross-tenant access, or control of critical systems is at least `high`.
-- Incomplete scope, missing ownership, or materially insufficient evidence prevents a `low` classification.
+- Incomplete scope, missing ownership, or materially insufficient evidence rules out `low`.
 
-Verified controls may change whether a specific release is acceptable. They do not erase these floors or reclassify the inherent nature of the use. The agent contract and assessment should agree about execution class and governance tier.
+Verified controls never erase these floors.
 
 ### Make the residual-risk decision accountable
 
-Assign every scenario one treatment: `avoid`, `mitigate`, `transfer`, or `accept`. An acceptance record names the accountable role, rationale, conditions, expiry, and next review date. A `critical` residual scenario is `no_go`. A `high` residual scenario needs independent review, explicit acceptance by the designated risk authority, continuous monitoring, and a tested stop or containment mechanism. A `medium` residual scenario needs a named owner, monitoring, and a time-bounded review. Track a low residual scenario when it can compound with other risks or confidence is low.
+Treat every scenario: `avoid`, `mitigate`, `transfer`, or `accept`. An acceptance names the accountable role, rationale, conditions, expiry, and next review date. Residual `critical` is `no_go`; `high` needs independent review, explicit acceptance by the risk authority, continuous monitoring, and a tested stop or containment mechanism; `medium` needs a named owner, monitoring, and a time-bounded review; track `low` when it can compound with other risks or confidence is low.
 
-A `conditional_go` names every condition, owner, deadline, monitoring signal, and consequence of non-completion. A condition that supplies required pre-release evidence still blocks launch; it is not a permission to ship first. Local policy or applicable obligations may be stricter.
+A `conditional_go` names each condition's owner, deadline, monitoring signal, and consequence if missed ([5.2](../../development-guide/05-release-operations-and-lifecycle/02-readiness-change-and-rollout.md)); a condition supplying required pre-release evidence still blocks launch.
 
 ## Requirements
 
@@ -108,32 +123,44 @@ A `conditional_go` names every condition, owner, deadline, monitoring signal, an
 
 ## Worked example
 
-The shared fictional internal policy assistant answers questions from approved, current, permission-filtered documents. It returns citations and uncertainty, has no external write capability, and reports `complete`, `needs_information`, `declined`, `failed`, or a declared bounded partial result. Its execution class may be `ephemeral`; that does not determine its governance tier.
-
-The owner first records a prohibited-use and regulatory screen. The example is not a legal determination: it identifies the relevant jurisdictions, internal policy owner, and reviewers to consult, and it records that the assistant must not present a document as current when the source policy cannot support that claim. The review must not be skipped merely because the assistant only reads documents.
-
-One material scenario is `RISK-CONTEXT-001`:
+The shared fictional policy assistant answers from approved, current, permission-filtered documents with citations, and cannot write externally; its `ephemeral` class does not decide its tier. The owner still records the screen (jurisdictions, policy owner, reviewers) and the rule that no document is presented as current without source support. One material scenario is `RISK-CONTEXT-001`:
 
 > Because a superseded travel-policy document remains eligible for retrieval, the assistant could cite it as current and state an incorrect London hotel allowance, causing an employee to make an unsupported expense decision and creating financial, operational, and trust harm for the employee and organization.
 
-The scenario's primary dimension is financial, with operational and reputational secondary dimensions. The assessment considers the other dimensions and records why they are not primary in this scenario. Inherent impact is 2: the illustration assumes a meaningful but contained and normally recoverable expense error. Inherent likelihood is 3 because stale material is plausible if current-status filtering fails. The matrix therefore gives inherent `medium` risk. This is an illustrative assessment, not a measured incident rate.
+Primary dimension: financial; secondary: operational, reputational. Impact 2 (contained, recoverable) and likelihood 3 (plausible if status filtering fails) give inherent `medium`.
 
-The preventive control filters for approved, current documents before retrieval and keeps the permission boundary independent of model output. Its evidence includes a versioned evaluation case using the fictional `travel-policy-current` fixture: it permits a London hotel amount of **GBP 220**, while a superseded document differs. The case checks that the response uses the current source, cites it, and expresses uncertainty or escalates when authoritative support is absent. A citation-presence check alone would not establish that the cited source supports the amount. A detective control records source identity and current-status failures for review; its linked indicator, alert, owner, and response runbook are part of the production evidence.
+The preventive control filters for approved, current documents before retrieval, independent of model output. Evidence: a versioned case on the `travel-policy-current` fixture (London hotel **GBP 220**; a superseded document differs) checking that the response cites the current source, or expresses uncertainty or escalates; citation presence alone shows no support. A detective control logs current-status failures, with indicator, alert, owner, and runbook.
 
-If the evaluation and operating-control evidence is verified, the residual impact remains 2 but likelihood becomes 1, producing residual `low` risk. The maximum inherent tier remains `medium`, so the governance tier is `medium` even though residual risk is lower. A required pre-release test that has not passed receives no risk-reduction credit and blocks launch. The authorized decision authority could issue `go` once that evidence is complete. A bounded `conditional_go` could instead allow only a noncritical, post-release review of the source-status indicator, with a named owner, a deadline, a monitoring signal, and the consequence that rollout expansion stops and reassessment begins if the review is overdue. It cannot substitute for the current-source test.
+With that evidence, residual likelihood is 1 (residual `low`); the tier stays `medium`. An unpassed required test blocks launch. The authority could then issue `go`, or a `conditional_go` deferring only a noncritical indicator review, where lateness stops expansion and starts reassessment.
 
 ## Evidence and checklist
 
-A reviewable assessment ties each claim to an artifact, not merely to a narrative. Tag evaluation cases, trace attributes, risk-register entries, and incident records with the scenario ID. For authorization or approval claims, retain deterministic denial, tamper, scope, and argument-binding tests. For model behavior, retain versioned cases, fit-for-purpose evaluators, repeated-run evidence when needed, and failure distributions. For tools and workflows, retain argument, ordering, retry, replay, duplication, timeout, and recovery evidence. For security and privacy, retain threat cases, isolation tests, redaction checks, and relevant review. For human or domain impact, retain affected-party analysis, domain rubric, escalation behavior, and expert review. Operational controls need an indicator, alert, runbook, owner, exercise, and recovery evidence.
+Tag cases, traces, register entries, and incidents with the scenario ID. Typical evidence:
 
-Machine validation can check score-to-tier agreement, maximum-tier summaries, floors, `no_go` outcomes for prohibited use and critical residual scenarios, unique IDs, sensible date ordering, resolvable evidence links, and agreement with the referenced agent contract. Structural validation cannot decide whether a control is effective, whether a scenario is complete, or whether a legal classification applies; those remain review decisions.
+- **Authorization:** deterministic denial, tamper, scope, and argument-binding tests.
+- **Model behavior:** versioned cases, fit-for-purpose evaluators, repeated runs, failure distributions.
+- **Tools and workflows:** argument, ordering, retry, replay, duplication, timeout, recovery.
+- **Security and privacy:** threat cases, isolation and redaction tests, review.
+- **Human or domain impact:** affected-party analysis, domain rubric, escalation behavior, expert review.
+- **Operations:** indicator, alert, runbook, owner, exercises.
 
-Before accepting the assessment, confirm:
+Machine validation checks score-to-tier agreement, maximum tiers, floors, `no_go` outcomes, unique IDs, dates, links, and contract agreement; control effectiveness, completeness, and legal classification stay review decisions.
 
-- [ ] The scope, prohibited-use and regulatory screen, named reviewers, and accountable owner are recorded.
-- [ ] All eight dimensions were considered; every material scenario has inherent and residual scoring, confidence, rationale, treatment, and linked evidence.
-- [ ] Each credited control has an owner and verified evidence; planned work has not reduced residual risk.
-- [ ] The governance tier reflects the highest inherent scenario and every applicable floor, and matches the agent contract.
-- [ ] The release decision, non-waivable gates, any permitted conditions, monitoring, expiry, and reassessment date are explicit.
+Before accepting, confirm:
 
-For related assurance methods, continue to [10.2 Bias, Human Impact, and Domain Assurance](02-bias-human-impact-and-domain-assurance.md) and [10.3 Advanced Privacy, Isolation, and Auditability](03-advanced-privacy-isolation-and-auditability.md).
+- [ ] Scope, the prohibited-use and regulatory screen, named reviewers, and the accountable owner are recorded.
+- [ ] All eight dimensions were considered per scenario.
+- [ ] Each credited control has an owner and verified evidence; no planned work reduced residual risk.
+- [ ] The governance tier reflects the highest inherent scenario and every floor, and matches the agent contract.
+- [ ] Gates, conditions, monitoring, expiry, and reassessment date are explicit.
+
+Next: [10.2](02-bias-human-impact-and-domain-assurance.md) and [10.3](03-advanced-privacy-isolation-and-auditability.md).
+
+## References
+
+[1]: https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf "NIST AI RMF 1.0"
+[2]: https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf "NIST AI 600-1 Generative AI Profile"
+[3]: https://www.iso.org/standard/81230.html "ISO/IEC 42001:2023 AI management system"
+[4]: https://www.iso.org/standard/77304.html "ISO/IEC 23894:2023 AI guidance on risk management"
+[5]: https://eur-lex.europa.eu/eli/reg/2016/679/oj "Regulation (EU) 2016/679 (GDPR), Article 35"
+[6]: https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai "European Commission: AI Act"

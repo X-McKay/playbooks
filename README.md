@@ -1,30 +1,41 @@
-# Agent Playbook 0.5.0-draft.2
+# Agent Playbook
 
-**Status:** Assembled 0.5.0-draft.2 — proposed, not an adopted standard
-**Provenance:** Reorganized and populated from the supplied v0.4 compatibility baseline and manifest-pinned PR #7 source set (`78ec3bd517c52255bced1901b4d00b68c7c18ada`).
-**Scope:** Technology-neutral guidance for designing, evaluating, releasing, operating, and assuring production AI agents and multi-agent systems.
+This playbook is a guide, with best practices, for developing production-grade AI agents. It is written for the developers who design, build, test and run agents, and it stays technology-neutral: the practices hold whatever model, framework or language you use.
 
-This is the coherent draft book entry point. It supplies a common route through two sections, ten Parts, and 40 populated draft chapters. It does **not** assert that an organization has adopted the draft requirements or that older material and skills conform to them.
+**Status:** 0.5.0-draft.2 — draft. The requirements use MUST, SHOULD and MAY to show how strongly the playbook recommends a practice; see [Applicability and normative language](applicability.md).
 
-## Current refinement state
+## How the playbook is organized
 
-Parts **1–5** are refined draft mini-books. Part 1 retains its completed planning history; the earlier increment integrated the seven separately reviewable Part 2 chapter/template units and three separately reviewable Part 3 chapter/template units, their two practical-reference indexes, shared navigation, and glossary pointers. This increment integrates the three separately reviewable Part 5 chapter/template units, its overview, practical reference, and glossary pointers. The Part 5 scoped writer gates were reported as passed local file checks only; they are not a whole-book result, release authorization, or adoption decision. The canonical requirement wording, all 208 IDs, strengths, owner paths, applicability, and conformance meaning are unchanged: the draft remains **proposed, not adopted**.
+The playbook has two sections:
 
-[Part 4](development-guide/04-testing-and-evaluation/README.md) remains the existing detailed seven-chapter pilot mini-book within the refined route. Parts **6–10** remain populated **first drafts**—not empty and not yet reviewed to the refinement depth of Parts 1–5. Final whole-book structural, owner, template, local-link, and Markdown checks, followed by packaging, remain pending the parent delivery record after this integration. See [development progress](development-progress.md) for the current reading-order queue and validation boundary.
+- **Section I, the Development Guide (Parts 1–5),** is the main route from a user problem to an agent running in production. Every production agent needs it.
+- **Section II, the Engineering Reference (Parts 6–10),** covers patterns you need only when your design uses them: explicit planning, durable or approval-gated work, model routing and context optimization, multiple agents, and higher-assurance risk work.
+
+Each chapter explains the concepts, the decisions you face, best practices and common failures, then lists its requirements, a worked example, and a checklist. Most chapters share one fictional example, an internal travel-policy assistant, so you can follow one agent through the book. Parts 1–5 have been reviewed in depth; Parts 6–10 are earlier drafts.
 
 ## Start here
 
-- [Applicability and normative language](applicability.md) explains the universal-versus-triggered boundary, `not applicable`, governed exceptions, non-waivable gates, and `conditional_go`.
-- [Glossary](glossary.md) supplies one reading vocabulary and links to the chapters that own each term.
-- [Requirement index](requirement-index.md) locates requirement IDs without reproducing a competing standard.
-- [Draft notes](draft-notes.md) records migration, proposed policy changes, review boundaries, limitations, and unresolved decisions.
-- [Development progress](development-progress.md) records completed increments, review units, the reading-order backlog, and delivery-validation status.
+- [Applicability and normative language](applicability.md) explains which requirements apply to your agent, what "not applicable" means, and how exceptions work.
+- [Glossary](glossary.md) defines the shared vocabulary and links to the chapter that explains each term.
+- [Requirement index](requirement-index.md) lists every requirement ID and the chapter that owns it.
+
+## Start small
+
+You do not need the whole book on day one. For a first production agent, especially a read-only one:
+
+1. Write a short problem brief and success criteria, and check that a simpler non-agent design would not do the job ([Part 1](development-guide/01-problem-definition-and-planning/README.md)).
+2. Write the agent contract: what it accepts, what it may do, and every way it can finish ([2.2](development-guide/02-agent-basics/02-agent-contracts-and-configuration.md)).
+3. Enforce permissions outside the model and treat retrieved content and tool output as data, not instructions ([Part 3](development-guide/03-security-and-trust-boundaries/README.md)).
+4. Build a small evaluation set from real tasks, including cases where the agent should decline or ask for more information, and rerun it on every change ([Part 4](development-guide/04-testing-and-evaluation/README.md)).
+5. Release gradually with monitoring, a way to stop the agent, and a named owner ([Part 5](development-guide/05-release-operations-and-lifecycle/README.md)).
+
+Add Engineering Reference Parts only when your design calls for them.
 
 ## Reading routes
 
-1. **New production proposal:** read [Part 1](development-guide/01-problem-definition-and-planning/README.md), then [Part 2](development-guide/02-agent-basics/README.md), [Part 3](development-guide/03-security-and-trust-boundaries/README.md), [Part 4](development-guide/04-testing-and-evaluation/README.md), and [Part 5](development-guide/05-release-operations-and-lifecycle/README.md).
-2. **Add an optional capability:** start with the relevant trigger: planning/reflection/parallel work ([Part 6](engineering-reference/06-reasoning-and-execution-patterns/README.md)); durable or human-governed work ([Part 7](engineering-reference/07-durable-execution-and-human-governed-work/README.md)); model/context/capacity engineering ([Part 8](engineering-reference/08-model-context-and-resource-engineering/README.md)); or composition/interoperability ([Part 9](engineering-reference/09-multi-agent-systems-and-interoperability/README.md)).
-3. **Higher-assurance review:** use the initial screen in [1.4](development-guide/01-problem-definition-and-planning/04-initial-risk-data-ownership-and-delivery-plan.md), then apply the triggered methods in [Part 10](engineering-reference/10-risk-privacy-and-specialized-assurance/README.md) alongside Parts 3–5.
+1. **New production agent:** read Parts 1 to 5 in order.
+2. **Adding a capability:** go to the Part for it: planning, reflection or parallel work ([Part 6](engineering-reference/06-reasoning-and-execution-patterns/README.md)); long-running, side-effecting or approval-gated work ([Part 7](engineering-reference/07-durable-execution-and-human-governed-work/README.md)); model selection, context, cost or capacity ([Part 8](engineering-reference/08-model-context-and-resource-engineering/README.md)); several agents or agent-to-agent protocols ([Part 9](engineering-reference/09-multi-agent-systems-and-interoperability/README.md)).
+3. **Higher-risk agent:** start with the initial risk screen in [1.4](development-guide/01-problem-definition-and-planning/04-initial-risk-data-ownership-and-delivery-plan.md), then apply [Part 10](engineering-reference/10-risk-privacy-and-specialized-assurance/README.md) alongside Parts 3–5.
 
 ## Book map
 
@@ -152,12 +163,12 @@ Parts **1–5** are refined draft mini-books. Part 1 retains its completed plann
 
 ## Universal versus triggered
 
-Every agent needs a bounded contract and terminal outcomes, proportionate risk screening, appropriate evidence, and operating controls. Those universal decisions do **not** make every reference mechanism universal. Tools, skills, retrieval, memory, explicit planning, MCP, A2A, model judges, durable execution, human approval, shared admission, and multi-agent composition apply only when their stated trigger is present. A read-only agent can still be high risk; execution class, governance tier, and residual risk remain separate decisions. See [Applicability and normative language](applicability.md) before treating a chapter as applicable or invoking an exception.
+Every agent needs a bounded contract with defined ways to finish, a proportionate risk screen, evidence that it works, and operating controls. That does not make every mechanism in the book universal. Tools, skills, retrieval, memory, explicit planning, MCP, A2A, model judges, durable execution, human approval, shared capacity controls and multi-agent composition apply only when your design uses them. A read-only agent can still be high risk, so execution class, governance tier and residual risk are separate decisions. See [Applicability and normative language](applicability.md).
 
-## Legacy v0.4 compatibility baseline
+## Earlier version
 
-The existing [`agent-playbook/`](agent-playbook/README.md), [`foundations/`](foundations/README.md), [`multi-agent-playbook/`](multi-agent-playbook/README.md), and [`skills/`](skills/README.md) remain a byte-identical v0.4 compatibility baseline in this worktree. They have not been moved, deleted, or declared v0.5 conformant. Skills continue to reference their existing material until a separately reviewed migration changes them.
+The `agent-playbook/`, `foundations/`, `multi-agent-playbook/` and `skills/` directories hold the earlier v0.4 playbook and its skills. They have not been updated to this draft, and the skills still reference the v0.4 chapters.
 
-## Contributing to this draft
+## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). New 0.5.0-draft.2 material must remain technology-neutral, preserve canonical chapter ownership, identify proposed policy changes honestly, and keep legacy content and skills distinct.
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the [writing guide](writing-guide.md). Editorial history and open decisions are in [development progress](development-progress.md) and [draft notes](draft-notes.md).

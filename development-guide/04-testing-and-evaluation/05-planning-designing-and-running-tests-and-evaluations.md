@@ -1,52 +1,52 @@
 # 4.5 Planning, Designing, and Running Tests and Evaluations
 
-**Status:** 0.5.0-draft.2 assembled draft — proposed, not adopted
-**Audience:** Agent builders, evaluation designers, reviewers, and accountable owners
-**Applicability:** Production candidates and changes for which test or evaluation evidence will support a material design, pilot, release, or operational decision. Select methods and depth to fit the claims, capabilities, and risks in scope.
+**Status:** 0.5.0-draft.2 — draft  
+**Audience:** Agent builders, evaluation designers, reviewers, and accountable owners  
+**Applicability:** Production candidates and changes whose test or evaluation evidence supports a design, pilot, release, or operational decision. Fit methods and depth to the claims, capabilities, and risks in scope.  
 **Reader question:** How do I build and operate an evaluation process?
 
 [Part 4 — Testing and Evaluation](README.md) · [4.4 Evaluators, Metrics, Rubrics, and Calibration](04-evaluators-metrics-rubrics-and-calibration.md) · [4.6 Standards, Required Coverage, and Execution Cadence](06-standards-required-coverage-and-execution-cadence.md) · [4.7 Analyzing Results, Comparing Versions, and Making Decisions](07-analyzing-results-comparing-versions-and-making-decisions.md) · [Practical reference](reference/README.md)
 
 ## From a claim to an interpretable result
 
-A useful evaluation starts with a question that matters, not a convenient score. What must the agent do for its intended users? What must it never do? Which capability, dependency, or risk could change the answer? Keep each claim narrow enough that a case can exercise it and evidence can establish it. [4.6](06-standards-required-coverage-and-execution-cadence.md) owns the required coverage map and profile triggers; this chapter shows how to turn selected claims into executions.
+Start with a question that matters, not a convenient score: what must the agent do, what must it never do, and which capability, dependency, or risk could change the answer? Keep each claim narrow enough for a case to exercise. [4.6](06-standards-required-coverage-and-execution-cadence.md) owns the coverage map and profile triggers; this chapter turns selected claims into executions.
 
-Treat evidence as a lifecycle input rather than a one-time certificate: the NIST AI Risk Management Framework describes risk measurement and testing as ongoing, including before deployment and during operation [1]. This supports continuous learning, not any particular test count or pass threshold.
+Evidence is ongoing input, not a one-time certificate: NIST's AI RMF says AI systems should be tested before deployment and regularly during operation,[1] though it sets no test count or pass threshold. Start small: early changes tend to have large effects, so about 20 tasks from real usage already show whether a change helped;[4] 20 to 50 tasks drawn from real failures make a good first suite, which you grow as new failures appear.[6]
 
-The working chain is:
+The working chain:
 
-1. **Map claim to case and profile.** Record the claim, its decision role, applicable risk or capability profile, case or case family, owner, stage, and reason for any relevant profile marked not applicable. A case may support several claims, but keep their expected outcomes and evidence distinguishable.
-2. **Design cases with purpose.** Give each case a stable identity, versioned task and origin, expected observable outcome or invariant, permitted variation, and suite purpose. Include ordinary answerable work as well as relevant missing, stale, conflicting, denied, malformed, or otherwise adverse conditions. A refusal-only suite cannot establish useful behavior.
-3. **Specify the fixture.** Define the controlled starting world: revisioned data and identity/permission state, dependencies, initialization, isolation, any permitted live boundary, reset and reset verification, and the authoritative source that can establish the outcome. Keep the fixture (what the case starts with) distinct from the reference or observation (what determines or demonstrates whether a claim holds).
-4. **Choose evaluator and trials.** Select an evaluator capable of judging the claim, document its identity and rule, and establish its fitness for the intended use. Before running, state what counts as pass, fail, invalid or inconclusive, and how repeats, retries, variants, and missing observations will be treated. See [4.4](04-evaluators-metrics-rubrics-and-calibration.md) for evaluator selection and calibration, and [4.7](07-analyzing-results-comparing-versions-and-making-decisions.md) for interpretation.
-5. **Run and preserve evidence.** Identify the exact candidate and configuration, case and fixture revisions, evaluator version, trial conditions, outcome, status, and relevant observation. Preserve cost/resource evidence where those are claims. Do not equate identical wording with reproducibility: repeated episodes should begin from verified conditions, while acceptable response wording or safe routes may vary.
-6. **Triage, learn, and hand off.** Separate candidate behavior from fixture, harness, dependency, or evaluator defects. Preserve every attempted run and its status. Fix an evaluation defect only under a predeclared, visible rule; retain invalid records and rerun affected evidence as required. A confirmed, privacy-reviewed production failure can become a regression case with a clear expected behavior. Send attributed results and evidence limits to the analysis and decision process rather than announcing a release conclusion here.
+1. **Map claim to case and profile.** Record the claim, decision role, profile, case or case family, owner, stage, and the reason for any profile marked not applicable. A case may serve several claims if their expectations and evidence stay distinguishable.
+2. **Design cases with purpose** (CASE-02). Mix ordinary answerable work with missing, stale, conflicting, denied, malformed, or adverse conditions; a suite without should-act cases rewards an agent that never acts.
+3. **Specify the fixture** (CASE-03, below). The fixture is the starting world; the reference or observation decides whether the claim holds.
+4. **Choose evaluator and trials.** Pick an evaluator fit for the claim ([4.4](04-evaluators-metrics-rubrics-and-calibration.md)). Before running, state what counts as pass, fail, invalid, or inconclusive, and how repeats, retries, variants, and missing observations are treated ([4.7](07-analyzing-results-comparing-versions-and-making-decisions.md)).
+5. **Run and preserve evidence** (CASE-05), including claimed cost/resource evidence. Reproducibility means verified starting conditions, not identical wording; acceptable wording and safe routes may vary.
+6. **Triage and learn.** Read the transcripts to separate candidate behavior from fixture, harness, dependency, or evaluator defects. Keep every run and its status; repair evaluation defects only under CASE-05's predeclared rule. A confirmed, privacy-reviewed production failure can become a regression case.
 
-Best practice: make each record linkable through stable IDs, not by relying on filenames or a copied transcript. Keep the candidate, case, fixture, evaluator, trial, and evidence identities together so a reviewer can trace a result back to the conditions that produced it.
+Link records by stable IDs, not filenames or copied transcripts, so each result traces to the candidate, case, fixture, evaluator, and trial that produced it.
 
 ## Cases, suites, and independent holdouts
 
-A case is a bounded probe, not just a prompt and a preferred response. Record why it exists, what it tests, what outcomes are acceptable, which path conditions matter, and what harmless variations are allowed. If the claim concerns current evidence, include the older or conflicting evidence that could trigger the failure; a current-only fixture cannot expose stale-source selection. If missing evidence should produce `needs_information`, make that the expected outcome rather than rewarding an invented complete answer.
+A case is a bounded probe, not a prompt plus preferred response. For a currentness claim, include the older or conflicting evidence that could trigger the failure; a current-only fixture cannot expose stale-source selection. If missing evidence should give `needs_information`, make that the expected outcome.
 
-Keep suite purpose explicit: development cases can guide iteration; regression cases preserve reviewed behavior; an acceptance set supports a specified stakeholder decision; a release holdout supplies evidence not used to tune the behavior being reported. A holdout must be separate in more than its label: preserve its access and use boundary, and use separately authored tasks and fixtures. Re-running development cases under a new suite name does not make an untouched holdout. If a holdout is exposed or used to change prompts, rules, rubrics, or case selection, record the loss of independence and establish a fresh holdout before making a claim that depends on independence.
+Suite purposes are in [4.2](02-test-levels-techniques-and-suite-purposes.md). A release holdout must differ in more than label: protect its access and use and author its tasks and fixtures separately. If a holdout is exposed or used to change prompts, rules, rubrics, or case selection, record the loss of independence and build a fresh one before any claim that depends on it. Test data published in plain text leaks into training data, so keep holdout material out of public and indexable places.[5]
 
-For indirect prompt-injection cases, harmless marker content and instrumented destinations help expose whether attempted content reaches a boundary; a clean final answer alone does not establish that no disclosure or action occurred [3].
+For indirect prompt injection, harmless marker content and instrumented destinations show whether injected content reaches a boundary; a clean final answer does not show that nothing was disclosed or done.[3] Fixed injection cases are a smoke test; resistance evidence needs adaptive or red-team attacks ([4.3](03-evaluation-types-and-dimensions.md)).
 
-Cases should evolve from representative requirements, reviewed adverse scenarios, and resolved failures. A report or incident is not automatically a valid test case: first remove or transform sensitive material, establish the expected behavior with an accountable reviewer, and record provenance without retaining unnecessary raw user content. Keep the case's origin visible, but do not make raw transcripts the default source of truth.
+Build cases from representative requirements, reviewed adverse scenarios, and resolved failures. An incident becomes a case only after sensitive material is removed or transformed, an accountable reviewer settles the expected behavior, and provenance is recorded without unnecessary raw content; raw transcripts are not the default source of truth.
 
 ## Fixtures, isolation, and safe data handling
 
-A fixture controls the conditions necessary to interpret a trial; it does not guarantee that a stochastic agent will produce identical text. For an isolated read-only policy assistant, the controlled world might include a current approved document, a superseded version, a user with a defined permission, a fixed clock, and a per-run retrieval log. For a system with effects, fixture and outcome design must additionally capture the relevant boundary and authoritative state; a transcript is not proof that an external action did or did not occur.
+A fixture controls the conditions needed to interpret a trial; it does not make a stochastic agent produce identical text. With effects, also capture the boundary and authoritative state; a transcript does not prove an external action did or did not occur.
 
-Prefer fresh per-run namespaces or equivalent isolation over shared mutable state. Before each run, initialize from the declared fixture revision and verify the fields material to the claim: source identities and revisions, permissions, relevant state, and empty or correctly initialized event records. Afterward, reset and verify again before another trial. If the reset cannot be verified, do not describe the next trial as an independent fresh-world run. State any live services or mutable inputs explicitly; record the conditions they expose rather than implying that a fixture controlled them.
+Start every trial from clean state: leftover files, caches, records, or memory can inflate or hide results and couple trials. Prefer fresh per-run namespaces to shared mutable state, and verify the fields material to the claim (source identities and revisions, permissions, relevant state, empty event records) before and after each run. Name any live services or mutable inputs and record what they exposed.
 
-Use synthetic or appropriately minimized data where it can establish the claim. Restrict access to evaluation records, separate identifiers from user content when possible, and retain only evidence needed for the decision and later review under applicable policy. If real production-derived material is necessary, use an authorized handling and sanitation process before reuse. Do not place credentials, secrets, or unnecessary personal content in cases, fixtures, logs, or examples. These are practical safeguards; the privacy and retention rules applicable to a particular deployment remain owned by its governing policy.
+Use synthetic or minimized data where it can establish the claim. Restrict access to evaluation records, separate identifiers from content where possible, keep only the evidence needed, and sanitize production-derived material through an authorized process. Keep credentials, secrets, and unnecessary personal content out of cases, fixtures, logs, and examples; retention follows the deployment's governing policy.
 
-Best practice: use a small, explicit fixture contract. A controlled dependency should represent the failure shapes relevant to the claim—such as denial, timeout, malformed or partial response—not only the happy path. Do not add a live dependency merely for realism if a controlled substitute can establish the claim safely; when the live boundary is essential, document why and how its variation is observed.
+A controlled dependency should reproduce the failure shapes the claim needs (denial, timeout, malformed or partial response), not only the happy path. Prefer it to a live dependency when it can establish the claim safely; when a live boundary is essential, say why and how its variation is observed.
 
 ## Worked example: current policy, denied access, and a separate holdout
 
-The example is fictional. The policy assistant is ephemeral and read-only: it answers from approved, current, permission-filtered sources and cites them. It has no persisted memory, external write, approval flow, or delegated agent. In the controlled development/regression fixture, the current London hotel value is GBP 220. A prior case included only the current document, so it could not reveal whether the assistant would select a superseded source when both were available. The revised case uses the shared identifiers and keeps the stale document visible as a plausible distractor.
+This fictional, unexecuted example uses the ephemeral, read-only policy assistant (no memory, writes, approvals, or delegation). An earlier case held only the current document, so it could not show whether the assistant would pick a superseded source; the revised case keeps the stale document visible as a plausible distractor.
 
 ```yaml
 example_status: "illustrative only; not executed"
@@ -101,7 +101,7 @@ trial_record:
   case: "POLICY-CURRENT-001"
   fixture_revision: "fixture-2026-10-18.1"
   reset_verified: "record per trial"
-  attempt: "record each physical attempt; do not hide retries"
+  attempt: "record every physical attempt, including retries"
   status: "pass | fail | invalid | inconclusive"
   observation: "response, cited source/revision, permission decision, and event log"
 holdout:
@@ -111,13 +111,11 @@ holdout:
   use: "not used to tune the candidate or evaluator reported on it"
 ```
 
-For each run, initialize a fresh namespace and verify source revisions, permission, and the per-run log before exposing the question. Evaluate the answer against the fixture's current source and the claim-specific grounding rubric; inspect permission and boundary observations separately from the semantic judgment. Then discard and recreate the namespace and verify the reset before another trial. A correct value with an unsupported citation is not automatically a grounding pass; a blocked out-of-scope retrieval proposal and an actual unauthorized retrieval are distinct observations. No external-write check is implied by this read-only design.
+Each run initializes, resets, and verifies as the fixture specifies. The answer is judged against the current source and grounding rubric, with permission and boundary observations kept separate from the semantic judgment. A correct value with an unsupported citation is not a grounding pass, and a blocked out-of-scope retrieval proposal is not an unauthorized retrieval. The read-only design implies no external-write check.
 
-The remaining shared cases give the suite meaningful contrasts: `POLICY-STALE-002`, `POLICY-MISSING-003`, `POLICY-CONFLICT-004`, `POLICY-DENIED-005`, `POLICY-INJECTION-006`, `POLICY-PARAPHRASE-007`, and `POLICY-EXHAUSTION-008`. `POLICY-HOLDOUT-009` remains independently authored with a separate task and fixture; do not substitute the development cases under that ID. Use a missing-evidence case to check for a bounded outcome, a current-policy conflict to check that the assistant does not invent a definitive amount, a denied case to observe permission enforcement and disclosure separately, and a paraphrase pair only after review establishes that the meaning is preserved. If the candidate's behavior is materially variable, predeclare fresh trials and their decision unit; the example specifies no universal count or adequacy claim.
+The other shared cases are contrasts: `POLICY-STALE-002`, `POLICY-MISSING-003` (bounded outcome), `POLICY-CONFLICT-004` (no invented amount), `POLICY-DENIED-005` (enforcement and disclosure observed separately), `POLICY-INJECTION-006`, `POLICY-PARAPHRASE-007` (counts only after review confirms meaning), and `POLICY-EXHAUSTION-008`. `POLICY-HOLDOUT-009` keeps its own independently authored task and fixture; never substitute development cases under that ID. If behavior varies materially, declare fresh trials and their decision unit in advance.
 
-A curated suite establishes results on the cases and conditions it contains; it does not automatically justify extrapolation to future users or broader contexts. NIST's Generative AI Profile cautions against generalizing capability from narrow or anecdotal assessment [2].
-
-This example specifies test design, not executed results. It does not establish semantic grounding for arbitrary answers, all retrieval risks, population reliability, or release readiness. The reusable record structures belong to the [practical reference](reference/README.md), not this chapter.
+A curated suite shows results only for the cases and conditions it holds; NIST's Generative AI Profile cautions against extrapolating from narrow, nonsystematic, or anecdotal assessments.[2]
 
 ## Requirements
 
@@ -129,19 +127,23 @@ This example specifies test design, not executed results. It does not establish 
 
 ## Evidence and checklist
 
-Retain the versioned claim/case map, case and fixture inventory, evaluator/trial policy, and attributed execution records needed to trace each reported result. Before handing results to analysis, check:
+Keep the versioned claim/case map, case and fixture inventory, evaluator/trial policy, and execution records. Before analysis, check:
 
-- [ ] Each case has a stable ID, versioned input, rationale, applicable tags, observable expectation, allowed variation, and suite purpose.
-- [ ] A release holdout has its own protected use boundary and independently authored task/fixture; it was not used to tune the reported candidate or evaluator.
-- [ ] Fixture revision, initialization, isolation, live boundaries, reset procedure, reset verification, and authoritative observation are explicit.
-- [ ] Data is synthetic or minimized where practicable; production-derived material is authorized, sanitized, classified, and not more revealing than needed.
-- [ ] Each trial identifies candidate/configuration, case, fixture, evaluator, relevant fixed/random conditions, observations, and visible status.
-- [ ] Invalid or inconclusive runs have retained reasons; no rerun or repair hides a candidate failure or relaxes the claim.
-- [ ] Evaluator and trial policy are fit for the stated claim; repeated runs are not described as independent when the relevant conditions were shared or reset was unverified.
-- [ ] Confirmed, reviewed production failures are available for regression intake without unnecessary raw user data.
+- [ ] Each case has a stable ID, versioned input, rationale, tags, observable expectation, allowed variation, and suite purpose (CASE-02).
+- [ ] Cases include ones where a behavior should occur and ones where it should not.
+- [ ] A release holdout has protected use and independently authored tasks and fixtures, and was not used to tune what it reports on.
+- [ ] Fixture revision, initialization, isolation, live boundary, reset, reset verification, and authoritative observation are explicit (CASE-03).
+- [ ] Every trial starts from a verified clean state.
+- [ ] Data is synthetic or minimized where practicable; production-derived material is authorized, sanitized, and classified.
+- [ ] Each trial records candidate, case, fixture, evaluator, conditions, observations, and a visible status; invalid or inconclusive runs keep their reason (CASE-05).
+- [ ] Failures were read in transcripts to separate agent defects from fixture, harness, or grader defects; no rerun or repair hides a candidate failure.
+- [ ] Repeats are not called independent when conditions were shared or reset was unverified.
 
 ## References
 
 [1]: https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf "NIST Artificial Intelligence Risk Management Framework 1.0"
 [2]: https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf "NIST Artificial Intelligence Risk Management Framework Generative AI Profile"
 [3]: https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html "OWASP LLM Prompt Injection Prevention Cheat Sheet"
+[4]: https://www.anthropic.com/engineering/multi-agent-research-system "Anthropic: How we built our multi-agent research system"
+[5]: https://aclanthology.org/2023.emnlp-main.308 "Stop Uploading Test Data in Plain Text: Practical Strategies for Mitigating Data Contamination by Evaluation Benchmarks"
+[6]: https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents "Anthropic: Demystifying Evals for AI Agents"

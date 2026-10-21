@@ -1,45 +1,50 @@
 # 7.2 Side Effects, Idempotency, and Unknown Outcomes
 
-**Status:** 0.5.0 first draft
-**Audience:** Agent builders, tool owners, evaluators, operators, and accountable action owners.
-**Applicability:** Applies whenever an execution path can cause an externally visible effect whose repetition, absence, or final state matters. This includes creating or changing a record, sending a consequential notification, or submitting a request to another system. It applies whether the run is durable or not; durable work needs it in addition to the recovery controls in [7.1](01-execution-classes-persistence-and-recovery.md). It does not apply to the policy assistant while it only reads approved documents, but it applies as soon as its human-approved update capability is enabled.
+**Status:** 0.5.0-draft.2 — draft
+**Audience:** Agent builders, tool owners, evaluators, operators and accountable action owners.
+**Applicability:** Whenever an execution path can cause an externally visible effect whose repetition, absence or final state matters (changing a record, a consequential notification, a request to another system), durable or not. Durable work also needs [7.1](01-execution-classes-persistence-and-recovery.md). It applies to the policy assistant once its approved update capability is enabled.
 
 [Part 7](README.md) · [Applicability](../../applicability.md) · [7.1 Execution Classes, Persistence, and Recovery](01-execution-classes-persistence-and-recovery.md) · [7.3 Approval, Suspension, and In-Flight Compatibility](03-approval-suspension-and-in-flight-compatibility.md)
 
 ## Purpose and applicability
 
-A local history can show that an agent *attempted* an action. It cannot by itself show whether another system accepted that action. The difficult failure is the gap between an external commit and the agent recording the receipt: a target can complete an update, then a process crash or lost response can leave the resumed run with no local completion record. Treating that missing receipt as proof that nothing happened turns recovery into a duplicate action.
+A local history shows an attempt, not whether another system accepted it. The hard case is the gap between an external commit and the agent recording the receipt: a crash or lost response leaves the resumed run with no record, and treating that as proof nothing happened turns recovery into a duplicate action.
 
-Durability preserves progress and makes recovery possible; it does not establish exactly-once external action. An operation is retry-safe only when the target's semantics, or an authoritative reconciliation procedure, make repeating that particular intended effect safe. Approval binding and execution-time authorization remain the responsibilities of [7.3](03-approval-suspension-and-in-flight-compatibility.md); neither a retry nor a reconciliation result enlarges the approved authority.
+Durability preserves progress, not exactly-once action. An operation is retry-safe only when the target's semantics or an authoritative reconciliation make repeating that effect safe. Neither widens approved authority ([7.3](03-approval-suspension-and-in-flight-compatibility.md)).
 
 ## Working model
 
-Give every intended external effect a stable **operation identity** before the first send. The identity names one business action, not one network attempt or one workflow replay. Bind it to the target, tenant or principal scope, canonical intended arguments, and an operation-version rule. Record those facts with the selected outcome policy. An opaque operation identifier, a target-supported idempotency key, and a digest of the canonical intent may be distinct fields; do not substitute a changing attempt identifier for the operation identity.
+Give every intended effect a stable **operation identity** before the first send. It names one business action, not an attempt or replay, and binds target, tenant or principal scope, canonical arguments and operation version. Operation ID, idempotency key and intent digest can be separate fields; a changing attempt ID is never the identity.
 
-Keep four observations separate:
+Keep four observations apart:
 
-- **Intent recorded:** the agent has created a proposed operation and its stable identity.
-- **External effect committed:** the target accepted or performed the effect. The target's accepted-operation record, versioned resource state, or equivalent authoritative ledger establishes this fact.
-- **Receipt recorded:** the agent has persisted a result returned by the target or learned during reconciliation.
-- **Attempt observed:** a caller, log, or trace says a request was sent. This is useful diagnostic evidence, not proof of the external effect.
+- **Intent recorded:** a proposed operation and its identity exist.
+- **Effect committed:** the target accepted it, per its accepted-operation record, versioned state or authoritative ledger.
+- **Receipt recorded:** the agent saved a returned or reconciled result.
+- **Attempt observed:** a log or trace says a request was sent; diagnostic only.
 
-The authoritative commit point is the point at which the target has accepted the operation according to its own contract. A local durable-step completion is only the agent's record of what it learned. A transcript, a model statement, or a response-shaped object is not an effect oracle.
+Only the target's acceptance is the commit point; a local step completion, transcript or response-shaped object is not proof of an effect.
 
-HTTP illustrates why method names alone are not enough. Its idempotent-method semantics concern the intended server effect, permit a retry after a response is lost, and still allow separately repeated server-side logging or history. A client should not automatically retry a non-idempotent request unless it knows the request is idempotent for that resource or can detect that the original was never applied. [1] The IETF's `Idempotency-Key` draft describes one target-facing convention: a key identifies retries of the same request and must not be reused for a different payload. It is useful only when the receiving service documents and enforces the necessary behavior. [2]
+Method names are not enough. HTTP idempotency concerns the intended server effect, allows retry after a lost response, and still permits repeated logging; clients should not auto-retry a non-idempotent request unless they know it is idempotent for that resource or can detect the original was never applied.[1] An expired IETF Internet-Draft (not a standard) describes a key that identifies retries of one request, must not be reused with a different payload, and returns the saved result for a completed request.[2] It helps only where the service enforces it; check key retention.
 
-A lost response from an inference request can also create uncertain or duplicated cost if it is repeated. That is a cost and admission-control concern, not evidence that a business update occurred. Do not use a repeatable model request to infer that a later write is safe to repeat.
+Repeating a model request after a lost response duplicates cost, an admission concern; it says nothing about whether a later write is safe to repeat.
 
 ## Decisions and best practices
 
-Decide the recovery disposition for each effect before enabling it. A **retry-safe** operation has a target-supported identity and duplicate behavior that preserves the intended result. For example, the target may return the original accepted result for the same key and intent, or expose an authoritative accepted-operation record. Repeat the same canonical request with the same operation identity, not a newly generated request.
+Decide each effect's recovery disposition before enabling it.
 
-A **reconcile-first** operation might already have succeeded, but the agent has no trustworthy receipt. Query the target by the stable operation identity and validate that the returned target, principal scope, and canonical-intent digest match. The target must define the query as authoritative: an eventually consistent general search or an ambiguous current state cannot prove that this operation did or did not commit. Only an authoritative finding of no commit can move the operation into a retry-safe disposition.
+- **Retry-safe:** the target's duplicate handling preserves the intended result (it returns the original result for the same key and intent, or exposes an authoritative accepted-operation record). Resend the same canonical request and identity.
+- **Reconcile-first:** it may have succeeded but no trustworthy receipt exists. Query the target by identity and match target, scope and digest; the query must be authoritative, not an eventually consistent search or ambiguous state. Only an authoritative "not committed" makes it retry-safe.
+- **Unresolved/manual:** the record is unavailable or inconclusive, identity or digest mismatch, retention expired, or state cannot tell this operation from a similar one. Stop sends, keep evidence and return the declared unresolved outcome to the accountable owner. A new operation, changed intent or compensation is a new decision, not a retry reusing the approval.
 
-An **unresolved/manual** operation has no safe automatic conclusion. This includes an unavailable or inconclusive target record, a mismatched identity or intent digest, an expired identity-retention period, and a target whose state cannot distinguish this operation from a similar one. Stop automatic sends, preserve the known evidence, and return a declared unresolved outcome for the accountable operator or target owner. A new operation, modified intent, or compensation is a new decision; it must not silently reuse an approval or be disguised as a retry.
+Without native idempotency, a jointly designed target-side record or lookup can still reconcile authoritatively; a local record alone proves nothing. With neither, make the action manual or redesign the interface; do not rely on timing.
 
-Where a target lacks native idempotency support, a jointly designed operation record or target-side lookup may still provide an authoritative reconciliation path. A local outbox or operation record alone does not prove target acceptance. If neither duplicate prevention nor an authoritative lookup is available, make the action manual or redesign the interface rather than relying on timing.
+Compensation is a separate operation and does not erase uncertainty. Use it only for a known effect with a permitted reversal, with its own identity, authorization and evidence; never for an effect that may not have happened or a reversal that causes different harm.
 
-Compensation is a separate external operation, not an eraser for uncertainty. Use it only when the target defines a meaningful and permitted reversal, the original effect is known well enough to compensate, and the compensation has its own identity, authorization, and evidence. It is not appropriate for an effect that might never have occurred, or for a reversal that would cause a different harmful effect.
+### Multi-step effects: outbox and sagas
+
+- **Transactional outbox.** Write the outgoing message in the same local transaction as your state change and let a relay publish it, so the intent to publish is recorded if and only if the transaction commits. Publication itself can still fail or be delayed if the relay crashes or exhausts its retries, so monitor the outbox for unsent rows and recover them. Relays can publish twice, so targets must be idempotent; the row is intent recorded, not a target commit.[3]
+- **Sagas.** When no single transaction covers several systems, run local steps, each reversible one with a pre-designed compensating step that runs if a later step fails. Each compensation is a separate operation under EFFECT-04, not an automatic rollback.[4]
 
 ## Requirements
 
@@ -55,9 +60,7 @@ Compensation is a separate external operation, not an eraser for uncertainty. Us
 
 ## Worked example: a policy update with a lost receipt
 
-The internal policy assistant normally answers from approved, current, permission-filtered documents and returns citations with uncertainty. In the fictional fixture, `travel-policy-current` permits a London hotel amount of GBP 220, while `travel-policy-superseded` differs. It has no write capability in that read-only form.
-
-A later, human-governed variant prepares an approved update that adds an effective-date clarification to `travel-policy-current` without changing the GBP 220 amount. The exact approval, its expiry, and execution-time authorization have already passed the checks described in [7.3](03-approval-suspension-and-in-flight-compatibility.md). Before the write step, the workflow records an intent like this adaptable example:
+In this fictional fixture, `travel-policy-current` permits a London hotel amount of GBP 220 and `travel-policy-superseded` differs. A human-governed policy assistant prepares an approved update adding an effective-date clarification to `travel-policy-current`, amount unchanged, with approval and authorization checked per 7.3. Before writing, the workflow records:
 
 ```yaml
 operation:
@@ -72,31 +75,24 @@ operation:
   approval_id: approved-policy-update-42
 ```
 
-The policy store accepts the update, creates revision 43, and records the operation identity and intent digest in its accepted-operation ledger. The network response is then lost before the durable step can persist the receipt. On recovery, the operation record still exists but has no result. That state is **not** `not_committed`; it is `unknown`.
+The store accepts the update, creates revision 43 and logs the identity and digest in its ledger, but the response is lost before the receipt is saved. On recovery the state is `unknown`, not `not_committed`. The workflow queries the store by identity, finds revision 43 with matching target, tenant and digest, and records `completed_reconciled` without resending.
 
-The resumed workflow follows the declared reconcile-first path. It asks the policy store for the operation identity and receives the accepted record for revision 43 with the same target, tenant, and digest. That target record is authoritative, so the workflow records `completed_reconciled` and does not send the update again. A second revision is neither necessary nor evidence of a successful recovery.
-
-If the policy store instead authoritatively reports that no operation with that identity committed, the workflow may resend the unchanged request with the same identity. If the store is unavailable, returns a record with a different digest, or cannot distinguish the proposed update from another update, the workflow returns `unresolved_manual` and makes no further write. The operator can inspect the target's records and choose a new, properly authorized operation if one is needed. A compensating update would be inappropriate until the original effect is known and the target's compensation rule permits it.
+If the store reports authoritatively that nothing committed, the workflow resends the unchanged request and identity. If it is unavailable, returns a different digest or cannot distinguish the update, the workflow returns `unresolved_manual` and writes nothing; the operator inspects the target and may start a new authorized operation. Compensation waits until the effect is known and allowed.
 
 ## Evidence and checklist
 
-Use a resettable target fixture with an accepted-operation ledger or another documented state oracle. The following evidence demonstrates the example's controls:
+Use a resettable target fixture with an accepted-operation ledger or other documented state oracle:
 
-- Inject a response loss or process failure after the fixture commits revision 43 but before the agent records its receipt. On recovery, assert one accepted operation and revision 43, a matching identity and digest, and `completed_reconciled` without a second target write.
-- Deliver the same request twice with the same identity and canonical intent. Assert the target reports or returns the first operation result and does not create another revision. Deliver the same identity with altered intent and assert rejection or an unresolved outcome, never coalescence.
-- Fail before the target commit. Only when the authoritative query establishes no committed operation, assert that the same identity can be retried and produces one accepted effect.
-- Make the target oracle unavailable or ambiguous after a receipt loss. Assert `unresolved_manual`, no additional target-facing send, and retained intent, attempt, and reconciliation evidence.
-- Where compensation is offered, test a known completed effect, its permitted compensation preconditions, and the target's resulting authoritative state. Do not pass the test merely because a local status says `compensated`.
-
-Before declaring this chapter applicable controls complete, confirm:
-
-- [ ] Each effect has a stable identity, canonical intent binding, and documented target scope.
-- [ ] The target's duplicate behavior, identity-retention period, and authoritative reconciliation source are known.
-- [ ] Every ambiguous-receipt path has a retry-safe or unresolved/manual disposition; none treats a missing receipt as a negative result.
-- [ ] Compensation, where available, is an explicit, separately evidenced operation rather than a hidden retry.
-- [ ] Failure-injection results use the authoritative target state and are linked to the evaluated action version.
+- Lose the response after revision 43 commits: assert one accepted operation, matching identity and digest, `completed_reconciled` and no second write.
+- Deliver the same identity and intent twice: the target returns the first result with no new revision. The same identity with altered intent is rejected or unresolved, never merged.
+- Fail before commit: retry with the same identity only after the authoritative query shows nothing committed, producing one accepted effect.
+- Make the oracle unavailable or ambiguous: assert `unresolved_manual`, no further send, and retained evidence.
+- Test compensation on a known effect and check the authoritative result; a local `compensated` status is not a pass.
+- Record the target's duplicate behavior, retention period and reconciliation source, and link results to the evaluated action version.
 
 ## References
 
 [1]: https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2 "HTTP Semantics"
-[2]: https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header "The Idempotency-Key HTTP Request Header Field"
+[2]: https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-idempotency-key-header "The Idempotency-Key HTTP Header Field"
+[3]: https://microservices.io/patterns/data/transactional-outbox.html "Pattern: Transactional outbox"
+[4]: https://microservices.io/patterns/data/saga.html "Pattern: Saga"

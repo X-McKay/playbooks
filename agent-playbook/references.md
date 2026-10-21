@@ -6,7 +6,7 @@ These sources informed the standard. They are conceptual guidance, open specific
 
 - [Agent Skills specification](https://agentskills.io/specification) — portable package structure, frontmatter rules, progressive disclosure, bundled resources, examples, and validation.
 - [Model Context Protocol specification](https://modelcontextprotocol.io/specification) — client-server protocol for exposing tools, resources, and prompts to models.
-- [OpenTelemetry semantic conventions for generative AI](https://opentelemetry.io/docs/specs/semconv/gen-ai/) — span, metric, and event conventions for model and agent operations.
+- [OpenTelemetry semantic conventions for generative AI](https://github.com/open-telemetry/semantic-conventions-genai) — span, metric, and event conventions for model and agent operations.
 - [JSON Schema](https://json-schema.org/specification) — vocabulary for describing and validating typed data contracts.
 
 ## Risk and security

@@ -1,36 +1,33 @@
 # 8.4 Capacity, Admission Control, and Backpressure
 
-**Status:** 0.5.0 first draft
+**Status:** 0.5.0-draft.2 — draft
 **Audience:** Engineers and operators of shared or externally exposed agent services
-**Applicability:** Required for shared-capacity or externally exposed systems; low-volume local agents need bounded per-run limits, not a distributed scheduler.
+**Applicability:** Needed for shared-capacity or externally exposed systems. Low-volume local agents need bounded per-run limits, not a distributed scheduler.
 
 [Part 8](README.md) · [Applicability](../../applicability.md) · [8.3 Cost, Latency, and Performance Optimization](03-cost-latency-and-performance-optimization.md) · [5.1 Observability, Budgets, and Operational Control](../../development-guide/05-release-operations-and-lifecycle/01-observability-budgets-and-operational-control.md)
 
 ## Purpose and applicability
 
-Admission control decides whether new work can begin without exceeding a system's safe operating limits. Backpressure communicates or enforces that decision upstream. They matter when multiple runs, users, workers, or services compete for finite model, retrieval, tool, or compute capacity. Without explicit limits, excess work can wait in queues, consume resources, and amplify timeouts and retries. Bounded queues, early rejection, and load shedding are established ways to contain overload; their thresholds and policies must fit the actual workload.[1] [2]
+**Admission control** decides whether new work may start within safe limits; **backpressure** pushes that decision upstream. Without them, competition for finite model, retrieval, tool or compute capacity makes excess work queue, hold resources and amplify timeouts and retries. Early rejection, load shedding [1] and bounded queues [2] are established ways to contain overload; set thresholds for your workload.
 
-This chapter is a conditional reference. A private, low-volume agent with no shared bottleneck can use its per-run limits and a simple safe failure outcome. A service exposed to bursts, multiple tenants, worker fleets, or rate-limited dependencies needs an explicit shared-capacity policy. Apply the most restrictive relevant limit across the request, run, actor, tenant, service, and dependency. Do not confuse cost controls with capacity controls: a run can stay within its spend budget yet occupy too many concurrent requests or overwhelm a downstream service.
+A low-volume agent with no shared bottleneck needs only per-run limits and a safe failure outcome. Services facing bursts, many tenants, worker fleets or rate-limited dependencies need a shared-capacity policy applying the most restrictive limit across request, run, actor, tenant, service and dependency. Cost controls are not capacity controls: a run within its spend budget can still hold too many concurrent requests or overwhelm a downstream service.
 
 ## Working model
 
-Capacity is not one number. The system may need separate limits for active runs, concurrent model requests, retrieval or tool calls, pending work, token or request rates, and expensive downstream operations. Different requests can consume different amounts of resources, so a raw requests-per-second figure may be an incomplete demand measure. Model the resource or bottleneck that constrains useful work, and test it with representative workloads.[1]
+Capacity is not one number: active runs, concurrent model requests, retrieval or tool calls, pending work, token or request rates and expensive downstream operations may each need a limit. Requests differ in cost, so model the resource that actually limits useful work and test with representative load, not requests per second alone.[1]
 
-When work arrives faster than it can finish, a queue grows. Waiting consumes memory and makes responses less timely; a large queue may turn overload into stale work rather than useful throughput. Bound both its size and how long a request may wait. Tie waiting to the task deadline: work that cannot finish before its deadline should be rejected, cancelled, or otherwise handled by an explicit policy rather than allowed to consume capacity invisibly.[2]
+When work arrives faster than it finishes, a queue grows, uses memory and turns overload into stale work. Bound its size and maximum wait, tie waiting to the task deadline, and reject or cancel by policy work that cannot finish in time.[2]
 
-Limits must compose across concurrency and retries. If several runs each start parallel branches, their aggregate demand—not just each run's local allowance—reaches the shared dependency. Count retries, resumed work, and speculative branches against the same relevant run and shared budgets. For distributed workers, a local in-memory counter cannot reliably enforce a service-wide limit. Use an enforcement point or coordinated reservation mechanism appropriate to the deployment. Reservation protects a parent budget from overspending when children are active; reconcile unused grants only when their state is known. This is a policy design requirement, not a claim that final provider billing can always be known exactly.
+Limits must compose: branches across many runs hit the shared dependency together whatever each run's allowance, and retries, resumed work and speculative branches count against the same budgets. An in-memory counter cannot enforce a service-wide limit; use an enforcement point or coordinated reservation, which also stops children overspending a parent budget. Reconcile unused grants only when their state is known; this is policy design, not an exact accounting guarantee.
 
-Admission policy also governs who gets scarce capacity. Per-tenant or per-actor limits can stop one source from monopolizing the service, while shared headroom can avoid stranding all capacity behind rigid quotas. The identity and scope used for fairness must match the system's authorization and tenancy model. Pick a simple policy first, document any priority classes, and test whether it behaves as intended; no single scheduling algorithm is right for every workload.
+Admission also allocates scarce capacity: per-tenant or per-actor limits stop one source monopolizing the service, shared headroom avoids stranding capacity behind rigid quotas, and the fairness identity must match your tenancy model. Start simple; no scheduler fits every workload, so document and test any priority classes.
 
 ## Decisions and best practices
 
-Start with expected request volume, burst shape, concurrency, work-size variation, completion deadline, and dependency limits. Measure or otherwise validate capacity under representative work before setting production ceilings. Include failure and retry behavior in the workload model. Add headroom for required completion work, such as returning a valid outcome and preserving required operational evidence, rather than allocating every available slot to optional parallel work.
-
-Choose overload behavior before release. Depending on the task, a system may queue briefly, defer non-urgent work, reject admission, reduce optional work through a tested degraded mode, route to an evaluated alternative, or escalate. A response can offer a retry time where the interface supports it; HTTP 429 is one standardized rate-limit response and may carry `Retry-After`, but the standard does not prescribe how a service identifies a user or counts requests.[3] Do not promise a wait time that the system cannot support.
-
-Degraded mode must preserve the task's meaning and required controls. For example, an agent that uses fewer documents cannot present an incomplete search as a complete, fully grounded answer. It can return a clearly bounded partial result only if the contract allows that outcome; otherwise it should ask for information, defer, or fail safely. A required safety review, approval, or evidence step is not optional load to shed.
-
-Protect dependencies independently. Set appropriate limits on in-flight calls and pending work, use timeouts and bounded retries, and avoid multiple layers retrying the same failure. A circuit breaker or equivalent may stop new requests to an unhealthy dependency while it recovers. Retry budgets and active-request limits are distinct capacity dimensions in some systems; their exact implementation varies.[4] Every retry consumes the same applicable limits as an initial attempt. A control plane must be able to stop new dispatch without relying on the agent model to decide that it is overloaded.
+- **Size from the workload.** Start from expected volume, burst shape, concurrency, work-size variation, deadlines and dependency limits, including failure and retry behavior, and validate under representative work before setting ceilings. Leave headroom for completion work (returning a valid outcome, keeping required evidence) so optional parallel work cannot take every slot.
+- **Choose overload behavior before release:** queue briefly, defer non-urgent work, reject admission, drop optional work in a tested degraded mode, route to an evaluated alternative, or escalate. Offer a retry time where the interface allows; HTTP 429 may carry `Retry-After`, but the standard does not say how a service identifies a user or counts requests.[3] Do not promise a wait the system cannot keep.
+- **Degrade without changing meaning.** An agent that reads fewer documents cannot present an incomplete search as complete and grounded; it returns a bounded partial result only where the contract allows, otherwise it asks, defers or fails safely. Required safety review, approval or evidence steps are never shed.
+- **Protect each dependency.** Limit in-flight calls and pending work, use timeouts, and retry only at the layer directly above the failing call, with randomized backoff, so layers do not multiply retries. About three attempts per request and a per-client retry budget of about 10% of requests are practical starting points.[1] [2] A circuit breaker can stop requests to an unhealthy dependency while it recovers, and some systems treat retry budgets and active-request limits as separate dimensions.[4] Retries use the same limits as first attempts, and the control plane can stop new dispatch without relying on the model to notice overload.
 
 ## Requirements
 
@@ -43,9 +40,7 @@ Protect dependencies independently. Set appropriate limits on in-flight calls an
 
 ## Worked example
 
-An internal policy assistant answers questions from approved, current, permission-filtered documents and returns citations with uncertainty. It has no external write capability. The owner expects several employees to ask questions at once and identifies retrieval and model-request concurrency as shared bottlenecks. The owner validates capacity using representative requests of different sizes instead of assuming that every question costs the same amount.
-
-The example policy separates a per-run allowance from the service-wide ceilings and tenant share. The values below are hypothetical policy settings for explaining the design; they are not measured capacity or universal recommendations.
+Many employees query the fictional read-only policy assistant at once; retrieval and model-request concurrency are the shared bottlenecks, validated with varied request sizes. Values are hypothetical:
 
 ```yaml
 admission_policy:
@@ -71,22 +66,18 @@ admission_policy:
     preserve_required_evidence: true
 ```
 
-A morning burst fills the bounded queue. The admission layer checks the tenant and service-wide slots before a run starts, so many locally permitted requests cannot collectively exceed the service limit. Once the queue age or task deadline is reached, new work is rejected with a clear retry path rather than left waiting beyond its useful window. If retrieval signals throttling, the controller stops launching new retrieval requests and does not retry in parallel without bound.
+A morning burst fills the bounded queue. Admission checks tenant and service-wide slots before each run, so local allowances cannot sum past the service limit, and at the queue-age or task deadline new work is rejected with a retry path. When retrieval throttles, the controller stops launching retrieval calls rather than retry in parallel.
 
-The assistant cannot silently omit a required document and still label its answer complete. If it has enough approved evidence for a contractually permitted bounded partial result, it returns that result with its limitation made clear. Otherwise it returns `needs_information` or `failed`, according to the contract. Admission and safety controls remain outside the model's discretion. Tests exercise a saturated queue, competing tenant requests, retrieval throttling, retry exhaustion, and the final outcome. The test record reports the actual candidate and workload results; the sample configuration itself is not evidence that any particular throughput or latency target has been met.
+The assistant cannot omit a required document and call its answer complete. It may return a contract-permitted partial result only when the available approved evidence supports the stated portion and the result makes its limitation clear; otherwise it returns `needs_information` or `failed`. Admission and safety controls stay outside the model's discretion. Tests cover a saturated queue, competing tenants, retrieval throttling, retry exhaustion and the final outcome.
 
 ## Evidence and checklist
 
-Keep a concise record of the workload model and the limits derived from it. Include the constrained resources, dependency limits, burst and request-size assumptions, allocation scopes, queue depth and age, retry policy, and behavior at each exhaustion point. Identify which capacity is reserved for mandatory completion work.
+Record the workload model and derived limits: constrained resources, burst and size assumptions, allocation scopes, queue bounds, retry policy, exhaustion behavior and the completion reserve.
 
-Demonstrate the policy with tests that saturate the system, not only a normal-load demonstration. Show that aggregate concurrency and child grants remain within declared bounds, that waiting requests expire or reject as intended, and that retries do not create unbounded extra work. Where fairness matters, test competing tenants and report the policy's behavior. Exercise each degraded mode and prove that required safety checks and evidence remain intact. Part 5.1 owns operational signals and basic per-run budgets; [8.3](03-cost-latency-and-performance-optimization.md) covers quality-preserving performance optimization. For limits tied to durable child work and reservation reconciliation, see [7.1](../07-durable-execution-and-human-governed-work/01-execution-classes-persistence-and-recovery.md).
+Test at saturation: combined concurrency and child grants stay in bounds, waiting requests expire or are rejected, retries stay bounded, competing tenants are treated fairly, and degraded modes keep required checks and evidence. Signals and per-run budgets are in 5.1, optimization in [8.3](03-cost-latency-and-performance-optimization.md), and durable child work and reservation reconciliation in [7.1](../07-durable-execution-and-human-governed-work/01-execution-classes-persistence-and-recovery.md).
 
 - [ ] Shared and dependency limits are separate from per-run spend limits.
-- [ ] Aggregate parallel work, retries, and resumed work are accounted for.
-- [ ] Queue depth, queue age, and overload outcomes are bounded and documented.
 - [ ] Tenant fairness and any priority behavior are explicit and tested.
-- [ ] Required safety, completion, and evidence work cannot be shed.
-- [ ] Saturation, throttling, and safe exhaustion have evidence for the exact candidate.
 
 ## References
 

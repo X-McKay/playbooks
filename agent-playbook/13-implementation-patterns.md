@@ -150,6 +150,3 @@ rollout and rollback plan
 The [operating model](../foundations/04-operating-model.md#bringing-existing-agents-into-conformance)
 describes how to bring existing agents into conformance step by step and how
 to stage adoption on evidence.
-
-For one opinionated, zero-trust implementation of this playbook, see
-[Zetra](https://github.com/X-McKay/zetra).
