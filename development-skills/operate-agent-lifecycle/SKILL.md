@@ -52,7 +52,13 @@ run. In `inputs`, distinguish known material from draft assumptions. Mark every 
 evidence; do not manufacture an observed artifact or hash.
 
 Record which `OPS-*` and `LIFECYCLE-*` groups apply. Mark a group `not_applicable` only with a concrete trigger-based rationale.
-An unimplemented applicable control is `unmet`, not `not_applicable`.
+An unimplemented applicable control is `unmet`, not `not_applicable`. For `LIFECYCLE-03`, use `not_applicable` only when the
+bounded case establishes that no affected agent or capability is pending resumption after containment. For `LIFECYCLE-06`, use it
+only when the bounded case establishes that the candidate is neither deprecated nor retired. If either trigger is unknown, record
+the trigger as unresolved (and as a blocker when material) rather than claiming it is absent; retain `unmet` pending trigger facts
+or required-record verification. When either trigger exists, planned, pending, or unverified recovery/retirement work is `unmet`.
+Assess standing support ownership and planned recovery or retirement runbooks separately; neither demonstrates a recovery or
+retirement execution.
 
 ### 2. Design the run, attempt, and event model
 

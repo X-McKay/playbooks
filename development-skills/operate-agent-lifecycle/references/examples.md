@@ -154,3 +154,70 @@ Only after new work, consumers, outstanding work, unneeded access and
 registrations, every relevant data copy, required evidence, and inventory status
 are handled under applicable policy can observed evidence support `retired`.
 Disabling for containment leaves retirement open.
+
+## 7. Conditional recovery and retirement: bounded non-trigger
+
+This fictional snapshot is limited to a future policy-lookup candidate during a
+planning review. It has no containment event that created a pending resumption,
+and it is neither deprecated nor retired. The separate preparedness assessment
+keeps planned ownership and runbooks visible without treating them as execution
+evidence.
+
+```json
+{
+  "case_scope": "Fictional policy-lookup candidate; bounded planning review only.",
+  "preparedness_assessment": {
+    "support_ownership": {
+      "requirement_id": "LIFECYCLE-01",
+      "status": "unmet",
+      "rationale": "The fictional support owner, recovery authority, and reachable route are planned values; no support record is verified."
+    },
+    "recovery_runbook": {
+      "status": "planned",
+      "rationale": "The runbook design names the future recovery-record fields but does not claim containment, resumption, or authorization."
+    },
+    "retirement_handoff_runbook": {
+      "status": "planned",
+      "rationale": "The handoff design lists future consumer, work, access, data, evidence, and inventory checks but does not claim retirement."
+    }
+  },
+  "applicability": [
+    {
+      "requirement_id": "LIFECYCLE-01",
+      "status": "unmet",
+      "rationale": "Future production support ownership is in scope, but the fictional support record remains planned and unverified.",
+      "evidence_ids": ["planned-lifecycle-preparedness"]
+    },
+    {
+      "requirement_id": "LIFECYCLE-03",
+      "status": "not_applicable",
+      "rationale": "In this fictional bounded planning case, no affected capability is pending resumption after containment. The planned recovery runbook is assessed separately and does not claim a recovery record or authorization.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "LIFECYCLE-06",
+      "status": "not_applicable",
+      "rationale": "In this fictional bounded planning case, the candidate is neither deprecated nor retired. The planned handoff runbook is assessed separately and does not claim a retirement.",
+      "evidence_ids": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "planned-lifecycle-preparedness",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    }
+  ],
+  "decision": {
+    "recommendation": "not_assessed",
+    "authorized": false
+  }
+}
+```
+
+If a bounded case instead identifies a pending post-containment resumption or a
+deprecated/retired candidate, the corresponding entry is `unmet` until its
+required record and handoff actions are verified. This fictional example reports
+no operation, observation, authorization, or lifecycle execution.

@@ -43,6 +43,8 @@
       "outstanding_work_model": "draft-unresolved",
       "dependencies": [],
       "review_policy_reference": "draft-unresolved",
+      "recovery_resumption_trigger": "draft-unresolved: determine whether an affected capability is pending resumption after containment",
+      "retirement_transition_trigger": "draft-unresolved: determine whether the candidate is deprecated or retired",
       "data_copy_classes": [],
       "inventory_location": "draft-unresolved"
     }
@@ -94,6 +96,7 @@
     "support_incident_record": {
       "state": "draft",
       "support_roles": "Draft: name reachable owner, technical contact, escalation, operators, authorities, combined roles, and independent review.",
+      "preparedness_assessment": "Draft: assess support ownership and planned recovery/retirement runbooks separately from LIFECYCLE-03/-06 trigger and execution evidence.",
       "triage_fields": ["signal", "suspected_scope", "impact_criteria", "containment_options", "incident_decision_maker", "communications_owner", "minimum_permitted_evidence"],
       "factual_separation": ["fixture_fact", "observation", "hypothesis", "confirmed_cause", "evaluation_conclusion", "release_authorization", "external_effect_status"]
     },
@@ -161,7 +164,7 @@
     {
       "requirement_id": "LIFECYCLE-03",
       "status": "unmet",
-      "rationale": "No containment, reconciliation, or externally authorized resumption has occurred.",
+      "rationale": "DRAFT: Recovery trigger is unresolved. Establish whether an affected agent or capability is pending resumption after containment; this template does not assert that containment, recovery, or authorization occurred. If the trigger is absent in the bounded case, use a reasoned not_applicable rationale; if present, retain unmet until the recovery record is verified.",
       "evidence_ids": []
     },
     {
@@ -179,7 +182,7 @@
     {
       "requirement_id": "LIFECYCLE-06",
       "status": "unmet",
-      "rationale": "No deprecation or retirement handoff has been completed.",
+      "rationale": "DRAFT: Retirement trigger is unresolved. Establish whether the candidate is deprecated or retired; this template does not assert a lifecycle transition. If the trigger is absent in the bounded case, use a reasoned not_applicable rationale; if present, retain unmet until the required handoff is verified.",
       "evidence_ids": []
     }
   ],

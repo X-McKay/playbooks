@@ -39,6 +39,7 @@ REQUIRED_FILES = {
     "assets/packet-template.json",
     "assets/evaluation-cases.json",
 }
+CONTRACT_FILES = frozenset({"packet.schema.json", "evaluation-cases.schema.json"})
 NAME_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 SHA_RE = re.compile(r"[0-9a-f]{64}\Z")
 COMMIT_RE = re.compile(r"[0-9a-f]{40}\Z")
@@ -105,6 +106,8 @@ def require_regular_file(path: Path) -> Path:
     path = require_no_symlink_components(path)
     if not path.is_file():
         fail(f"expected regular file: {path}")
+    if path.stat(follow_symlinks=False).st_nlink != 1:
+        fail(f"hardlinked files are not allowed: {path}")
     return path
 
 
@@ -133,15 +136,16 @@ def confined_file(root: Path, relative: str, label: str = "path") -> Path:
         fail(f"{label} escapes its root: {relative!r}")
     if not resolved_candidate.is_file():
         fail(f"{label} is not a regular file: {relative!r}")
-    return resolved_candidate
+    return require_regular_file(resolved_candidate)
 
 
-def walk_regular_files(root: Path) -> list[Path]:
-    """Enumerate a tree while rejecting all symlinks and special files."""
+def walk_regular_files(root: Path, *, excluded_components: frozenset[str] = frozenset(), excluded_paths: frozenset[Path] = frozenset()) -> list[Path]:
+    """Enumerate included files strictly, pruning declared exclusions first."""
     root = require_directory(root)
     files: list[Path] = []
     for directory, dirnames, filenames in os.walk(root, topdown=True, followlinks=False):
         current = Path(directory)
+        dirnames[:] = [name for name in dirnames if name not in excluded_components and current / name not in excluded_paths]
         for name in list(dirnames):
             entry = current / name
             if entry.is_symlink():
@@ -150,6 +154,8 @@ def walk_regular_files(root: Path) -> list[Path]:
                 fail(f"unsupported directory entry: {entry}")
         for name in filenames:
             entry = current / name
+            if name in excluded_components or entry in excluded_paths:
+                continue
             if entry.is_symlink():
                 fail(f"symlinks are not allowed: {entry}")
             metadata = entry.stat(follow_symlinks=False)
@@ -257,9 +263,13 @@ def reject_duplicate_json_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
+def reject_nonstandard_json_constant(value: str) -> None:
+    fail(f"non-standard JSON numeric constant: {value}")
+
+
 def parse_json_text(text: str, label: str) -> Any:
     try:
-        return json.loads(text, object_pairs_hook=reject_duplicate_json_keys)
+        return json.loads(text, object_pairs_hook=reject_duplicate_json_keys, parse_constant=reject_nonstandard_json_constant)
     except json.JSONDecodeError as exc:
         fail(f"invalid JSON in {label}: {exc.msg}")
 
@@ -592,15 +602,12 @@ def schema_property(schema: Any, name: str, label: str) -> dict[str, Any]:
     return schema["properties"][name]
 
 
-def validate_contract_schemas(root: Path) -> None:
-    """Check the local schemas cover the strict constraints this stdlib tool uses.
+def validate_contract_schema_data(packet: Any, cases: Any) -> None:
+    """Check the two shipped contracts cover this tool's strict constraints.
 
     This is deliberately not a complete JSON-Schema implementation; it catches
     obvious divergence in the independently shipped schema resources.
     """
-    contracts = require_directory(root / "development-skills/contracts")
-    packet = parse_json(require_regular_file(contracts / "packet.schema.json"), "packet schema")
-    cases = parse_json(require_regular_file(contracts / "evaluation-cases.schema.json"), "evaluation-cases schema")
     for schema, label in ((packet, "packet schema"), (cases, "evaluation-cases schema")):
         if not isinstance(schema, dict) or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema" or schema.get("type") != "object" or schema.get("additionalProperties") is not False:
             fail(f"{label} must be a closed draft 2020-12 object schema")
@@ -630,6 +637,20 @@ def validate_contract_schemas(root: Path) -> None:
         fail("evaluation-cases schema enums diverge from validation")
 
 
+def validate_contract_schemas(root: Path) -> None:
+    contracts = require_directory(root / "development-skills/contracts")
+    sources = {source.relative_to(contracts).as_posix(): source for source in walk_regular_files(contracts)}
+    if set(sources) != CONTRACT_FILES:
+        fail(f"contract resources must exactly be {sorted(CONTRACT_FILES)} (missing={sorted(CONTRACT_FILES - set(sources))}, extra={sorted(set(sources) - CONTRACT_FILES)})")
+    packet = parse_json(sources["packet.schema.json"], "packet schema")
+    cases = parse_json(sources["evaluation-cases.schema.json"], "evaluation-cases schema")
+    validate_contract_schema_data(packet, cases)
+
+
+def supported_package_resource(relative: str) -> bool:
+    return relative == "SKILL.md" or (relative.startswith("references/") and relative.endswith(".md")) or (relative.startswith("assets/") and relative.endswith(".json"))
+
+
 def validate_package(root: Path, package: Path, requirement_ids: set[str]) -> dict[str, Any]:
     package = require_directory(package)
     name = package.name
@@ -641,13 +662,8 @@ def validate_package(root: Path, package: Path, requirement_ids: set[str]) -> di
     if missing:
         fail(f"package {name} is missing required files: {', '.join(missing)}")
     for relative in rel_paths:
-        if relative == "SKILL.md":
-            continue
-        if relative.startswith("references/") and relative.endswith(".md"):
-            continue
-        if relative.startswith("assets/") and relative.endswith(".json"):
-            continue
-        fail(f"unsupported package file: {name}/{relative}")
+        if not supported_package_resource(relative):
+            fail(f"unsupported package file: {name}/{relative}")
     frontmatter = parse_frontmatter(package / "SKILL.md")
     if frontmatter["name"] != name or not NAME_RE.fullmatch(name):
         fail(f"package name must match safe directory name: {name}")
@@ -875,20 +891,19 @@ def package_library(root_arg: str, output_arg: str, profile: str | None, force: 
     except UnicodeDecodeError:
         fail("catalog is not UTF-8")
     staged.append(catalog_stage)
-    contracts = root / "development-skills/contracts"
-    if contracts.exists():
-        contracts = require_directory(contracts)
-        for source in walk_regular_files(contracts):
-            relative = source.relative_to(contracts).as_posix()
-            if source.suffix != ".json":
-                fail(f"unsupported contract resource: {source}")
-            item = staged_file(source, f"contracts/{relative}", "archive contract")
-            try:
-                if not isinstance(parse_json_text(item["content"].decode("utf-8"), f"contract {relative}"), dict):
-                    fail(f"contract {relative} must be a JSON object")
-            except UnicodeDecodeError:
-                fail(f"contract {relative} is not UTF-8")
-            staged.append(item)
+    contracts = require_directory(root / "development-skills/contracts")
+    contract_sources = {source.relative_to(contracts).as_posix(): source for source in walk_regular_files(contracts)}
+    if set(contract_sources) != CONTRACT_FILES:
+        fail(f"archive contracts must exactly be {sorted(CONTRACT_FILES)} (missing={sorted(CONTRACT_FILES - set(contract_sources))}, extra={sorted(set(contract_sources) - CONTRACT_FILES)})")
+    staged_contracts: dict[str, Any] = {}
+    for relative in sorted(CONTRACT_FILES):
+        item = staged_file(contract_sources[relative], f"contracts/{relative}", "archive contract")
+        try:
+            staged_contracts[relative] = parse_json_text(item["content"].decode("utf-8"), f"contract {relative}")
+        except UnicodeDecodeError:
+            fail(f"contract {relative} is not UTF-8")
+        staged.append(item)
+    validate_contract_schema_data(staged_contracts["packet.schema.json"], staged_contracts["evaluation-cases.schema.json"])
     if profile:
         profile_json = staged_file(root / "implementation-profiles/python/profile.json", "implementation-profiles/python/profile.json", "archive profile")
         profile_readme = staged_file(root / "implementation-profiles/python/README.md", "implementation-profiles/python/README.md", "archive profile README")
@@ -956,6 +971,16 @@ def validate_manifest_data(manifest: Any, archive_files: list[dict[str, Any]]) -
     expected_records = checked_manifest_files(manifest["archive_files"])
     if expected_records != archive_files:
         fail("manifest archive_files does not exactly describe archive members")
+    expected_contracts = {f"contracts/{name}" for name in CONTRACT_FILES}
+    archive_contracts = {item["path"] for item in archive_files if item["path"].startswith("contracts/")}
+    if archive_contracts != expected_contracts:
+        fail(f"archive contracts must exactly be {sorted(expected_contracts)} (missing={sorted(expected_contracts - archive_contracts)}, extra={sorted(archive_contracts - expected_contracts)})")
+    package_prefixes = tuple(f"{name}/" for name in EXPECTED_SKILLS)
+    for item in archive_files:
+        path = item["path"]
+        if path == "catalog.json" or path in expected_contracts or path.startswith(package_prefixes) or path.startswith("implementation-profiles/python/"):
+            continue
+        fail(f"manifest archive file is unassigned: {path}")
     catalog = exact_object(manifest["catalog"], {"path", "sha256", "bytes", "schema_version", "library_version", "playbook_version", "source_commit", "status", "skill_ids"}, "manifest catalog")
     if catalog["path"] != "catalog.json":
         fail("manifest catalog path must be catalog.json")
@@ -978,19 +1003,23 @@ def validate_manifest_data(manifest: Any, archive_files: list[dict[str, Any]]) -
         if not isinstance(package["digest"], str) or not SHA_RE.fullmatch(package["digest"]):
             fail(f"manifest package {name} has invalid digest")
         files = checked_manifest_files(package["files"])
-        if not REQUIRED_FILES.issubset({item["path"] for item in files}):
+        declared_paths = {item["path"] for item in files}
+        if not REQUIRED_FILES.issubset(declared_paths):
             fail(f"manifest package {name} is missing required resources")
+        prefix = f"{name}/"
+        archive_paths = {item["path"][len(prefix):] for item in archive_files if item["path"].startswith(prefix)}
+        for relative in archive_paths:
+            if not supported_package_resource(relative):
+                fail(f"manifest package {name} has unsupported archive resource: {relative}")
+        if archive_paths != declared_paths:
+            fail(f"manifest package {name} resources do not exactly inventory archive members (missing={sorted(archive_paths - declared_paths)}, extra={sorted(declared_paths - archive_paths)})")
         for item in files:
             relative = item["path"]
-            if relative == "SKILL.md" or (relative.startswith("references/") and relative.endswith(".md")) or (relative.startswith("assets/") and relative.endswith(".json")):
-                if next((record for record in archive_files if record["path"] == f"{name}/{relative}"), None) != item | {"path": f"{name}/{relative}"}:
-                    # The archive file record uses the full ZIP path; compare
-                    # byte/hash fields explicitly to avoid accepting omissions.
-                    archive_record = next((record for record in archive_files if record["path"] == f"{name}/{relative}"), None)
-                    if archive_record is None or archive_record["sha256"] != item["sha256"] or archive_record["bytes"] != item["bytes"]:
-                        fail(f"manifest package {name} resource is absent or mismatched: {relative}")
-            else:
+            if not supported_package_resource(relative):
                 fail(f"manifest package {name} has unsupported resource: {relative}")
+            archive_record = next((record for record in archive_files if record["path"] == f"{name}/{relative}"), None)
+            if archive_record is None or archive_record["sha256"] != item["sha256"] or archive_record["bytes"] != item["bytes"]:
+                fail(f"manifest package {name} resource is absent or mismatched: {relative}")
         if package_digest(files) != package["digest"]:
             fail(f"manifest package {name} digest does not match its resources")
         markdown = exact_object(package["skill_markdown"], {"bytes", "words", "token_estimate", "token_estimate_label"}, f"manifest package {name} skill_markdown")
@@ -1068,14 +1097,17 @@ def verify_package(package_arg: str) -> dict[str, Any]:
             except UnicodeDecodeError:
                 fail("archived catalog is not UTF-8")
             validate_catalog_data(catalog_data, set(EXPECTED_SKILLS))
-            for item in observed:
-                if item["path"].startswith("contracts/"):
-                    try:
-                        contract = parse_json_text(archive.read(by_name[item["path"]]).decode("utf-8"), f"archived {item['path']}")
-                    except UnicodeDecodeError:
-                        fail(f"archived {item['path']} is not UTF-8")
-                    if not isinstance(contract, dict):
-                        fail(f"archived {item['path']} must be a JSON object")
+            catalog = validated["catalog"]
+            catalog_fields = ("schema_version", "library_version", "playbook_version", "source_commit", "status")
+            if any(catalog[field] != catalog_data[field] for field in catalog_fields) or catalog["skill_ids"] != [item["id"] for item in catalog_data["skills"]]:
+                fail("manifest catalog metadata does not match catalog.json")
+            archived_contracts: dict[str, Any] = {}
+            for name in sorted(CONTRACT_FILES):
+                try:
+                    archived_contracts[name] = parse_json_text(archive.read(by_name[f"contracts/{name}"]).decode("utf-8"), f"archived contracts/{name}")
+                except UnicodeDecodeError:
+                    fail(f"archived contracts/{name} is not UTF-8")
+            validate_contract_schema_data(archived_contracts["packet.schema.json"], archived_contracts["evaluation-cases.schema.json"])
             if validated["profile"] is not None:
                 try:
                     profile_data = parse_json_text(archive.read(by_name["implementation-profiles/python/profile.json"]).decode("utf-8"), "archived profile")
@@ -1287,11 +1319,24 @@ def is_identity_excluded(relative: str) -> bool:
     return any(part in IDENTITY_IGNORED_COMPONENTS for part in PurePosixPath(relative).parts)
 
 
+def workflow_identity_ignored(state: dict[str, Any], state_path: Path, incoming_receipt: Path) -> set[Path]:
+    """Return ledger-owned metadata paths excluded from source identity only."""
+    ignored = {state_path.resolve(strict=True), incoming_receipt.resolve(strict=True)}
+    # All retained receipt files are metadata rather than active source.  They
+    # remain separately hash-validated by prior_evidence_is_valid(), including
+    # receipts from invalidated attempts.
+    for record in state["evidence"]:
+        receipt = record.get("evidence_file")
+        if isinstance(receipt, str):
+            ignored.add(Path(receipt).resolve(strict=False))
+    return ignored
+
+
 def snapshot_workspace(workspace: Path, ignored: set[Path]) -> list[dict[str, str]]:
     """Hash the active source identity under the documented narrow exclusion scope."""
     records: list[dict[str, str]] = []
     root = require_directory(workspace)
-    for item in walk_regular_files(root):
+    for item in walk_regular_files(root, excluded_components=IDENTITY_IGNORED_COMPONENTS, excluded_paths=frozenset(ignored)):
         resolved = item.resolve(strict=True)
         relative = item.relative_to(root).as_posix()
         if resolved in ignored or is_identity_excluded(relative):
@@ -1354,7 +1399,7 @@ def advance_workflow(state_path: Path, event: str, evidence_path: Path | None) -
     elif state["workspace"] != str(workspace):
         fail("workflow evidence workspace does not match the initialized workflow workspace")
 
-    ignored = {state_path.resolve(strict=True), Path(source_evidence_path).resolve(strict=True)}
+    ignored = workflow_identity_ignored(state, state_path, Path(source_evidence_path))
     identity_is_bound = state["source_identity"] is not None and state["source_identity"]["stage"] == "retested"
     integrity_problem = prior_evidence_is_valid(
         state,

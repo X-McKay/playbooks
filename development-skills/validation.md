@@ -12,7 +12,7 @@ The CLI was strengthened to include the selected profile and full manifest in an
 
 ## Deterministic local evidence
 
-The final complete suite ran **21 test methods successfully** on Python 3.12 in a Linux sandbox. These methods include multiple negative cases and complete CLI subprocess flows; 21 is the method count, not a count of agents or production trials.
+The originally submitted revision `147cdb4` ran **21 test methods successfully** on Python 3.12 in a Linux sandbox. These methods include multiple negative cases and complete CLI subprocess flows; 21 is the method count, not a count of agents or production trials. The post-feedback suite below adds focused regressions and runs 44 methods.
 
 The checked behaviors include:
 
@@ -24,9 +24,27 @@ The checked behaviors include:
 - phase order, blocked and failed receipts, unique immutable attempts, bounded repair, mandatory cleanup/full-retest, post-retest mutation invalidation, and a second frozen package after a bounded repair;
 - manual state-stage tampering and refusal of a package receipt that names a non-ZIP note.
 
-All eight packages also passed the independent Agent Skills reference validator at upstream commit `69ef37e9424c0a7ea9dd2293b559e43ec8176379` and the local skill-creator quick validator. Draft packet and case assets passed their JSON Schemas under `jsonschema` 4.23.0; YAML parsing used PyYAML 6.0.2 in an isolated validation environment. These optional independent tools are not dependencies of the deterministic CLI or CI suite.
+All eight packages also passed the independent Agent Skills reference validator at upstream commit `69ef37e9424c0a7ea9dd2293b559e43ec8176379` and the local skill-creator quick validator. Draft packet and case assets passed their JSON Schemas under `jsonschema` 4.23.0; YAML parsing used PyYAML 6.0.2 in an isolated validation environment. These independent tools are not dependencies of the deterministic CLI or standard-library test suite; the separate independent-validation CI job installs their pinned development dependencies in an isolated environment.
 
 Repository-wide Markdown lint, offline relative-link/fragment checks, compilation, and whitespace checks passed. Nix and `just` were unavailable in this environment, so their wrapper commands were not run; the applicable underlying validation commands were run directly. The development shell and `Justfile` were updated to include the skill checks for environments that use them.
+
+## PR feedback corrections
+
+The six defects raised on [PR #10](https://github.com/X-McKay/playbooks/pull/10), including the additional local-clone finding, were reproduced against `147cdb4` before correction. The integrated post-feedback suite passed **44 test methods** on Python 3.12, including the original suite, eight archive-feedback methods, three receipt-identity methods, three Python-profile methods, four lifecycle methods, one JSON-constant method, and four excluded-metadata methods.
+
+Archive verification now requires exactly the two mandatory shared contracts and validates their constrained content instead of accepting absent or semantically empty contracts. Every archived skill resource must be assigned, supported, and exactly inventoried in its package descriptor. Mutation regressions cover missing contracts, malformed contract content, undeclared references/scripts, unassigned root files, omitted-plus-extra resources, and catalog metadata divergence. Complete content identity still does not prove publisher authenticity.
+
+The central JSON parser rejects `NaN`, `Infinity`, and `-Infinity`; quoted spellings remain ordinary data. Source snapshots consistently exclude every retained receipt plus the incoming receipt and state. Root-level and mixed-location receipts now complete the sequence without spurious source invalidation, while unrelated root-code changes and tampering with historical receipts still fail.
+
+Excluded metadata directories are now pruned before inspecting their entries rather than after strict whole-workspace traversal. A real `git clone --local` with verified hardlinked Git objects completes the full workflow with `.git` left in place; excluded cache symlink/FIFO metadata also does not block source identity. Included source and separately referenced evidence/receipts still reject symlinks and hardlinks. Package traversal remains strict by default. These filesystem regressions ran on POSIX/Linux, not on every supported coding-host operating system.
+
+The Python profile explicitly establishes an approved `src` import path before CLI and tests, and requires test-package markers for all four layers. A fresh standard-library fixture executes CLI help/output and all literal profile checks, with the declared environment and deadlines. It also reproduces the old unmarked-layout failure. No project build-backend install or native-host session is inferred from that fixture.
+
+Lifecycle templates no longer infer an absent trigger from missing recovery/retirement observations. A fictional bounded example uses reasoned `not_applicable` entries only when the corresponding event is absent and assesses preparedness separately; unknown triggers and unverified triggered work remain explicit gaps.
+
+The new [independent validator](../tools/agent_skills/INDEPENDENT-VALIDATION.md) passed all eight package/reference and packet/case checks locally. The pinned dependency installation was reproduced in a fresh isolated environment, and controlled invalid fixtures/resources exited nonzero. CI now repeats these checks in a separate read-only job while the runtime CLI remains standard-library-only.
+
+The live-model probes below describe the original submission. They were not rerun for this feedback revision and are not evidence of updated native-host adherence, production promotion, or performance uplift.
 
 ## Exploratory live-model probes
 

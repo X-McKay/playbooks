@@ -73,10 +73,19 @@ work. A small single-process package can use this shape:
 │       ├── service.py                     # business logic using injected ports
 │       └── ports.py                       # Protocols for clock, files, transport, effects
 └── tests/
+    ├── __init__.py                         # keeps `-t .` discovery importable
     ├── unit/
+    │   ├── __init__.py
+    │   └── test_*.py
     ├── contract/
+    │   ├── __init__.py
+    │   └── test_*.py
     ├── e2e/
+    │   ├── __init__.py
+    │   └── test_*.py
     └── security/
+        ├── __init__.py
+        └── test_*.py
 ```
 
 If the project needs a command name, expose it through a reviewed
@@ -84,6 +93,27 @@ If the project needs a command name, expose it through a reviewed
 ordinary `python -m` smoke path. This profile supplies **no scaffold, generated
 code, daemon, or service runtime**. Create only files needed by the authorized
 implementation.
+
+## Source-tree preflight for the literal checks
+
+The commands in `profile.json` deliberately run a source tree; they do not
+install the project or invoke a build backend. From the approved workspace root,
+set this small runner environment **before** the CLI smoke path or any test
+layer:
+
+```bash
+export PYTHONPATH="$PWD/src"
+export PYTHONNOUSERSITE=1
+```
+
+This makes only `src/<package_name>` importable to the selected interpreter and
+avoids ambient user-site packages. Keep the working directory at the approved
+workspace root, do not append unreviewed paths, and do not treat these variables
+as isolation or a permission control. The `tests/__init__.py` and one
+`__init__.py` in each test-layer directory above are required by the documented
+`unittest discover -s tests/<layer> -t .` form. A project that chooses another
+source-path mechanism must review it separately and use test commands compatible
+with that mechanism.
 
 ## Design rules
 
@@ -189,6 +219,11 @@ legacy `skills/` tree. The caller must review the project paths, optional
 dependencies, commands, and permissions before use.
 
 ```bash
+# From the approved workspace root, establish the documented source-tree runner
+# environment before the CLI or test commands. This is not a package install.
+export PYTHONPATH="$PWD/src"
+export PYTHONNOUSERSITE=1
+
 # Confirm the declared interpreter and inspect the public CLI.
 python3.11 --version
 python3.11 -m <package_name> --help
@@ -197,14 +232,16 @@ python3.11 -m <package_name> --help
 python3.11 -m venv .venv
 . .venv/bin/activate
 # Only when the project declares a reviewed, pinned, hash-verified lock input:
-python -m pip install --require-hashes -r requirements-dev.lock
+python3.11 -m pip install --require-hashes -r requirements-dev.lock
 
-# Run the standard-library test layout with finite outer time limits supplied by the host.
-python -m compileall -q src
-python -m unittest discover -s tests/unit -t .
-python -m unittest discover -s tests/contract -t .
-python -m unittest discover -s tests/e2e -t .
-python -m unittest discover -s tests/security -t .
+# Run the literal profile checks after the preflight, with the profile's declared
+# finite deadlines supplied by the host: compile (30 seconds), unit and contract
+# (60 seconds each), then e2e and security (120 seconds each).
+python3.11 -m compileall -q src
+python3.11 -m unittest discover -s tests/unit -t .
+python3.11 -m unittest discover -s tests/contract -t .
+python3.11 -m unittest discover -s tests/e2e -t .
+python3.11 -m unittest discover -s tests/security -t .
 ```
 
 If the project adopts another reviewed test runner, pin it as an optional

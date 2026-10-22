@@ -18,3 +18,29 @@ jobs:
         run: python3 tools/agent_skills/skillctl.py validate --root .
       - name: Run deterministic unit and end-to-end CLI tests
         run: python3 -m unittest discover -s tests/agent_skills -v
+
+  independent-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Install pinned independent validators in an isolated virtual environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          VENV="$RUNNER_TEMP/development-skills-validation-venv"
+          rm -rf "$VENV"
+          python3 -m venv "$VENV"
+          timeout 120 "$VENV/bin/python" -m pip install --disable-pip-version-check --no-input --no-cache-dir --no-deps --retries 2 --timeout 20 \
+            hatchling==1.27.0 packaging==26.3 pathspec==1.1.1 pluggy==1.7.0 trove-classifiers==2026.9.21.13
+          timeout 120 "$VENV/bin/python" -m pip install --disable-pip-version-check --no-input --no-cache-dir --no-build-isolation --retries 2 --timeout 20 \
+            -r tools/agent_skills/requirements-validation.txt
+          "$VENV/bin/python" -m pip check
+      - name: Run independent packet, case, and reference-format validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          VENV="$RUNNER_TEMP/development-skills-validation-venv"
+          "$VENV/bin/python" tools/agent_skills/validate_independent.py \
+            --root "$GITHUB_WORKSPACE" \
+            --skills-ref "$VENV/bin/skills-ref"

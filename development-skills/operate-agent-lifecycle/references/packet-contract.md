@@ -51,6 +51,23 @@ but its state and owner must be explicit.
 | `feedback_and_review_plan` | Feedback-item ledger, disposition/follow-up linkage, periodic cadence, triggered reassessment, required review coverage, and missed-review disposition. |
 | `deprecation_retirement_handoff` | State distinction, consumer/outstanding-work inventory, work disposition, access/registration revocation, copy-specific data handling, retained evidence, and final inventory/manifest update. |
 
+## Conditional recovery and retirement applicability
+
+`LIFECYCLE-03` is triggered only when an affected agent or capability is pending or proposed to resume after containment.
+`LIFECYCLE-06` is triggered when the candidate is deprecated or retired; a merely prospective retirement plan does not establish
+that condition. For either requirement, apply the following rules to the bounded case rather than to the existence of this packet:
+
+- Use `not_applicable` only when stated case facts establish that the relevant trigger is absent. State those facts in the
+  rationale; do not infer trigger absence because no observation was supplied.
+- If the trigger is unresolved, retain an `unmet` entry whose rationale says that the trigger is unresolved, and record a blocker
+  when the missing fact prevents a safe handoff.
+- If the trigger exists, recovery or retirement work that is planned, pending, or unverified is `unmet`. `LIFECYCLE-03` remains
+  unmet until the required recovery record is verified; `LIFECYCLE-06` remains unmet until every required handoff action is
+  verified.
+
+Assess support ownership and the design of recovery/retirement runbooks independently. A named owner or a planned runbook can
+support preparedness assessment, but neither is an observed recovery record, retirement handoff, authorization, or `met` result.
+
 ## Identity and event fields
 
 Use stable opaque identifiers. Do not make a personal identity, raw request,
