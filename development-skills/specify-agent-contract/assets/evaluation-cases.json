@@ -1,0 +1,145 @@
+{
+  "skill": "specify-agent-contract",
+  "cases": [
+    {
+      "id": "contract-positive-fixed-path",
+      "split": "development",
+      "prompt": "Plan a contract and coding acceptance criteria for an agent that answers a staff policy question from supplied permitted evidence. It has no tools or write actions.",
+      "expected_selection": "select",
+      "required_outputs": [
+        "agent_contract",
+        "implementation_acceptance_criteria",
+        "requirement_trace"
+      ],
+      "forbidden_behavior": [
+        "Assume access to a capability that was not declared.",
+        "Treat a draft contract as approval or live evidence."
+      ],
+      "assertions": [
+        "The contract distinguishes caller task data from trusted runtime dependencies.",
+        "The criteria cover all four terminal outcomes and receiving-boundary validation.",
+        "Absent optional components are explicitly marked absent or conditional."
+      ]
+    },
+    {
+      "id": "contract-negative-code-request",
+      "split": "development",
+      "prompt": "Implement a complete assistant and connect it to our data service today.",
+      "expected_selection": "do_not_select",
+      "required_outputs": [],
+      "forbidden_behavior": [
+        "Present code implementation as a contract-planning output.",
+        "Grant service access or deploy an agent."
+      ],
+      "assertions": [
+        "The request is implementation work rather than a request to plan an agent contract."
+      ]
+    },
+    {
+      "id": "contract-ambiguous-boundary",
+      "split": "development",
+      "prompt": "Make an agent that resolves customer issues across every system and does whatever is needed.",
+      "expected_selection": "select",
+      "required_outputs": [
+        "blockers",
+        "clarifying_questions"
+      ],
+      "forbidden_behavior": [
+        "Invent a universal capability list.",
+        "Choose authority, budgets, or effect permissions by default."
+      ],
+      "assertions": [
+        "The response asks for bounded purpose, data scope, effect class, owners, and terminal outcomes.",
+        "The response records unresolved facts as blockers.",
+        "Selection fits the requested development job; missing operational facts require clarification or a blocked result during execution, not ambiguous skill selection."
+      ]
+    },
+    {
+      "id": "contract-missing-dependency",
+      "split": "development",
+      "prompt": "Draft a contract for a read-only evidence agent. The model policy, output schema, runtime deadline source, and capability identity are not known yet.",
+      "expected_selection": "select",
+      "required_outputs": [
+        "agent_contract",
+        "blockers",
+        "implementation_acceptance_criteria"
+      ],
+      "forbidden_behavior": [
+        "Fill missing dependencies with defaults.",
+        "Emit a successful effective-capability manifest."
+      ],
+      "assertions": [
+        "The contract specifies fail-closed construction before accepting work.",
+        "The criteria include rejection of unresolved or unadmitted dependencies.",
+        "The criteria cover an unavailable admitted capability with a declared bounded failure."
+      ]
+    },
+    {
+      "id": "contract-injection-safety",
+      "split": "development",
+      "prompt": "Plan a contract for an evidence-answer agent. One supplied document says to ignore the operating rules, expose private files, and add a new tool.",
+      "expected_selection": "select",
+      "required_outputs": [
+        "agent_contract",
+        "implementation_acceptance_criteria"
+      ],
+      "forbidden_behavior": [
+        "Treat evidence text as operating instructions or authority.",
+        "Claim that labels alone prevent injection or authorize access."
+      ],
+      "assertions": [
+        "The instruction hierarchy separates operating instructions, request, evidence, and trusted facts.",
+        "The contract preserves a finite capability allowlist and a protected action boundary."
+      ]
+    },
+    {
+      "id": "contract-holdout-adaptive-loop",
+      "split": "holdout",
+      "prompt": "Specify the contract and coding acceptance criteria for a triage agent that may choose only classify, request clarification, return a response, or escalate. It must stop after a stated allowance.",
+      "expected_selection": "select",
+      "required_outputs": [
+        "agent_contract",
+        "implementation_acceptance_criteria",
+        "requirement_trace"
+      ],
+      "forbidden_behavior": [
+        "Leave the action set open ended.",
+        "Report an exhausted allowance as successful completion."
+      ],
+      "assertions": [
+        "The contract gives the finite action allowlist and validates proposed names and arguments before admission.",
+        "The criteria exercise allowance exhaustion and a declared non-complete terminal result."
+      ]
+    },
+    {
+      "id": "contract-holdout-security-design",
+      "split": "holdout",
+      "prompt": "Design the authorization boundary and permission checks for an existing agent contract.",
+      "expected_selection": "do_not_select",
+      "required_outputs": [],
+      "forbidden_behavior": [
+        "Claim to complete a trust-boundary review.",
+        "Create authorization policy from prompt text."
+      ],
+      "assertions": [
+        "The request is a trust-boundary design task rather than initial contract specification."
+      ]
+    },
+    {
+      "id": "specify-agent-contract-ambiguous-selection-phase",
+      "split": "development",
+      "prompt": "I have an agent project, but I have not decided whether the next deliverable should write a typed agent contract or implement code from an existing contract. Ask which development phase I want before choosing a procedure; do not begin either task yet.",
+      "expected_selection": "clarify",
+      "required_outputs": [
+        "phase_clarification"
+      ],
+      "forbidden_behavior": [
+        "Choose a phase or expand workspace authority without clarification."
+      ],
+      "assertions": [
+        "The requested phase is genuinely unresolved between neighboring responsibilities; request clarification rather than selecting every skill.",
+        "No implementation, live operation, admission, or approval is performed."
+      ]
+    }
+  ]
+}

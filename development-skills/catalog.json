@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "library_version": "0.1.0",
+  "playbook_version": "0.5.0-draft.2",
+  "source_commit": "151fca01fbc609c5550c563c902946db540c2f4c",
+  "status": "proposed",
+  "description": "Explicit development-time package catalog. Listing is not admission, approval, or a runtime permission grant. Generate an inventory to bind content hashes.",
+  "skills": [
+    {"id": "org.xmckay.agent.plan", "name": "plan-agent-use", "path": "development-skills/plan-agent-use", "dependencies": []},
+    {"id": "org.xmckay.agent.contract", "name": "specify-agent-contract", "path": "development-skills/specify-agent-contract", "dependencies": []},
+    {"id": "org.xmckay.agent.trust", "name": "design-trust-boundaries", "path": "development-skills/design-trust-boundaries", "dependencies": []},
+    {"id": "org.xmckay.agent.evidence", "name": "build-agent-evidence", "path": "development-skills/build-agent-evidence", "dependencies": []},
+    {"id": "org.xmckay.agent.readiness", "name": "review-agent-readiness", "path": "development-skills/review-agent-readiness", "dependencies": []},
+    {"id": "org.xmckay.agent.operations", "name": "operate-agent-lifecycle", "path": "development-skills/operate-agent-lifecycle", "dependencies": []},
+    {"id": "org.xmckay.agent.skill-admission", "name": "author-and-admit-agent-skills", "path": "development-skills/author-and-admit-agent-skills", "dependencies": []},
+    {"id": "org.xmckay.agent.implementation", "name": "draft-agent-implementation", "path": "development-skills/draft-agent-implementation", "dependencies": ["plan-agent-use", "specify-agent-contract", "design-trust-boundaries", "build-agent-evidence", "review-agent-readiness", "operate-agent-lifecycle", "author-and-admit-agent-skills"]}
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "id": "python-local",
+  "schema_version": "1.0",
+  "status": "proposed",
+  "language": "python",
+  "minimum_version": "3.11",
+  "required_artifacts": [
+    "pyproject.toml",
+    "config.example.toml",
+    ".env.example",
+    "src",
+    "tests/unit",
+    "tests/contract",
+    "tests/e2e",
+    "tests/security"
+  ],
+  "checks": [
+    {
+      "id": "compile",
+      "argv": [
+        "python3.11",
+        "-m",
+        "compileall",
+        "-q",
+        "src"
+      ],
+      "timeout_seconds": 30
+    },
+    {
+      "id": "unit",
+      "argv": [
+        "python3.11",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/unit",
+        "-t",
+        "."
+      ],
+      "timeout_seconds": 60
+    },
+    {
+      "id": "contract",
+      "argv": [
+        "python3.11",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/contract",
+        "-t",
+        "."
+      ],
+      "timeout_seconds": 60
+    },
+    {
+      "id": "e2e",
+      "argv": [
+        "python3.11",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/e2e",
+        "-t",
+        "."
+      ],
+      "timeout_seconds": 120
+    },
+    {
+      "id": "security",
+      "argv": [
+        "python3.11",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/security",
+        "-t",
+        "."
+      ],
+      "timeout_seconds": 120
+    }
+  ],
+  "forbidden_actions": [
+    "Run outside the user-approved isolated workspace or treat this profile as isolation enforcement.",
+    "Use --dangerously-skip-permissions, --yolo, or any equivalent host permission-bypass flag.",
+    "Store, commit, print, log, fixture, or search for credentials, tokens, or real secret files.",
+    "Construct shell or code text from untrusted input, or invoke a shell with untrusted input.",
+    "Read from or write outside declared file allowlists, follow unvalidated symlinks, or silently overwrite undeclared outputs.",
+    "Download, install, update, or invoke an undeclared dependency, SDK, connector, or service merely because this profile references it.",
+    "Start a daemon, scheduler, server, autonomous loop, or production/local service.",
+    "Perform a consequential external effect without separate reviewed authority and a tested effect boundary.",
+    "Claim that a generated or locally tested candidate is approved, secure, isolated, deployed, compliant, or production-ready."
+  ]
+}

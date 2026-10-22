@@ -1,0 +1,206 @@
+{
+  "schema_version": "1.0",
+  "skill": "operate-agent-lifecycle",
+  "run_id": "example-run",
+  "status": "draft",
+  "source_commit": "151fca01fbc609c5550c563c902946db540c2f4c",
+  "inputs": {
+    "candidate_identity": {
+      "agent_id": "draft-unresolved-agent-id",
+      "agent_version": "draft-unresolved-version",
+      "effective_capability_configuration_id": "draft-unresolved-effective-identity",
+      "inventory_reference": "draft-unresolved-inventory-reference"
+    },
+    "agent_contract": {
+      "artifact": "draft-unresolved-contract-artifact",
+      "terminal_outcomes": [],
+      "success_condition": "draft-unresolved",
+      "permitted_partial_result_rule": "draft-unresolved"
+    },
+    "boundary_and_data_constraints": {
+      "effect_classification": "draft-unresolved",
+      "permitted_correlation_fields": [],
+      "retention_and_content_constraints": "draft-unresolved",
+      "unknown_external_effect_reconciliation_rule": "draft-unresolved"
+    },
+    "execution_scope": {
+      "execution_shape": "draft-unresolved",
+      "operation_types": [],
+      "budget_scope": "draft-unresolved",
+      "in_flight_behavior": "draft-unresolved"
+    },
+    "operator_policy_context": {
+      "support_owner": "draft-unresolved",
+      "technical_contact": "draft-unresolved",
+      "escalation_route": "draft-unresolved",
+      "stop_operator": "draft-unresolved",
+      "recovery_authority": "draft-unresolved",
+      "material_change_authority": "draft-unresolved",
+      "independent_review_requirement": "draft-unresolved"
+    },
+    "lifecycle_context": {
+      "consumers": [],
+      "outstanding_work_model": "draft-unresolved",
+      "dependencies": [],
+      "review_policy_reference": "draft-unresolved",
+      "data_copy_classes": [],
+      "inventory_location": "draft-unresolved"
+    }
+  },
+  "outputs": {
+    "operating_control_record": {
+      "state": "draft",
+      "identity_rules": "Draft: define request, stable run, and physical-attempt identifiers.",
+      "terminal_outcome_taxonomy": "Draft: take outcomes from the agent contract.",
+      "termination_reason_taxonomy": "Draft: define reasons separately from terminal outcomes.",
+      "signal_plan": "Draft: identify operator questions, bounded labels, owners, and routes."
+    },
+    "event_schema": {
+      "state": "draft",
+      "common_fields": [
+        "event_id",
+        "schema_version",
+        "recorded_at",
+        "sequence",
+        "event_type",
+        "run_id",
+        "attempt_id",
+        "agent_id",
+        "agent_version",
+        "effective_capability_configuration_id",
+        "payload",
+        "telemetry_capture_status"
+      ],
+      "payload_policy": "Draft: identify permitted, redacted, omitted, and protected-artifact fields."
+    },
+    "attempt_trace_contract": {
+      "state": "draft",
+      "timing_fields": ["dispatch_at", "finished_at", "elapsed_ms"],
+      "result_fields": ["operation_result", "exit_code", "exit_signal", "timeout_state", "cancellation_state"],
+      "output_fields": ["stdout_bytes", "stderr_bytes", "output_capture_ref", "output_truncated"],
+      "file_change_fields": ["path", "pre_exists", "post_exists", "pre_size_bytes", "post_size_bytes", "pre_sha256", "post_sha256", "change_kind"]
+    },
+    "budget_and_timeout_plan": {
+      "state": "draft",
+      "dimensions": [],
+      "required_properties": ["unit", "scope", "ceiling", "measurement_point", "reservation_rule", "charge_rule", "in_flight_treatment", "unknown_use_rule", "exhausted_behavior"]
+    },
+    "stop_and_recovery_plan": {
+      "state": "draft",
+      "stop_scope": "Draft: select one run, agent admissions, or capability scope.",
+      "in_flight_rule": "Draft: requested stop is not confirmed cancellation.",
+      "resume_evidence": "Draft: cause or remaining uncertainty, correction, safeguards/release gates, and external recovery authorization."
+    },
+    "support_incident_record": {
+      "state": "draft",
+      "support_roles": "Draft: name reachable owner, technical contact, escalation, operators, authorities, combined roles, and independent review.",
+      "triage_fields": ["signal", "suspected_scope", "impact_criteria", "containment_options", "incident_decision_maker", "communications_owner", "minimum_permitted_evidence"],
+      "factual_separation": ["fixture_fact", "observation", "hypothesis", "confirmed_cause", "evaluation_conclusion", "release_authorization", "external_effect_status"]
+    },
+    "feedback_and_review_plan": {
+      "state": "draft",
+      "feedback_fields": ["feedback_id", "source_category", "received_at", "disposition", "accountable_follow_up", "linked_corrective_action"],
+      "review_fields": ["cadence_policy_reference", "early_triggers", "required_coverage", "missed_review_disposition"]
+    },
+    "deprecation_retirement_handoff": {
+      "state": "draft",
+      "lifecycle_states": ["proposed", "deprecated", "disabled", "retired", "unresolved"],
+      "required_handoff_items": ["stop_new_work", "consumer_inventory", "outstanding_work_and_disposition", "revoke_unneeded_credentials", "remove_unneeded_capability_registrations", "copy_specific_data_disposition", "preserve_required_evidence", "inventory_or_manifest_update"]
+    }
+  },
+  "assumptions": [
+    "DRAFT: The candidate contract and its terminal outcomes will be supplied by the accountable owner.",
+    "DRAFT: An approved policy will define contacts, review cadence, retention, and any shared-accounting implementation."
+  ],
+  "blockers": [
+    "DRAFT: Candidate identity, authority assignments, and data-handling constraints are unresolved; no operating control is evidenced."
+  ],
+  "applicability": [
+    {
+      "requirement_id": "OPS-01",
+      "status": "unmet",
+      "rationale": "Draft packet has no observed production run identity record.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "OPS-02",
+      "status": "unmet",
+      "rationale": "Draft outcome and attempt trace design has not been observed.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "OPS-03",
+      "status": "unmet",
+      "rationale": "Applicable ceilings and enforcement evidence are unresolved.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "OPS-04",
+      "status": "unmet",
+      "rationale": "Exhaustion behavior and any shared accounting remain unimplemented.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "OPS-05",
+      "status": "unmet",
+      "rationale": "Stop mechanism and in-flight treatment are planned only.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "LIFECYCLE-01",
+      "status": "unmet",
+      "rationale": "Reachable support contacts and authority boundaries remain draft.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "LIFECYCLE-02",
+      "status": "unmet",
+      "rationale": "Triage and escalation plan is not an observed incident response.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "LIFECYCLE-03",
+      "status": "unmet",
+      "rationale": "No containment, reconciliation, or externally authorized resumption has occurred.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "LIFECYCLE-04",
+      "status": "unmet",
+      "rationale": "No operational feedback disposition has been observed.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "LIFECYCLE-05",
+      "status": "unmet",
+      "rationale": "No periodic or event-triggered maintenance review has been observed.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "LIFECYCLE-06",
+      "status": "unmet",
+      "rationale": "No deprecation or retirement handoff has been completed.",
+      "evidence_ids": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "planned-operating-control-record",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "planned-lifecycle-support-record",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    }
+  ],
+  "decision": {
+    "recommendation": "not_assessed",
+    "authorized": false
+  }
+}

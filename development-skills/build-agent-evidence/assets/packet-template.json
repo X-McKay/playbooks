@@ -1,0 +1,233 @@
+{
+  "schema_version": "1.0",
+  "skill": "build-agent-evidence",
+  "run_id": "example-run",
+  "status": "draft",
+  "source_commit": "151fca01fbc609c5550c563c902946db540c2f4c",
+  "inputs": {
+    "candidate": "draft: record the immutable candidate source, resolved configuration, route, fallback, and behavior-affecting scope",
+    "baseline": "draft: record the immutable baseline and comparable configuration, or a first-release rationale",
+    "contract": "draft: link the versioned outcomes, prohibited outcomes, boundaries, stop conditions, and material risk record",
+    "approved_workspace": "draft: record the approved isolated workspace root and allowed modification boundary",
+    "decision_owner": "draft: record the accountable evaluation owner and external decision authority"
+  },
+  "outputs": {
+    "coverage_map": "evaluation/coverage-map.yaml — draft map of claims, risks, profiles, cases, levels, evaluators, stages, owners, decision roles, and rerun triggers",
+    "case_register": "evaluation/cases.json — draft stable case IDs, versioned inputs, origins, tags, purposes, terminal outcomes, invariants, and allowed variation",
+    "fixture_manifest": "evaluation/fixtures.json — draft fixture revisions, initialization, unique per-test copies, isolation, reset, reset verification, data handling, and authoritative observations",
+    "evaluator_records": "evaluation/evaluators/ — draft claim-to-method, self-test, reviewer provenance, fitness, limits, and calibration records",
+    "trial_policy": "evaluation/trial-policy.yaml — draft fresh-session, reset, attempt, retry, selection, fallback, status, resource, and uncertainty policy",
+    "decision_policy": "evaluation/decision-policy.yaml — draft gates, coverage, slices, thresholds, missing-evidence treatment, repair rule, and authority",
+    "run_ledger": "evaluation/runs/example-run/ledger.jsonl — draft append-only physical-attempt and final-policy result record",
+    "comparison_report": "evaluation/reports/candidate-comparison.md and companion data — draft candidate-baseline pairing, flips, denominators, statuses, limits, and holdout disposition",
+    "repair_record": "evaluation/repairs/ — draft location for any bounded, non-relaxing repair record; state no repair used when absent"
+  },
+  "assumptions": [
+    "draft: the supplied candidate, baseline, contract, and configuration identities are stable until the retained artifacts are verified",
+    "draft: every execution will start in a fresh session with a unique fixture copy and verified reset",
+    "draft: only data authorized and proportionate to the stated claims will enter fixtures or retained artifacts"
+  ],
+  "blockers": [
+    "draft: replace this entry with each real missing contract, controlled fixture, authoritative observation, holdout, evaluator-fitness, workspace, or authority blocker; remove it only when no blocker remains"
+  ],
+  "applicability": [
+    {
+      "requirement_id": "CASE-01",
+      "status": "unmet",
+      "rationale": "draft: the versioned claim-to-case, profile, cadence, owner, and decision-role map is not yet complete",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "CASE-02",
+      "status": "unmet",
+      "rationale": "draft: stable case identity, suite purpose, and independently authored holdout treatment are not yet evidenced",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "CASE-03",
+      "status": "unmet",
+      "rationale": "draft: fixture initialization, isolation, reset verification, and authoritative observation are not yet evidenced",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "CASE-04",
+      "status": "unmet",
+      "rationale": "draft: claim-fit unit, contract, integration, end-to-end, and adverse test-level selection is not yet evidenced",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "CASE-05",
+      "status": "unmet",
+      "rationale": "draft: attributable execution records and any applicable bounded repair record are not yet retained",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "BEHAVIOR-01",
+      "status": "unmet",
+      "rationale": "draft: terminal outcomes, trajectory invariants, and their separate observations are not yet evidenced",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "BEHAVIOR-02",
+      "status": "unmet",
+      "rationale": "draft: applicable adverse conditions, relation pairs, and repeated fresh-trial evidence are not yet complete",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "BEHAVIOR-03",
+      "status": "unmet",
+      "rationale": "draft: applicable critical controls lack separate proposal, boundary, execution, and disclosure observations",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "BEHAVIOR-04",
+      "status": "unmet",
+      "rationale": "draft: the harm screen and any triggered affected-slice evaluation are not yet recorded",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "BEHAVIOR-05",
+      "status": "unmet",
+      "rationale": "draft: claim-sufficient provenance and visible evidence statuses are not yet retained for each result",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "EVALUATOR-01",
+      "status": "unmet",
+      "rationale": "draft: every decision-facing evaluator still needs its bounded claim-to-method record",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "EVALUATOR-02",
+      "status": "unmet",
+      "rationale": "draft: source, permission, state, and truth evidence types have not yet been matched to their claims",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "EVALUATOR-03",
+      "status": "unmet",
+      "rationale": "draft: decision-facing references, rubrics, reviewer provenance, and disagreement treatment are incomplete",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "EVALUATOR-04",
+      "status": "unmet",
+      "rationale": "draft: if a model judge is needed for a decision-facing claim, heldout independent calibration is not yet complete",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "EVALUATOR-05",
+      "status": "unmet",
+      "rationale": "draft: evaluator known-pass, known-failure, and material-change revalidation evidence is incomplete",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "COVERAGE-01",
+      "status": "unmet",
+      "rationale": "draft: the proportional universal core, bounds, retained identities, and trial policy are incomplete",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "COVERAGE-02",
+      "status": "unmet",
+      "rationale": "draft: independently triggered profiles and objective absent-trigger rationales are not yet mapped",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "COVERAGE-03",
+      "status": "unmet",
+      "rationale": "draft: stage cadence, material-change impact, affected reruns, and regression intake are incomplete",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "COVERAGE-04",
+      "status": "unmet",
+      "rationale": "draft: a guarded-live scope record is required only if live evaluation is proposed and has not been supplied",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "RELEASE-EVIDENCE-01",
+      "status": "unmet",
+      "rationale": "draft: candidate and baseline provenance, execution units, configuration, versions, and case-level records are incomplete",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "RELEASE-EVIDENCE-02",
+      "status": "unmet",
+      "rationale": "draft: comparable trial, metric, status, paired-flip, and uncertainty policy is incomplete where triggered",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "RELEASE-EVIDENCE-03",
+      "status": "unmet",
+      "rationale": "draft: the dated pre-result decision policy is not yet complete",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "RELEASE-EVIDENCE-04",
+      "status": "unmet",
+      "rationale": "draft: non-compensable gate application and invalid, inconclusive, failure, and repair dispositions are incomplete",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "RELEASE-EVIDENCE-05",
+      "status": "unmet",
+      "rationale": "draft: a decision record, limitations, next action, and downstream handoff are not yet justified by evidence",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "RELEASE-EVIDENCE-06",
+      "status": "unmet",
+      "rationale": "draft: any production-derived signal must be attributed, reviewed, sanitized, classified, and versioned before regression use",
+      "evidence_ids": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "planned-coverage-map",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "planned-case-and-fixture-register",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "planned-evaluator-self-tests",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "planned-candidate-baseline-comparison",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "planned-independent-holdout",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "planned-unit-contract-integration-end-to-end-adversarial-suite",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    }
+  ],
+  "decision": {
+    "recommendation": "not_assessed",
+    "authorized": false
+  }
+}

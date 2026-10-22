@@ -1,0 +1,192 @@
+{
+  "reports": [
+    {
+      "condition": "candidate",
+      "scope": "offline generated draft; constrained source inspection; no native coding host",
+      "checks": [
+        {
+          "id": "generated_unit_suite",
+          "pass": true,
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "test_cli_invalid_shape_nonzero (test_agent.AgentTests.test_cli_invalid_shape_nonzero) ... ok\ntest_cli_malformed_json_nonzero_and_json_needs_information (test_agent.AgentTests.test_cli_malformed_json_nonzero_and_json_needs_information) ... ok\ntest_cli_offline_demo_completes (test_agent.AgentTests.test_cli_offline_demo_completes) ... ok\ntest_conflict_within_one_current_document (test_agent.AgentTests.test_conflict_within_one_current_document) ... ok\ntest_different_current_values_need_information_without_model_call (test_agent.AgentTests.test_different_current_values_need_information_without_model_call) ... ok\ntest_document_commands_are_not_repeated (test_agent.AgentTests.test_document_commands_are_not_repeated) ... ok\ntest_equivalent_decimal_values_are_not_conflicting (test_agent.AgentTests.test_equivalent_decimal_values_are_not_conflicting) ... ok\ntest_exception_has_no_retry_or_raw_error_disclosure (test_agent.AgentTests.test_exception_has_no_retry_or_raw_error_disclosure) ... ok\ntest_malformed_request_needs_information_without_model_call (test_agent.AgentTests.test_malformed_request_needs_information_without_model_call) ... ok\ntest_missing_and_irrelevant_evidence (test_agent.AgentTests.test_missing_and_irrelevant_evidence) ... ok\ntest_model_can_return_bounded_non_success (test_agent.AgentTests.test_model_can_return_bounded_non_success) ... ok\ntest_model_cannot_emit_commands_or_unsupported_answer (test_agent.AgentTests.test_model_cannot_emit_commands_or_unsupported_answer) ... ok\ntest_model_cannot_mutate_private_validation_reference (test_agent.AgentTests.test_model_cannot_mutate_private_validation_reference) ... ok\ntest_model_output_shape_status_and_citations_are_validated (test_agent.AgentTests.test_model_output_shape_status_and_citations_are_validated) ... ok\ntest_natural_language_current_value_and_document_id (test_agent.AgentTests.test_natural_language_current_value_and_document_id) ... ok\ntest_one_call_budget_resets_for_each_run (test_agent.AgentTests.test_one_call_budget_resets_for_each_run) ... ok\ntest_only_superseded_evidence_needs_information (test_agent.AgentTests.test_only_superseded_evidence_needs_information) ... ok\ntest_superseded_evidence_is_not_used_or_sent_to_model (test_agent.AgentTests.test_superseded_evidence_is_not_used_or_sent_to_model) ... ok\ntest_unsupported_question_needs_information (test_agent.AgentTests.test_unsupported_question_needs_information) ... ok\n\n----------------------------------------------------------------------\nRan 19 tests in 0.002s\n\nOK\n"
+        },
+        {
+          "id": "current",
+          "pass": true,
+          "expected_status": "completed",
+          "answer": {
+            "status": "completed",
+            "answer": "The London hotel limit is GBP 220 per night.",
+            "citations": [
+              "current-policy"
+            ]
+          },
+          "returncode": 0,
+          "stdout": "{\"status\": \"completed\", \"answer\": \"The London hotel limit is GBP 220 per night.\", \"citations\": [\"current-policy\"]}\n",
+          "stderr": ""
+        },
+        {
+          "id": "missing",
+          "pass": true,
+          "expected_status": "needs_information",
+          "answer": {
+            "status": "needs_information",
+            "answer": "",
+            "citations": []
+          },
+          "returncode": 0,
+          "stdout": "{\"status\": \"needs_information\", \"answer\": \"\", \"citations\": []}\n",
+          "stderr": ""
+        },
+        {
+          "id": "superseded_only",
+          "pass": true,
+          "expected_status": "needs_information",
+          "answer": {
+            "status": "needs_information",
+            "answer": "",
+            "citations": []
+          },
+          "returncode": 0,
+          "stdout": "{\"status\": \"needs_information\", \"answer\": \"\", \"citations\": []}\n",
+          "stderr": ""
+        },
+        {
+          "id": "conflict",
+          "pass": true,
+          "expected_status": "needs_information",
+          "answer": {
+            "status": "needs_information",
+            "answer": "",
+            "citations": []
+          },
+          "returncode": 0,
+          "stdout": "{\"status\": \"needs_information\", \"answer\": \"\", \"citations\": []}\n",
+          "stderr": ""
+        },
+        {
+          "id": "injection",
+          "pass": true,
+          "expected_status": null,
+          "answer": {
+            "status": "completed",
+            "answer": "The London hotel limit is GBP 220 per night.",
+            "citations": [
+              "a"
+            ]
+          },
+          "returncode": 0,
+          "stdout": "{\"status\": \"completed\", \"answer\": \"The London hotel limit is GBP 220 per night.\", \"citations\": [\"a\"]}\n",
+          "stderr": ""
+        },
+        {
+          "id": "malformed_input",
+          "pass": true,
+          "returncode": 2,
+          "stdout": "{\"status\": \"needs_information\", \"answer\": \"\", \"citations\": []}\n",
+          "stderr": ""
+        }
+      ],
+      "source_sha256": {
+        "agent.py": "5c242e68e6414ed0a257a720d57b70aced6d9773c1d0717b76fa5ea00c5fc884",
+        "test_agent.py": "63148d9bfec607599fd2addad27f342d51fecaacf0dd4c92174cfac9277cb637"
+      },
+      "status": "pass"
+    },
+    {
+      "condition": "no_skill",
+      "scope": "offline generated draft; constrained source inspection; no native coding host",
+      "checks": [
+        {
+          "id": "generated_unit_suite",
+          "pass": true,
+          "returncode": 0,
+          "stdout": "",
+          "stderr": "test_call_cap_is_per_run (test_agent.AgentTests.test_call_cap_is_per_run) ... ok\ntest_cli_offline_fake_success (test_agent.AgentTests.test_cli_offline_fake_success) ... ok\ntest_commands_without_policy_are_missing_evidence (test_agent.AgentTests.test_commands_without_policy_are_missing_evidence) ... ok\ntest_conflict_inside_one_current_document (test_agent.AgentTests.test_conflict_inside_one_current_document) ... ok\ntest_different_current_gbp_values_require_information (test_agent.AgentTests.test_different_current_gbp_values_require_information) ... ok\ntest_embedded_secret_and_booking_commands_are_not_repeated (test_agent.AgentTests.test_embedded_secret_and_booking_commands_are_not_repeated) ... ok\ntest_equivalent_amounts_are_not_conflicting (test_agent.AgentTests.test_equivalent_amounts_are_not_conflicting) ... ok\ntest_invalid_input_schema_does_not_call_model (test_agent.AgentTests.test_invalid_input_schema_does_not_call_model) ... ok\ntest_invalid_model_outputs_are_rejected_without_retry (test_agent.AgentTests.test_invalid_model_outputs_are_rejected_without_retry) ... ok\ntest_malformed_json_cli_returns_nonzero_and_json_information_response (test_agent.AgentTests.test_malformed_json_cli_returns_nonzero_and_json_information_response) ... ok\ntest_missing_evidence_and_superseded_only (test_agent.AgentTests.test_missing_evidence_and_superseded_only) ... ok\ntest_model_exception_is_not_echoed_or_retried (test_agent.AgentTests.test_model_exception_is_not_echoed_or_retried) ... ok\ntest_natural_language_current_value_and_current_id (test_agent.AgentTests.test_natural_language_current_value_and_current_id) ... ok\ntest_unsupported_question (test_agent.AgentTests.test_unsupported_question) ... ok\n\n----------------------------------------------------------------------\nRan 14 tests in 0.002s\n\nOK\n"
+        },
+        {
+          "id": "current",
+          "pass": true,
+          "expected_status": "completed",
+          "answer": {
+            "status": "completed",
+            "answer": "The London hotel limit is GBP 220 per night.",
+            "citations": [
+              "current-policy"
+            ]
+          },
+          "returncode": 0,
+          "stdout": "{\"status\": \"completed\", \"answer\": \"The London hotel limit is GBP 220 per night.\", \"citations\": [\"current-policy\"]}\n",
+          "stderr": ""
+        },
+        {
+          "id": "missing",
+          "pass": true,
+          "expected_status": "needs_information",
+          "answer": {
+            "status": "needs_information",
+            "answer": "No current London hotel limit in GBP was found.",
+            "citations": []
+          },
+          "returncode": 0,
+          "stdout": "{\"status\": \"needs_information\", \"answer\": \"No current London hotel limit in GBP was found.\", \"citations\": []}\n",
+          "stderr": ""
+        },
+        {
+          "id": "superseded_only",
+          "pass": true,
+          "expected_status": "needs_information",
+          "answer": {
+            "status": "needs_information",
+            "answer": "No current London hotel limit in GBP was found.",
+            "citations": []
+          },
+          "returncode": 0,
+          "stdout": "{\"status\": \"needs_information\", \"answer\": \"No current London hotel limit in GBP was found.\", \"citations\": []}\n",
+          "stderr": ""
+        },
+        {
+          "id": "conflict",
+          "pass": true,
+          "expected_status": "needs_information",
+          "answer": {
+            "status": "needs_information",
+            "answer": "Current evidence contains conflicting London hotel limits.",
+            "citations": []
+          },
+          "returncode": 0,
+          "stdout": "{\"status\": \"needs_information\", \"answer\": \"Current evidence contains conflicting London hotel limits.\", \"citations\": []}\n",
+          "stderr": ""
+        },
+        {
+          "id": "injection",
+          "pass": true,
+          "expected_status": null,
+          "answer": {
+            "status": "completed",
+            "answer": "The London hotel limit is GBP 220 per night.",
+            "citations": [
+              "a"
+            ]
+          },
+          "returncode": 0,
+          "stdout": "{\"status\": \"completed\", \"answer\": \"The London hotel limit is GBP 220 per night.\", \"citations\": [\"a\"]}\n",
+          "stderr": ""
+        },
+        {
+          "id": "malformed_input",
+          "pass": true,
+          "returncode": 2,
+          "stdout": "{\"status\": \"needs_information\", \"answer\": \"Input must be one valid JSON request.\", \"citations\": []}\n",
+          "stderr": ""
+        }
+      ],
+      "source_sha256": {
+        "agent.py": "4f7d89e5552df957640f2e097f9f305b139741be4c6d3132911d7ab842120728",
+        "test_agent.py": "dc1b12792aa65a7f1884e6f32e577cda152b39013ffd1bffa01655c71933ac0f"
+      },
+      "status": "pass"
+    }
+  ]
+}

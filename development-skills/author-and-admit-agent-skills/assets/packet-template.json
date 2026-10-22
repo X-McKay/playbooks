@@ -1,0 +1,139 @@
+{
+  "schema_version": "1.0",
+  "skill": "author-and-admit-agent-skills",
+  "run_id": "example-run",
+  "status": "draft",
+  "source_commit": "151fca01fbc609c5550c563c902946db540c2f4c",
+  "inputs": {
+    "target_agent_contract": "draft: unresolved target contract and effective capability manifest",
+    "candidate_package_location": "draft: unresolved package location or bounded specification",
+    "candidate_source_and_revision": "draft: unresolved source and revision",
+    "prior_package_identity": "draft: no prior identity supplied"
+  },
+  "outputs": {
+    "package_inventory": {
+      "status": "draft",
+      "artifact": "draft: workspace-relative complete material inventory",
+      "identity_scope": [
+        "all regular package files",
+        "instruction entry file",
+        "behavior-relevant references",
+        "output-shaping assets",
+        "executable material"
+      ]
+    },
+    "candidate_identity_record": {
+      "candidate_name": "draft-unresolved-name",
+      "unique_name_resolution_status": "unresolved",
+      "semantic_version": "draft-unresolved-version",
+      "accountable_owner": "unresolved",
+      "owner_verification_status": "not verified",
+      "source": "unresolved",
+      "source_revision": "unresolved",
+      "source_verification_status": "not verified",
+      "license_status": "unresolved",
+      "resolved_complete_package_identity": "unresolved",
+      "identity_method": "draft: reproducible digest over complete material inventory",
+      "prior_identity": "not supplied",
+      "change_review_status": "not assessed"
+    },
+    "admission_proposal": {
+      "admission_state": "proposed-not-admitted",
+      "proposed_allowlist_relation": "draft only; no effective manifest change",
+      "authority_statement": "The candidate package grants no capability, permission, authority, or approval."
+    },
+    "dependency_register": {
+      "status": "draft",
+      "artifact": "draft: workspace-relative dependency register with expected identities and verification observations"
+    },
+    "resource_loading_and_cost_plan": {
+      "status": "draft",
+      "artifact": "draft: workspace-relative staged metadata, instruction, and direct-resource cost/loading record",
+      "required_resource_handling": "Block or return needs_information when a required resource cannot be safely identified or loaded by the host."
+    },
+    "selection_evaluation_plan": {
+      "status": "draft",
+      "artifact": "draft: workspace-relative positive, negative, ambiguous, procedure, safety, and prior-version case plan"
+    },
+    "external_review_handoff": "draft: immutable candidate remains unapproved; external accountable review is required"
+  },
+  "assumptions": [
+    "Draft: the target agent may use skills only if its contract declares that capability and an external process controls an allowlist.",
+    "Draft: package source, owner, licensing, host loading behavior, and dependencies need explicit verification."
+  ],
+  "blockers": [
+    "Draft: do not progress while candidate name resolution, source/revision, owner, license status, whole-package identity, or required dependency observations are unresolved."
+  ],
+  "applicability": [
+    {
+      "requirement_id": "SKILL-01",
+      "status": "unmet",
+      "rationale": "Draft proposal has no observed target-agent capability-boundary evidence.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SKILL-02",
+      "status": "unmet",
+      "rationale": "Draft proposal has no observed unique resolution or reviewed allowlist evidence.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SKILL-03",
+      "status": "unmet",
+      "rationale": "Candidate owner, source, license status, version, and complete immutable identity remain draft or unresolved.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SKILL-04",
+      "status": "unmet",
+      "rationale": "Candidate procedure, boundaries, completion, and required dependency observations need review.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SKILL-05",
+      "status": "unmet",
+      "rationale": "No observed separate admission and authorization exists for any executable material.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SKILL-06",
+      "status": "unmet",
+      "rationale": "Format, complete-package, cost/loading, selection, procedure, safety, and version-comparison evidence is planned only.",
+      "evidence_ids": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "format-validation-plan",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "complete-package-identity-plan",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "staged-resource-cost-and-loading-plan",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "selection-and-safety-evaluation-plan",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    }
+  ],
+  "decision": {
+    "recommendation": "not_assessed",
+    "authorized": false
+  }
+}

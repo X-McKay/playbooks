@@ -28,11 +28,12 @@
               lychee
               markdownlint-cli2
               nixfmt-rfc-style
+              python3
             ];
 
             shellHook = ''
               echo "Playbooks development shell"
-              echo "Run 'just check' to lint Markdown and check links."
+              echo "Run 'just check' to lint Markdown, check links, and validate development skills."
             '';
           };
         }

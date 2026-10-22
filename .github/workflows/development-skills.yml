@@ -1,0 +1,20 @@
+name: Development skills
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Validate proposed library
+        run: python3 tools/agent_skills/skillctl.py validate --root .
+      - name: Run deterministic unit and end-to-end CLI tests
+        run: python3 -m unittest discover -s tests/agent_skills -v

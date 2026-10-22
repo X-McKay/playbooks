@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:xmckay:agent-development:packet:1.0",
+  "title": "Agent development evidence packet — local implementation contract",
+  "description": "A planning/evidence envelope, not proof of conformance or authorization. The checker also verifies workspace containment and artifact hashes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "skill", "run_id", "status", "source_commit", "inputs", "outputs", "assumptions", "blockers", "applicability", "evidence", "decision"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "skill": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 64},
+    "run_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["draft", "needs_information", "blocked", "candidate_evidenced"]},
+    "source_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "inputs": {"type": "object"},
+    "outputs": {"type": "object"},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "blockers": {"type": "array", "items": {"type": "string"}},
+    "applicability": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requirement_id", "status", "rationale", "evidence_ids"],
+        "properties": {
+          "requirement_id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["met", "not_applicable", "unmet", "exception_proposed"]},
+          "rationale": {"type": "string", "minLength": 1},
+          "evidence_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "status", "artifact", "sha256"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["planned", "observed"]},
+          "status": {"enum": ["pass", "fail", "invalid", "inconclusive", "not_run"]},
+          "artifact": {"type": "string"},
+          "sha256": {"type": "string"}
+        },
+        "allOf": [
+          {"if": {"properties": {"kind": {"const": "observed"}}}, "then": {"properties": {"artifact": {"minLength": 1}, "sha256": {"pattern": "^[a-f0-9]{64}$"}}}},
+          {"if": {"properties": {"kind": {"const": "planned"}}}, "then": {"properties": {"status": {"const": "not_run"}}}}
+        ]
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recommendation", "authorized"],
+      "properties": {
+        "recommendation": {"enum": ["not_assessed", "go", "conditional_go", "no_go"]},
+        "authorized": {"const": false}
+      }
+    }
+  }
+}

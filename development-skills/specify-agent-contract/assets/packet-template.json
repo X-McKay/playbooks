@@ -1,0 +1,196 @@
+{
+  "schema_version": "1.0",
+  "skill": "specify-agent-contract",
+  "run_id": "example-contract-plan",
+  "status": "draft",
+  "source_commit": "151fca01fbc609c5550c563c902946db540c2f4c",
+  "inputs": {
+    "problem_packet": {
+      "problem_id": "draft-agent-problem",
+      "purpose": "Draft: state the bounded job the proposed agent should perform.",
+      "requester_and_consumer": "Draft: name the requester and the downstream consumer of each terminal outcome.",
+      "included_work": [
+        "Draft: list the task interpretation or response work that belongs to the agent."
+      ],
+      "excluded_work": [
+        "Draft: list actions, data access, decisions, or effects outside the proposed boundary."
+      ],
+      "caller_inputs": [
+        {
+          "name": "draft_task_field",
+          "type": "text",
+          "required": true,
+          "validation": "Draft: state format, range, or rejection behavior."
+        }
+      ],
+      "trusted_runtime_dependencies": [
+        {
+          "name": "draft_identity_or_deadline",
+          "type": "opaque_identifier_or_timestamp",
+          "source": "Draft: name the trusted boundary that supplies this dependency.",
+          "prohibited_sources": [
+            "request_body",
+            "model_output",
+            "untrusted_content"
+          ]
+        }
+      ],
+      "desired_capabilities": [],
+      "execution_shape": "Draft: response-only, fixed workflow, or bounded adaptive loop with a finite action set.",
+      "known_constraints": [
+        "Draft: state applicable request, model, capability-call, time, or cost policy and its enforcement point."
+      ],
+      "instruction_intent": "Draft: state task, evidence/decision, uncertainty, and output guidance without granting authority."
+    }
+  },
+  "outputs": {
+    "agent_contract": {
+      "artifact": "Draft: reviewable agent contract at an approved workspace-relative location.",
+      "sections": [
+        "identity, owner, purpose, and non-goals",
+        "anatomy and runtime responsibilities",
+        "typed caller inputs and trusted dependency provenance",
+        "finite actions, capabilities, budgets, and stop behavior",
+        "validated terminal outcomes and caller handling",
+        "instruction hierarchy and revision identity",
+        "external effective-capability startup manifest requirements",
+        "fail-closed construction and material-change rules"
+      ]
+    },
+    "implementation_acceptance_criteria": {
+      "artifact": "Draft: criteria list at an approved workspace-relative location.",
+      "required_categories": [
+        "construction rejection and no-default behavior",
+        "typed input and trusted-dependency handling",
+        "allowlist and budget enforcement",
+        "output validation and terminal outcomes",
+        "missing or unavailable dependency behavior",
+        "external manifest emission and change identity",
+        "instruction/data-boundary cases"
+      ],
+      "evidence_status": "planned"
+    },
+    "requirement_trace": {
+      "ANATOMY": "Draft: map ANATOMY-01 through ANATOMY-05 to contract sections and criteria.",
+      "CONTRACT": "Draft: map CONTRACT-01 through CONTRACT-06 to contract sections and criteria.",
+      "PROMPT": "Draft: map PROMPT-01 through PROMPT-05 to contract sections and criteria."
+    }
+  },
+  "assumptions": [
+    "Draft assumption: accountable owner, governance tier, risk-record identity, and numeric budget values require confirmation."
+  ],
+  "blockers": [
+    "Draft blocker: no capability, model policy, schema, or authority-bearing dependency is considered admitted until named, resolved, and externally reviewed."
+  ],
+  "applicability": [
+    {
+      "requirement_id": "ANATOMY-01",
+      "status": "unmet",
+      "rationale": "Draft: responsibilities and interfaces are not yet confirmed in an implementation.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "ANATOMY-02",
+      "status": "unmet",
+      "rationale": "Draft: proposal and deterministic-enforcement separation requires implementation review.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "ANATOMY-03",
+      "status": "unmet",
+      "rationale": "Draft: repeated-step stopping conditions and resource limits require a declared runtime shape.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "ANATOMY-04",
+      "status": "unmet",
+      "rationale": "Draft: receiving-boundary structural validation requires an identified output contract.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "ANATOMY-05",
+      "status": "unmet",
+      "rationale": "Draft: shared executable-capability maintenance ownership is unresolved until a capability is declared.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "CONTRACT-01",
+      "status": "unmet",
+      "rationale": "Draft: the contract output will define the complete interface and terminal outcomes.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "CONTRACT-02",
+      "status": "unmet",
+      "rationale": "Draft: construction validation and fail-closed handling require an implementation decision.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "CONTRACT-03",
+      "status": "unmet",
+      "rationale": "Draft: capability allowlist and enforceable bounds require explicit values and enforcement points.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "CONTRACT-04",
+      "status": "unmet",
+      "rationale": "Draft: trusted dependency types and provenance require confirmation from protected boundaries.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "CONTRACT-05",
+      "status": "unmet",
+      "rationale": "Draft: runtime output validation and action-proposal treatment require implementation review.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "CONTRACT-06",
+      "status": "unmet",
+      "rationale": "Draft: effective-configuration manifest emission and evidence links are not yet observed.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "PROMPT-01",
+      "status": "unmet",
+      "rationale": "Draft: instruction task, evidence rule, and uncertainty treatment require final contract alignment.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "PROMPT-02",
+      "status": "unmet",
+      "rationale": "Draft: instruction, request, evidence, and trusted-fact roles require final assembly review.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "PROMPT-03",
+      "status": "unmet",
+      "rationale": "Draft: any exemplars require a contract-consistency check before use.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "PROMPT-04",
+      "status": "unmet",
+      "rationale": "Draft: output instruction alignment and separate runtime validation require implementation review.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "PROMPT-05",
+      "status": "unmet",
+      "rationale": "Draft: instruction revision identity and relevant evaluation handoff are not yet recorded.",
+      "evidence_ids": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "plan-contract-review",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    }
+  ],
+  "decision": {
+    "recommendation": "not_assessed",
+    "authorized": false
+  }
+}
