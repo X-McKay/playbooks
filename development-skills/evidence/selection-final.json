@@ -1,0 +1,871 @@
+{
+  "model": "gpt-6.1-sol",
+  "mode": "metadata-only portable instruction probe; not a native coding host",
+  "repetitions": 1,
+  "results": [
+    {
+      "index": 0,
+      "skill": "plan-agent-use",
+      "case": "plan-agent-use-positive-facilities-routing",
+      "split": "development",
+      "metadata": "\nname: plan-agent-use\ndescription: \"Turn an early request for an agent or automation into a bounded, measurable planning packet: a problem brief, success record, simpler-baseline comparison, and initial scope, risk, ownership, and delivery record. Use before settling a production agent or exposure-bearing pilot, including when an agent may be unnecessary. Do not use to design an implementation contract, approve risk, grant access, evaluate a candidate, authorize exposure, or deploy.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Before we decide whether to build an agent, turn our facilities-request idea into a bounded plan. Office staff search for the right maintenance form; a possible electrical hazard must be handled differently. Compare a clearer form catalogue and a fixed selector with an adaptive agent, and identify the people and data questions we still need.",
+      "metadata_sha256": "ba8c274282a3bc1bd90767b35ad970a5bddb9e65df799a614d6076e80e8d48fb",
+      "fixture_sha256": "4359acdf8bc7f527d45755cbf957770554fc76846e48bddf7f102445441a6d2d",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request seeks a bounded, pre-build planning packet for a potential facilities-request agent, including simpler-baseline comparisons, hazard-related scope and risk considerations, and unresolved ownership and data questions. This directly matches the skill and does not request implementation, risk approval, access, or deployment.",
+      "pass": true,
+      "elapsed_ms": 2878,
+      "usage": {
+        "completion_tokens": 71,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 359,
+        "prompt_tokens_details": {},
+        "total_tokens": 430,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 1,
+      "skill": "plan-agent-use",
+      "case": "plan-agent-use-negative-contract-authoring",
+      "split": "development",
+      "metadata": "\nname: plan-agent-use\ndescription: \"Turn an early request for an agent or automation into a bounded, measurable planning packet: a problem brief, success record, simpler-baseline comparison, and initial scope, risk, ownership, and delivery record. Use before settling a production agent or exposure-bearing pilot, including when an agent may be unnecessary. Do not use to design an implementation contract, approve risk, grant access, evaluate a candidate, authorize exposure, or deploy.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "The planning decision is already accepted. Write the typed input/output contract, terminal outcomes, capability manifest, and configuration identity for the selected candidate.",
+      "metadata_sha256": "ba8c274282a3bc1bd90767b35ad970a5bddb9e65df799a614d6076e80e8d48fb",
+      "fixture_sha256": "c932563be22aa2b317524f0c06cc1352a11ba9be105b272a7d72b78f8101da16",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is to design an implementation contract for an already selected candidate, which is explicitly excluded from this early-stage planning skill.",
+      "pass": true,
+      "elapsed_ms": 2397,
+      "usage": {
+        "completion_tokens": 42,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 325,
+        "prompt_tokens_details": {},
+        "total_tokens": 367,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 2,
+      "skill": "plan-agent-use",
+      "case": "plan-agent-use-ambiguous-selection-phase",
+      "split": "development",
+      "metadata": "\nname: plan-agent-use\ndescription: \"Turn an early request for an agent or automation into a bounded, measurable planning packet: a problem brief, success record, simpler-baseline comparison, and initial scope, risk, ownership, and delivery record. Use before settling a production agent or exposure-bearing pilot, including when an agent may be unnecessary. Do not use to design an implementation contract, approve risk, grant access, evaluate a candidate, authorize exposure, or deploy.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "I have an agent project, but I have not decided whether the next deliverable should frame the problem and compare alternatives or write an implementation contract. Ask which development phase I want before choosing a procedure; do not begin either task yet.",
+      "metadata_sha256": "ba8c274282a3bc1bd90767b35ad970a5bddb9e65df799a614d6076e80e8d48fb",
+      "fixture_sha256": "5dadb28c072945cc75b58011428935e48eda1b7f61df435035f828a5dd29597e",
+      "expected": "clarify",
+      "actual": "clarify",
+      "reason": "The intended deliverable is genuinely ambiguous between early problem framing and alternatives comparison, which fits this skill, and an implementation contract, which is explicitly excluded. Clarify the desired development phase before selecting a procedure.",
+      "pass": true,
+      "elapsed_ms": 2358,
+      "usage": {
+        "completion_tokens": 57,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 344,
+        "prompt_tokens_details": {},
+        "total_tokens": 401,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 3,
+      "skill": "plan-agent-use",
+      "case": "plan-agent-use-holdout-renewal-policy",
+      "split": "holdout",
+      "metadata": "\nname: plan-agent-use\ndescription: \"Turn an early request for an agent or automation into a bounded, measurable planning packet: a problem brief, success record, simpler-baseline comparison, and initial scope, risk, ownership, and delivery record. Use before settling a production agent or exposure-bearing pilot, including when an agent may be unnecessary. Do not use to design an implementation contract, approve risk, grant access, evaluate a candidate, authorize exposure, or deploy.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Account managers spend time comparing several renewal-policy pages before answering a customer about a billing-cycle change. Make a planning brief that distinguishes this user task from a requested agent, includes a conflicting-current-page variation and a requester-permission variation, defines what later evidence would measure, and compares a maintained policy index with any more adaptive option.",
+      "metadata_sha256": "ba8c274282a3bc1bd90767b35ad970a5bddb9e65df799a614d6076e80e8d48fb",
+      "fixture_sha256": "22006e3fb93385fe5c7655ccf37d141ceb677edb699f331b0824ec2ce0fb44d2",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request calls for an early, bounded planning brief that separates the user problem from a proposed agent, defines measurable evidence and scope variations, and compares a simpler maintained policy index with an adaptive option. This directly fits the skill’s planning purpose without requesting implementation, access approval, or deployment.",
+      "pass": true,
+      "elapsed_ms": 3004,
+      "usage": {
+        "completion_tokens": 72,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 362,
+        "prompt_tokens_details": {},
+        "total_tokens": 434,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 4,
+      "skill": "specify-agent-contract",
+      "case": "contract-positive-fixed-path",
+      "split": "development",
+      "metadata": "\nname: specify-agent-contract\ndescription: Plan a bounded, reviewable agent contract and implementation acceptance criteria from a problem packet. Use before coding an agent or changing its inputs, outputs, instructions, capabilities, limits, or runtime shape. Do not use to grant access, approve risk, deploy, or substitute for trust-boundary, interface, evaluation, or operations review.\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Plan a contract and coding acceptance criteria for an agent that answers a staff policy question from supplied permitted evidence. It has no tools or write actions.",
+      "metadata_sha256": "e9e4e73360bcb08c4c33c5b860321b8c34770c20913faccb9c1845d186f9112f",
+      "fixture_sha256": "c92011c366485ab1ffdc576a7cb87270900c4e4d9919069f4fa2a8da99b10b44",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request asks for a bounded agent contract and coding acceptance criteria, matching the skill’s pre-implementation planning scope. The evidence-only, no-tools, no-write constraints are relevant contract limits.",
+      "pass": true,
+      "elapsed_ms": 2843,
+      "usage": {
+        "completion_tokens": 53,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 305,
+        "prompt_tokens_details": {},
+        "total_tokens": 358,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 5,
+      "skill": "specify-agent-contract",
+      "case": "contract-negative-code-request",
+      "split": "development",
+      "metadata": "\nname: specify-agent-contract\ndescription: Plan a bounded, reviewable agent contract and implementation acceptance criteria from a problem packet. Use before coding an agent or changing its inputs, outputs, instructions, capabilities, limits, or runtime shape. Do not use to grant access, approve risk, deploy, or substitute for trust-boundary, interface, evaluation, or operations review.\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Implement a complete assistant and connect it to our data service today.",
+      "metadata_sha256": "e9e4e73360bcb08c4c33c5b860321b8c34770c20913faccb9c1845d186f9112f",
+      "fixture_sha256": "8ecab2f37680c90e7a6e17fb1e3a05e217121d9488c5814fb2bf1c3ed6d84f58",
+      "expected": "do_not_select",
+      "actual": "select",
+      "reason": "Building an assistant and connecting it to a data service calls for defining its agent contract, capabilities, limits, and implementation acceptance criteria before coding. This skill covers that planning step, not implementation, access approval, or deployment.",
+      "pass": false,
+      "elapsed_ms": 3142,
+      "usage": {
+        "completion_tokens": 92,
+        "completion_tokens_details": {
+          "reasoning_tokens": 31,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 289,
+        "prompt_tokens_details": {},
+        "total_tokens": 381,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 6,
+      "skill": "specify-agent-contract",
+      "case": "specify-agent-contract-ambiguous-selection-phase",
+      "split": "development",
+      "metadata": "\nname: specify-agent-contract\ndescription: Plan a bounded, reviewable agent contract and implementation acceptance criteria from a problem packet. Use before coding an agent or changing its inputs, outputs, instructions, capabilities, limits, or runtime shape. Do not use to grant access, approve risk, deploy, or substitute for trust-boundary, interface, evaluation, or operations review.\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "I have an agent project, but I have not decided whether the next deliverable should write a typed agent contract or implement code from an existing contract. Ask which development phase I want before choosing a procedure; do not begin either task yet.",
+      "metadata_sha256": "e9e4e73360bcb08c4c33c5b860321b8c34770c20913faccb9c1845d186f9112f",
+      "fixture_sha256": "883de4e4d27db4d0d3fc4525a7e5380c34f5dd9cb379036018348e2ea5e33925",
+      "expected": "clarify",
+      "actual": "clarify",
+      "reason": "The intended development phase is unresolved. Ask whether the next deliverable is a typed agent contract, which fits this skill, or implementation from an existing contract, which does not.",
+      "pass": true,
+      "elapsed_ms": 2845,
+      "usage": {
+        "completion_tokens": 51,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 324,
+        "prompt_tokens_details": {},
+        "total_tokens": 375,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 7,
+      "skill": "specify-agent-contract",
+      "case": "contract-holdout-adaptive-loop",
+      "split": "holdout",
+      "metadata": "\nname: specify-agent-contract\ndescription: Plan a bounded, reviewable agent contract and implementation acceptance criteria from a problem packet. Use before coding an agent or changing its inputs, outputs, instructions, capabilities, limits, or runtime shape. Do not use to grant access, approve risk, deploy, or substitute for trust-boundary, interface, evaluation, or operations review.\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Specify the contract and coding acceptance criteria for a triage agent that may choose only classify, request clarification, return a response, or escalate. It must stop after a stated allowance.",
+      "metadata_sha256": "e9e4e73360bcb08c4c33c5b860321b8c34770c20913faccb9c1845d186f9112f",
+      "fixture_sha256": "bb44ccc0fa056c8bf6d036a172b8d3e0c65f0a203246b0a41aed13af86f9e5d4",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request directly asks for a bounded agent contract and coding acceptance criteria, including permitted actions and a stopping allowance, which matches the skill’s pre-implementation scope.",
+      "pass": true,
+      "elapsed_ms": 2566,
+      "usage": {
+        "completion_tokens": 47,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 312,
+        "prompt_tokens_details": {},
+        "total_tokens": 359,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 8,
+      "skill": "design-trust-boundaries",
+      "case": "boundary-positive-read-only-policy",
+      "split": "development",
+      "metadata": "\nname: design-trust-boundaries\ndescription: Design an inspectable authority, content-to-action, and conditional data-handling boundary for a production agent candidate. Use when a candidate may read protected resources, receive untrusted content, render or forward output, call a live service, or process non-public or personal data. Produce a scoped planning packet; do not use to grant permissions, operate a live service, deploy, or replace implementation testing.\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Design the authority and content boundary for a production policy assistant that reads a permission-filtered internal policy passage for an authenticated employee and returns a bounded answer.",
+      "metadata_sha256": "3bf8ee141851c59c4fcc973afcbf565182b7710d7fb1e3d1f5cf25cad0351b06",
+      "fixture_sha256": "df9ce0ee63ba591ce74a4783111d0b41d1d463410d4c3daa2af7eb9389bdd33a",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request asks for authority and content-boundary design for a production agent that reads protected internal resources and returns bounded output, directly matching the skill’s scoped planning purpose.",
+      "pass": true,
+      "elapsed_ms": 2509,
+      "usage": {
+        "completion_tokens": 48,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 321,
+        "prompt_tokens_details": {},
+        "total_tokens": 369,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 9,
+      "skill": "design-trust-boundaries",
+      "case": "boundary-negative-style-only-request",
+      "split": "development",
+      "metadata": "\nname: design-trust-boundaries\ndescription: Design an inspectable authority, content-to-action, and conditional data-handling boundary for a production agent candidate. Use when a candidate may read protected resources, receive untrusted content, render or forward output, call a live service, or process non-public or personal data. Produce a scoped planning packet; do not use to grant permissions, operate a live service, deploy, or replace implementation testing.\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Write a short formatting guide for project status updates; no agent candidate, protected resource, content channel, data flow, or live interface is involved.",
+      "metadata_sha256": "3bf8ee141851c59c4fcc973afcbf565182b7710d7fb1e3d1f5cf25cad0351b06",
+      "fixture_sha256": "bfd6303836a34327e2bb8d09030815e388fa06e3c855f9b3dc4d648f8912384c",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is for a short formatting guide, not a production agent trust-boundary design or scoped planning packet.",
+      "pass": true,
+      "elapsed_ms": 2013,
+      "usage": {
+        "completion_tokens": 39,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 320,
+        "prompt_tokens_details": {},
+        "total_tokens": 359,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 10,
+      "skill": "design-trust-boundaries",
+      "case": "design-trust-boundaries-ambiguous-selection-phase",
+      "split": "development",
+      "metadata": "\nname: design-trust-boundaries\ndescription: Design an inspectable authority, content-to-action, and conditional data-handling boundary for a production agent candidate. Use when a candidate may read protected resources, receive untrusted content, render or forward output, call a live service, or process non-public or personal data. Produce a scoped planning packet; do not use to grant permissions, operate a live service, deploy, or replace implementation testing.\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "I have an agent project, but I have not decided whether the next deliverable should design authority and data boundaries or operate a live support task. Ask which development phase I want before choosing a procedure; do not begin either task yet.",
+      "metadata_sha256": "3bf8ee141851c59c4fcc973afcbf565182b7710d7fb1e3d1f5cf25cad0351b06",
+      "fixture_sha256": "54cdd304df5b12524d76b6440bd3aeb7222ee0e9e54c60e6684a969638b19d72",
+      "expected": "clarify",
+      "actual": "clarify",
+      "reason": "The intended deliverable is genuinely ambiguous between designing authority and data boundaries, which fits this skill, and operating a live support task, which is excluded. Clarify the desired development phase before choosing a procedure.",
+      "pass": true,
+      "elapsed_ms": 2224,
+      "usage": {
+        "completion_tokens": 57,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 338,
+        "prompt_tokens_details": {},
+        "total_tokens": 395,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 11,
+      "skill": "design-trust-boundaries",
+      "case": "boundary-holdout-workspace-and-export",
+      "split": "holdout",
+      "metadata": "\nname: design-trust-boundaries\ndescription: Design an inspectable authority, content-to-action, and conditional data-handling boundary for a production agent candidate. Use when a candidate may read protected resources, receive untrusted content, render or forward output, call a live service, or process non-public or personal data. Produce a scoped planning packet; do not use to grant permissions, operate a live service, deploy, or replace implementation testing.\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "The user approved an implementation workspace for a design agent. The agent now proposes to export incident details to an external reviewer because it can write the review packet locally.",
+      "metadata_sha256": "3bf8ee141851c59c4fcc973afcbf565182b7710d7fb1e3d1f5cf25cad0351b06",
+      "fixture_sha256": "5b3b0a2fdc69409d0e39957f15df05e870613cde39c601a3025ec56954305387",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request concerns an authority and data-handling boundary: approval to write a review packet locally does not imply permission to export incident details to an external reviewer. This skill fits planning the scoped boundary without granting permissions or performing the export.",
+      "pass": true,
+      "elapsed_ms": 2656,
+      "usage": {
+        "completion_tokens": 61,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 323,
+        "prompt_tokens_details": {},
+        "total_tokens": 384,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 12,
+      "skill": "build-agent-evidence",
+      "case": "evidence-positive-pre-release-plan",
+      "split": "development",
+      "metadata": "\nname: build-agent-evidence\ndescription: \"Build a reproducible evidence packet and bounded autonomous coding test workflow for a proposed agent behavior or change. Use when defining cases, fixtures, evaluators, heldout comparisons, test artifacts, or release-facing evidence; do not use to define a missing contract, grant access, approve risk, deploy, or invent results.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Create a reproducible evidence plan for an agent change before a release decision. Map user-visible outcomes, prohibited effects, unit, contract, integration, end-to-end, and adversarial tests; use a baseline and a separately authored holdout.",
+      "metadata_sha256": "7a0431c0e3c0e54d427582b16e3c3c63903a9ff067231e28c76cfd009ad4b01c",
+      "fixture_sha256": "c561615dc337e348b27a04e41c518883bc35e6ea04b9076e370e1a3cde26c746",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request directly fits building a reproducible evidence plan for a proposed agent change, including test cases, evaluators, baseline comparisons, and separately authored holdouts to inform a release decision without approving or deploying it.",
+      "pass": true,
+      "elapsed_ms": 2246,
+      "usage": {
+        "completion_tokens": 57,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 324,
+        "prompt_tokens_details": {},
+        "total_tokens": 381,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 13,
+      "skill": "build-agent-evidence",
+      "case": "evidence-negative-contract-neighbor",
+      "split": "development",
+      "metadata": "\nname: build-agent-evidence\ndescription: \"Build a reproducible evidence packet and bounded autonomous coding test workflow for a proposed agent behavior or change. Use when defining cases, fixtures, evaluators, heldout comparisons, test artifacts, or release-facing evidence; do not use to define a missing contract, grant access, approve risk, deploy, or invent results.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Define the agent's request schema, permitted terminal outcomes, interface fields, and stop conditions. Do not create an evaluation plan yet.",
+      "metadata_sha256": "7a0431c0e3c0e54d427582b16e3c3c63903a9ff067231e28c76cfd009ad4b01c",
+      "fixture_sha256": "37feaf8fce18fc798814cfdb335629c15afada95801b4ae04f37e4a4928772a5",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request defines the agent's contract—schema, outcomes, interface fields, and stop conditions—and explicitly excludes evaluation planning. Defining a missing contract is outside this skill's scope.",
+      "pass": true,
+      "elapsed_ms": 2253,
+      "usage": {
+        "completion_tokens": 53,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 302,
+        "prompt_tokens_details": {},
+        "total_tokens": 355,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 14,
+      "skill": "build-agent-evidence",
+      "case": "evidence-ambiguous-missing-scope",
+      "split": "development",
+      "metadata": "\nname: build-agent-evidence\ndescription: \"Build a reproducible evidence packet and bounded autonomous coding test workflow for a proposed agent behavior or change. Use when defining cases, fixtures, evaluators, heldout comparisons, test artifacts, or release-facing evidence; do not use to define a missing contract, grant access, approve risk, deploy, or invent results.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Make our assistant better and get it ready to launch soon. We have not identified the candidate behavior, contract, baseline, risks, or approved workspace.",
+      "metadata_sha256": "7a0431c0e3c0e54d427582b16e3c3c63903a9ff067231e28c76cfd009ad4b01c",
+      "fixture_sha256": "3bb839c793be796807135d1219ebe5c6d7c2c1fa827c6e39a3b667f3717e482d",
+      "expected": "clarify",
+      "actual": "clarify",
+      "reason": "The request does not specify whether the intended work is an evidence/test workflow, behavior or contract definition, or deployment. Clarify the proposed change and desired deliverable; this skill can build bounded tests and release-facing evidence, but cannot define the missing contract, approve risk, grant access, or deploy.",
+      "pass": true,
+      "elapsed_ms": 3755,
+      "usage": {
+        "completion_tokens": 149,
+        "completion_tokens_details": {
+          "reasoning_tokens": 71,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 306,
+        "prompt_tokens_details": {},
+        "total_tokens": 455,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 15,
+      "skill": "build-agent-evidence",
+      "case": "evidence-holdout-positive-comparison",
+      "split": "holdout",
+      "metadata": "\nname: build-agent-evidence\ndescription: \"Build a reproducible evidence packet and bounded autonomous coding test workflow for a proposed agent behavior or change. Use when defining cases, fixtures, evaluators, heldout comparisons, test artifacts, or release-facing evidence; do not use to define a missing contract, grant access, approve risk, deploy, or invent results.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "For a behavior-affecting candidate change, assemble a frozen candidate-baseline comparison with fresh sessions, identical fixture semantics, visible invalid and inconclusive statuses, a separately authored holdout fixture, and calibrated independent review only if a model judge is needed.",
+      "metadata_sha256": "7a0431c0e3c0e54d427582b16e3c3c63903a9ff067231e28c76cfd009ad4b01c",
+      "fixture_sha256": "3ea5ede18ad2f95c7894f644832bb7b8a3857216e2a248f7d9c4db86f4817cb1",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request directly fits building a reproducible evidence packet and bounded test workflow: frozen candidate-baseline comparisons, fresh sessions, consistent fixtures, explicit invalid and inconclusive statuses, independently authored holdouts, and calibrated review for model judging.",
+      "pass": true,
+      "elapsed_ms": 2556,
+      "usage": {
+        "completion_tokens": 61,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 326,
+        "prompt_tokens_details": {},
+        "total_tokens": 387,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 16,
+      "skill": "review-agent-readiness",
+      "case": "frozen-candidate-readiness-positive",
+      "split": "development",
+      "metadata": "\nname: review-agent-readiness\ndescription: \"Assemble a bounded readiness review for one frozen agent candidate before a production release, pilot, promotion, or material change. Use to consume a Part 4 evaluation handoff; verify code, configuration, dependency, evidence, support, and rollout identities; expose blockers; and recommend a scoped go, conditional_go, or no_go. Do not use to create evaluation evidence, authorize release, deploy, or operate a service.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Review the frozen release candidate for a limited production canary. I have its code and build hashes, resolved configuration, dependency lock, Part 4 conclusion with case/evaluator identities and limits, tested disable evidence, support contacts, and proposed stages.",
+      "metadata_sha256": "7021026c63614e1b471cb1783f5a1559cff4a6d2fb98714d62d349036e07936c",
+      "fixture_sha256": "59aad00ccace58bc29332bf3d4af73a08e6aef1519eb41a23995a08e28a81e07",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request is a bounded readiness review of a frozen candidate for a limited production canary, using the Part 4 handoff and identity, disable, support, and rollout evidence. This fits the skill’s scope without asking it to authorize or deploy the release.",
+      "pass": true,
+      "elapsed_ms": 2064,
+      "usage": {
+        "completion_tokens": 67,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 346,
+        "prompt_tokens_details": {},
+        "total_tokens": 413,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 17,
+      "skill": "review-agent-readiness",
+      "case": "evaluation-design-near-neighbor-negative",
+      "split": "development",
+      "metadata": "\nname: review-agent-readiness\ndescription: \"Assemble a bounded readiness review for one frozen agent candidate before a production release, pilot, promotion, or material change. Use to consume a Part 4 evaluation handoff; verify code, configuration, dependency, evidence, support, and rollout identities; expose blockers; and recommend a scoped go, conditional_go, or no_go. Do not use to create evaluation evidence, authorize release, deploy, or operate a service.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Create new holdout cases, select evaluators, and calculate whether the agent's latest test results pass its evidence gates before a release review.",
+      "metadata_sha256": "7021026c63614e1b471cb1783f5a1559cff4a6d2fb98714d62d349036e07936c",
+      "fixture_sha256": "0e3e77c863e17b9cc1f68c95534499b66588283477c6e363053fad732114879a",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is to create and assess evaluation evidence before a release review, including holdout cases and evaluator selection. This skill consumes an existing evaluation handoff for a frozen candidate and explicitly excludes creating evaluation evidence.",
+      "pass": true,
+      "elapsed_ms": 2394,
+      "usage": {
+        "completion_tokens": 58,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 325,
+        "prompt_tokens_details": {},
+        "total_tokens": 383,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 18,
+      "skill": "review-agent-readiness",
+      "case": "review-agent-readiness-ambiguous-selection-phase",
+      "split": "development",
+      "metadata": "\nname: review-agent-readiness\ndescription: \"Assemble a bounded readiness review for one frozen agent candidate before a production release, pilot, promotion, or material change. Use to consume a Part 4 evaluation handoff; verify code, configuration, dependency, evidence, support, and rollout identities; expose blockers; and recommend a scoped go, conditional_go, or no_go. Do not use to create evaluation evidence, authorize release, deploy, or operate a service.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "I have an agent project, but I have not decided whether the next deliverable should review a frozen release candidate or plan an agent from an early problem. Ask which development phase I want before choosing a procedure; do not begin either task yet.",
+      "metadata_sha256": "7021026c63614e1b471cb1783f5a1559cff4a6d2fb98714d62d349036e07936c",
+      "fixture_sha256": "2ab6ee4a3ed142815af159f98bc3c9e2d4d648b38f78e15cba86d9ea283d6fa3",
+      "expected": "clarify",
+      "actual": "clarify",
+      "reason": "The intended development phase is genuinely ambiguous: a readiness review of a frozen candidate fits this skill, while planning an agent from an early problem does not. Clarify which phase the user wants before selecting a procedure.",
+      "pass": true,
+      "elapsed_ms": 2475,
+      "usage": {
+        "completion_tokens": 58,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 346,
+        "prompt_tokens_details": {},
+        "total_tokens": 404,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 19,
+      "skill": "review-agent-readiness",
+      "case": "material-change-holdout-positive",
+      "split": "holdout",
+      "metadata": "\nname: review-agent-readiness\ndescription: \"Assemble a bounded readiness review for one frozen agent candidate before a production release, pilot, promotion, or material change. Use to consume a Part 4 evaluation handoff; verify code, configuration, dependency, evidence, support, and rollout identities; expose blockers; and recommend a scoped go, conditional_go, or no_go. Do not use to create evaluation evidence, authorize release, deploy, or operate a service.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Independently review a proposed canary after a model-route and source-filter change. The packet includes old and new immutable identities, a change-impact table, refreshed Part 4 holdout evidence and limits for the new candidate, tested disable and reconciliation evidence, support contacts, and a policy-approved decision process.",
+      "metadata_sha256": "7021026c63614e1b471cb1783f5a1559cff4a6d2fb98714d62d349036e07936c",
+      "fixture_sha256": "cf2294627e3b627812b797c45d8892f16b28c6ae1164de860f6c0f58f64ea5d1",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request is a bounded readiness review of a frozen candidate after a material change, using refreshed Part 4 evidence and verifying candidate identities, change impacts, rollback evidence, and support readiness. It fits the skill’s scoped readiness recommendation role without asking it to create evidence, authorize release, or deploy.",
+      "pass": true,
+      "elapsed_ms": 2633,
+      "usage": {
+        "completion_tokens": 74,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 358,
+        "prompt_tokens_details": {},
+        "total_tokens": 432,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 20,
+      "skill": "operate-agent-lifecycle",
+      "case": "lifecycle-positive-operating-control-plan",
+      "split": "development",
+      "metadata": "\nname: operate-agent-lifecycle\ndescription: \"Design an operating-control and lifecycle support packet for a production agent or material operational change. Use when defining run and attempt records, runtime bounds, operator stop treatment, support and incident handling, feedback, review, deprecation, or retirement. Do not use to implement a runtime, schedule work, deploy, authorize release, or investigate a live incident.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Create a draft operating-control and support packet for our production research assistant. We need run and retry identifiers, command timing and file-change traces, per-run limits, stop treatment, operator contacts, feedback review, and a future retirement handoff. No service exists yet.",
+      "metadata_sha256": "35a27b725dfda9e625cfb6e794b61c3832685f90326c4173e3e9da8016cb3305",
+      "fixture_sha256": "7dc12d04f6f4e437ef1a9da3115ab5fd94b98d05dba508b7c4ea36051298e909",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request directly asks for an operating-control and lifecycle support packet covering run and retry records, runtime limits, stop handling, support contacts, feedback review, and retirement. The absence of an existing service does not change the skill fit; this is design work, not runtime implementation or deployment.",
+      "pass": true,
+      "elapsed_ms": 2446,
+      "usage": {
+        "completion_tokens": 72,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 335,
+        "prompt_tokens_details": {},
+        "total_tokens": 407,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 21,
+      "skill": "operate-agent-lifecycle",
+      "case": "lifecycle-negative-release-approval-neighbor",
+      "split": "development",
+      "metadata": "\nname: operate-agent-lifecycle\ndescription: \"Design an operating-control and lifecycle support packet for a production agent or material operational change. Use when defining run and attempt records, runtime bounds, operator stop treatment, support and incident handling, feedback, review, deprecation, or retirement. Do not use to implement a runtime, schedule work, deploy, authorize release, or investigate a live incident.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Review our frozen candidate evidence and issue the authorization to expose it to production users.",
+      "metadata_sha256": "35a27b725dfda9e625cfb6e794b61c3832685f90326c4173e3e9da8016cb3305",
+      "fixture_sha256": "c4d00f721105fa347c3beaf048d7049f83481bb56b146b91bffb0a1d322e8267",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is to authorize a production release, which is explicitly excluded from this skill’s operating-control and lifecycle support scope.",
+      "pass": true,
+      "elapsed_ms": 2082,
+      "usage": {
+        "completion_tokens": 41,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 298,
+        "prompt_tokens_details": {},
+        "total_tokens": 339,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 22,
+      "skill": "operate-agent-lifecycle",
+      "case": "operate-agent-lifecycle-ambiguous-selection-phase",
+      "split": "development",
+      "metadata": "\nname: operate-agent-lifecycle\ndescription: \"Design an operating-control and lifecycle support packet for a production agent or material operational change. Use when defining run and attempt records, runtime bounds, operator stop treatment, support and incident handling, feedback, review, deprecation, or retirement. Do not use to implement a runtime, schedule work, deploy, authorize release, or investigate a live incident.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "I have an agent project, but I have not decided whether the next deliverable should write operating and support controls or review release readiness. Ask which development phase I want before choosing a procedure; do not begin either task yet.",
+      "metadata_sha256": "35a27b725dfda9e625cfb6e794b61c3832685f90326c4173e3e9da8016cb3305",
+      "fixture_sha256": "3bf00532049705b615d9b79d9088891e71a18ec7ce7d2c460270203885bf81d7",
+      "expected": "clarify",
+      "actual": "clarify",
+      "reason": "The intended deliverable is genuinely ambiguous between operating and lifecycle support controls, which this skill covers, and release-readiness review, which is a different job. Clarify the desired development phase before selecting a procedure.",
+      "pass": true,
+      "elapsed_ms": 4354,
+      "usage": {
+        "completion_tokens": 58,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 327,
+        "prompt_tokens_details": {},
+        "total_tokens": 385,
+        "traffic_type": "on_demand"
+      }
+    },
+    {
+      "index": 23,
+      "skill": "operate-agent-lifecycle",
+      "case": "lifecycle-holdout-retirement-handoff",
+      "split": "holdout",
+      "metadata": "\nname: operate-agent-lifecycle\ndescription: \"Design an operating-control and lifecycle support packet for a production agent or material operational change. Use when defining run and attempt records, runtime bounds, operator stop treatment, support and incident handling, feedback, review, deprecation, or retirement. Do not use to implement a runtime, schedule work, deploy, authorize release, or investigate a live incident.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Our supported assistant may be withdrawn next quarter. Create a technology-neutral draft handoff that distinguishes deprecation, disabling, and retirement; accounts for consumers and unfinished work; and handles credentials, registrations, data copies, retained evidence, and the inventory record. We have not disabled or retired it.",
+      "metadata_sha256": "35a27b725dfda9e625cfb6e794b61c3832685f90326c4173e3e9da8016cb3305",
+      "fixture_sha256": "c9e2da33016c8ca0253c61aad3ea61e7b5d0f47e6ba2108f5240f31774c7e084",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request is to design a technology-neutral lifecycle handoff covering deprecation, disabling, retirement, consumer impacts, unfinished work, and asset and evidence handling. This directly fits lifecycle support planning and does not ask to execute disabling or retirement.",
+      "pass": true,
+      "elapsed_ms": 2607,
+      "usage": {
+        "completion_tokens": 62,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 340,
+        "prompt_tokens_details": {},
+        "total_tokens": 402,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 24,
+      "skill": "author-and-admit-agent-skills",
+      "case": "propose-recurring-skill-package",
+      "split": "development",
+      "metadata": "\nname: author-and-admit-agent-skills\ndescription: \"Authors or reviews a proposed reusable agent-skill package and prepares a non-authorizing admission proposal. Use when a skill is being created, discovered, changed, or considered for an agent; record whole-package identity, source, owner, license, dependencies, staged context cost, and selection and safety evidence. Do not use for one-off instructions, application implementation, tool authorization, package installation, or deployment.\"\nlicense: \"Unresolved: no repository license was recorded at the pinned source commit\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "We repeatedly need a bounded procedure for evidence-linked internal policy answers. Create a portable candidate skill package and prepare an admission proposal for our policy assistant, without enabling it.",
+      "metadata_sha256": "9662a56de828cbc0e64beabaae4ad809f3b139be21c5e9b44f995b4f8e61d0a3",
+      "fixture_sha256": "7fb23b778034326bed1b16cec63b4df58d1e17a4c2de5718cadee73ce1454660",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request is to author a reusable, portable candidate skill package and prepare a non-authorizing admission proposal for an agent, which directly matches the skill’s described purpose.",
+      "pass": true,
+      "elapsed_ms": 2191,
+      "usage": {
+        "completion_tokens": 48,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 347,
+        "prompt_tokens_details": {},
+        "total_tokens": 395,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 25,
+      "skill": "author-and-admit-agent-skills",
+      "case": "one-off-instruction-near-neighbor",
+      "split": "development",
+      "metadata": "\nname: author-and-admit-agent-skills\ndescription: \"Authors or reviews a proposed reusable agent-skill package and prepares a non-authorizing admission proposal. Use when a skill is being created, discovered, changed, or considered for an agent; record whole-package identity, source, owner, license, dependencies, staged context cost, and selection and safety evidence. Do not use for one-off instructions, application implementation, tool authorization, package installation, or deployment.\"\nlicense: \"Unresolved: no repository license was recorded at the pinned source commit\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Write a two-sentence instruction for one customer-support reply today. Do not create or change a reusable package.",
+      "metadata_sha256": "9662a56de828cbc0e64beabaae4ad809f3b139be21c5e9b44f995b4f8e61d0a3",
+      "fixture_sha256": "aeec2a1c8fcfbb094cf8742335e59a750819ba625f7e1acfafafdfd7538f016b",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is for a one-off customer-support instruction and explicitly excludes creating or changing a reusable skill package.",
+      "pass": true,
+      "elapsed_ms": 1846,
+      "usage": {
+        "completion_tokens": 38,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 336,
+        "prompt_tokens_details": {},
+        "total_tokens": 374,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 26,
+      "skill": "author-and-admit-agent-skills",
+      "case": "author-and-admit-agent-skills-ambiguous-selection-phase",
+      "split": "development",
+      "metadata": "\nname: author-and-admit-agent-skills\ndescription: \"Authors or reviews a proposed reusable agent-skill package and prepares a non-authorizing admission proposal. Use when a skill is being created, discovered, changed, or considered for an agent; record whole-package identity, source, owner, license, dependencies, staged context cost, and selection and safety evidence. Do not use for one-off instructions, application implementation, tool authorization, package installation, or deployment.\"\nlicense: \"Unresolved: no repository license was recorded at the pinned source commit\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "I have an agent project, but I have not decided whether the next deliverable should author a reusable skill package or change the application code. Ask which development phase I want before choosing a procedure; do not begin either task yet.",
+      "metadata_sha256": "9662a56de828cbc0e64beabaae4ad809f3b139be21c5e9b44f995b4f8e61d0a3",
+      "fixture_sha256": "181811cef2ddc80a14f76da748e932a20564d5f41eb8771c1662f3089da17d4b",
+      "expected": "clarify",
+      "actual": "clarify",
+      "reason": "The intended deliverable is explicitly undecided between authoring a reusable skill package, which fits this skill, and changing application code, which is excluded. Clarify the desired development phase before selecting a procedure.",
+      "pass": true,
+      "elapsed_ms": 2100,
+      "usage": {
+        "completion_tokens": 57,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 360,
+        "prompt_tokens_details": {},
+        "total_tokens": 417,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 27,
+      "skill": "author-and-admit-agent-skills",
+      "case": "changed-reference-requires-new-identity",
+      "split": "holdout",
+      "metadata": "\nname: author-and-admit-agent-skills\ndescription: \"Authors or reviews a proposed reusable agent-skill package and prepares a non-authorizing admission proposal. Use when a skill is being created, discovered, changed, or considered for an agent; record whole-package identity, source, owner, license, dependencies, staged context cost, and selection and safety evidence. Do not use for one-off instructions, application implementation, tool authorization, package installation, or deployment.\"\nlicense: \"Unresolved: no repository license was recorded at the pinned source commit\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "A proposed skill has the same entry file as the previous candidate, but its currentness reference and output-shaping asset changed. Prepare the updated admission proposal.",
+      "metadata_sha256": "9662a56de828cbc0e64beabaae4ad809f3b139be21c5e9b44f995b4f8e61d0a3",
+      "fixture_sha256": "b8bd94f221d06172ab08d7c4f3b0d3698b98cd8ecf3d1fb24bc8056e0485eeac",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request concerns a changed reusable skill package and asks for an updated non-authorizing admission proposal. The skill explicitly covers package changes and whole-package identity, including changed references and assets beyond the entry file.",
+      "pass": true,
+      "elapsed_ms": 2284,
+      "usage": {
+        "completion_tokens": 55,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 345,
+        "prompt_tokens_details": {},
+        "total_tokens": 400,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 28,
+      "skill": "draft-agent-implementation",
+      "case": "dai-development-local-draft",
+      "split": "development",
+      "metadata": "\nname: draft-agent-implementation\ndescription: \"Draft a runnable agent release candidate from a detailed problem through planning, contract, trust design, implementation, tests, cleanup, full retest, packaging, and readiness review. Use for an end-to-end agent coding task with a build budget; missing profile or workspace authority permits planning only and blocks code changes. Do not use for an isolated planning task, live operations, release approval, or deployment.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Implement the approved bounded agent change in the named workspace. I have supplied the problem, constraints, workspace/source authority, an implementation profile, and a repair budget. Produce code, tests, operating notes, evidence, and a ZIP after the required final workflow.",
+      "metadata_sha256": "24bb3ab9049f54ffb73c2fc55abdeae749dfaf25a3c948287b0c0c229922499e",
+      "fixture_sha256": "2f700785ec620cad8474625bfb77c4f50f3d5dbe424c5e245093d01321fc5c71",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request is an end-to-end bounded agent implementation with workspace authority, an implementation profile, and a repair budget, including code, tests, operating notes, evidence, and packaging. This matches drafting a runnable agent release candidate through the final workflow.",
+      "pass": true,
+      "elapsed_ms": 2277,
+      "usage": {
+        "completion_tokens": 64,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 343,
+        "prompt_tokens_details": {},
+        "total_tokens": 407,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 29,
+      "skill": "draft-agent-implementation",
+      "case": "dai-near-neighbor-evidence-review",
+      "split": "development",
+      "metadata": "\nname: draft-agent-implementation\ndescription: \"Draft a runnable agent release candidate from a detailed problem through planning, contract, trust design, implementation, tests, cleanup, full retest, packaging, and readiness review. Use for an end-to-end agent coding task with a build budget; missing profile or workspace authority permits planning only and blocks code changes. Do not use for an isolated planning task, live operations, release approval, or deployment.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "Review the existing candidate's test coverage and evaluation metrics. Do not change code or build an archive.",
+      "metadata_sha256": "24bb3ab9049f54ffb73c2fc55abdeae749dfaf25a3c948287b0c0c229922499e",
+      "fixture_sha256": "c0e95c344fc6bffd49b445746f63f7a630bb5f07cf11e761a9f0fe82d828ec04",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is an isolated review of an existing candidate’s test coverage and evaluation metrics, not an end-to-end agent implementation task.",
+      "pass": true,
+      "elapsed_ms": 3522,
+      "usage": {
+        "completion_tokens": 67,
+        "completion_tokens_details": {
+          "reasoning_tokens": 22,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 312,
+        "prompt_tokens_details": {},
+        "total_tokens": 379,
+        "traffic_type": "on_demand"
+      }
+    },
+    {
+      "index": 30,
+      "skill": "draft-agent-implementation",
+      "case": "draft-agent-implementation-ambiguous-selection-phase",
+      "split": "development",
+      "metadata": "\nname: draft-agent-implementation\ndescription: \"Draft a runnable agent release candidate from a detailed problem through planning, contract, trust design, implementation, tests, cleanup, full retest, packaging, and readiness review. Use for an end-to-end agent coding task with a build budget; missing profile or workspace authority permits planning only and blocks code changes. Do not use for an isolated planning task, live operations, release approval, or deployment.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "I have an agent project, but I have not decided whether the next deliverable should build and test a complete agent release candidate or only write the problem brief. Ask which development phase I want before choosing a procedure; do not begin either task yet.",
+      "metadata_sha256": "24bb3ab9049f54ffb73c2fc55abdeae749dfaf25a3c948287b0c0c229922499e",
+      "fixture_sha256": "b660034e974413ab64534b5b2ee909e6487bb415c5bb660a68f916de6be6bb8a",
+      "expected": "clarify",
+      "actual": "clarify",
+      "reason": "The intended deliverable is explicitly undecided between an end-to-end agent release candidate, which fits this skill, and an isolated problem brief, which does not. Clarify the desired development phase before selecting a procedure.",
+      "pass": true,
+      "elapsed_ms": 3302,
+      "usage": {
+        "completion_tokens": 59,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 342,
+        "prompt_tokens_details": {},
+        "total_tokens": 401,
+        "traffic_type": "on_demand"
+      }
+    },
+    {
+      "index": 31,
+      "skill": "draft-agent-implementation",
+      "case": "dai-holdout-complete-package",
+      "split": "holdout",
+      "metadata": "\nname: draft-agent-implementation\ndescription: \"Draft a runnable agent release candidate from a detailed problem through planning, contract, trust design, implementation, tests, cleanup, full retest, packaging, and readiness review. Use for an end-to-end agent coding task with a build budget; missing profile or workspace authority permits planning only and blocks code changes. Do not use for an isolated planning task, live operations, release approval, or deployment.\"\nmetadata:\n  version: \"0.1.0\"\n  playbook_version: \"0.5.0-draft.2\"\n  source_commit: \"151fca01fbc609c5550c563c902946db540c2f4c\"\n",
+      "request": "In the pre-authorized isolated workspace, implement the supplied bounded change using the supplied implementation profile. Preserve every failed trial, repair no more than twice, write operating notes, and produce a ZIP only after a successful end-to-end test, cleanup, and complete retest.",
+      "metadata_sha256": "24bb3ab9049f54ffb73c2fc55abdeae749dfaf25a3c948287b0c0c229922499e",
+      "fixture_sha256": "d19dd41ace147447c203e4c297d816e8eef512fb19e995e7abd0a91e03ffaee2",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request fits an end-to-end implementation task in an authorized isolated workspace with an implementation profile, bounded repairs, operating notes, testing, cleanup, full retest, and conditional ZIP packaging.",
+      "pass": true,
+      "elapsed_ms": 2346,
+      "usage": {
+        "completion_tokens": 53,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 346,
+        "prompt_tokens_details": {},
+        "total_tokens": 399,
+        "traffic_type": "provisioned_throughput"
+      }
+    }
+  ]
+}

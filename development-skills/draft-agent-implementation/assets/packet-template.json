@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "skill": "draft-agent-implementation",
+  "run_id": "example-run",
+  "status": "draft",
+  "source_commit": "151fca01fbc609c5550c563c902946db540c2f4c",
+  "inputs": {
+    "problem_description": "DRAFT — replace with a detailed bounded problem description and terminal outcomes.",
+    "constraints": [
+      "DRAFT — replace with prohibited behavior, safety/data limits, and dependencies."
+    ],
+    "workspace_authority": {
+      "path": "DRAFT — caller-approved workspace path required before code changes.",
+      "source_identity": "DRAFT — source revision or immutable identity required before code changes.",
+      "authorized_by": "DRAFT — caller or accountable workspace owner.",
+      "permitted_changes": [
+        "local code, tests, and operability documents only"
+      ],
+      "excluded_actions": [
+        "deployment",
+        "external effects",
+        "credential access",
+        "host or local-service changes"
+      ]
+    },
+    "implementation_profile": {
+      "id": "DRAFT — caller-provided profile required before implementation.",
+      "revision": "DRAFT — caller-provided profile revision.",
+      "availability": "unresolved",
+      "status": "unresolved"
+    },
+    "build_budget": {
+      "repair_cap": 2,
+      "time_or_resource_limit": "DRAFT — caller-provided bound.",
+      "required_test_scope": "DRAFT — unit, integration, end-to-end, cleanup, and complete retest scope."
+    }
+  },
+  "outputs": {
+    "implementation_state": {
+      "stage": "initialized",
+      "transition_log": [],
+      "repair_count": 0,
+      "candidate_identity": "DRAFT — unresolved until source and configuration are assembled.",
+      "phase_hashes": {}
+    },
+    "plan_handoff": "DRAFT — workspace-relative planning artifact or structured summary.",
+    "contract_handoff": "DRAFT — workspace-relative contract artifact or structured summary.",
+    "trust_handoff": "DRAFT — workspace-relative trust-boundary artifact or structured summary.",
+    "implementation_manifest": "DRAFT — candidate/configuration identity and component list.",
+    "code": [],
+    "tests": [],
+    "operability_docs": [],
+    "test_ledger": "DRAFT — record every test attempt and status.",
+    "cleanup_record": "DRAFT — record removal of generated test residue before complete retest.",
+    "retest_ledger": "DRAFT — required after cleanup and after every behavior-affecting repair.",
+    "package": "DRAFT — create only after end-to-end test, cleanup, and complete retest.",
+    "readiness_handoff": "DRAFT — go recommendation only; external authorization required."
+  },
+  "assumptions": [
+    "DRAFT — planning may proceed while the implementation profile is unresolved; code work may not.",
+    "DRAFT — all observed evidence paths will be normalized and confined to the approved workspace."
+  ],
+  "blockers": [
+    "DRAFT — replace or remove: unresolved implementation profile blocks implementation."
+  ],
+  "applicability": [
+    {
+      "requirement_id": "SCOPE-01",
+      "status": "unmet",
+      "rationale": "DRAFT — planning handoff has not yet recorded the intended and prohibited uses.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "PLAN-01",
+      "status": "not_applicable",
+      "rationale": "DRAFT — no explicit model-directed planning loop has been proposed.",
+      "evidence_ids": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E-DRAFT-WORKSPACE-AUTHORITY",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "E-DRAFT-END-TO-END",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    }
+  ],
+  "decision": {
+    "recommendation": "not_assessed",
+    "authorized": false
+  }
+}

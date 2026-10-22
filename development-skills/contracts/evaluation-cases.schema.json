@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:xmckay:agent-development:evaluation-cases:1.0",
+  "title": "Agent skill evaluation fixtures — not observed test evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["skill", "cases"],
+  "properties": {
+    "skill": {"type": "string", "minLength": 1},
+    "cases": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "split", "prompt", "expected_selection", "required_outputs", "forbidden_behavior", "assertions"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "split": {"enum": ["development", "holdout"]},
+          "prompt": {"type": "string", "minLength": 1},
+          "expected_selection": {"enum": ["select", "do_not_select", "clarify"], "description": "Select when the requested job fits even if execution must clarify missing inputs. Clarify only when the requested skill/phase itself is unresolved; execution outcomes are asserted separately."},
+          "required_outputs": {"type": "array", "items": {"type": "string"}},
+          "forbidden_behavior": {"type": "array", "items": {"type": "string"}},
+          "assertions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}

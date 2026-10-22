@@ -1,0 +1,25 @@
+# Development-only dependencies for validate_independent.py. Do not use these in skillctl.py.
+# The build backend and its transitive runtime dependencies are pinned first because
+# skills-ref is installed from the immutable upstream commit below without build isolation.
+hatchling==1.27.0
+packaging==26.3
+pathspec==1.1.1
+pluggy==1.7.0
+trove-classifiers==2026.9.21.13
+
+# Draft 2020-12 JSON Schema validator and complete transitive runtime closure.
+attrs==26.1.0
+jsonschema==4.23.0
+jsonschema-specifications==2025.9.1
+referencing==0.37.0
+rpds-py==2026.9.1
+typing_extensions==4.16.0
+
+# Full reference-format validator and complete transitive runtime closure.
+click==8.5.0
+python-dateutil==3.0.0
+PyYAML==6.0.2
+six==1.17.0
+strictyaml==1.7.3
+tzdata==2026.5
+skills-ref @ git+https://github.com/agentskills/agentskills.git@69ef37e9424c0a7ea9dd2293b559e43ec8176379#subdirectory=skills-ref

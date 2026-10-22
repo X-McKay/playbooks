@@ -44,6 +44,12 @@ The `development-guide/` and `engineering-reference/` trees are a proposed 0.5.0
 
 Do **not** use a new-draft contribution to relabel the legacy `agent-playbook/`, `foundations/`, `multi-agent-playbook/`, or `skills/` trees as v0.5 conformant. They remain the v0.4 compatibility baseline until a separately reviewed migration changes them. The legacy skill-reference update rule above does not automatically apply to a proposed 0.5 draft chapter; a skill migration needs its own reviewed scope. Do not weaken the repository-neutrality rule by adding product-specific setup, commands, SDK instructions, or provider-specific configuration to the draft.
 
+### Separately reviewed development skill library
+
+The proposed `development-skills/` library maps current draft owners without changing them or relabeling the legacy library. Keep its portable procedures technology-neutral, its source links immutable, and its reference dependencies explicit. Package validity, a filled template, and a readiness recommendation are not admission, conformance certification, or release authorization.
+
+`implementation-profiles/` and `tools/agent_skills/` are separately scoped, non-normative implementation and repository-validation aids. Their stack-specific details must stay outside the canonical chapters and portable skill procedures. Changes to those aids must not introduce a new playbook requirement, a hidden runtime dependency, automatic permission grants, or claims that local tooling tests establish native-host behavior. Run the skill tests, clean up, re-test, and package the result before delivery.
+
 ### New-draft mini-books
 
 For new or reorganized draft Parts, use the [writing guide](writing-guide.md). It defines the flexible six-function mini-book pattern, requires one canonical owner for each normative requirement, and keeps audience, applicability, evidence, and practical reference visible without requiring a rewrite of other Parts.

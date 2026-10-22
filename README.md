@@ -18,6 +18,7 @@ Each chapter explains the concepts, the decisions you face, best practices and c
 - [Applicability and normative language](applicability.md) explains which requirements apply to your agent, what "not applicable" means, and how exceptions work.
 - [Glossary](glossary.md) defines the shared vocabulary and links to the chapter that explains each term.
 - [Requirement index](requirement-index.md) lists every requirement ID and the chapter that owns it.
+- [Proposed agent development skills](development-skills/README.md) provide a separately versioned, 0.5-mapped workflow for drafting and evaluating agent release candidates. They do not replace the canonical requirements or migrate the legacy skills.
 
 ## Start small
 

@@ -11,7 +11,12 @@ lint:
 links:
     lychee --offline --include-fragments --no-progress "**/*.md"
 
-check: lint links
+# Check only the proposed development library; leave legacy skills unchanged.
+skills-check:
+    python3 tools/agent_skills/skillctl.py validate --root .
+    python3 -m unittest discover -s tests/agent_skills -v
+
+check: lint links skills-check
 
 nix-check:
     nix flake check

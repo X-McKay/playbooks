@@ -1,0 +1,273 @@
+{
+  "schema_version": "1.0",
+  "skill": "design-trust-boundaries",
+  "run_id": "example-trust-boundary-run",
+  "status": "draft",
+  "source_commit": "151fca01fbc609c5550c563c902946db540c2f4c",
+  "inputs": {
+    "candidate_id": "example-candidate",
+    "bounded_task": "Draft an inspectable trust-boundary packet for a read-only policy-answer candidate.",
+    "planning_record": "Draft placeholder: an equivalent bounded planning record has not been supplied.",
+    "agent_contract": "Draft placeholder: an equivalent candidate contract has not been supplied.",
+    "approved_workspace_root": "Draft placeholder: identify the user-approved workspace root before any local write is planned.",
+    "proposed_channels": [
+      "authenticated request context",
+      "user-provided question",
+      "permission-filtered source passage"
+    ]
+  },
+  "outputs": {
+    "authority_boundary_record": {
+      "construction_boundary": {
+        "candidate_version": "Draft placeholder: candidate version identity is not supplied.",
+        "admitted_capabilities": [
+          "Draft placeholder: no capability is admitted until an accountable record identifies it."
+        ],
+        "workspace_boundary": "Draft placeholder: local packet output may be written only below the approved workspace root; this is not a live-service permission."
+      },
+      "operation_register": [
+        {
+          "id": "workspace-packet-write",
+          "kind": "workspace_write",
+          "purpose": "Write the draft packet beneath the user-approved workspace root.",
+          "proposed_by": "trusted_request",
+          "normalized_action_and_target": "Draft placeholder: normalize a relative packet path below the approved workspace root.",
+          "resource_and_data_class": "draft planning artifact; classification pending",
+          "requester_or_tenant_relation": "not applicable to a local drafting write",
+          "destination": "user-approved workspace only",
+          "authority_mode": "user-approved local workspace boundary",
+          "trusted_context_sources": [
+            "Draft placeholder: user-approved workspace root"
+          ],
+          "admitted_at_construction": false,
+          "per_operation_decision": "not_assessed",
+          "credential_constraints": "No credential is needed for an approved local workspace write.",
+          "required_approval_binding": "none proposed",
+          "safe_outcome": "blocked if the requested path escapes the approved workspace root",
+          "denied_alternatives": [
+            "live-service update",
+            "deployment",
+            "production data export"
+          ]
+        },
+        {
+          "id": "live-policy-read",
+          "kind": "protected_read",
+          "purpose": "Read one permission-filtered current policy passage for a bounded answer.",
+          "proposed_by": "configuration",
+          "normalized_action_and_target": "Draft placeholder: exact resource selector has not been supplied.",
+          "resource_and_data_class": "Draft placeholder: source and data classification are not supplied.",
+          "requester_or_tenant_relation": "Draft placeholder: authenticated requester relationship is not supplied.",
+          "destination": "bounded response only; no external forwarding",
+          "authority_mode": "delegated requester scope subject to resource-side decision",
+          "trusted_context_sources": [
+            "Draft placeholder: workload identity source",
+            "Draft placeholder: authenticated requester and tenant source",
+            "Draft placeholder: current policy source"
+          ],
+          "admitted_at_construction": false,
+          "per_operation_decision": "not_assessed",
+          "credential_constraints": "Draft placeholder: require a workload-specific, short-lived, audience- and resource-limited credential outside model-visible context.",
+          "required_approval_binding": "none proposed for a read-only operation",
+          "safe_outcome": "needs_information or declined when identity, policy, target, or scope is missing, stale, unavailable, or denied",
+          "denied_alternatives": [
+            "cross-requester collection read",
+            "model-selected tenant",
+            "unlisted document collection",
+            "external destination"
+          ]
+        }
+      ],
+      "trusted_context_sources": [
+        "Draft placeholder: record workload identity provenance.",
+        "Draft placeholder: record authenticated requester and tenant provenance.",
+        "Draft placeholder: record resource, destination, and policy provenance."
+      ],
+      "credential_constraints": "Draft placeholder: no personal, shared, ambient, forwarded, long-lived, or model-visible credential is permitted.",
+      "execution_gate": "Draft placeholder: normalize actual arguments, acquire trusted current facts, authorize the exact operation, verify a bound approval only when required, then allow or return the bounded outcome.",
+      "denied_paths": [
+        "unlisted tool",
+        "workspace path escape",
+        "external egress",
+        "authority expansion from content"
+      ],
+      "observations": [
+        "planned construction identity",
+        "planned model proposal",
+        "planned validation decision",
+        "planned authorization decision",
+        "planned dispatch attempt",
+        "planned authoritative effect observation"
+      ]
+    },
+    "content_action_boundary_record": {
+      "trusted_operating_context": "Draft placeholder: record only task boundary, admitted capabilities, authenticated scope, output contract, and allowed destinations from named trusted sources.",
+      "untrusted_channels": [
+        "user-provided question",
+        "retrieved passage",
+        "attachment",
+        "tool result",
+        "transformed summary"
+      ],
+      "flow_map": [
+        {
+          "from": "permission-filtered source passage",
+          "to": "bounded answer",
+          "allowed_influence": "support an answer only",
+          "retained_provenance": "source identity, status, and permission context reference",
+          "receiving_validation": "structural, provenance, semantic, and destination checks",
+          "safe_outcome": "needs_information when support is absent or unresolved"
+        }
+      ],
+      "action_surface": "Draft placeholder: begin with no live-service, export, communication, or approval route beyond individually listed operations.",
+      "injection_controls": "Draft placeholder: untrusted content cannot alter capability membership, scope, tenant, target, execution class, approval state, or destination; enforce this at each receiving operation.",
+      "confused_deputy_controls": "Draft placeholder: derive requester and tenant scope from authenticated context at the protected operation, not from a model field, citation, attachment, or broad service identity.",
+      "validation_and_observations": "Draft placeholder: keep proposal, validation decision, authorization decision, dispatch, response, and authoritative effect distinct."
+    },
+    "data_handling_audit_record": {
+      "trigger_decision": "Draft placeholder: determine whether non-public or personal data is processed and whether a consequential-event audit is triggered; unresolved classification remains blocking.",
+      "category_copy_map": [],
+      "destination_and_access_map": [],
+      "capture_and_export_controls": "Draft placeholder: prompt, completion, and tool-payload capture remain disabled by default; any exceptional capture needs a documented purpose, classification, approval, redaction-before-export, access restriction, sampling scope, retention, and deletion plan.",
+      "diagnostic_and_audit_lanes": "Draft placeholder: define separate purpose, access, retention/deletion, and derived-store handling for diagnostics and audit evidence.",
+      "consequential_event_audit": "Draft placeholder: populate only when a consequential operation is proposed; use actor, action, target, time, candidate/run identity, policy/approval references, non-content binding, and result without raw hidden reasoning.",
+      "privacy_harm_handoffs": "Draft placeholder: record plausible privacy/disparate-impact pathways, affected groups, uncertainty, and accountable-owner or specialized-assessment handoffs."
+    },
+    "handoffs": [
+      {
+        "owner": "Draft placeholder: accountable policy and data owner",
+        "open_decision": "Identify trusted requester provenance, exact resource scope, data classification, and permitted destinations.",
+        "safe_interim_outcome": "blocked; do not access or export live material"
+      }
+    ],
+    "verification_plan": [
+      "Plan harmless positive, denial, injection, cross-requester, changed-target, unavailable-authorization, denied-destination, and minimization fixtures.",
+      "For implementation work, preserve failed trials, run an end-to-end safe-fixture test, clean up unique artifacts, run the full retest, then perform package/export review."
+    ]
+  },
+  "assumptions": [
+    "Draft placeholder: the candidate has an accountable owner who can supply trusted policy and data-handling decisions.",
+    "Draft placeholder: the user-approved workspace is a bounded local drafting location and is not a proxy for a live service."
+  ],
+  "blockers": [
+    "Draft placeholder: workload identity source, authenticated requester scope, protected resource selector, and data classification are not yet confirmed."
+  ],
+  "applicability": [
+    {
+      "requirement_id": "AUTH-01",
+      "status": "unmet",
+      "rationale": "Draft placeholder: record a verifiable workload identity separate from developer and unrelated workload credentials.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "AUTH-02",
+      "status": "unmet",
+      "rationale": "Draft placeholder: record declared resource, action, requester, tenant, data-class, and destination limits plus denied defaults.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "AUTH-03",
+      "status": "unmet",
+      "rationale": "Draft placeholder: identify the per-operation resource-side authorization gate and its fail-closed outcome.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "AUTH-04",
+      "status": "unmet",
+      "rationale": "Draft placeholder: identify the authenticated context that derives or validates requester and tenant scope.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "AUTH-05",
+      "status": "unmet",
+      "rationale": "Draft placeholder: no consequential operation is currently defined; reassess if one is proposed.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "BOUNDARY-01",
+      "status": "unmet",
+      "rationale": "Draft placeholder: trace untrusted content and prevent it from changing operating context or authority.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "BOUNDARY-02",
+      "status": "unmet",
+      "rationale": "Draft placeholder: define receiving validation for model output, structured data, action proposals, and handoffs.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "BOUNDARY-03",
+      "status": "unmet",
+      "rationale": "Draft placeholder: identify deterministic protected-operation enforcement using trusted identity and policy.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "BOUNDARY-04",
+      "status": "unmet",
+      "rationale": "Draft placeholder: define safe refusal, escalation, or failure for prohibited or authority-expanding requests.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "BOUNDARY-05",
+      "status": "unmet",
+      "rationale": "Draft placeholder: identify defense-in-depth signals and paired direct/indirect injection fixtures without treating them as enforcement.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "DATA-01",
+      "status": "unmet",
+      "rationale": "Draft placeholder: determine the non-public or personal data trigger before marking this lane applicable or not applicable.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "DATA-02",
+      "status": "unmet",
+      "rationale": "Draft placeholder: determine necessary representations and default-disabled capture behavior if the DATA trigger applies.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "DATA-03",
+      "status": "unmet",
+      "rationale": "Draft placeholder: determine diagnostic or audit export fields and redaction/exclusion rules if such export exists.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "DATA-04",
+      "status": "unmet",
+      "rationale": "Draft placeholder: determine distinct diagnostic and audit lifecycle rules, including derived stores.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "DATA-05",
+      "status": "unmet",
+      "rationale": "Draft placeholder: determine whether a consequential-event trigger exists before defining its minimal audit record.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "DATA-06",
+      "status": "unmet",
+      "rationale": "Draft placeholder: determine affected groups, plausible privacy harms, uncertainty, and any specialized-assessment handoff.",
+      "evidence_ids": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "planned-operation-gate-fixtures",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "planned-minimization-and-denial-fixtures",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    }
+  ],
+  "decision": {
+    "recommendation": "not_assessed",
+    "authorized": false
+  }
+}

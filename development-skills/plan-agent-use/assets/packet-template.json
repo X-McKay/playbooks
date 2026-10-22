@@ -1,0 +1,186 @@
+{
+  "schema_version": "1.0",
+  "skill": "plan-agent-use",
+  "run_id": "example-plan-run",
+  "status": "draft",
+  "source_commit": "151fca01fbc609c5550c563c902946db540c2f4c",
+  "inputs": {
+    "request_summary": "[Draft: state the requester, proposed solution, and decision sought without treating the solution as selected.]",
+    "planning_boundary": "[Draft: state the user task, user groups, current-process context, and proposed first-delivery boundary.]",
+    "supplied_material_status": "[Draft: list supplied observations, reports, task examples, sources, and their known limits.]"
+  },
+  "outputs": {
+    "problem_brief": {
+      "artifact": "planning/problem-brief.md",
+      "user_groups_and_current_work": "[Draft: identify each group, trigger, task, current process, and specific difficulty with its evidence status.]",
+      "task_classes": "[Draft: include a representative input, needed result, and material variation for every in-scope task class.]",
+      "relationships": "[Draft: identify upstream dependencies and failure/change effects, plus downstream consumers and their next decisions.]",
+      "scope_boundary": "[Draft: list exclusions, unverified assumptions, and questions that could change the brief.]"
+    },
+    "success_record": {
+      "artifact": "planning/success-record.md",
+      "outcome_and_case_rules": "[Draft: define the user outcome, functional behavior, prohibited behavior, and case-dependent clarification, decline, escalation, partial-result, or failure paths.]",
+      "dimensions_and_metrics": "[Draft: identify only material value, task, safety, reliability, latency, or economics dimensions and define population, unit, method, status rules, and baseline status.]",
+      "predeclared_targets": "[Draft: name target, critical slices, accountable owner, and consequence before any candidate result; use unselected where unavailable.]",
+      "evidence_handoff": "[Draft: state the claims, cases, boundary observations, and identities that later evidence work must cover.]"
+    },
+    "suitability_record": {
+      "artifact": "planning/suitability-record.md",
+      "comparison_boundary": "[Draft: use the same task, cases, user contexts, sources, constraints, and prohibited effects for every alternative.]",
+      "alternatives_and_baseline": "[Draft: name the actually considered alternatives and the simplest plausible baseline, with task-specific retained/rejected/unproven rationale.]",
+      "fit_assessment": "[Draft: assess task uncertainty, usable data, action space, error consequence, maintenance burden, and evaluation burden.]",
+      "classification_and_added_value": "[Draft: distinguish predefined transitions from model-directed next-action, sequencing, or stopping; state the adaptive added-value claim or why an agent is unselected.]",
+      "revisit_conditions": "[Draft: name changes or comparable evidence that would reopen this choice.]"
+    },
+    "initial_scope_record": {
+      "artifact": "planning/initial-scope-record.md",
+      "uses_and_affected_parties": "[Draft: record intended and prohibited uses, affected users/non-users/systems, plausible scenarios, and unresolved specialist applicability.]",
+      "sources_connections_and_capabilities": "[Draft: for each proposed source/connection state purpose, owner, access, sensitivity, freshness, handling; for each capability state authority, external effect, reversibility, and execution-class question.]",
+      "responsibility_map": "[Draft: name reachable business, technical, operating, source/access, containment, restart, and review authorities or mark each unassigned.]",
+      "bounded_delivery": "[Draft: state eligible users, task/data/capability limits, entry and expansion evidence, support, stop conditions, containment, notification, and restart questions.]"
+    },
+    "planning_handoff": {
+      "artifact": "planning/handoff.md",
+      "next_leaves": [
+        "[Draft: name each explicitly required later leaf after checking library availability.]"
+      ],
+      "unresolved_decisions": "[Draft: list the conditions that prevent contract, trust-boundary, evidence, readiness, or operations work from proceeding.]",
+      "authorization_statement": "[Draft: this planning packet grants no authority, approval, access, deployment, or risk acceptance.]"
+    }
+  },
+  "assumptions": [
+    "[Draft assumption draft-assumption-current-work: the described current task and difficulty are representative of the intended user group; validate with a representative walkthrough or process record. Owner: unassigned.]"
+  ],
+  "blockers": [
+    "[Draft blocker draft-blocker-ownership: no reachable business, technical, and operating owners have been confirmed; do not progress to user exposure or represent ownership as settled. Resolution owner: unassigned.]"
+  ],
+  "applicability": [
+    {
+      "requirement_id": "PROBLEM-01",
+      "status": "unmet",
+      "rationale": "Draft template: confirm user groups, their tasks, current process, and specific difficulty.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "PROBLEM-02",
+      "status": "unmet",
+      "rationale": "Draft template: supply task-class inputs, needed results, and plausible material variations.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "PROBLEM-03",
+      "status": "unmet",
+      "rationale": "Draft template: identify material dependencies, failure/change effects, consumers, and next decisions.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "PROBLEM-04",
+      "status": "unmet",
+      "rationale": "Draft template: separate problem/outcome from implementation and state exclusions and unverified assumptions.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SUCCESS-01",
+      "status": "unmet",
+      "rationale": "Draft template: define intended outcome, acceptance criteria, correct result, and case-dependent success before results.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SUCCESS-02",
+      "status": "unmet",
+      "rationale": "Draft template: define applicable missing, ambiguous, conflicting, and out-of-scope behavior without concealing uncertainty.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SUCCESS-03",
+      "status": "unmet",
+      "rationale": "Draft template: define every acceptance/comparison metric, population, method, baseline status, target, slices, owner, and status rules.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SUCCESS-04",
+      "status": "unmet",
+      "rationale": "Draft template: identify material dimensions separately and prevent proxies or averages from overriding safety.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SUCCESS-05",
+      "status": "unmet",
+      "rationale": "Draft template: predeclare target, critical-slice, and insufficient-evidence consequences with an accountable owner.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SUITABILITY-01",
+      "status": "unmet",
+      "rationale": "Draft template: name a task-specific reason, simpler plausible baseline, considered alternatives, and dispositions.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SUITABILITY-02",
+      "status": "unmet",
+      "rationale": "Draft template: assess uncertainty, usable data, action space, consequence, maintenance, and evaluation burden.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SUITABILITY-03",
+      "status": "unmet",
+      "rationale": "Draft template: identify model-directed choices or classify predefined transitions as a fixed workflow.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SUITABILITY-04",
+      "status": "unmet",
+      "rationale": "Draft template: specify comparable same-case evidence needed to justify adaptive added value over the simpler baseline.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SUITABILITY-05",
+      "status": "unmet",
+      "rationale": "Draft template: if a hybrid is selected, assign stable constraints and explain why a simpler single approach is inadequate.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SCOPE-01",
+      "status": "unmet",
+      "rationale": "Draft template: record uses, affected parties, plausible harms, and unresolved prohibited or regulated-use questions.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SCOPE-02",
+      "status": "unmet",
+      "rationale": "Draft template: inventory every proposed source/connection, purpose, ownership, access, sensitivity, freshness, and handling.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SCOPE-03",
+      "status": "unmet",
+      "rationale": "Draft template: inventory enabled capabilities, permitted authority, effects, reversibility, and execution-class questions.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SCOPE-04",
+      "status": "unmet",
+      "rationale": "Draft template: name reachable ownership, responses, combined roles, and any independent/release/risk acceptance authority.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "SCOPE-05",
+      "status": "unmet",
+      "rationale": "Draft template: bound eligible exposure, limits, evidence, support, stops, containment, and restart authority.",
+      "evidence_ids": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "planned-current-task-walkthrough",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    }
+  ],
+  "decision": {
+    "recommendation": "not_assessed",
+    "authorized": false
+  }
+}

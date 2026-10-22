@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "skill": "review-agent-readiness",
+  "run_id": "example-run",
+  "status": "draft",
+  "source_commit": "151fca01fbc609c5550c563c902946db540c2f4c",
+  "inputs": {
+    "frozen_candidate": {
+      "code_revision": "DRAFT PLACEHOLDER — immutable source revision or build identity is required.",
+      "build_artifact": "DRAFT PLACEHOLDER — artifact digest or immutable build reference is required.",
+      "resolved_instructions_and_configuration": "DRAFT PLACEHOLDER — resolved behavior-affecting configuration is required.",
+      "model_route_fallback_and_settings": "DRAFT PLACEHOLDER — resolved model, route, fallback, and settings identities are required.",
+      "effective_capabilities_and_permissions": "DRAFT PLACEHOLDER — effective, not merely declared, capabilities and permissions are required.",
+      "source_corpus_filter_and_data_identities": "DRAFT PLACEHOLDER — source, corpus, filter, and relevant data identities are required.",
+      "dependency_identities": "DRAFT PLACEHOLDER — dependency versions or digests are required.",
+      "risk_assessment_version": "DRAFT PLACEHOLDER — applicable risk-record identity is required."
+    },
+    "proposed_exposure": {
+      "intended_and_prohibited_use": "DRAFT PLACEHOLDER — stated purpose and prohibited use are required.",
+      "users_tenants_capabilities_and_stage_limit": "DRAFT PLACEHOLDER — proposed population, capability boundary, and stage limit are required."
+    },
+    "part4_evaluation_handoff": {
+      "conclusion_and_authority": "DRAFT PLACEHOLDER — accountable Part 4 conclusion and owner are required.",
+      "evaluation_subject_cases_fixtures_evaluators_and_trial_policy": "DRAFT PLACEHOLDER — frozen evaluation identities are required.",
+      "gates_profiles_statuses_limits_and_next_action": "DRAFT PLACEHOLDER — evidence status ledger, limits, and next action are required."
+    },
+    "support_stop_and_effect_inputs": {
+      "support_escalation_and_recovery_contacts": "DRAFT PLACEHOLDER — reachable support, escalation, and recovery authority are required.",
+      "signals_stop_disable_containment_and_in_flight_path": "DRAFT PLACEHOLDER — proposed signal/response path and tested-control evidence are required."
+    },
+    "material_change": {
+      "baseline_and_change_description": "DRAFT PLACEHOLDER — identify baseline or first-release rationale and material changes.",
+      "affected_assumptions_controls_evidence_and_scope": "DRAFT PLACEHOLDER — record unaffected, targeted_confirmation, or invalidated dispositions."
+    }
+  },
+  "outputs": {
+    "frozen_candidate_record": "DRAFT PLACEHOLDER — compare all candidate, dependency, risk, evaluation, and exposure identities for one subject.",
+    "part4_handoff_assessment": "DRAFT PLACEHOLDER — retain the distinct Part 4 conclusion, evidence links, limits, and next action without re-grading it.",
+    "readiness_ledger": "DRAFT PLACEHOLDER — record ROLLOUT-01 through ROLLOUT-07 applicability, rationale, evidence IDs, blockers, and exception boundary.",
+    "support_disable_assessment": "DRAFT PLACEHOLDER — link support contacts and observed tested stop, disable, containment, safe-stop, or reconciliation evidence.",
+    "staged_rollout_plan": "DRAFT PLACEHOLDER — name each stage's scope, entry evidence, signals, promotion/stop criteria, decision role, and in-flight path.",
+    "change_impact_record": "DRAFT PLACEHOLDER — record affected assumptions, risks, controls, evaluations, and rollout constraints with refresh actions.",
+    "recommendation_basis": "DRAFT PLACEHOLDER — bound any recommendation to the frozen candidate, proposed scope, residual limits, and external-decision handoff."
+  },
+  "assumptions": [
+    "DRAFT PLACEHOLDER — the proposed exposure and governing decision policy will be supplied by accountable owners."
+  ],
+  "blockers": [
+    "DRAFT PLACEHOLDER — no candidate-specific Part 4 conclusion, tested response evidence, or external decision record has been supplied."
+  ],
+  "applicability": [
+    {
+      "requirement_id": "ROLLOUT-01",
+      "status": "unmet",
+      "rationale": "DRAFT PLACEHOLDER — the complete frozen candidate and authorized exposure scope have not been supplied.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "ROLLOUT-02",
+      "status": "unmet",
+      "rationale": "DRAFT PLACEHOLDER — candidate-specific readiness evidence and control dispositions have not been supplied.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "ROLLOUT-03",
+      "status": "unmet",
+      "rationale": "DRAFT PLACEHOLDER — predeclared criteria and an external accountable decision record have not been supplied.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "ROLLOUT-04",
+      "status": "not_applicable",
+      "rationale": "DRAFT PLACEHOLDER — no exception is proposed; if one is proposed, it remains unapproved until external governance records it.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "ROLLOUT-05",
+      "status": "not_applicable",
+      "rationale": "DRAFT PLACEHOLDER — no conditional_go recommendation is proposed for this draft packet.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "ROLLOUT-06",
+      "status": "unmet",
+      "rationale": "DRAFT PLACEHOLDER — stages, criteria, authorities, and tested containment or disable evidence have not been supplied.",
+      "evidence_ids": []
+    },
+    {
+      "requirement_id": "ROLLOUT-07",
+      "status": "unmet",
+      "rationale": "DRAFT PLACEHOLDER — baseline/change impact and refreshed affected evidence have not been supplied.",
+      "evidence_ids": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "planned-part4-handoff",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    },
+    {
+      "id": "planned-disable-or-containment-test",
+      "kind": "planned",
+      "status": "not_run",
+      "artifact": "",
+      "sha256": ""
+    }
+  ],
+  "decision": {
+    "recommendation": "not_assessed",
+    "authorized": false
+  }
+}

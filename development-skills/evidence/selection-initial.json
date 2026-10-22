@@ -1,0 +1,559 @@
+{
+  "model": "gpt-6.1-sol",
+  "mode": "metadata-only portable instruction probe; not a native coding host",
+  "repetitions": 1,
+  "results": [
+    {
+      "index": 0,
+      "skill": "plan-agent-use",
+      "case": "plan-agent-use-positive-facilities-routing",
+      "split": "development",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request asks for a bounded, pre-build planning packet for a possible agent, including simpler-baseline comparisons, scope and risk considerations for electrical hazards, and unresolved ownership and data questions. This directly fits the skill without asking it to approve risk, authorize exposure, or design an implementation contract.",
+      "pass": true,
+      "elapsed_ms": 2670,
+      "usage": {
+        "completion_tokens": 73,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 359,
+        "prompt_tokens_details": {},
+        "total_tokens": 432,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 1,
+      "skill": "plan-agent-use",
+      "case": "plan-agent-use-negative-contract-authoring",
+      "split": "development",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is to design an implementation contract for an already selected candidate, which the skill explicitly excludes. This skill is for early-stage agent or automation planning.",
+      "pass": true,
+      "elapsed_ms": 3162,
+      "usage": {
+        "completion_tokens": 48,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 325,
+        "prompt_tokens_details": {},
+        "total_tokens": 373,
+        "traffic_type": "on_demand"
+      }
+    },
+    {
+      "index": 2,
+      "skill": "plan-agent-use",
+      "case": "plan-agent-use-ambiguous-idea-only",
+      "split": "development",
+      "expected": "clarify",
+      "actual": "select",
+      "reason": "This is an early, broad request to plan AI automation for customer questions. The skill fits by defining the problem, measurable success, simpler alternatives, and initial scope, risks, ownership, and delivery before committing to an agent or pilot.",
+      "pass": false,
+      "elapsed_ms": 2366,
+      "usage": {
+        "completion_tokens": 62,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 310,
+        "prompt_tokens_details": {},
+        "total_tokens": 372,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 3,
+      "skill": "specify-agent-contract",
+      "case": "contract-positive-fixed-path",
+      "split": "development",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request is to plan a bounded agent contract and coding acceptance criteria before implementation, which directly matches the skill. The evidence-only scope and absence of tools or write actions define relevant contract limits.",
+      "pass": true,
+      "elapsed_ms": 2301,
+      "usage": {
+        "completion_tokens": 53,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 305,
+        "prompt_tokens_details": {},
+        "total_tokens": 358,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 4,
+      "skill": "specify-agent-contract",
+      "case": "contract-negative-code-request",
+      "split": "development",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request asks for implementation and data-service integration, not planning a bounded agent contract and acceptance criteria. This skill is a pre-coding planning step, not an implementation or access-granting skill.",
+      "pass": true,
+      "elapsed_ms": 5388,
+      "usage": {
+        "completion_tokens": 148,
+        "completion_tokens_details": {
+          "reasoning_tokens": 89,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 289,
+        "prompt_tokens_details": {},
+        "total_tokens": 437,
+        "traffic_type": "on_demand"
+      }
+    },
+    {
+      "index": 5,
+      "skill": "specify-agent-contract",
+      "case": "contract-ambiguous-boundary",
+      "split": "development",
+      "expected": "clarify",
+      "actual": "select",
+      "reason": "The request proposes building an agent with unbounded scope and capabilities. This skill fits the pre-coding work of defining a bounded, reviewable contract and implementation acceptance criteria, while identifying missing requirements and limits without granting access or approving risk.",
+      "pass": false,
+      "elapsed_ms": 2808,
+      "usage": {
+        "completion_tokens": 62,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 292,
+        "prompt_tokens_details": {},
+        "total_tokens": 354,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 6,
+      "skill": "design-trust-boundaries",
+      "case": "boundary-positive-read-only-policy",
+      "split": "development",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request directly asks for authority and content-boundary design for a production agent that reads protected internal resources and returns bounded output, matching the skill’s scoped planning purpose.",
+      "pass": true,
+      "elapsed_ms": 2143,
+      "usage": {
+        "completion_tokens": 48,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 321,
+        "prompt_tokens_details": {},
+        "total_tokens": 369,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 7,
+      "skill": "design-trust-boundaries",
+      "case": "boundary-negative-style-only-request",
+      "split": "development",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is for a formatting guide, with no production agent candidate or authority, content-to-action, or data-handling boundary to design.",
+      "pass": true,
+      "elapsed_ms": 1957,
+      "usage": {
+        "completion_tokens": 45,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 320,
+        "prompt_tokens_details": {},
+        "total_tokens": 365,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 8,
+      "skill": "design-trust-boundaries",
+      "case": "boundary-ambiguous-order-support",
+      "split": "development",
+      "expected": "clarify",
+      "actual": "do_not_select",
+      "reason": "The request asks the support assistant to investigate a live customer order and notify the account team, not to design a trust-boundary planning packet. Operating live services is explicitly outside this skill’s scope.",
+      "pass": false,
+      "elapsed_ms": 3075,
+      "usage": {
+        "completion_tokens": 89,
+        "completion_tokens_details": {
+          "reasoning_tokens": 31,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 308,
+        "prompt_tokens_details": {},
+        "total_tokens": 397,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 9,
+      "skill": "build-agent-evidence",
+      "case": "evidence-positive-pre-release-plan",
+      "split": "development",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request directly matches building a reproducible, release-facing evidence plan for an agent change, including test cases, prohibited effects, baseline comparisons, and a separately authored holdout. It does not ask the skill to approve risk or make the release decision.",
+      "pass": true,
+      "elapsed_ms": 2623,
+      "usage": {
+        "completion_tokens": 65,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 324,
+        "prompt_tokens_details": {},
+        "total_tokens": 389,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 10,
+      "skill": "build-agent-evidence",
+      "case": "evidence-negative-contract-neighbor",
+      "split": "development",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is to define the agent's contract—schema, outcomes, interface fields, and stop conditions—not to build an evidence packet or evaluation workflow. Defining a missing contract is explicitly excluded.",
+      "pass": true,
+      "elapsed_ms": 2378,
+      "usage": {
+        "completion_tokens": 56,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 302,
+        "prompt_tokens_details": {},
+        "total_tokens": 358,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 11,
+      "skill": "build-agent-evidence",
+      "case": "evidence-ambiguous-missing-scope",
+      "split": "development",
+      "expected": "clarify",
+      "actual": "clarify",
+      "reason": "The request does not identify a proposed behavior or change, so it is unclear whether the intended work is evidence-building or defining requirements and launch approval. This skill can build a bounded test and evidence workflow, but cannot define the missing contract, grant workspace access, approve risk, or deploy.",
+      "pass": true,
+      "elapsed_ms": 3604,
+      "usage": {
+        "completion_tokens": 128,
+        "completion_tokens_details": {
+          "reasoning_tokens": 53,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 306,
+        "prompt_tokens_details": {},
+        "total_tokens": 434,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 12,
+      "skill": "review-agent-readiness",
+      "case": "frozen-candidate-readiness-positive",
+      "split": "development",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request is a bounded readiness review of one frozen candidate before a limited production canary, using the Part 4 handoff and identity, disable, support, and rollout evidence. This matches the skill’s scope without requesting release authorization or deployment.",
+      "pass": true,
+      "elapsed_ms": 2964,
+      "usage": {
+        "completion_tokens": 64,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 346,
+        "prompt_tokens_details": {},
+        "total_tokens": 410,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 13,
+      "skill": "review-agent-readiness",
+      "case": "evaluation-design-near-neighbor-negative",
+      "split": "development",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is to create and evaluate evidence, including holdout cases, evaluator selection, and gate calculations. This skill consumes an existing evaluation handoff for a bounded readiness review and explicitly excludes creating evaluation evidence.",
+      "pass": true,
+      "elapsed_ms": 1997,
+      "usage": {
+        "completion_tokens": 58,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 325,
+        "prompt_tokens_details": {},
+        "total_tokens": 383,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 14,
+      "skill": "review-agent-readiness",
+      "case": "ambiguous-launch-question",
+      "split": "development",
+      "expected": "clarify",
+      "actual": "select",
+      "reason": "The request calls for a pre-launch readiness recommendation, which fits this skill. Missing candidate identity, scope, permissions, and current evaluation evidence are blockers the review should expose, not grounds to authorize launch.",
+      "pass": false,
+      "elapsed_ms": 2258,
+      "usage": {
+        "completion_tokens": 55,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 340,
+        "prompt_tokens_details": {},
+        "total_tokens": 395,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 15,
+      "skill": "operate-agent-lifecycle",
+      "case": "lifecycle-positive-operating-control-plan",
+      "split": "development",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request directly fits designing an operating-control and lifecycle support packet, including run and retry records, traces, runtime limits, stop treatment, support contacts, feedback review, and retirement handoff. The absence of an existing service does not prevent drafting the packet.",
+      "pass": true,
+      "elapsed_ms": 2610,
+      "usage": {
+        "completion_tokens": 66,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 335,
+        "prompt_tokens_details": {},
+        "total_tokens": 401,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 16,
+      "skill": "operate-agent-lifecycle",
+      "case": "lifecycle-negative-release-approval-neighbor",
+      "split": "development",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is to authorize release to production users, which is explicitly excluded from this skill’s operating-control and lifecycle support scope.",
+      "pass": true,
+      "elapsed_ms": 2104,
+      "usage": {
+        "completion_tokens": 42,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 298,
+        "prompt_tokens_details": {},
+        "total_tokens": 340,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 17,
+      "skill": "operate-agent-lifecycle",
+      "case": "lifecycle-ambiguous-monitoring-request",
+      "split": "development",
+      "expected": "clarify",
+      "actual": "select",
+      "reason": "Defining what to record for agent monitoring fits the skill’s scope of designing operating controls, including run and attempt records and lifecycle support.",
+      "pass": false,
+      "elapsed_ms": 2206,
+      "usage": {
+        "completion_tokens": 42,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 294,
+        "prompt_tokens_details": {},
+        "total_tokens": 336,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 18,
+      "skill": "author-and-admit-agent-skills",
+      "case": "propose-recurring-skill-package",
+      "split": "development",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request is to author a reusable candidate skill package and prepare a non-authorizing admission proposal for an agent, explicitly without enabling it. This directly matches the skill’s described scope.",
+      "pass": true,
+      "elapsed_ms": 2109,
+      "usage": {
+        "completion_tokens": 51,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 347,
+        "prompt_tokens_details": {},
+        "total_tokens": 398,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 19,
+      "skill": "author-and-admit-agent-skills",
+      "case": "one-off-instruction-near-neighbor",
+      "split": "development",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is for a one-off customer-support instruction and explicitly excludes creating or changing a reusable package, so it falls outside this skill’s scope.",
+      "pass": true,
+      "elapsed_ms": 1792,
+      "usage": {
+        "completion_tokens": 46,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 336,
+        "prompt_tokens_details": {},
+        "total_tokens": 382,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 20,
+      "skill": "author-and-admit-agent-skills",
+      "case": "broad-skill-request-ambiguous",
+      "split": "development",
+      "expected": "clarify",
+      "actual": "select",
+      "reason": "The request is to add a reusable agent skill for handling team security documents, which fits skill authoring and admission-proposal preparation. The scope and package details can be gathered during that process.",
+      "pass": false,
+      "elapsed_ms": 2040,
+      "usage": {
+        "completion_tokens": 53,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 325,
+        "prompt_tokens_details": {},
+        "total_tokens": 378,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 21,
+      "skill": "draft-agent-implementation",
+      "case": "dai-development-local-draft",
+      "split": "development",
+      "expected": "select",
+      "actual": "select",
+      "reason": "The request matches implementing an approved bounded agent change in an authorized workspace, using supplied constraints, authority, implementation profile, and budget to produce code, tests, operating notes, evidence, and a review-ready ZIP.",
+      "pass": true,
+      "elapsed_ms": 2109,
+      "usage": {
+        "completion_tokens": 57,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 341,
+        "prompt_tokens_details": {},
+        "total_tokens": 398,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 22,
+      "skill": "draft-agent-implementation",
+      "case": "dai-near-neighbor-evidence-review",
+      "split": "development",
+      "expected": "do_not_select",
+      "actual": "do_not_select",
+      "reason": "The request is an evaluation-only review of existing test coverage and metrics, explicitly excluding code changes and archive creation. The skill is for implementing an agent candidate and producing implementation artifacts, not standalone review.",
+      "pass": true,
+      "elapsed_ms": 2069,
+      "usage": {
+        "completion_tokens": 56,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 310,
+        "prompt_tokens_details": {},
+        "total_tokens": 366,
+        "traffic_type": "provisioned_throughput"
+      }
+    },
+    {
+      "index": 23,
+      "skill": "draft-agent-implementation",
+      "case": "dai-ambiguous-planning-without-profile",
+      "split": "development",
+      "expected": "clarify",
+      "actual": "do_not_select",
+      "reason": "The request is for planning, not bounded implementation, and explicitly lacks an approved workspace. This skill applies after planning and required handoffs, and excludes unapproved workspaces.",
+      "pass": false,
+      "elapsed_ms": 1905,
+      "usage": {
+        "completion_tokens": 51,
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 313,
+        "prompt_tokens_details": {},
+        "total_tokens": 364,
+        "traffic_type": "provisioned_throughput"
+      }
+    }
+  ]
+}
