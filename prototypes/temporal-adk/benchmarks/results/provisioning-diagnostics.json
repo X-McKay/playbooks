@@ -1,0 +1,636 @@
+{
+  "baseline_image_id": "sha256:5556ea7fa538fd87a79eb92edb347594c55c69ed6be0498cb74c29537af6487f",
+  "scope": "Three pre-change disposable sessions. Host monotonic observation times, polling every0.2s plus kubectl overhead. This observer can perturb timing; use the separate unobserved interleaved comparison for total provisioning. Pod timestamps originate in the cluster. SDK exec is the runtime socket readiness check; no inference.",
+  "samples": [
+    {
+      "provider": "scripted",
+      "sdk_calls": [
+        {
+          "method": "create",
+          "start": 0.043632874730974436,
+          "phase": 1,
+          "seconds": 0.6893987911753356
+        },
+        {
+          "method": "wait_ready",
+          "start": 0.7334019998088479,
+          "phase": 2,
+          "seconds": 8.059768666047603
+        },
+        {
+          "method": "exec",
+          "start": 8.793477125000209,
+          "seconds": 1.541477874852717
+        }
+      ],
+      "first_observed_pvc_bound_seconds": 3.7511017909273505,
+      "first_observed_workload_running_seconds": 7.937729041092098,
+      "first_observed_supervisor_running_seconds": 1.9393056659027934,
+      "final_workload_status": {
+        "kind": "Pod",
+        "name": "default--b-d18aadaa298f5e9e",
+        "uid": "f3767e5b-e84c-4f9c-ad5a-10ab389d986c",
+        "created": "2026-10-18T01:41:02Z",
+        "phase": "Running",
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:08Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:09Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:10Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:10Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:07Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "init": [
+          {
+            "containerID": "containerd://386d7426fb36c894eb91feefff38ac0cf986c284c2e292fea4df3bd6376ece0a",
+            "image": "ghcr.io/nvidia/openshell/sandbox:0.1.4",
+            "imageID": "ghcr.io/nvidia/openshell/sandbox@sha256:ca00c094aeaa60681b8196cda18ab3c5dd5f7d782d4c36798256427b67599070",
+            "lastState": {},
+            "name": "openshell-sandbox-bootstrap",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://386d7426fb36c894eb91feefff38ac0cf986c284c2e292fea4df3bd6376ece0a",
+                "exitCode": 0,
+                "finishedAt": "2026-10-18T01:41:07Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-18T01:41:07Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 10001,
+                "supplementalGroups": [
+                  10001
+                ],
+                "uid": 10001
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/.openshell/bootstrap-input",
+                "name": "openshell-sandbox-bootstrap",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/.openshell/runtime",
+                "name": "openshell-runtime"
+              },
+              {
+                "mountPath": "/.openshell/state",
+                "name": "openshell-runtime-state"
+              }
+            ]
+          },
+          {
+            "containerID": "containerd://c7cb2a36736ae7b04189f1b78597f77b97060d86f955ab6e8d38d93ad20b167d",
+            "image": "docker.io/library/adk-bridge-probe:local",
+            "imageID": "sha256:82098fdef6c29267c4f93dbfe70cf22fbcf02382ae544a6a6dd5ae2c1eb8d213",
+            "lastState": {},
+            "name": "workspace-init",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://c7cb2a36736ae7b04189f1b78597f77b97060d86f955ab6e8d38d93ad20b167d",
+                "exitCode": 0,
+                "finishedAt": "2026-10-18T01:41:08Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-18T01:41:08Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 10001,
+                "supplementalGroups": [
+                  10001
+                ],
+                "uid": 10001
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/mnt/openshell-workspace",
+                "name": "workspace"
+              },
+              {
+                "mountPath": "/.openshell/runtime",
+                "name": "openshell-runtime",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "containerID": "containerd://307ac15895bcf97abb07eed3eb65de8886d10e3db95c5adcf1b6b883bedfe039",
+            "image": "docker.io/library/adk-bridge-probe:local",
+            "imageID": "sha256:82098fdef6c29267c4f93dbfe70cf22fbcf02382ae544a6a6dd5ae2c1eb8d213",
+            "lastState": {},
+            "name": "agent",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-18T01:41:09Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 10001,
+                "supplementalGroups": [
+                  10001
+                ],
+                "uid": 10001
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/.openshell/runtime",
+                "name": "openshell-runtime",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/.openshell/state",
+                "name": "openshell-runtime-state"
+              },
+              {
+                "mountPath": "/.openshell/pod-identity",
+                "name": "openshell-pod-identity",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/run",
+                "name": "openshell-run"
+              },
+              {
+                "mountPath": "/sandbox",
+                "name": "workspace"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "provider": "scripted",
+      "sdk_calls": [
+        {
+          "method": "create",
+          "start": 0.013680750038474798,
+          "phase": 1,
+          "seconds": 0.2851834171451628
+        },
+        {
+          "method": "wait_ready",
+          "start": 0.29933283291757107,
+          "phase": 2,
+          "seconds": 7.054009250365198
+        },
+        {
+          "method": "exec",
+          "start": 7.353640791960061,
+          "seconds": 0.33352195797488093
+        }
+      ],
+      "first_observed_pvc_bound_seconds": 2.569696499966085,
+      "first_observed_workload_running_seconds": 6.209704292006791,
+      "first_observed_supervisor_running_seconds": 1.1579062500968575,
+      "final_workload_status": {
+        "kind": "Pod",
+        "name": "default--b-cd3fe0546d72f2f7",
+        "uid": "a576cc2b-d01f-4d33-a628-8c72aa6c5479",
+        "created": "2026-10-18T01:41:18Z",
+        "phase": "Running",
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:22Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:23Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:24Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:24Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:21Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "init": [
+          {
+            "containerID": "containerd://beb068e9b3e316a87c1b53eee7063fbdc31323476b3464c68b4a404d859e760f",
+            "image": "ghcr.io/nvidia/openshell/sandbox:0.1.4",
+            "imageID": "ghcr.io/nvidia/openshell/sandbox@sha256:ca00c094aeaa60681b8196cda18ab3c5dd5f7d782d4c36798256427b67599070",
+            "lastState": {},
+            "name": "openshell-sandbox-bootstrap",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://beb068e9b3e316a87c1b53eee7063fbdc31323476b3464c68b4a404d859e760f",
+                "exitCode": 0,
+                "finishedAt": "2026-10-18T01:41:22Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-18T01:41:22Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 10001,
+                "supplementalGroups": [
+                  10001
+                ],
+                "uid": 10001
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/.openshell/bootstrap-input",
+                "name": "openshell-sandbox-bootstrap",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/.openshell/runtime",
+                "name": "openshell-runtime"
+              },
+              {
+                "mountPath": "/.openshell/state",
+                "name": "openshell-runtime-state"
+              }
+            ]
+          },
+          {
+            "containerID": "containerd://d425e86509a694b9e6d3584af744a769f73f9551a8ffde96b966825bd2e6d841",
+            "image": "docker.io/library/adk-bridge-probe:local",
+            "imageID": "sha256:82098fdef6c29267c4f93dbfe70cf22fbcf02382ae544a6a6dd5ae2c1eb8d213",
+            "lastState": {},
+            "name": "workspace-init",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://d425e86509a694b9e6d3584af744a769f73f9551a8ffde96b966825bd2e6d841",
+                "exitCode": 0,
+                "finishedAt": "2026-10-18T01:41:22Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-18T01:41:22Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 10001,
+                "supplementalGroups": [
+                  10001
+                ],
+                "uid": 10001
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/mnt/openshell-workspace",
+                "name": "workspace"
+              },
+              {
+                "mountPath": "/.openshell/runtime",
+                "name": "openshell-runtime",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "containerID": "containerd://4c1d349c01c339afbe367f57dd46de9aa51e44ff4bb51ffad9bd1d533fc0882b",
+            "image": "docker.io/library/adk-bridge-probe:local",
+            "imageID": "sha256:82098fdef6c29267c4f93dbfe70cf22fbcf02382ae544a6a6dd5ae2c1eb8d213",
+            "lastState": {},
+            "name": "agent",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-18T01:41:23Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 10001,
+                "supplementalGroups": [
+                  10001
+                ],
+                "uid": 10001
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/.openshell/runtime",
+                "name": "openshell-runtime",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/.openshell/state",
+                "name": "openshell-runtime-state"
+              },
+              {
+                "mountPath": "/.openshell/pod-identity",
+                "name": "openshell-pod-identity",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/run",
+                "name": "openshell-run"
+              },
+              {
+                "mountPath": "/sandbox",
+                "name": "workspace"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "provider": "vllm",
+      "sdk_calls": [
+        {
+          "method": "create",
+          "start": 0.01895145932212472,
+          "phase": 1,
+          "seconds": 0.4526176657527685
+        },
+        {
+          "method": "wait_ready",
+          "start": 0.4720781669020653,
+          "phase": 2,
+          "seconds": 8.065751625224948
+        },
+        {
+          "method": "exec",
+          "start": 8.538141750264913,
+          "seconds": 1.3326806668192148
+        }
+      ],
+      "first_observed_pvc_bound_seconds": 3.632021542172879,
+      "first_observed_workload_running_seconds": 8.338227916974574,
+      "first_observed_supervisor_running_seconds": 2.0742333750240505,
+      "final_workload_status": {
+        "kind": "Pod",
+        "name": "default--b-1c8292a45df47781",
+        "uid": "fe275fec-d2d1-40d1-894f-cfc2ee83d420",
+        "created": "2026-10-18T01:41:31Z",
+        "phase": "Running",
+        "conditions": [
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:37Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "PodReadyToStartContainers"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:38Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "Initialized"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:39Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:39Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "ContainersReady"
+          },
+          {
+            "lastProbeTime": null,
+            "lastTransitionTime": "2026-10-18T01:41:35Z",
+            "observedGeneration": 2,
+            "status": "True",
+            "type": "PodScheduled"
+          }
+        ],
+        "init": [
+          {
+            "containerID": "containerd://40d35ca8e5094fe1c3da0643e16754b6fa162bd7a4f0ae70171d4d27b631d786",
+            "image": "ghcr.io/nvidia/openshell/sandbox:0.1.4",
+            "imageID": "ghcr.io/nvidia/openshell/sandbox@sha256:ca00c094aeaa60681b8196cda18ab3c5dd5f7d782d4c36798256427b67599070",
+            "lastState": {},
+            "name": "openshell-sandbox-bootstrap",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://40d35ca8e5094fe1c3da0643e16754b6fa162bd7a4f0ae70171d4d27b631d786",
+                "exitCode": 0,
+                "finishedAt": "2026-10-18T01:41:36Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-18T01:41:36Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 10001,
+                "supplementalGroups": [
+                  10001
+                ],
+                "uid": 10001
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/.openshell/bootstrap-input",
+                "name": "openshell-sandbox-bootstrap",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/.openshell/runtime",
+                "name": "openshell-runtime"
+              },
+              {
+                "mountPath": "/.openshell/state",
+                "name": "openshell-runtime-state"
+              }
+            ]
+          },
+          {
+            "containerID": "containerd://15f06c7627847a9c8aa880f16794847c366931f998cf352e0afe479a20b20c86",
+            "image": "docker.io/library/adk-bridge-probe:local",
+            "imageID": "sha256:82098fdef6c29267c4f93dbfe70cf22fbcf02382ae544a6a6dd5ae2c1eb8d213",
+            "lastState": {},
+            "name": "workspace-init",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": false,
+            "state": {
+              "terminated": {
+                "containerID": "containerd://15f06c7627847a9c8aa880f16794847c366931f998cf352e0afe479a20b20c86",
+                "exitCode": 0,
+                "finishedAt": "2026-10-18T01:41:37Z",
+                "reason": "Completed",
+                "startedAt": "2026-10-18T01:41:37Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 10001,
+                "supplementalGroups": [
+                  10001
+                ],
+                "uid": 10001
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/mnt/openshell-workspace",
+                "name": "workspace"
+              },
+              {
+                "mountPath": "/.openshell/runtime",
+                "name": "openshell-runtime",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "containerID": "containerd://04d508051690a63b4382ae2121e0228e7e6e49d5e619a5a0674ecf2f0ed32d83",
+            "image": "docker.io/library/adk-bridge-probe:local",
+            "imageID": "sha256:82098fdef6c29267c4f93dbfe70cf22fbcf02382ae544a6a6dd5ae2c1eb8d213",
+            "lastState": {},
+            "name": "agent",
+            "ready": true,
+            "resources": {},
+            "restartCount": 0,
+            "started": true,
+            "state": {
+              "running": {
+                "startedAt": "2026-10-18T01:41:38Z"
+              }
+            },
+            "user": {
+              "linux": {
+                "gid": 10001,
+                "supplementalGroups": [
+                  10001
+                ],
+                "uid": 10001
+              }
+            },
+            "volumeMounts": [
+              {
+                "mountPath": "/.openshell/runtime",
+                "name": "openshell-runtime",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/.openshell/state",
+                "name": "openshell-runtime-state"
+              },
+              {
+                "mountPath": "/.openshell/pod-identity",
+                "name": "openshell-pod-identity",
+                "readOnly": true,
+                "recursiveReadOnly": "Disabled"
+              },
+              {
+                "mountPath": "/run",
+                "name": "openshell-run"
+              },
+              {
+                "mountPath": "/sandbox",
+                "name": "workspace"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,413 @@
+{
+  "description": "Three disposable OpenShell 0.1.4 sessions in the existing kind cluster before the adapter change; one observation per scenario, not a latency distribution. Timings are host monotonic. Pod status timestamps originate in the cluster. No grace-period override or force deletion.",
+  "source_revision": "c993c99130e50cebeae7ba073e8e3e34d0289c64",
+  "experiments": {
+    "idle_direct_delete": {
+      "specs": [
+        {
+          "name": "default--b-2d1480dafbe9bebe",
+          "grace": 30,
+          "containers": [
+            {
+              "name": "agent",
+              "command": [
+                "/.openshell/runtime/openshell-sandbox",
+                "--bootstrap",
+                "/.openshell/state/bootstrap/boundary.json"
+              ],
+              "lifecycle": null
+            }
+          ]
+        },
+        {
+          "name": "os-supervisor-b3f7fe53-b29e-4271-96fb-5b84967dd023",
+          "grace": 30,
+          "containers": [
+            {
+              "name": "supervisor",
+              "command": [
+                "/openshell-supervisor",
+                "--backend-descriptor-file",
+                "/.openshell/supervisor/runtime-descriptor.json",
+                "--auth-bundle-file",
+                "/.openshell/supervisor/auth.json",
+                "--workdir",
+                "/sandbox",
+                "--health-socket-path",
+                "/run/openshell/health.sock",
+                "--health-port",
+                "5501"
+              ],
+              "lifecycle": null
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "seconds": 0.089,
+          "resources": [
+            {
+              "kind": "Pod",
+              "name": "default--b-2d1480dafbe9bebe",
+              "deleting": "2026-10-18T01:23:40Z",
+              "state": [
+                {
+                  "name": "agent",
+                  "state": {
+                    "running": {
+                      "startedAt": "2026-10-18T01:23:08Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Pod",
+              "name": "os-supervisor-b3f7fe53-b29e-4271-96fb-5b84967dd023",
+              "deleting": "2026-10-18T01:23:40Z",
+              "state": [
+                {
+                  "name": "supervisor",
+                  "state": {
+                    "running": {
+                      "startedAt": "2026-10-18T01:23:02Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "PersistentVolumeClaim",
+              "name": "workspace-default--b-2d1480dafbe9bebe",
+              "deleting": "2026-10-18T01:23:10Z",
+              "state": []
+            }
+          ]
+        },
+        {
+          "seconds": 0.426,
+          "resources": [
+            {
+              "kind": "Pod",
+              "name": "default--b-2d1480dafbe9bebe",
+              "deleting": "2026-10-18T01:23:40Z",
+              "state": [
+                {
+                  "name": "agent",
+                  "state": {
+                    "running": {
+                      "startedAt": "2026-10-18T01:23:08Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Pod",
+              "name": "os-supervisor-b3f7fe53-b29e-4271-96fb-5b84967dd023",
+              "deleting": "2026-10-18T01:23:40Z",
+              "state": [
+                {
+                  "name": "supervisor",
+                  "state": {
+                    "terminated": {
+                      "containerID": "containerd://27283a4a64f3bcc4ae1e7012d1deb4f35a06ae326299338eb16ff50354bdee17",
+                      "exitCode": 143,
+                      "finishedAt": "2026-10-18T01:23:11Z",
+                      "message": "2026-10-18T01:23:02.409Z INFO openshell_supervisor: Starting sandbox supervision\n2026-10-18T01:23:09.318Z INFO openshell_supervisor: Fetching sandbox policy via gRPC\n2026-10-18T01:23:09.361Z INFO openshell_supervisor_network::opa: Configured OPA runtime binary identity mode\n2026-10-18T01:23:09.361Z OCSF CONFIG:CONFIGURED [INFO] OPA runtime binary identity mode configured [source:proto require_binary_identity:true] [source:proto]\n2026-10-18T01:23:09.368Z INFO openshell_supervisor: Isolation boundary attached\n2026-10-18T01:23:09.369Z INFO openshell_supervisor: Isolation boundary enforcement confirmed\n2026-10-18T01:23:09.371Z OCSF CONFIG:ENABLED [INFO] TLS termination enabled: provisioned CA loaded\n2026-10-18T01:23:09.372Z OCSF CONFIG:READY [INFO] Policy DNS connected to isolation boundary\n2026-10-18T01:23:09.372Z OCSF NET:LISTEN [INFO] 127.0.0.1:3128\n2026-10-18T01:23:09.384Z INFO openshell_supervisor: Isolation boundary agent started\n2026-10-18T01:23:09.385Z OCSF SSH:LISTEN [INFO]\n2026-10-18T01:23:09.385Z INFO openshell_supervisor: Control-mode access plane started\n2026-10-18T01:23:09.397Z OCSF NET:OPEN [INFO] openshell.openshell.svc.cluster.local:8080\n2026-10-18T01:23:09.398Z OCSF CONFIG:LOADED [INFO] Acknowledged initial policy revision as loaded [version:1] [hash:477149685c1c80666cabe03416898036867f8a1746f1f3bb8e5bb77883192889]\n2026-10-18T01:23:09.760Z OCSF EVENT [INFO] ssh relay open (channel_id=8dfefdbf-72ca-4412-8c59-9855371608a7, target=unix:/run/openshell/ssh.sock)\n2026-10-18T01:23:09.760Z OCSF SSH:OPEN [INFO] ALLOWED\n2026-10-18T01:23:10.795Z OCSF EVENT [INFO] ssh relay closed (channel_id=8dfefdbf-72ca-4412-8c59-9855371608a7, target=unix:/run/openshell/ssh.sock)\n2026-10-18T01:23:10.872Z OCSF EVENT [INFO] ssh relay open (channel_id=8ce90ea9-de38-446e-8079-2ec8410f8ac8, target=unix:/run/openshell/ssh.sock)\n2026-10-18T01:23:10.872Z OCSF SSH:OPEN [INFO] ALLOWED\n2026-10-18T01:23:10.914Z OCSF EVENT [INFO] ssh relay closed (channel_id=8ce90ea9-de38-446e-8079-2ec8410f8ac8, target=unix:/run/openshell/ssh.sock)\n",
+                      "reason": "Error",
+                      "startedAt": "2026-10-18T01:23:02Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "PersistentVolumeClaim",
+              "name": "workspace-default--b-2d1480dafbe9bebe",
+              "deleting": "2026-10-18T01:23:10Z",
+              "state": []
+            }
+          ]
+        },
+        {
+          "seconds": 0.762,
+          "resources": [
+            {
+              "kind": "Pod",
+              "name": "default--b-2d1480dafbe9bebe",
+              "deleting": "2026-10-18T01:23:40Z",
+              "state": [
+                {
+                  "name": "agent",
+                  "state": {
+                    "terminated": {
+                      "containerID": "containerd://9f4feffcc0a1f39faf3e56ef9872e98ea5289d2c3186285be9023f0bcd9b5e43",
+                      "exitCode": 1,
+                      "finishedAt": "2026-10-18T01:23:11Z",
+                      "reason": "Error",
+                      "startedAt": "2026-10-18T01:23:08Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "PersistentVolumeClaim",
+              "name": "workspace-default--b-2d1480dafbe9bebe",
+              "deleting": "2026-10-18T01:23:10Z",
+              "state": []
+            }
+          ]
+        }
+      ],
+      "seconds": 1.348886040970683
+    },
+    "used_direct_delete": {
+      "specs": [
+        {
+          "name": "default--b-66f075225ff96a6b",
+          "grace": 30,
+          "containers": [
+            {
+              "name": "agent",
+              "command": [
+                "/.openshell/runtime/openshell-sandbox",
+                "--bootstrap",
+                "/.openshell/state/bootstrap/boundary.json"
+              ],
+              "lifecycle": null
+            }
+          ]
+        },
+        {
+          "name": "os-supervisor-632006aa-a736-4c33-a3e6-27283ed46241",
+          "grace": 30,
+          "containers": [
+            {
+              "name": "supervisor",
+              "command": [
+                "/openshell-supervisor",
+                "--backend-descriptor-file",
+                "/.openshell/supervisor/runtime-descriptor.json",
+                "--auth-bundle-file",
+                "/.openshell/supervisor/auth.json",
+                "--workdir",
+                "/sandbox",
+                "--health-socket-path",
+                "/run/openshell/health.sock",
+                "--health-port",
+                "5501"
+              ],
+              "lifecycle": null
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "seconds": 0.093,
+          "resources": [
+            {
+              "kind": "Pod",
+              "name": "default--b-66f075225ff96a6b",
+              "deleting": "2026-10-18T01:24:28Z",
+              "state": [
+                {
+                  "name": "agent",
+                  "state": {
+                    "running": {
+                      "startedAt": "2026-10-18T01:23:50Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Pod",
+              "name": "os-supervisor-632006aa-a736-4c33-a3e6-27283ed46241",
+              "deleting": "2026-10-18T01:24:28Z",
+              "state": [
+                {
+                  "name": "supervisor",
+                  "state": {
+                    "running": {
+                      "startedAt": "2026-10-18T01:23:45Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "PersistentVolumeClaim",
+              "name": "workspace-default--b-66f075225ff96a6b",
+              "deleting": "2026-10-18T01:23:58Z",
+              "state": []
+            }
+          ]
+        }
+      ],
+      "seconds": 30.352731707971543,
+      "workload_log_excerpt": "Sandbox Protocol connection lost; workload frozen pending authenticated recovery"
+    },
+    "used_stop_then_delete": {
+      "specs": [
+        {
+          "name": "default--b-0ce4d4c45a9c909a",
+          "grace": 30,
+          "containers": [
+            {
+              "name": "agent",
+              "command": [
+                "/.openshell/runtime/openshell-sandbox",
+                "--bootstrap",
+                "/.openshell/state/bootstrap/boundary.json"
+              ],
+              "lifecycle": null
+            }
+          ]
+        },
+        {
+          "name": "os-supervisor-2e003551-ad7c-4dd1-93af-ff47d7555006",
+          "grace": 30,
+          "containers": [
+            {
+              "name": "supervisor",
+              "command": [
+                "/openshell-supervisor",
+                "--backend-descriptor-file",
+                "/.openshell/supervisor/runtime-descriptor.json",
+                "--auth-bundle-file",
+                "/.openshell/supervisor/auth.json",
+                "--workdir",
+                "/sandbox",
+                "--health-socket-path",
+                "/run/openshell/health.sock",
+                "--health-port",
+                "5501"
+              ],
+              "lifecycle": null
+            }
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "seconds": 0.078,
+          "resources": [
+            {
+              "kind": "Pod",
+              "name": "default--b-0ce4d4c45a9c909a",
+              "deleting": null,
+              "state": [
+                {
+                  "name": "agent",
+                  "state": {
+                    "running": {
+                      "startedAt": "2026-10-18T01:25:05Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Pod",
+              "name": "os-supervisor-2e003551-ad7c-4dd1-93af-ff47d7555006",
+              "deleting": "2026-10-18T01:25:44Z",
+              "state": [
+                {
+                  "name": "supervisor",
+                  "state": {
+                    "running": {
+                      "startedAt": "2026-10-18T01:25:00Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "PersistentVolumeClaim",
+              "name": "workspace-default--b-0ce4d4c45a9c909a",
+              "deleting": null,
+              "state": []
+            }
+          ]
+        },
+        {
+          "seconds": 0.507,
+          "resources": [
+            {
+              "kind": "Pod",
+              "name": "default--b-0ce4d4c45a9c909a",
+              "deleting": null,
+              "state": [
+                {
+                  "name": "agent",
+                  "state": {
+                    "running": {
+                      "startedAt": "2026-10-18T01:25:05Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "PersistentVolumeClaim",
+              "name": "workspace-default--b-0ce4d4c45a9c909a",
+              "deleting": null,
+              "state": []
+            }
+          ]
+        },
+        {
+          "seconds": 0.83,
+          "resources": [
+            {
+              "kind": "Pod",
+              "name": "default--b-0ce4d4c45a9c909a",
+              "deleting": "2026-10-18T01:25:44Z",
+              "state": [
+                {
+                  "name": "agent",
+                  "state": {
+                    "terminated": {
+                      "containerID": "containerd://29175d589691b43ff41ac26ec9442090b0c4979fde295777a3fbecf936103e1e",
+                      "exitCode": 1,
+                      "finishedAt": "2026-10-18T01:25:14Z",
+                      "reason": "Error",
+                      "startedAt": "2026-10-18T01:25:05Z"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "PersistentVolumeClaim",
+              "name": "workspace-default--b-0ce4d4c45a9c909a",
+              "deleting": null,
+              "state": []
+            }
+          ]
+        },
+        {
+          "seconds": 1.564,
+          "resources": [
+            {
+              "kind": "PersistentVolumeClaim",
+              "name": "workspace-default--b-0ce4d4c45a9c909a",
+              "deleting": null,
+              "state": []
+            }
+          ]
+        },
+        {
+          "seconds": 2.477,
+          "resources": []
+        }
+      ],
+      "seconds": 2.728008583188057,
+      "stop_seconds": 2.4047597921453416
+    }
+  }
+}
