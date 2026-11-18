@@ -1,6 +1,9 @@
 ---
 name: assess-multi-agent-risk
 description: Create or update a scenario-based risk assessment for a multi-agent system. Use when evaluating composition risk, emergent behavior, authority laundering, shared-state poisoning, false consensus, runaway delegation, dynamic membership, correlated failure, or governance tier and launch decisions.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Assess Multi-Agent Risk

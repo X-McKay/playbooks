@@ -1,6 +1,9 @@
 ---
 name: implement-temporal-agent
 description: Implement or review durable PydanticAI agent execution with Temporal. Use when adding workflows, activities, retries, timeouts, idempotency, signals, human approval, continue-as-new, payload versioning, replay tests, or recovery for long-running agent work.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Implement a Temporal Agent

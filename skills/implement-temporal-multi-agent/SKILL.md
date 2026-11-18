@@ -1,6 +1,9 @@
 ---
 name: implement-temporal-multi-agent
 description: Implement or refactor durable multi-agent coordination with Temporal. Use when a system needs recoverable delegation, parallel branches, signals, timers, approvals, cancellation, compensation, deterministic aggregation, or replay-safe graph and budget state.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Implement a Temporal Multi-Agent System

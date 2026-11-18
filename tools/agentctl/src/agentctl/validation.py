@@ -1,32 +1,39 @@
 from __future__ import annotations
 
+import json
 import re
 from collections.abc import Mapping
+from functools import lru_cache
+from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
+from jsonschema import Draft202012Validator
+
+from agentctl.contracts import (
+    EFFECT_MINIMUM,
+    EXECUTION_CLASSES,
+    EXECUTION_RANK,
+    NAME_PATTERN,
+    REQUIRED_BUDGETS,
+    RETRY_SAFETY,
+    RISK_TIERS,
+    SEMVER_PATTERN,
+)
 from agentctl.diagnostics import Diagnostic, emit_diagnostics, relative_display
 from agentctl.files import DataFileError, load_data
 from agentctl.risk import validate_risk_file
 
-EXECUTION_CLASSES = ("ephemeral", "durable", "human_governed")
-EXECUTION_RANK = {name: rank for rank, name in enumerate(EXECUTION_CLASSES)}
-RISK_TIERS = {"low", "medium", "high", "critical"}
-EFFECT_MINIMUM = {
-    "read": "ephemeral",
-    "write_reversible": "durable",
-    "write_consequential": "human_governed",
-}
-RETRY_SAFETY = {"safe", "idempotency_key_required", "unsafe"}
-NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$")
-REQUIRED_BUDGETS = {
-    "max_requests",
-    "max_input_tokens",
-    "max_output_tokens",
-    "max_tool_calls",
-    "max_cost_usd",
-}
+
+@lru_cache(maxsize=1)
+def load_agent_schema() -> dict[str, Any]:
+    schema = json.loads(
+        files("agentctl")
+        .joinpath("schemas/agent-spec.schema.json")
+        .read_text(encoding="utf-8")
+    )
+    Draft202012Validator.check_schema(schema)
+    return schema
 
 
 def validate_project(root: Path, *, output_format: str = "text") -> int:
@@ -42,18 +49,28 @@ def validate_project(root: Path, *, output_format: str = "text") -> int:
             )
         )
     for path in specs:
-        diagnostics.extend(_validate_spec(path, root))
+        diagnostics.extend(validate_agent_file(path, root))
     return emit_diagnostics(
         diagnostics, output_format=output_format, heading="Agent contract validation"
     )
 
 
-def _validate_spec(path: Path, root: Path) -> list[Diagnostic]:
+def validate_agent_file(path: Path, root: Path) -> list[Diagnostic]:
     shown = relative_display(path, root)
     try:
         spec = load_data(path)
     except DataFileError as exc:
         return [Diagnostic("AGENT002", str(exc), shown)]
+
+    schema_errors = sorted(
+        Draft202012Validator(load_agent_schema()).iter_errors(spec),
+        key=lambda item: (str(list(item.absolute_path)), item.message),
+    )
+    if schema_errors:
+        return [
+            Diagnostic("AGENT041", f"{item.json_path}: {item.message}", shown)
+            for item in schema_errors
+        ]
 
     errors: list[Diagnostic] = []
 

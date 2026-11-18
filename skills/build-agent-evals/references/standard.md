@@ -44,3 +44,8 @@ Block release on any hard safety or authorization violation. For graded metrics,
 ## Online Evaluation
 
 Sample by risk and failure mode, not only uniformly. Redact before storage. Keep monitoring alerts separate from offline release gates until labels and evaluator reliability are understood. Promote reviewed failures into a versioned regression dataset.
+
+## Source standards
+
+This portable summary tracks [Agent Playbook v0.3](https://github.com/X-McKay/playbooks/tree/main/agent-playbook) and [Multi-Agent Systems Playbook v0.1](https://github.com/X-McKay/playbooks/tree/main/multi-agent-playbook).
+The bundled guidance is sufficient to use this skill without cloning the source repository.

@@ -1,6 +1,7 @@
 # Multi-Agent System Design Standard
 
-Read the repository's Multi-Agent Playbook chapters on principles, reference architecture, System Specs, membership, cost, and governance.
+Use the self-contained requirements below when the playbooks are not installed.
+The source chapters provide additional explanation and examples.
 
 ## Decision Order
 
@@ -38,3 +39,8 @@ Dynamic systems buy adaptability and utilization at the cost of reproducibility,
 - Runtime authority equals the intersection of caller, callee, edge, user, tenant, and policy authority.
 - Every run has finite agent, depth, round, request, tool, token, cost, and time budgets.
 - Every externally visible result records the exact composition manifest.
+
+## Source standards
+
+This portable summary tracks [Agent Playbook v0.3](https://github.com/X-McKay/playbooks/tree/main/agent-playbook) and [Multi-Agent Systems Playbook v0.1](https://github.com/X-McKay/playbooks/tree/main/multi-agent-playbook).
+The bundled guidance is sufficient to use this skill without cloning the source repository.

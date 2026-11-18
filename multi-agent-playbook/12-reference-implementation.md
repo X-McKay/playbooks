@@ -4,6 +4,10 @@ This reference extends the Agent Playbook implementation with a governed system
 package. It illustrates boundaries and validation order; applications should
 adapt APIs to their pinned PydanticAI and Temporal versions.
 
+For an executable offline example with pinned dependencies, see
+[the multi-agent example](../examples/multi-agent/README.md). Its scope and limits
+are explicit; the production architecture below remains illustrative.
+
 ## Package
 
 ```text

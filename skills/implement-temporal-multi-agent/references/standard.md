@@ -9,3 +9,8 @@ Use child workflows for durable units with independent lifecycle, signals, or re
 An approval authorizes exactly one reviewed action at a known state. Revalidate authorization, data, budget, action hash, manifest, expiry, and prior execution immediately before the effect.
 
 Terminal states must distinguish success, escalation, permanent failure, cancellation, compensation completed, compensation failed, and partial effect.
+
+## Source standards
+
+This portable summary tracks [Agent Playbook v0.3](https://github.com/X-McKay/playbooks/tree/main/agent-playbook) and [Multi-Agent Systems Playbook v0.1](https://github.com/X-McKay/playbooks/tree/main/multi-agent-playbook).
+The bundled guidance is sufficient to use this skill without cloning the source repository.

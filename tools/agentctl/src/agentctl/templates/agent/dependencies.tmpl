@@ -1,0 +1,12 @@
+from dataclasses import dataclass
+from datetime import datetime
+from uuid import UUID
+
+
+@dataclass(frozen=True)
+class AgentDependencies:
+    request_id: UUID
+    tenant_id: UUID
+    actor_id: UUID
+    authorization_scopes: frozenset[str]
+    deadline: datetime

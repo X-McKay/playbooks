@@ -65,6 +65,19 @@ class RiskContractTests(unittest.TestCase):
         self.assertEqual(matrix_tier(3, 4), "critical")
         self.assertEqual(matrix_tier(4, 1), "high")
 
+    def test_integral_float_scores_validate_like_json_schema_integers(self) -> None:
+        payload = self._load()
+        for phase in ("inherent", "residual"):
+            score = payload["scenarios"][0][phase]
+            score["impact"] = float(score["impact"])
+            score["likelihood"] = float(score["likelihood"])
+        self._write(payload)
+        result, report = self._json_command(
+            ["risk", "validate", str(self.risk_path), "--root", str(self.root)]
+        )
+        self.assertEqual(result, 0)
+        self.assertTrue(report["ok"])
+
     def test_validate_discovers_generated_assessment(self) -> None:
         scenario = self._load()["scenarios"][0]
         self.assertEqual(scenario["status"], "open")

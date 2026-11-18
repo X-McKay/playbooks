@@ -3,6 +3,13 @@
 Practical standards, reusable skills, and executable tooling for building and
 operating production software systems.
 
+## Start here
+
+- [Getting started](docs/getting-started.md): scaffold, validate, evaluate, and check a release.
+- [Conformance map](docs/conformance.md): requirements, automated checks, and manual evidence.
+- [Compatibility](docs/compatibility.md): versions and tested integration boundaries.
+- [Contributing](CONTRIBUTING.md) and [changelog](CHANGELOG.md).
+
 ## What's here
 
 ### Agent Playbook
@@ -65,11 +72,17 @@ uv run --locked agentctl --help
 uv run --locked python -m unittest discover -s tools/agentctl/tests
 ```
 
-Use `uv lock --check` and `nix flake check` in CI to reject dependency or flake
-drift.
+CI runs `just check` on Python 3.12–3.14 and Nix source-quality checks.
+`just check` includes Markdown links, annotated examples, copied skill packages,
+offline PydanticAI examples, and an installed-wheel smoke test.
+See [contribution checks](CONTRIBUTING.md#checks) for scope.
 
 ## Status
 
 The Agent Playbook is currently **v0.3 — draft**. Feedback and contributions
 are welcome through [issues](https://github.com/X-McKay/playbooks/issues) and
 [pull requests](https://github.com/X-McKay/playbooks/pulls).
+
+## License
+
+The repository remains unlicensed for now; see [license status](CONTRIBUTING.md#license-status).

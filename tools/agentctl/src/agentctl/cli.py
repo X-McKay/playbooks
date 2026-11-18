@@ -9,6 +9,7 @@ from rich.console import Console
 from rich_argparse import RichHelpFormatter
 
 from agentctl import __version__
+from agentctl.contracts import EXECUTION_CLASSES, TIERS
 from agentctl.evals import run_eval_command
 from agentctl.release import check_release
 from agentctl.risk import explain_risk_assessment, validate_risk_assessments
@@ -92,12 +93,12 @@ def build_parser() -> argparse.ArgumentParser:
     scaffold.add_argument("--package", default="acme_agents")
     scaffold.add_argument(
         "--execution-class",
-        choices=("ephemeral", "durable", "human_governed"),
+        choices=EXECUTION_CLASSES,
         default="ephemeral",
     )
     scaffold.add_argument(
         "--risk-tier",
-        choices=("low", "medium", "high", "critical"),
+        choices=TIERS,
         default="low",
     )
     scaffold.add_argument("--owner", default="replace-me")
@@ -123,12 +124,12 @@ def build_parser() -> argparse.ArgumentParser:
     system_scaffold.add_argument("--operational-owner", default="replace-me")
     system_scaffold.add_argument(
         "--execution-class",
-        choices=("ephemeral", "durable", "human_governed"),
+        choices=EXECUTION_CLASSES,
         default="durable",
     )
     system_scaffold.add_argument(
         "--risk-tier",
-        choices=("low", "medium", "high", "critical"),
+        choices=TIERS,
         default="medium",
     )
     system_scaffold.add_argument(

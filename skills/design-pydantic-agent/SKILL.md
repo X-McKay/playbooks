@@ -1,6 +1,9 @@
 ---
 name: design-pydantic-agent
 description: Design, scaffold, or refactor a production PydanticAI agent. Use when defining an Agent Spec, dependencies, typed output, prompts, execution classes, risk tiers, package boundaries, or the standard src/agents directory structure.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Design a PydanticAI Agent

@@ -26,3 +26,8 @@ Coordination owns retry. Callees expose idempotent operations or explicit idempo
 ## Aggregation Rule
 
 Define how evidence is combined before execution. Keep dissent when uncertainty matters. Quorum rules specify eligibility, independence assumptions, abstentions, ties, and a deterministic final decision function.
+
+## Source standards
+
+This portable summary tracks [Agent Playbook v0.3](https://github.com/X-McKay/playbooks/tree/main/agent-playbook) and [Multi-Agent Systems Playbook v0.1](https://github.com/X-McKay/playbooks/tree/main/multi-agent-playbook).
+The bundled guidance is sufficient to use this skill without cloning the source repository.

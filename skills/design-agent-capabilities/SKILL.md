@@ -1,6 +1,9 @@
 ---
 name: design-agent-capabilities
 description: Design or review an agent's skills and tools. Use when deciding whether behavior belongs in instructions, deterministic code, a PydanticAI tool or toolset, or an Agent Skill; defining schemas and policies; classifying side effects and retries; or wiring explicit capability allowlists.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Design Agent Capabilities

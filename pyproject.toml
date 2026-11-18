@@ -6,9 +6,17 @@ requires-python = ">=3.12,<3.15"
 dependencies = ["agentctl-playbook"]
 
 [dependency-groups]
-dev = ["ruff==0.16.9"]
+dev = [
+    "hatchling==1.33.0",
+    "markdown-it-py==4.2.0",
+    "ruff==0.16.9",
+]
+examples = [
+    "pydantic-ai-slim==2.70.0",
+]
 
 [tool.uv]
+default-groups = ["dev", "examples"]
 package = false
 
 [tool.uv.sources]

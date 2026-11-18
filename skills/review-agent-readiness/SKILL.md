@@ -1,6 +1,9 @@
 ---
 name: review-agent-readiness
 description: Review a PydanticAI and Temporal agent for production readiness. Use for architecture reviews, pre-launch audits, pull-request reviews, risk assessments, launch checklists, or go/no-go decisions covering contracts, capabilities, durability, evals, security, observability, and cost.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Review Agent Readiness

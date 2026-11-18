@@ -1,6 +1,9 @@
 ---
 name: design-multi-agent-system
 description: Design, justify, scaffold, or refactor a governed multi-agent system. Use when choosing an architecture, defining a System Spec, composing existing Agent Specs, comparing a multi-agent design with a simpler baseline, or deciding whether static or dynamic membership is appropriate.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Design a Multi-Agent System

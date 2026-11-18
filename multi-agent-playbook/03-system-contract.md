@@ -6,7 +6,7 @@ coordination and policy code, and a controlled assembly function.
 
 ## System Spec
 
-```yaml
+```yaml system-spec
 name: customer-resolution-system
 description: Investigate support cases and propose policy-compliant resolutions.
 

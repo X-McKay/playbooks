@@ -1,0 +1,35 @@
+name: ${args_name}
+description: Replace with the agent's bounded purpose.
+
+instructions:
+  - Follow verified evidence and deterministic policy.
+  - Never claim an external action succeeded unless its tool result confirms success.
+
+model_settings:
+  temperature: 0.1
+  max_tokens: 2000
+
+retries: 2
+tool_timeout: 20
+end_strategy: graceful
+instrument: true
+
+metadata:
+  contract_version: 1
+  owner: ${args_owner}
+  version: 0.1.0
+  execution_class: ${args_execution_class}
+  risk_tier: ${args_risk_tier}
+  risk_assessment: docs/risk-assessments/${args_name}.yaml
+  data_classification: internal
+  model_policy: balanced-v1
+  temporal_enabled: ${str_temporal_lower}
+  enabled_skills: []
+  enabled_toolsets: []
+  evaluation_policy: evals/${module_name}/release-policy.yaml
+${approval}  budgets:
+    max_requests: 8
+    max_input_tokens: 30000
+    max_output_tokens: 5000
+    max_tool_calls: 12
+    max_cost_usd: 0.50

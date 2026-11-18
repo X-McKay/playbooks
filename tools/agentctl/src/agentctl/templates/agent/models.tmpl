@@ -1,0 +1,15 @@
+from typing import Literal
+
+from pydantic import BaseModel, Field
+
+
+class Evidence(BaseModel):
+    source: str
+    claim: str
+
+
+class AgentResult(BaseModel):
+    status: Literal["completed", "needs_information", "escalated"]
+    summary: str
+    evidence: list[Evidence]
+    confidence: float = Field(ge=0, le=1)

@@ -17,28 +17,41 @@ Expected decisions:
 
 ## Minimal Spec Shape
 
-```yaml
+```yaml agent-spec
 name: support-agent
-version: 1
-owner: customer-platform
-purpose: Answer account questions and propose support actions.
-non_goals:
-  - Issue refunds
-execution_class: ephemeral
-risk_tier: medium
-risk_assessment: docs/risk-assessments/support-agent.yaml
-input_type: SupportRequest
-dependency_type: SupportDependencies
-output_type: SupportResponse
-skills:
-  - investigate-support-case
-tools:
-  - get-account-summary
-  - list-ticket-history
-hard_gates:
-  - no_unauthorized_write
-  - no_unsupported_account_claim
+description: Answer account questions and propose support actions.
+instructions:
+  - Answer using verified account and ticket information.
+  - Propose refunds without executing them.
+retries: 2
+tool_timeout: 20
+instrument: true
+metadata:
+  contract_version: 1
+  version: 1.0.0
+  owner: customer-platform
+  execution_class: ephemeral
+  risk_tier: medium
+  risk_assessment: docs/risk-assessments/support-agent.yaml
+  data_classification: confidential
+  model_policy: balanced-v1
+  evaluation_policy: evals/support_agent/release-policy.yaml
+  enabled_skills:
+    - investigate-support-case
+  enabled_toolsets:
+    - account-and-ticket-read
+  budgets:
+    max_requests: 8
+    max_input_tokens: 30000
+    max_output_tokens: 5000
+    max_tool_calls: 12
+    max_cost_usd: 0.50
 ```
+
+This is a schema-valid Agent Spec. Supply the referenced risk assessment,
+evaluation policy, skill, and toolset before project validation. Define input,
+dependency, and output types in Python; place hard gates in the eval policy.
+
 
 ## Factory Shape
 

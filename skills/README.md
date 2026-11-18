@@ -86,7 +86,11 @@ PydanticAI loads the selected `SKILL.md` instructions, but it does not automatic
 
 ## Validation
 
-From the repository root, validate each package with the reference validator when installed:
+Run `just skills` and `just docs` from the repository root. The repository suite
+also validates packages copied outside the checkout. Source playbook versions
+are recorded in each skill's `metadata`; update summaries and metadata together.
+
+Optionally validate each package with the reference validator when installed:
 
 ```bash
 for skill in skills/*/; do

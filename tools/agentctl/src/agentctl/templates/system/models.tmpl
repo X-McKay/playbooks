@@ -1,0 +1,17 @@
+from typing import Any, Literal
+
+from pydantic import BaseModel, Field
+
+
+class DelegationRequest(BaseModel):
+    delegation_id: str
+    objective: str
+    input: dict[str, Any]
+    depth: int = Field(ge=0)
+
+
+class DelegationResult(BaseModel):
+    delegation_id: str
+    status: Literal["completed", "needs_information", "escalated", "failed"]
+    output: dict[str, Any] | None = None
+    evidence_refs: list[str] = []

@@ -1,24 +1,13 @@
 from __future__ import annotations
 
 import argparse
-import re
 from datetime import date, timedelta
 from pathlib import Path
 
+from agentctl.contracts import NAME_PATTERN, PACKAGE_PATTERN
+from agentctl.files import add_if_missing, write_files
+from agentctl.templates import render_template
 from agentctl.ui import status, step, success
-
-NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-PACKAGE_PATTERN = re.compile(r"^[a-z_][a-z0-9_]*$")
-
-
-def _write_files(files: dict[Path, str], *, force: bool) -> None:
-    existing = [path for path in files if path.exists()]
-    if existing and not force:
-        rendered = "\n".join(f"  - {path}" for path in existing)
-        raise ValueError(f"refusing to overwrite existing files:\n{rendered}")
-    for path, content in files.items():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
 
 
 def scaffold_agent(args: argparse.Namespace) -> int:
@@ -48,8 +37,8 @@ def scaffold_agent(args: argparse.Namespace) -> int:
         ),
     }
 
-    _add_if_missing(files, root / "src" / args.package / "__init__.py", "")
-    _add_if_missing(files, root / "src" / args.package / "agents" / "__init__.py", "")
+    add_if_missing(files, root / "src" / args.package / "__init__.py", "")
+    add_if_missing(files, root / "src" / args.package / "agents" / "__init__.py", "")
 
     if temporal:
         files.update(_temporal_files(root, args.package, module_name))
@@ -65,7 +54,7 @@ def scaffold_agent(args: argparse.Namespace) -> int:
         files.update(_eval_files(root, args.name, module_name))
 
     with status("Creating the golden-path agent package…"):
-        _write_files(files, force=args.force)
+        write_files(files, force=args.force)
     success(
         "Agent scaffold created",
         (
@@ -88,111 +77,30 @@ def _agent_spec(args: argparse.Namespace, module_name: str, temporal: bool) -> s
         if args.execution_class == "human_governed"
         else ""
     )
-    return f"""name: {args.name}
-description: Replace with the agent's bounded purpose.
-
-instructions:
-  - Follow verified evidence and deterministic policy.
-  - Never claim an external action succeeded unless its tool result confirms success.
-
-model_settings:
-  temperature: 0.1
-  max_tokens: 2000
-
-retries: 2
-tool_timeout: 20
-end_strategy: graceful
-instrument: true
-
-metadata:
-  contract_version: 1
-  owner: {args.owner}
-  version: 0.1.0
-  execution_class: {args.execution_class}
-  risk_tier: {args.risk_tier}
-  risk_assessment: docs/risk-assessments/{args.name}.yaml
-  data_classification: internal
-  model_policy: balanced-v1
-  temporal_enabled: {str(temporal).lower()}
-  enabled_skills: []
-  enabled_toolsets: []
-  evaluation_policy: evals/{module_name}/release-policy.yaml
-{approval}  budgets:
-    max_requests: 8
-    max_input_tokens: 30000
-    max_output_tokens: 5000
-    max_tool_calls: 12
-    max_cost_usd: 0.50
-"""
+    return render_template(
+        "agent/agent-spec.tmpl",
+        args_name=args.name,
+        args_owner=args.owner,
+        args_execution_class=args.execution_class,
+        args_risk_tier=args.risk_tier,
+        str_temporal_lower=str(temporal).lower(),
+        module_name=module_name,
+        approval=approval,
+    )
 
 
 def _factory(package: str, module_name: str) -> str:
-    return f'''"""Validated assembly for the agent.
-
-Adapt imports and capability construction to the PydanticAI version pinned by the
-application. Keep provider clients and other I/O out of module import time.
-"""
-
-from .dependencies import AgentDependencies
-from .models import AgentResult
-
-
-def build_agent(settings):
-    """Build the agent from reviewed registries and explicit dependencies."""
-    from pydantic_ai import Agent
-
-    spec = settings.load_agent_spec("{package}.agents.{module_name}")
-    metadata = settings.validate_agent_metadata(spec.metadata)
-    model = settings.model_registry.resolve(metadata.model_policy)
-    skills = settings.skill_registry.resolve(metadata.enabled_skills)
-    toolsets = settings.tool_registry.resolve(
-        metadata.enabled_toolsets,
-        execution_class=metadata.execution_class,
+    return render_template(
+        "agent/factory.tmpl", package=package, module_name=module_name
     )
-    return Agent(
-        model=model,
-        deps_type=AgentDependencies,
-        output_type=AgentResult,
-        instructions=spec.instructions,
-        toolsets=toolsets,
-        capabilities=settings.capabilities_for(metadata, skills),
-    )
-'''
 
 
 def _dependencies() -> str:
-    return """from dataclasses import dataclass
-from datetime import datetime
-from uuid import UUID
-
-
-@dataclass(frozen=True)
-class AgentDependencies:
-    request_id: UUID
-    tenant_id: UUID
-    actor_id: UUID
-    authorization_scopes: frozenset[str]
-    deadline: datetime
-"""
+    return render_template("agent/dependencies.tmpl")
 
 
 def _models() -> str:
-    return """from typing import Literal
-
-from pydantic import BaseModel, Field
-
-
-class Evidence(BaseModel):
-    source: str
-    claim: str
-
-
-class AgentResult(BaseModel):
-    status: Literal["completed", "needs_information", "escalated"]
-    summary: str
-    evidence: list[Evidence]
-    confidence: float = Field(ge=0, le=1)
-"""
+    return render_template("agent/models.tmpl")
 
 
 def _instructions(name: str) -> str:
@@ -221,14 +129,9 @@ def _temporal_files(root: Path, package: str, module_name: str) -> dict[Path, st
 # idempotency, heartbeats, and stable application failure types.
 ''',
     }
-    _add_if_missing(files, workflows / "__init__.py", "")
-    _add_if_missing(files, activities / "__init__.py", "")
+    add_if_missing(files, workflows / "__init__.py", "")
+    add_if_missing(files, activities / "__init__.py", "")
     return files
-
-
-def _add_if_missing(files: dict[Path, str], path: Path, content: str) -> None:
-    if not path.exists():
-        files[path] = content
 
 
 def _approval_policy() -> str:
@@ -241,20 +144,7 @@ audit_required: true
 
 
 def _threat_model(name: str) -> str:
-    return f"""# Threat model: {name}
-
-## Scope and assets
-
-Document users, data, external systems, and consequential actions.
-
-## Trust boundaries
-
-Document models, tools, retrieval, Temporal, approvals, telemetry, and operators.
-
-## Threats and controls
-
-For every material threat, record preventive, detective, and recovery controls.
-"""
+    return render_template("agent/threat-model.tmpl", name=name)
 
 
 def _risk_assessment(args: argparse.Namespace) -> str:
@@ -283,110 +173,19 @@ def _risk_assessment(args: argparse.Namespace) -> str:
             "human_impact_safety",
         )
     )
-    return f"""schema_version: 1
-
-assessment:
-  agent: {args.name}
-  agent_version: 0.1.0
-  assessment_version: 0.1.0
-  status: draft
-  assessed_at: "{assessed_at.isoformat()}"
-  review_by: "{review_by.isoformat()}"
-  prepared_by: {args.owner}
-  approved_by: []
-
-scope:
-  intended_use: Replace with the agent's bounded intended use.
-  prohibited_uses:
-    - Operate outside the reviewed scope or authorization boundary.
-  users:
-    - replace-with-intended-users
-  affected_parties:
-    - replace-with-affected-parties
-  environments:
-    - development
-  jurisdictions:
-    - replace-with-applicable-jurisdictions
-  execution_class: {args.execution_class}
-
-dimension_review:
-{dimension_review}
-
-regulatory_screen:
-  prohibited_use: false
-  applicable_regimes: []
-  required_reviews: []
-  governance_floors: []
-  notes: Complete legal and regulatory applicability review before approval.
-
-classification:
-  governance_tier: {args.risk_tier}
-  maximum_inherent_tier: {args.risk_tier}
-  maximum_residual_tier: {args.risk_tier}
-  decision: {decision}
-  rationale: Draft classification generated from the selected governance tier.
-
-scenarios:
-  - id: RISK-OP-001
-    title: Incorrect or incomplete agent outcome
-    status: open
-    statement: >-
-      Because model or dependency behavior may be incorrect, the agent could
-      produce an incorrect or incomplete outcome, causing harm to affected
-      users or dependent operations.
-    primary_dimension: operational
-    secondary_dimensions: []
-    affected_parties:
-      - replace-with-affected-parties
-    affected_assets:
-      - replace-with-affected-assets
-    causes:
-      - model error
-      - dependency failure
-    preconditions:
-      - The agent receives a request within its intended scope.
-    consequences:
-      - An affected party or dependent operation receives an incorrect outcome.
-    inherent:
-      impact: {impact}
-      likelihood: {likelihood}
-      tier: {args.risk_tier}
-      confidence: low
-      rationale: Replace with evidence-based inherent-risk rationale.
-    controls: []
-    residual:
-      impact: {impact}
-      likelihood: {likelihood}
-      tier: {args.risk_tier}
-      confidence: low
-      rationale: No risk reduction is credited until controls are verified.
-    treatment: mitigate
-    owner: {args.owner}
-    eval_cases:
-      - RISK-OP-001
-    indicators:
-      - agent_failure_count
-    alerts:
-      - material agent failure detected
-    runbook: docs/runbooks/{args.name}.md
-
-acceptance:
-  accountable_role: replace-with-risk-authority
-  accepted_scenarios: []
-  conditions:
-    - id: CONDITION-001
-      requirement: Complete the assessment and required control evidence.
-      owner: {args.owner}
-      due_by: "{review_by.isoformat()}"
-  expires_at: "{review_by.isoformat()}"
-  rationale: Draft assessment is not accepted for production.
-
-assumptions:
-  - Replace generated assumptions with reviewed use-case assumptions.
-
-open_questions:
-  - Which additional material harm scenarios apply to this agent?
-"""
+    return render_template(
+        "agent/risk-assessment.tmpl",
+        args_name=args.name,
+        assessed_at_isoformat=assessed_at.isoformat(),
+        review_by_isoformat=review_by.isoformat(),
+        args_owner=args.owner,
+        args_execution_class=args.execution_class,
+        dimension_review=dimension_review,
+        args_risk_tier=args.risk_tier,
+        decision=decision,
+        impact=impact,
+        likelihood=likelihood,
+    )
 
 
 def _eval_files(root: Path, agent_name: str, module_name: str) -> dict[Path, str]:
@@ -407,68 +206,8 @@ evaluators. Preserve the normalized report fields consumed by `agentctl`.
 
 
 def _eval_runner(agent_name: str) -> str:
-    return f'''"""Fail-closed eval adapter generated by agentctl.
-
-Replace this placeholder with a Pydantic Evals suite. Write the normalized report
-to AGENTCTL_REPORT_PATH so `agentctl release check` can apply release policy.
-"""
-
-import json
-import os
-from pathlib import Path
-
-
-report_path = Path(os.environ["AGENTCTL_REPORT_PATH"])
-report_path.parent.mkdir(parents=True, exist_ok=True)
-report_path.write_text(
-    json.dumps(
-        {{
-            "schema_version": 1,
-            "agent": "{agent_name}",
-            "hard_gates": {{"placeholder_eval_removed": False}},
-            "metrics": {{}},
-            "notes": ["Replace the generated eval placeholder before release."],
-        }},
-        indent=2,
-    )
-    + "\\n",
-    encoding="utf-8",
-)
-'''
+    return render_template("agent/eval-runner.tmpl", agent_name=agent_name)
 
 
 def _release_policy() -> str:
-    return """schema_version: 1
-required_provenance:
-  - git_commit
-  - dataset_versions
-  - evaluator_versions
-  - model
-  - prompt_version
-  - skill_versions
-  - toolset_versions
-  - run_count
-hard_gates:
-  placeholder_eval_removed: true
-  critical_safety_pass_rate: 1.0
-  schema_validity_rate: 1.0
-  unauthorized_tool_calls: 0
-  unapproved_consequential_actions: 0
-thresholds:
-  task_success_rate:
-    min: 0.90
-  p95_latency_seconds:
-    max: 25
-  average_cost_usd:
-    max: 0.20
-regressions:
-  task_success_rate:
-    direction: higher
-    max_delta: 0.02
-  p95_latency_seconds:
-    direction: lower
-    max_delta: 2.0
-  average_cost_usd:
-    direction: lower
-    max_delta: 0.02
-"""
+    return render_template("agent/release-policy.tmpl")

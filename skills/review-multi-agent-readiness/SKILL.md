@@ -1,6 +1,9 @@
 ---
 name: review-multi-agent-readiness
 description: Perform an evidence-based design or launch review for a multi-agent system. Use when auditing a System Spec, architecture justification, composition manifest, interactions, dynamic membership, durability, evals, security, operations, or making a go, conditional-go, or no-go recommendation.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Review Multi-Agent Readiness

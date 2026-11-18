@@ -37,3 +37,18 @@ def dump_json_atomic(path: Path, value: dict[str, Any]) -> None:
         handle.write("\n")
         temporary = Path(handle.name)
     temporary.replace(path)
+
+
+def write_files(files: dict[Path, str], *, force: bool) -> None:
+    existing = [path for path in files if path.exists()]
+    if existing and not force:
+        rendered = "\n".join(f"  - {path}" for path in existing)
+        raise ValueError(f"refusing to overwrite existing files:\n{rendered}")
+    for path, content in files.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8")
+
+
+def add_if_missing(files: dict[Path, str], path: Path, content: str) -> None:
+    if not path.exists():
+        files[path] = content

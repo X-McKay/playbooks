@@ -12,3 +12,8 @@ Use a layered suite:
 Critical risk scenarios are hard gates. Report distributions and tail behavior, not only means. Treat cost per successful outcome and worst-case amplification as first-class metrics.
 
 Every report identifies a system subject and exact composition manifest. Baselines use the same dataset and evaluator version. Dynamic systems report admission decisions and selected members per run.
+
+## Source standards
+
+This portable summary tracks [Agent Playbook v0.3](https://github.com/X-McKay/playbooks/tree/main/agent-playbook) and [Multi-Agent Systems Playbook v0.1](https://github.com/X-McKay/playbooks/tree/main/multi-agent-playbook).
+The bundled guidance is sufficient to use this skill without cloning the source repository.

@@ -49,3 +49,8 @@ Persist an approval request identifier, requested action, actor requirements, ex
 - Approval authorization and timeout.
 - Replay tests for changed workflow code.
 - Trace-context propagation.
+
+## Source standards
+
+This portable summary tracks [Agent Playbook v0.3](https://github.com/X-McKay/playbooks/tree/main/agent-playbook) and [Multi-Agent Systems Playbook v0.1](https://github.com/X-McKay/playbooks/tree/main/multi-agent-playbook).
+The bundled guidance is sufficient to use this skill without cloning the source repository.

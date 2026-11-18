@@ -67,6 +67,8 @@ scripts/agentctl validate --root /path/to/project
 scripts/agentctl validate --root /path/to/project --format json
 ```
 
+Structural validation first applies the packaged Agent Spec schema (`AGENT041`
+reports JSON-path errors); semantic validation then checks cross-file policy.
 Validation covers required Agent Spec metadata, semantic versions, execution and risk classes, budgets, Temporal structure, approval policy, threat-model presence, eval policy, capability existence, tool effect, retry safety, authorization declarations, timeouts, output bounds, and consistency with the referenced risk assessment.
 
 ## Scaffold and validate a multi-agent system
@@ -255,3 +257,10 @@ Missing gates or metrics fail closed. When a policy defines regressions, an appr
 - [Pydantic Evals quickstart](https://pydantic.dev/docs/ai/evals/getting-started/quick-start/)
 - [PydanticAI Temporal integration](https://pydantic.dev/docs/ai/capabilities/durable_execution/temporal/)
 - [Agent Skills specification](https://agentskills.io/specification)
+
+## Maintenance
+
+See [contribution guidance](../../CONTRIBUTING.md) and the
+[conformance map](../../docs/conformance.md). Packaged resources live in
+`src/agentctl/schemas/` and `src/agentctl/templates/`; `just package` verifies
+they work after wheel installation.

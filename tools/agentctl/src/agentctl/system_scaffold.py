@@ -1,20 +1,16 @@
 from __future__ import annotations
 
 import argparse
-import re
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
 import yaml
 
-from agentctl.files import DataFileError, load_data
-from agentctl.risk import TIER_RANK
-from agentctl.scaffold import _add_if_missing, _write_files
+from agentctl.contracts import NAME_PATTERN, PACKAGE_PATTERN, TIER_RANK
+from agentctl.files import DataFileError, add_if_missing, load_data, write_files
+from agentctl.templates import render_template
 from agentctl.ui import status, step, success
-
-NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-PACKAGE_PATTERN = re.compile(r"^[a-z_][a-z0-9_]*$")
 
 
 def scaffold_system(args: argparse.Namespace) -> int:
@@ -62,8 +58,8 @@ def scaffold_system(args: argparse.Namespace) -> int:
         root / "docs" / "threat-models" / f"{args.name}.md": _threat_model(args.name),
     }
     files.update(_eval_files(root, args.name, module_name))
-    _add_if_missing(files, root / "src" / args.package / "__init__.py", "")
-    _add_if_missing(files, root / "src" / args.package / "systems" / "__init__.py", "")
+    add_if_missing(files, root / "src" / args.package / "__init__.py", "")
+    add_if_missing(files, root / "src" / args.package / "systems" / "__init__.py", "")
 
     if temporal:
         files.update(_temporal_files(root, args.package, module_name))
@@ -76,7 +72,7 @@ def scaffold_system(args: argparse.Namespace) -> int:
         files[system_dir / "policies" / "admission.yaml"] = _admission_policy()
 
     with status("Creating the golden-path multi-agent system package…"):
-        _write_files(files, force=args.force)
+        write_files(files, force=args.force)
     success(
         "Multi-agent system scaffold created",
         (
@@ -242,40 +238,11 @@ def _system_spec(
 
 
 def _factory() -> str:
-    return '''"""Validated assembly for the multi-agent system."""
-
-
-def build_system(settings):
-    """Resolve pinned members, policies, graph, budgets, and manifest."""
-    spec = settings.load_system_spec(__package__)
-    members = settings.agent_registry.resolve_members(spec.members)
-    policies = settings.policy_registry.resolve_system_policies(spec)
-    graph = settings.graph_factory.build(spec.interactions)
-    settings.validate_system_contract(spec, members, graph, policies)
-    manifest = settings.manifest_factory.build(spec, members, graph, policies)
-    return settings.system_runtime(spec, members, graph, policies, manifest)
-'''
+    return render_template("system/factory.tmpl")
 
 
 def _models() -> str:
-    return """from typing import Any, Literal
-
-from pydantic import BaseModel, Field
-
-
-class DelegationRequest(BaseModel):
-    delegation_id: str
-    objective: str
-    input: dict[str, Any]
-    depth: int = Field(ge=0)
-
-
-class DelegationResult(BaseModel):
-    delegation_id: str
-    status: Literal["completed", "needs_information", "escalated", "failed"]
-    output: dict[str, Any] | None = None
-    evidence_refs: list[str] = []
-"""
+    return render_template("system/models.tmpl")
 
 
 def _coordination() -> str:
@@ -501,22 +468,7 @@ def _risk_assessment(
 
 
 def _threat_model(name: str) -> str:
-    return f"""# Threat model: {name}
-
-## Scope and graph
-
-Document members, roles, interactions, state, registries, data, and effects.
-
-## Trust boundaries
-
-Document users, orchestrator, each member, transports, stores, tools, approvals,
-telemetry, and operators.
-
-## Threats and controls
-
-Cover injection propagation, authority laundering, confused deputy, poisoning,
-false consensus, dynamic admission, resource exhaustion, and duplicate effects.
-"""
+    return render_template("system/threat-model.tmpl", name=name)
 
 
 def _eval_files(root: Path, name: str, module_name: str) -> dict[Path, str]:
@@ -572,8 +524,8 @@ def _temporal_files(root: Path, package: str, module_name: str) -> dict[Path, st
 # Run member agents, registries, tools, artifact stores, and other I/O here.
 ''',
     }
-    _add_if_missing(files, workflows / "__init__.py", "")
-    _add_if_missing(files, activities / "__init__.py", "")
+    add_if_missing(files, workflows / "__init__.py", "")
+    add_if_missing(files, activities / "__init__.py", "")
     return files
 
 

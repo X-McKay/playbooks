@@ -15,3 +15,8 @@
 Block release for prohibited use, critical residual risk, missing consequential approval, undeclared or over-privileged edges, absent system limits, non-replay-safe durable code, placeholder hard gates, missing manifest provenance, or no safe recovery from partial effects.
 
 Conditional-go conditions must be bounded, owned, observable, time-limited, and incapable of masking a hard blocker.
+
+## Source standards
+
+This portable summary tracks [Agent Playbook v0.3](https://github.com/X-McKay/playbooks/tree/main/agent-playbook) and [Multi-Agent Systems Playbook v0.1](https://github.com/X-McKay/playbooks/tree/main/multi-agent-playbook).
+The bundled guidance is sufficient to use this skill without cloning the source repository.

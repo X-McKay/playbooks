@@ -7,3 +7,8 @@ The system governance tier is at least the maximum member tier and maximum inher
 Dynamic systems additionally assess registry compromise, publisher trust, incompatible contracts, capability substitution, churn, manifest non-reproducibility, admission races, and emergency quarantine.
 
 Monitor leading indicators such as denied edges, depth, fan-out, admission failures, disagreement, retries, duplicate effects, partial effects, cost amplification, and late results.
+
+## Source standards
+
+This portable summary tracks [Agent Playbook v0.3](https://github.com/X-McKay/playbooks/tree/main/agent-playbook) and [Multi-Agent Systems Playbook v0.1](https://github.com/X-McKay/playbooks/tree/main/multi-agent-playbook).
+The bundled guidance is sufficient to use this skill without cloning the source repository.

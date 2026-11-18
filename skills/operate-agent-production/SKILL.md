@@ -1,6 +1,9 @@
 ---
 name: operate-agent-production
 description: Instrument, operate, and optimize a production agent. Use when adding OpenTelemetry or Logfire tracing, dashboards, alerts, SLOs, privacy controls, token and spend budgets, model routing, context reduction, caching, retry controls, or incident diagnostics.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Operate a Production Agent

@@ -162,6 +162,18 @@ def _validate_package(package: Path, root: Path) -> tuple[list[Diagnostic], str 
     if not body.strip():
         diagnostics.append(Diagnostic("SKILL011", "instruction body is empty", shown))
     diagnostics.extend(_validate_links(body, package, root, shown))
+    for reference in sorted(package.rglob("*.md")):
+        if reference == manifest:
+            continue
+        diagnostics.extend(
+            _validate_links(
+                reference.read_text(encoding="utf-8"),
+                package,
+                root,
+                relative_display(reference, root),
+                source_dir=reference.parent,
+            )
+        )
     diagnostics.extend(_validate_openai_metadata(package, root))
     return diagnostics, name
 
@@ -183,21 +195,22 @@ def _parse_frontmatter(text: str) -> tuple[dict[str, Any], str, str | None]:
 
 
 def _validate_links(
-    body: str, package: Path, root: Path, shown: str
+    body: str, package: Path, root: Path, shown: str, *, source_dir: Path | None = None
 ) -> list[Diagnostic]:
     diagnostics: list[Diagnostic] = []
     for raw_target in LINK_PATTERN.findall(body):
         target = raw_target.strip().split("#", 1)[0]
         if not target or "://" in target or target.startswith("mailto:"):
             continue
-        if target.startswith("/") or ".." in Path(target).parts:
+        resolved = ((source_dir or package) / target).resolve()
+        if target.startswith("/") or not resolved.is_relative_to(package.resolve()):
             diagnostics.append(
                 Diagnostic(
                     "SKILL012", f"reference must stay within the skill: {target}", shown
                 )
             )
             continue
-        if not (package / target).exists():
+        if not resolved.exists():
             diagnostics.append(
                 Diagnostic("SKILL013", f"missing referenced file: {target}", shown)
             )

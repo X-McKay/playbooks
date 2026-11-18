@@ -2,6 +2,10 @@
 
 This chapter shows how the standards fit together. It is intentionally illustrative: adapt imports and capability construction to the exact pinned PydanticAI and Temporal versions in the project.
 
+For an executable offline example with pinned dependencies, see
+[the single-agent example](../examples/single-agent/README.md). Its scope and limits
+are explicit; the production architecture below remains illustrative.
+
 ## Agent package
 
 ```text

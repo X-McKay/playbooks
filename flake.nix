@@ -25,7 +25,7 @@
             packages = with pkgs; [
               git
               just
-              nixfmt-rfc-style
+              nixfmt
               python312
               shellcheck
               uv
@@ -44,12 +44,66 @@
         }
       );
 
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+          python = pkgs.python312.withPackages (
+            ps: with ps; [
+              jsonschema
+              pyyaml
+              rich
+              rich-argparse
+              markdown-it-py
+            ]
+          );
+          source = pkgs.lib.cleanSourceWith {
+            src = ./.;
+            filter =
+              path: type:
+              !(builtins.elem (baseNameOf path) [
+                ".git"
+                ".venv"
+                ".ruff_cache"
+                "__pycache__"
+                "artifacts"
+                "dist"
+              ]);
+          };
+        in
+        {
+          source-quality =
+            pkgs.runCommand "playbooks-source-quality"
+              {
+                nativeBuildInputs = [
+                  python
+                  pkgs.ruff
+                  pkgs.shellcheck
+                  pkgs.nixfmt
+                ];
+              }
+              ''
+                cp -R ${source} source
+                chmod -R u+w source
+                cd source
+                export PYTHONPATH="$PWD/tools/agentctl/src"
+                nixfmt --check flake.nix
+                shellcheck scripts/agentctl
+                ruff check tools/agentctl/src tools/agentctl/tests scripts examples
+                ruff format --check tools/agentctl/src tools/agentctl/tests scripts examples
+                python scripts/check_docs.py
+                python -m agentctl --no-animations skills validate skills
+                touch "$out"
+              '';
+        }
+      );
+
       formatter = forAllSystems (
         system:
         let
           pkgs = import nixpkgs { inherit system; };
         in
-        pkgs.nixfmt-rfc-style
+        pkgs.nixfmt
       );
     };
 }

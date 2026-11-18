@@ -1,0 +1,13 @@
+schema_version: 1
+required_provenance:
+  - dataset_versions
+  - evaluator_versions
+  - model
+  - run_count
+hard_gates:
+  typed_proposal: true
+  cross_tenant_denied: true
+  mismatched_review_denied: true
+  budget_enforced: true
+thresholds:
+  task_success_rate: {min: 1.0}

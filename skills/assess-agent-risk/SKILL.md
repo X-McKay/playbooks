@@ -1,6 +1,9 @@
 ---
 name: assess-agent-risk
 description: Assess or review an AI agent's financial, operational, reputational, legal, security, privacy, regulatory, and human-impact risk. Use when classifying an agent, producing an inherent and residual risk assessment, defining governance tiers, evaluating controls, mapping risks to evals, screening a use case before launch, or reassessing a material agent change.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Assess Agent Risk

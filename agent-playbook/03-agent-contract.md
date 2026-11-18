@@ -4,7 +4,7 @@ Every production agent is represented by a reviewable package containing a decla
 
 ## Agent Spec
 
-```yaml
+```yaml agent-spec
 name: customer-support
 description: Investigate customer questions and propose policy-compliant resolutions.
 
@@ -31,6 +31,8 @@ metadata:
   risk_assessment: docs/risk-assessments/customer-support.yaml
   data_classification: confidential
   model_policy: balanced-v1
+  temporal_enabled: true
+  evaluation_policy: evals/customer_support/release-policy.yaml
   enabled_skills:
     - customer-policy
   enabled_toolsets:
@@ -43,6 +45,10 @@ metadata:
     max_tool_calls: 12
     max_cost_usd: 0.50
 ```
+
+The example is schema-valid; its referenced skills, tools, assessment, and eval
+policy must also exist in the consuming project. `agentctl validate` checks both
+the packaged Agent Spec schema and cross-file requirements.
 
 Organization-specific fields belong under `metadata` and MUST be validated by application code during startup.
 

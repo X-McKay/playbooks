@@ -11,12 +11,11 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 
+from agentctl.contracts import TIER_RANK
 from agentctl.diagnostics import Diagnostic, emit_diagnostics, relative_display
 from agentctl.files import DataFileError, load_data
 from agentctl.ui import risk_report
 
-TIERS = ("low", "medium", "high", "critical")
-TIER_RANK = {tier: rank for rank, tier in enumerate(TIERS)}
 RISK_MATRIX = (
     ("low", "low", "medium", "medium"),
     ("low", "medium", "medium", "high"),
@@ -307,8 +306,9 @@ def _semantic_diagnostics(payload: Mapping[str, Any], shown: str) -> list[Diagno
     return diagnostics
 
 
-def matrix_tier(impact: int, likelihood: int) -> str:
-    return RISK_MATRIX[impact - 1][likelihood - 1]
+def matrix_tier(impact: int | float, likelihood: int | float) -> str:
+    # JSON Schema integers include numeric representations such as 2.0.
+    return RISK_MATRIX[int(impact) - 1][int(likelihood) - 1]
 
 
 def _schema_error_key(error: Any) -> tuple[str, str]:

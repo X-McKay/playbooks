@@ -1,6 +1,9 @@
 ---
 name: build-multi-agent-evals
 description: Build evaluation datasets, harnesses, baselines, and release gates for multi-agent systems. Use when testing topology choice, routing, interaction contracts, coordination, durability, dynamic membership, adversarial propagation, end-to-end quality, or system cost and latency.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Build Multi-Agent Evals

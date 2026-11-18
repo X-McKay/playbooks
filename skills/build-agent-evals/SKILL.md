@@ -1,6 +1,9 @@
 ---
 name: build-agent-evals
 description: Build or improve an agent evaluation program with Pydantic Evals. Use when creating datasets, cases, evaluators, trajectory checks, Temporal failure scenarios, regression suites, multi-run measurements, release gates, online evaluations, or quality-cost-latency scorecards.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Build Agent Evals

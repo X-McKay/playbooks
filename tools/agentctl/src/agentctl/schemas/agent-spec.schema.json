@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Playbook Agent Spec",
+  "description": "Organization contract v1. Unknown framework configuration and metadata extensions are allowed. Semantic and cross-file validation is performed by agentctl.",
+  "type": "object",
+  "required": [
+    "name",
+    "description",
+    "instructions",
+    "retries",
+    "tool_timeout",
+    "instrument",
+    "metadata"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "instructions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "\\S"
+      }
+    },
+    "retries": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tool_timeout": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "instrument": {
+      "const": true
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "owner",
+        "risk_assessment",
+        "data_classification",
+        "model_policy",
+        "evaluation_policy",
+        "contract_version",
+        "version",
+        "execution_class",
+        "risk_tier",
+        "enabled_skills",
+        "enabled_toolsets",
+        "budgets"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "risk_assessment": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "data_classification": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "model_policy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "evaluation_policy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "contract_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][0-9A-Za-z.-]+)?$"
+        },
+        "execution_class": {
+          "enum": [
+            "ephemeral",
+            "durable",
+            "human_governed"
+          ]
+        },
+        "risk_tier": {
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "enabled_skills": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        },
+        "enabled_toolsets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "uniqueItems": true
+        },
+        "budgets": {
+          "type": "object",
+          "required": [
+            "max_requests",
+            "max_input_tokens",
+            "max_output_tokens",
+            "max_tool_calls",
+            "max_cost_usd"
+          ],
+          "properties": {
+            "max_requests": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_input_tokens": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_output_tokens": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_tool_calls": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "max_cost_usd": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          }
+        },
+        "temporal_enabled": {
+          "type": "boolean"
+        },
+        "approval_policy": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "threat_model": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "execution_class": {
+                "enum": [
+                  "durable",
+                  "human_governed"
+                ]
+              }
+            },
+            "required": [
+              "execution_class"
+            ]
+          },
+          "then": {
+            "required": [
+              "temporal_enabled"
+            ],
+            "properties": {
+              "temporal_enabled": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "execution_class": {
+                "const": "human_governed"
+              }
+            },
+            "required": [
+              "execution_class"
+            ]
+          },
+          "then": {
+            "required": [
+              "approval_policy"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

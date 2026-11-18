@@ -1,0 +1,12 @@
+"""Validated assembly for the multi-agent system."""
+
+
+def build_system(settings):
+    """Resolve pinned members, policies, graph, budgets, and manifest."""
+    spec = settings.load_system_spec(__package__)
+    members = settings.agent_registry.resolve_members(spec.members)
+    policies = settings.policy_registry.resolve_system_policies(spec)
+    graph = settings.graph_factory.build(spec.interactions)
+    settings.validate_system_contract(spec, members, graph, policies)
+    manifest = settings.manifest_factory.build(spec, members, graph, policies)
+    return settings.system_runtime(spec, members, graph, policies, manifest)

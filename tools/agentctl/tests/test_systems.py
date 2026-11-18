@@ -144,6 +144,141 @@ class SystemContractTests(unittest.TestCase):
         self.assertTrue((path.parent / "policies/admission.yaml").is_file())
         self.assertEqual(main(["system", "validate", "--root", str(self.root)]), 0)
 
+    def test_system_rejection_matrix(self) -> None:
+        path = self._scaffold_system()
+        original = yaml.safe_load(path.read_text())
+        cases = [
+            (
+                "execution floor",
+                lambda p: p["metadata"].update(execution_class="ephemeral"),
+                "SYSTEM022",
+            ),
+            (
+                "governance floor",
+                lambda p: p["metadata"].update(governance_tier="low"),
+                "SYSTEM023",
+            ),
+            (
+                "undeclared callee",
+                lambda p: p["interactions"][0].update(to="unknown-agent"),
+                "SYSTEM027",
+            ),
+            (
+                "missing policy",
+                lambda p: p["interactions"][0].update(policy="missing.yaml"),
+                "SYSTEM029",
+            ),
+            ("malformed members", lambda p: p.update(members="invalid"), "SYSTEM003"),
+            (
+                "insufficient capacity",
+                lambda p: p["limits"].update(max_agent_runs=1),
+                "SYSTEM032",
+            ),
+        ]
+        for label, mutate, code in cases:
+            with self.subTest(case=label):
+                payload = json.loads(json.dumps(original))
+                mutate(payload)
+                path.write_text(yaml.safe_dump(payload))
+                output = io.StringIO()
+                with contextlib.redirect_stdout(output):
+                    result = main(
+                        [
+                            "system",
+                            "validate",
+                            "--root",
+                            str(self.root),
+                            "--format",
+                            "json",
+                        ]
+                    )
+                self.assertEqual(result, 1)
+                self.assertIn(
+                    code,
+                    {d["code"] for d in json.loads(output.getvalue())["diagnostics"]},
+                )
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_malformed_system_risk_is_a_diagnostic(self) -> None:
+        spec_path = self._scaffold_system()
+        path = (
+            self.root
+            / yaml.safe_load(spec_path.read_text())["metadata"]["risk_assessment"]
+        )
+        original = yaml.safe_load(path.read_text())
+        for field, value in [
+            ("inherent", []),
+            ("residual", {"impact": [], "likelihood": True, "tier": {}}),
+            ("controls", {}),
+        ]:
+            with self.subTest(field=field):
+                payload = json.loads(json.dumps(original))
+                payload["scenarios"][0][field] = value
+                path.write_text(yaml.safe_dump(payload))
+                output = io.StringIO()
+                with contextlib.redirect_stdout(output):
+                    result = main(
+                        [
+                            "system",
+                            "validate",
+                            "--root",
+                            str(self.root),
+                            "--format",
+                            "json",
+                        ]
+                    )
+                self.assertEqual(result, 1)
+                self.assertIn(
+                    "SYSRISK025",
+                    {d["code"] for d in json.loads(output.getvalue())["diagnostics"]},
+                )
+
+    def test_invalid_member_metadata_stops_cross_member_checks(self) -> None:
+        self._scaffold_system()
+        path = self.root / "src/sample_agents/agents/planner_agent/agent.yaml"
+        original = yaml.safe_load(path.read_text())
+        for field, value in [
+            ("execution_class", []),
+            ("risk_tier", []),
+            ("enabled_skills", [42]),
+        ]:
+            with self.subTest(field=field):
+                payload = json.loads(json.dumps(original))
+                payload["metadata"][field] = value
+                path.write_text(yaml.safe_dump(payload))
+                output = io.StringIO()
+                with contextlib.redirect_stdout(output):
+                    result = main(
+                        [
+                            "system",
+                            "validate",
+                            "--root",
+                            str(self.root),
+                            "--format",
+                            "json",
+                        ]
+                    )
+                self.assertEqual(result, 1)
+                self.assertIn(
+                    "AGENT041",
+                    {d["code"] for d in json.loads(output.getvalue())["diagnostics"]},
+                )
+
+    def test_integral_float_system_risk_scores_are_accepted(self) -> None:
+        spec_path = self._scaffold_system()
+        path = (
+            self.root
+            / yaml.safe_load(spec_path.read_text())["metadata"]["risk_assessment"]
+        )
+        risk = yaml.safe_load(path.read_text())
+        for phase in ("inherent", "residual"):
+            score = risk["scenarios"][0][phase]
+            score["impact"] = float(score["impact"])
+            score["likelihood"] = float(score["likelihood"])
+        path.write_text(yaml.safe_dump(risk))
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            result = main(
+                ["system", "validate", "--root", str(self.root), "--format", "json"]
+            )
+        self.assertEqual(result, 0)
+        self.assertTrue(json.loads(output.getvalue())["ok"])

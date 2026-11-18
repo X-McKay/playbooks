@@ -1,6 +1,9 @@
 ---
 name: operate-multi-agent-system
 description: Prepare, operate, troubleshoot, or optimize a production multi-agent system. Use when defining system traces, SLOs, dashboards, alerts, budgets, capacity, privacy, manifests, incident response, rollback, topology changes, or dynamic registry operations.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Operate a Multi-Agent System

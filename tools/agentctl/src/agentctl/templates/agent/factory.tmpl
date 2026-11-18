@@ -1,0 +1,30 @@
+"""Validated assembly for the agent.
+
+Adapt imports and capability construction to the PydanticAI version pinned by the
+application. Keep provider clients and other I/O out of module import time.
+"""
+
+from .dependencies import AgentDependencies
+from .models import AgentResult
+
+
+def build_agent(settings):
+    """Build the agent from reviewed registries and explicit dependencies."""
+    from pydantic_ai import Agent
+
+    spec = settings.load_agent_spec("${package}.agents.${module_name}")
+    metadata = settings.validate_agent_metadata(spec.metadata)
+    model = settings.model_registry.resolve(metadata.model_policy)
+    skills = settings.skill_registry.resolve(metadata.enabled_skills)
+    toolsets = settings.tool_registry.resolve(
+        metadata.enabled_toolsets,
+        execution_class=metadata.execution_class,
+    )
+    return Agent(
+        model=model,
+        deps_type=AgentDependencies,
+        output_type=AgentResult,
+        instructions=spec.instructions,
+        toolsets=toolsets,
+        capabilities=settings.capabilities_for(metadata, skills),
+    )

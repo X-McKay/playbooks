@@ -1,6 +1,9 @@
 ---
 name: design-agent-interactions
 description: Design or review multi-agent delegation, handoff, review, voting, fan-out, shared-artifact, and event contracts. Use when defining who may call whom, typed message envelopes, edge-specific authority, context sharing, retry ownership, aggregation, dissent, or interaction-level budgets.
+metadata:
+  agent-playbook: "0.3"
+  multi-agent-playbook: "0.1"
 ---
 
 # Design Agent Interactions
